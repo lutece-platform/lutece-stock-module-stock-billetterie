@@ -1,0 +1,42 @@
+	<div class="content-box" >
+	
+		    
+	    <h2>#i18n{module.stock.billetterie.modify_partner.title}</h2>
+	    
+	    ${error!}
+	    <form method="post" action="jsp/admin/plugins/stock/modules/billetterie/DoSavePartner.jsp">
+	    	<input type="hidden" id="partner_id" name="id" value="${partner.id!}"/>
+	    	<input type="hidden" id="jsp_back" name="jsp_back" value="${jsp_back!}"/>
+	        <p>
+				<div>
+					<label for="provider_name" >#i18n{module.stock.billetterie.field.PartnerDTO.name} * :</label>
+					<input type="text" id="provider_name" name="name" size="60" maxlength="100" value="${partner.name!}"/>
+				</div>
+				<div>
+					<label for="provider_address" >#i18n{stock.create_provider.address} :</label>
+					<input type="text" id="provider_address" name="address" size="60" maxlength="250"  value="${partner.address!}"/>
+				</div>
+				<div>
+					<label for="provider_comment" >#i18n{stock.create_provider.comment} :</label>
+					<input type="text" id="provider_comment" name="comment" size="60" maxlength="250"  value="${partner.comment!}"/>
+				</div>
+				<div>
+					<label for="provider_contact_name" >#i18n{stock.create_provider.contact} :</label>
+					<input type="text" id="provider_contact_name" name="contactName" size="60" maxlength="60"  value="${partner.contactName!}"/>
+				</div>
+				<div>
+					<label for="provider_phone_number" >#i18n{stock.create_provider.phoneNumber} * :</label>
+					<input type="text" id="provider_phone_number" name="phoneNumber" size="60" maxlength="10"  value="${partner.phoneNumber!}"/>
+				</div>
+		        <div>
+					<label for="provider_mail" >#i18n{stock.create_provider.mail} * :</label>
+					<input type="text" id="provider_mail" name="mail" size="60" maxlength="50"  value="${partner.mail!}"/>
+				</div>
+	       	</p>
+			<p>   
+				<input type="submit" value="#i18n{module.stock.billetterie.message.buttonSave}" class="button" tabindex="3" />
+				<input class="button" type="submit" name="cancel" value="#i18n{portal.admin.message.buttonCancel}" />
+			</p>
+	
+	   </form>
+	</div>

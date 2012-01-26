@@ -1,0 +1,57 @@
+<#macro placesNumberChooser idType idSeance>
+	<#if idType == 1>
+		<select name="nb_places">
+			<#list nb_max_tarif_reduit as nb>
+				<option>${nb.code!}</option>
+			</#list>
+		</select>
+	<#elseif idType == 2>
+		<select name="nb_places">
+			<#list nb_max_invitation as nb>
+				<option>${nb.code!}</option>
+			</#list>
+		</select>
+	<#elseif idType == 3>
+		<select name="nb_places">
+			<#list nb_max_invitation_enfant as nb>
+				<option>${nb.code!}</option>
+			</#list>
+		</select>
+	</#if>
+</#macro>
+
+<#if seanceList?has_content>
+	<form action="jsp/site/Portal.jsp?page=reservation&action=reserver&product_id=${show.id}" method="post">
+	
+	<#-- Utilisé pour la page de confirmation -->
+	<input type="hidden" name="show_name" value="${show.name}" />
+	<input type="hidden" name="show_id" value="${show.id}" />
+	<input type="hidden" name="seance_date" value="${seance_date}" />
+	<table>
+	  <tr>
+	 	<th></th>
+	  	<#list seanceList as seance>
+	    <th>${seance.typeName} <#if seance.idGenre! == 1>(${seance.reductPrice!} &#8364;)</#if></th>
+	    </#list>
+	  </tr>
+	  <tr>
+	  	<td style="width:200px">Places disponibles</td>
+	  	<#list seanceList as seance>
+		<td>${seance.quantity}</td>
+	    </#list>
+	  </tr>
+	  <tr>
+	  <td>Places à réserver</td>
+	  	<#list seanceList as seance>
+	  	<input type="hidden" name="seance_id" value="${seance.id}" />
+	  	<input type="hidden" name="seance_type_name" value="${seance.typeName}" />
+		<td><@placesNumberChooser idType=seance.idGenre idSeance=seance.id /></td>
+	    </#list>
+	  </tr>
+	</table>
+	<input type="submit" value="Réserver" class="btn-action" />
+	</form>
+
+<#else>
+	Aucune séance disponible à la réservation pour cette date.
+</#if>

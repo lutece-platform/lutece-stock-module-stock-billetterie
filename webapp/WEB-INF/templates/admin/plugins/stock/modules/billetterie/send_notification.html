@@ -1,0 +1,31 @@
+	<div class="content-box" >
+	    
+	    <h2>${title!}</h2>
+	    
+		${error!}
+		
+		${avertissement!}
+	    <form method="post" action="jsp/admin/plugins/stock/modules/billetterie/DoSendNotification.jsp">
+	    	<input type="hidden" id="jsp_back" name="jsp_back" value="${jsp_back!}" />
+	    	<input type="hidden" name="notificationAction" value="${notification.notificationAction!}" />
+	    	<input type="hidden" name="idOffer" value="${notification.idOffer!}" />
+	        <p>
+				<div>
+					<label for="recipientsTo" >#i18n{module.stock.billetterie.send_notification.field.recipientsTo} * :</label>
+					<textarea rows="5" cols="120" name="recipientsTo">${notification.recipientsTo!}</textarea>
+				</div>
+				<div>
+					<label for="subject" >#i18n{module.stock.billetterie.send_notification.field.subject} * :</label>
+					<input type="text" name="subject" size="120" maxlength="120" value="${notification.subject!}"/>
+				</div>
+				<div>
+					<label for="message" >#i18n{module.stock.billetterie.send_notification.field.message} * :</label>
+					<textarea rows="50" cols="120" name="message">${notification.message!}</textarea>
+				</div>
+			</p>
+			<p>
+				<input type="submit" value="#i18n{module.stock.billetterie.message.buttonSend}" class="button" tabindex="3" />
+				<input class="button" type="submit" name="cancel" value="#i18n{portal.admin.message.buttonCancel}" />
+			</p>
+	   </form>	    
+	</div>

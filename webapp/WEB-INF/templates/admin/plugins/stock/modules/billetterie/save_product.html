@@ -1,0 +1,70 @@
+<div class="content-box" >
+    <h2>${title!}</h2>
+    ${error!}
+    <form method="post" enctype="multipart/form-data" name="save_product" id="save_product" action="jsp/admin/plugins/stock/modules/billetterie/DoSaveProduct.jsp">
+    	<input type="hidden" id="jsp_back" name="jsp_back" value="${jsp_back!}"/>
+        <p>
+        
+			<div>
+				<label for="poster" >#i18n{module.stock.billetterie.save_product.poster} * :</label>
+				<#if product.posterName?has_content>
+					<input type="hidden" name="posterName" value="${product.posterName}" />
+					<img src="images/poster/tb_${product.posterName}" style="float:left; margin-right: 5px;"/>
+					<p>Renseigner le champ ci-dessous pour modifier le poster :</p>
+				</#if>
+				<input type="file" id="poster" name="posterFile" size="60" maxlength="100" />
+			</div>
+			<div style="clear:left">
+				<label for="product_name" >#i18n{module.stock.billetterie.save_product.name} * :</label>
+				<input type="text" id="name" name="name" size="60" maxlength="100" value="${product.name!}"/>
+			</div>
+	        <div>
+				<label for="show_aLaffiche" >#i18n{module.stock.billetterie.save_product.aLaffiche} :</label>
+				<input type="checkbox" id="show_aLaffiche" name="aLaffiche" value="on" <#if product.alaffiche?has_content && product.alaffiche>checked="checked"</#if>/>
+			</div>
+			<div>
+				<label>#i18n{module.stock.billetterie.save_product.category} * :</label>
+		        <@combo name="idCategory" default_value="${(product.idCategory!)}" items=category_list! />           
+			</div>
+			<div>
+				<label>#i18n{module.stock.billetterie.save_product.provider} * :</label>
+		        <@combo name="idProvider" default_value="${(product.idProvider!)}" items=provider_list! />           
+			</div>
+			<div>
+				<label>#i18n{module.stock.billetterie.save_product.with} :</label>
+				<textarea name="with" cols="60" rows="5" maxlength="100">${product.with!}</textarea>
+			</div>
+			<div>
+				<label>#i18n{module.stock.billetterie.save_product.targetPublic} :</label>
+				<select name="targetPublic">
+						<option> </option> 
+					<#list public_list as public>
+						<option<#if product.targetPublic?has_content && product.targetPublic == public> selected="selected"</#if>>${public}</option>
+					</#list>
+				</select>
+			</div>
+			<div>
+				<label for="product_description" >#i18n{module.stock.billetterie.save_product.description} :</label>
+				<textarea id="description" name="description" cols="60" rows="10" maxlength="2000">${product.description!}</textarea>
+			</div>
+			<div>
+				<label>#i18n{module.stock.billetterie.save_product.start} * :</label>
+				<input type="text" name="startDate" id="date_start" size="10" maxlength="10" value="${product.startDate!}"/>
+			</div>
+			<div>
+				<label>#i18n{module.stock.billetterie.save_product.end} * :</label>
+				<input type="text" name="endDate" id="date_end" size="10" maxlength="10" value="${product.endDate!}"/>
+			</div>
+			<@getDatePickerRange idFieldFrom="date_start" idFieldTo="date_end" language="fr_FR" />
+			<div>
+				<label>#i18n{module.stock.billetterie.save_product.website} :</label>
+				<input type="text" name="website" size="60" maxlength="100" value="${product.website!}"/>
+			</div>
+       	</p>
+		<p>   
+			<input type="hidden" id="product_id" name="id" value="${product.id!}"/>
+			<input type="submit" value="#i18n{module.stock.billetterie.message.buttonSave}" class="button" tabindex="3" />
+			<input class="button" type="submit" name="cancel" value="#i18n{portal.admin.message.buttonCancel}" />
+		</p>
+   </form>
+</div>

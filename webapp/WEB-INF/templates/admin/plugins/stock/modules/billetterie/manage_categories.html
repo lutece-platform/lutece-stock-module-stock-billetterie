@@ -1,0 +1,53 @@
+<div id="content-box-actions">			
+  	<form action="jsp/admin/plugins/stock/modules/billetterie/SaveCategory.jsp" method="get">	    	
+     		<input type="submit" class="button bt-toolbar" value="#i18n{module.stock.billetterie.manage_category.buttonCreateCategory}">	    	
+  	</form>
+</div>
+<div class="content-box" >
+	<h2>#i18n{module.stock.billetterie.manage_category.title}</h2>
+	<div class="highlight-box">
+		<div style="visibility: visible; display: block;" id="filters">
+			<form action="jsp/admin/plugins/stock/modules/billetterie/ManageCategories.jsp" method="post">
+				<input type="hidden" name="filter" value="filter" />
+				<p>
+					<label for="filter_name">#i18n{module.stock.billetterie.manage_category.filter.name} : </label>
+					<input type="text" value="${filter.name!}" name="filter_name" id="filter_name" />
+				</p>
+				<p>
+					<label for=""/>&nbsp;</label>
+					<input type="submit" class="button" value="#i18n{module.stock.billetterie.message.buttonSearch}" />
+				</p>
+			</form>
+		</div>
+	</div>
+	<@paginationAdmin paginator=paginator combo=1 />
+	<table>
+		<tbody>
+		    <tr>
+	        	<th>#i18n{module.stock.billetterie.manage_category.filter.name}</th>
+	        	<th>#i18n{module.stock.billetterie.manage_category.actionsLabel}</th>
+	    	</tr>
+	    	<#if list_categories?has_content>
+		    <#list list_categories as category>
+			    <tr>
+		        	<td><a title="#i18n{module.stock.billetterie.manage_category.linkModifyCategory}" href="jsp/admin/plugins/stock/modules/billetterie/SaveCategory.jsp?category_id=${category.id}">${category.name!}</a></td>
+		        	<td>
+		        		<a alt="#i18n{module.stock.billetterie.manage_category.linkModifyCategory}"  title="#i18n{module.stock.billetterie.manage_category.linkModifyCategory}" href="jsp/admin/plugins/stock/modules/billetterie/SaveCategory.jsp?category_id=${category.id}"> 
+		        			<img src="images/admin/skin/actions/modify.png" alt="#i18n{module.stock.billetterie.manage_category.linkModifyCategory}" /> 
+		        		</a>
+		            	<a alt="#i18n{module.stock.billetterie.manage_category.linkDeleteCategory}"  title="#i18n{module.stock.billetterie.manage_category.linkDeleteCategory}" href="jsp/admin/plugins/stock/modules/billetterie/DeleteCategory.jsp?category_id=${category.id}"> 
+		            		<img src="images/admin/skin/actions/delete.png" alt="#i18n{module.stock.billetterie.manage_category.linkDeleteCategory}" />
+		            	</a>
+		            </td>
+			    </tr>
+		    </#list>
+		    <#else>
+				<tr>
+					<td colspan="6">
+						Aucun résultat trouvé. Veuillez élargir votre recherche ou créer une catégorie.
+					</td>
+				</tr>
+			</#if>
+		</tbody>
+	</table>
+</div>

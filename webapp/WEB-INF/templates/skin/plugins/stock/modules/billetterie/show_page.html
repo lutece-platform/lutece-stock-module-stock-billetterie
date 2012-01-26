@@ -1,0 +1,68 @@
+
+
+</div>
+<#-- results -->
+<div id="two-zones-second" class="span-18 last" role="main">
+	<div class="span-18 last">
+	
+	
+	    <div class="portlet">
+	    	<div class="portlet-content">
+		${error!}
+				<div id="show_page">
+					
+					<div id="bloc-entete">
+						<a href="images/poster/${show.posterName}" class="thickbox" title="${show.name}"/>
+							<img src="images/poster/${show.posterName}" class="poster" alt="Affiche ${show.name}"/>
+						</a>
+						<div class="content-title"><h2>${show.name}</h2></div>
+						<#if show.with?has_content><p><strong>Distribution :</strong> <@nl2br>${show.with!}</@nl2br></p></#if>
+						<p><strong>Public :</strong> En famille, à partir de 9 ans</p>
+						<p><strong>Genre :</strong> ${show.categoryName!}</p>
+						<p>
+							<strong>Salle :</strong>
+							${partner.name!}
+							<br />
+							${partner.address!}
+						</p>
+						<p><strong>Dates :</strong> du ${show.startDate!} au ${show.endDate!}</p>
+					</div>
+					
+					<div id="bloc-presentation">
+						<p><@nl2br>${show.description!}</@nl2br></p>
+						
+						<#if show.website?has_content><p><strong>Site internet :</strong> <a title=${show.name}" href="${show.website!}">${show.website!}</a></p></#if>
+					</div>
+					
+					<fieldset id="bloc-reservation">
+						<legend>Réservation</legend>
+						<#if user?has_content>
+							<#if booking_opened = 0>
+								<#if seance_date_list?has_content>
+								<form action="jsp/site/Portal.jsp?page=billetterie&action=fiche-spectacle&product_id=${show.id}" method="post">
+									<select name="date_seance">
+										<#list seance_date_list as seance>
+										<option <#if seance == sSeanceDate! >selected="selected"</#if>>${seance}</option>
+										</#list>
+									</select>
+									<input type="submit" value="Voir les places disponibles" class="btn-action" />
+								</form>
+									${bloc_reservation}
+								<#else>
+									Aucune date programmée pour ce spectacle.
+								</#if>
+							<#elseif booking_opened = -1>
+								<em>Les réservations pour ce spectacle sont terminées.</em>
+							<#else>
+								<em>Les réservations seront ouvertes à partir du ${show.startDate!}.</em>
+							</#if>
+						<#else>
+							<p>Vous devez être connecté pour pouvoir réserver : <a href="jsp/site/plugins/mylutece/DoMyLuteceLogin.jsp?auth_provider=mylutece-cas" title="Connexion Lutece">se connecter</a>.</p>
+						</#if>
+					</fieldset>
+					
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

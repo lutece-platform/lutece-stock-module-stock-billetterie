@@ -1,0 +1,63 @@
+<#macro create>
+	  	<form action="jsp/admin/plugins/stock/modules/billetterie/SavePartner.jsp" method="get">	    	
+	      		<input type="submit" class="button bt-toolbar" value="#i18n{module.stock.billetterie.manage_partner.buttonCreatePartner}">	    	
+	  	</form>
+</#macro>
+
+<div id="content-box-actions">			
+		<@create/>
+	</div>
+<div class="content-box" >
+	<div class="highlight-box">
+		<div style="visibility: visible; display: block;" id="filters">
+			<form action="jsp/admin/plugins/stock/modules/billetterie/ManagePartners.jsp" method="post">
+				<input type="hidden" name="filter" value="filter" />
+				<p>
+					<label for="filter_name">#i18n{module.stock.billetterie.field.PartnerDTO.name} : </label>
+					<input type="text" value="${filter.name!}" name="name" id="filter_name" />
+				</p>
+				
+				<p>
+					<label for=""/>&nbsp;</label>
+					<input type="submit" class="button" value="#i18n{module.stock.billetterie.message.buttonSearch}" />
+				</p>
+			</form>
+		</div>
+	</div>
+	
+	
+  	
+	<@paginationAdmin paginator=paginator combo=1 />
+	<table>
+		<tbody>
+		    <tr>
+		        <th>#i18n{module.stock.billetterie.field.PartnerDTO.name}</th>
+		        <th>#i18n{module.stock.billetterie.manage_partner_type.actionsLabel}</th>
+		    </tr>
+		   <#if list_partners?has_content>
+		    <#list list_partners as partner>
+			    <tr>
+			        <td><a title="#i18n{module.stock.billetterie.manage_partner.linkModifyPartner}" href="jsp/admin/plugins/stock/modules/billetterie/SavePartner.jsp?partner_id=${partner.id}">${partner.name!}</a></td>
+			        	<td width="100">
+			           		<a title="#i18n{module.stock.billetterie.manage_partner.linkManageProducts}" href="jsp/admin/plugins/stock/modules/billetterie/ManageProducts.jsp?idProvider=${partner.id}"> 
+				            	<img width="24px" src="images/admin/skin/actions/show.png" alt="#i18n{module.stock.billetterie.manage_partner.linkManageProducts}" />
+				            </a>
+			        		<a title="#i18n{module.stock.billetterie.manage_partner.linkModifyPartner}" href="jsp/admin/plugins/stock/modules/billetterie/SavePartner.jsp?partner_id=${partner.id}"> 
+			        			<img src="images/admin/skin/actions/modify.png" alt="#i18n{module.stock.billetterie.manage_partner.linkModifyPartner}" /> 
+			        		</a>
+			            	<a title="#i18n{module.stock.billetterie.manage_partner.linkDeletePartner}" href="jsp/admin/plugins/stock/modules/billetterie/DeletePartner.jsp?partner_id=${partner.id}"> 
+			            		<img src="images/admin/skin/actions/delete.png" alt="#i18n{module.stock.billetterie.manage_partner.linkDeletePartner}" />
+			            	</a>
+			            </td>
+			    </tr>
+		    </#list>
+		    <#else>
+				<tr>
+					<td colspan="6">
+						Aucun résultat trouvé. Veuillez élargir votre recherche ou créer une salle.
+					</td>
+				</tr>
+			</#if>
+		</tbody>
+	</table>
+</div>

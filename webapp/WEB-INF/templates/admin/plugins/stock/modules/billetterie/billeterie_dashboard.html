@@ -1,0 +1,31 @@
+<div class="content-box" >
+    <h2>#i18n{module.stock.billetterie.dashboard.pageTitle}</h2>
+	<div class="dashboard-item">
+		<img src="images/admin/skin/plugins/stock/modules/billetterie/clap.png" alt="" height="24" width="24" align="middle"/>
+		<a href="jsp/admin/plugins/stock/modules/billetterie/ManageProductsStatistics.jsp">
+			#i18n{module.stock.billetterie.dashboard.nbSpectaclesALAffiche}
+		</a>
+		: ${nbProductALAffiche}
+	</div>
+	<div class="dashboard-item">
+		<img src="images/admin/skin/plugins/stock/modules/billetterie/clap.png" alt="" height="24" width="24" align="middle"/>
+		<a href="jsp/admin/plugins/stock/modules/billetterie/ManageProductsStatistics.jsp">
+			#i18n{module.stock.billetterie.dashboard.nbSpectaclesAVenir}
+		</a> 
+		: ${nbProductAVenir}
+	</div>
+	<div class="dashboard-item">
+		<img src="images/admin/skin/plugins/stock/modules/billetterie/ticket.png" alt="" height="24" width="24" align="middle"/>
+		<a href="jsp/admin/plugins/stock/modules/billetterie/ManagePurchasesStatistics.jsp">
+			#i18n{module.stock.billetterie.dashboard.nbReservationsJour} 
+		</a> 
+		: ${nbPurchaseCountDuJour}
+	</div>
+	<div class="dashboard-item">
+		<img src="images/admin/skin/plugins/stock/modules/billetterie/ticket.png" alt="" height="24" width="24" align="middle"/>
+		<a href="jsp/admin/plugins/stock/modules/billetterie/ManagePurchasesStatistics.jsp">
+			#i18n{module.stock.billetterie.dashboard.nbReservationsMois}
+		</a> 
+		: ${nbPurchaseCountDuMois}
+	</div>
+</div> 

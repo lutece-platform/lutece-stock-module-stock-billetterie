@@ -1,0 +1,100 @@
+<div class="content-box" >
+	<h2>#i18n{module.stock.billetterie.list_purchase.title}</h2>
+	<#list errors as error>
+		${error!}
+	</#list>
+	<div class="highlight-box">
+		<div style="visibility: visible; display: block;" id="filters">
+			<form action="jsp/admin/plugins/stock/modules/billetterie/ManagePurchase.jsp" method="post">
+				<input type="hidden" name="filter" value="${filter!}" />
+				<p>
+					<label for="filter_product">#i18n{module.stock.billetterie.list_offres.filter.product} : </label>
+					<input type="text" name="productName" id="filter_product" value="${(filter.productName)!}" />
+				</p>
+				<p>
+					<label for="filter_date_beginOffer">#i18n{module.stock.billetterie.list_purchase.filter.offerDate} : </label>
+					<input type="text" name="dateBeginOffer" id="filter_date_beginOffer" value="${(filter.dateBeginOffer?date)!}" size="8" />
+					#i18n{module.stock.billetterie.list_purchase.filter.offerDateEt}
+					<input type="text" name="dateEndOffer" id="filter_date_endOffer" value="${(filter.dateEndOffer?date)!}" size="8"/>
+				</p>
+				<p>
+					<label for="filter_date_begin">#i18n{module.stock.billetterie.list_purchase.filter.purchaseDate} : </label>
+					<input type="text" name="dateBegin" id="filter_date_begin" value="${(filter.dateBegin?date)!}" size="8" />
+					#i18n{module.stock.billetterie.list_purchase.filter.purchaseDateEt}
+					<input type="text" name="dateEnd" id="filter_date_end" value="${(filter.dateEnd?date)!}" size="8"/>
+				</p>
+				<p>
+					<label>#i18n{module.stock.billetterie.list_purchase.filter.offerType} : </label>
+		        	<@combo name="idGenre" default_value="${filter.idGenre!}" items=offerGenre_list! />
+				</p>
+				<p>
+					<label for="filter_userName">#i18n{module.stock.billetterie.list_purchase.filter.userName} : </label>
+					<input type="text" name="userName" id="filter_userName" value="${(filter.userName)!}" />
+				</p>
+				<p>
+					<label for=""/>&nbsp;</label>
+					<input type="submit" class="button" value="#i18n{module.stock.billetterie.list_offres.buttonSearch}" />
+				</p>
+			</form>
+		</div>
+	</div>
+	<@paginationAdmin paginator=paginator combo=1 />	
+	<table>
+		<tbody>
+		    <tr>
+	        	<th>#i18n{module.stock.billetterie.list_purchase.table.product}</th>
+	        	<th>#i18n{module.stock.billetterie.list_purchase.table.dateOffer}</th>
+	        	<th>#i18n{module.stock.billetterie.list_purchase.table.datePurchase}</th>
+	        	<th>#i18n{module.stock.billetterie.list_purchase.table.typeOffer}</th>
+	        	<th>#i18n{module.stock.billetterie.list_purchase.table.userName}</th>
+	        	<th>#i18n{module.stock.billetterie.list_purchase.table.quantity}</th>
+	        	<th>#i18n{module.stock.billetterie.list_purchase.table.actions}</th>
+	    	</tr>
+	    	<#if list_purchases?has_content>
+			    <#list list_purchases as purchase>
+				    <tr>
+				    	<td>
+				    		<#if (purchase.offer.statut) == strStatutCancel!>
+				    			<b style="color: red;">Annulé</b> - 
+				    		</#if>
+				    		${(purchase.offer.product.name)!}
+				    	</td>
+				    	<td>
+				    		<a href="jsp/admin/plugins/stock/modules/billetterie/ManageOffers.jsp">
+				    			${(purchase.offer.date)!} - ${(purchase.offer.hour)!}
+				    		</a>
+				    	</td>
+				    	<td>
+				    		${purchase.date!}
+				    	</td>
+				    	<td>
+				    		${(purchase.offer.typeName)!}
+				    	</td>
+				    	<td>
+				    		${purchase.userName!}
+				    	</td>
+				    	<td>
+				    		${purchase.quantity!}
+				    	</td>
+			        	<td>
+			        		<a title="#i18n{module.stock.billetterie.list_purchase.linkPrintTicket}" href="jsp/site/plugins/jasper/DownloadFile.jsp?report_id=contremarque&report_type=pdf&value1=${purchase.id!}"> 
+			        			<img src="images/local/skin/buttons/b_print.png" alt="#i18n{module.stock.billetterie.list_purchase.linkPrintTicket}" /> 
+			        		</a>
+			        		<a title="#i18n{module.stock.billetterie.list_purchase.linkCancelPurchase}" href="jsp/admin/plugins/stock/modules/billetterie/DeletePurchase.jsp?purchase_id=${purchase.id!}"> 
+			        			<img src="images/admin/skin/plugins/form/actions/disable.png" alt="#i18n{module.stock.billetterie.list_purchase.linkCancelPurchase}" /> 
+			        		</a>
+			            </td>
+				    </tr>
+			    </#list>
+			<#else>
+				<tr>
+					<td colspan="7">
+						#i18n{module.stock.billetterie.list_purchase.message.noResult}
+					</td>
+				</tr>
+			</#if>
+		</tbody>
+	</table>
+</div>
+<@getDatePickerRange idFieldFrom="filter_date_beginOffer" idFieldTo="filter_date_endOffer" language="${locale!}" />
+<@getDatePickerRange idFieldFrom="filter_date_begin" idFieldTo="filter_date_end" language="${locale!}" />

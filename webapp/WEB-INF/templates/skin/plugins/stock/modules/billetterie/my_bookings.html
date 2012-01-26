@@ -1,0 +1,76 @@
+
+
+</div>
+<#-- results -->
+<div id="two-zones-second" class="span-18 last">
+
+
+	<div class="content-title">
+		<h2>#i18n{module.stock.billetterie.my_bookings.title}</h2>
+
+	</div>
+	<div class="span-18 last notitle">
+		<div class="portlet">
+			<div class="portlet-content">
+
+				<p style="margin-top: 10px">Bonjour
+					${user.userInfos['user.name.given']!}. Bienvenue sur votre espace
+					de réservation.</p>
+				<#if nextBookingList?has_content>
+				<table>
+					<tbody>
+						<#list nextBookingList as booking>
+						<tr>
+							<td width="70%"><#if booking.offer.statut == 'annule'> <strong
+								class="annule">Annulé - </strong> </#if> <a
+								href="jsp/site/Portal.jsp?page=billetterie&action=fiche-spectacle&product_id=${booking.offer.product.id}"
+								title="${booking.offer.product.name}">${booking.offer.product.name}</a>
+								- ${booking.offer.product.providerName} - ${booking.offer.date}
+								- ${booking.offer.hour}</td>
+							<td>${booking.offer.typeName}</td>
+							<td>${booking.quantity!}</td>
+							<td style="padding: 5px"><#if booking.offer.statut !=
+								'annule' && booking.offer.statut! != 'verrouille'><a
+								title="#i18n{module.stock.billetterie.list_purchase.linkPrintTicket}"
+								href="jsp/site/plugins/jasper/DownloadFile.jsp?report_id=contremarque&report_type=pdf&value1=${booking.id!}"><img
+									src="images/local/skin/buttons/b_print.png"
+									alt="#i18n{module.stock.billetterie.list_purchase.linkPrintTicket}" />
+							</a> <a
+								title="#i18n{module.stock.billetterie.list_purchase.linkCancelPurchase}"
+								href="jsp/site/Portal.jsp?page=reservation&action=delete-purchase&purchase_id=${booking.id!}"><img
+									height="22" width="22"
+									src="images/local/skin/cancel_reservation.png"
+									alt="#i18n{module.stock.billetterie.list_purchase.linkCancelPurchase}" />
+							</a></#if></td>
+						</tr>
+						</#list>
+					</tbody>
+				</table>
+				<#else> 
+				Aucune réservation. 
+				</#if>
+
+				<#if pastBookingList!?has_content>
+				<h3>Archives</h3>
+
+				<table class="archives">
+					<tbody>
+						<#list pastBookingList as booking>
+						<tr>
+							<td width="70%"><#if booking.offer.statut == 'annule'> <strong
+								class="annule">Annulé - </strong> </#if> <a
+								href="jsp/site/Portal.jsp?page=billetterie&action=fiche-spectacle&product_id=${booking.offer.product.id}"
+								title="${booking.offer.product.name}">${booking.offer.product.name}</a>
+								- ${booking.offer.product.providerName} - ${booking.offer.date}
+								- ${booking.offer.hour}</td>
+							<td>${booking.offer.typeName}</td>
+							<td>${booking.quantity!}</td>
+						</tr>
+						</#list>
+					</tbody>
+				</table>
+				</#if> 
+			</div>
+		</div>
+	</div>
+</div>

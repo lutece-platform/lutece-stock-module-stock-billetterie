@@ -1,0 +1,60 @@
+<div class="content-box">
+	<h2>#i18n{module.stock.billetterie.manage_purchases_statistics.pageTitle}</h2>
+	${error!}
+	<form action="jsp/admin/plugins/stock/modules/billetterie/ManagePurchasesStatistics.jsp" method="post" name="" id=""  >
+		<div class="highlight-box">
+			<p>
+				<label class="text-label" for="fist_response_date_filter">#i18n{module.stock.billetterie.manage_purchases_statistics.labelValidationDate}</label>
+				<input type="text" name="fist_response_date_filter" id="fist_response_date_filter" size="10" value="<#if fist_response_date_filter?has_content>${fist_response_date_filter?date}</#if>" />
+				#i18n{form.result.labelAnd}
+				<input type="text" name="last_response_date_filter" id="last_response_date_filter" size="10" value="<#if last_response_date_filter?has_content>${last_response_date_filter?if_exists?date}</#if>" />
+				<input type="submit" class="button" value="#i18n{module.stock.billetterie.message.buttonSearch}" />
+			</p>
+		</div>
+		<div class="highlight-box">
+			<h2>#i18n{module.stock.billetterie.manage_purchases_statistics.titleStatistic}</h2>
+		    <p>
+		    	<span style="margin-left:50px;"><label class="text-label" for="">#i18n{module.stock.billetterie.manage_purchases_statistics.labelNumberResponse} </label></span> 
+				<span style="font-weight:bold;color:#000;">${number_response}</span> 
+			</p>
+		    <p>
+		    	<label class="text-label">#i18n{module.stock.billetterie.manage_purchases_statistics.labelGraph}</label>
+		    	<input type="radio" name="times_unit" value="0" <#if times_unit=="0">checked</#if>>#i18n{module.stock.billetterie.manage_statistics.radioButtonDay}
+		    	<input type="radio" name="times_unit" value="1" <#if times_unit=="1">checked</#if>>#i18n{module.stock.billetterie.manage_statistics.radioButtonWeek}
+		    	<input type="radio" name="times_unit" value="2" <#if times_unit=="2">checked</#if>>#i18n{module.stock.billetterie.manage_statistics.radioButtonMonth}
+		    </p> 
+	        <#if fist_response_date_filter?exists&&last_response_date_filter?exists>
+				<img src="jsp/admin/plugins/stock/modules/billetterie/DoGeneratePurchasesGraph.jsp?times_unit=${times_unit}&fist_response_date_filter=${fist_response_date_filter?date?if_exists}&last_response_date_filter=${last_response_date_filter?date?if_exists}&type_data=2"/>
+			<#elseif fist_response_date_filter?exists > 
+				<img src="jsp/admin/plugins/stock/modules/billetterie/DoGeneratePurchasesGraph.jsp?times_unit=${times_unit}&fist_response_date_filter=${fist_response_date_filter?date?if_exists}&type_data=2"/>
+			<#elseif last_response_date_filter?exists>
+				<img src="jsp/admin/plugins/stock/modules/billetterie/DoGeneratePurchasesGraph.jsp?times_unit=${times_unit}&last_response_date_filter=${last_response_date_filter?date?if_exists}&type_data=2"/>
+			<#else>
+				<img src="jsp/admin/plugins/stock/modules/billetterie/DoGeneratePurchasesGraph.jsp?times_unit=${times_unit}&type_data=2"/>
+			</#if>
+		</div>
+	</form>
+	<form action="jsp/admin/plugins/stock/modules/billetterie/DoExportPurchasesStatistic.jsp" method="post" name="" id=""  >
+		<div class="highlight-box">
+			<h2>#i18n{module.stock.billetterie.manage_statistics.titleDataSave}</h2>
+			<#if number_response==0>
+				<li><ul>#i18n{module.stock.billetterie.message.error.nombreReservationsZero}</ul></li>
+			<#else>
+				<#if fistResponseDateFilter?exists>
+					<input name="fist_response_date_filter" value="${fist_response_date_filter?date?if_exists}" type="hidden" />	
+				</#if>	
+				<#if lastResponseDateFilter?exists>
+					<input name="last_response_date_filter" value="${last_response_date_filter?date?if_exists}" type="hidden" />	
+				</#if>	
+	    	 	<p>
+					<input value="#i18n{module.stock.billetterie.manage_statistics.labelExportResult}" class="button"  type="submit">
+	          	</p>
+	    	</#if>	
+		</div>
+		<input type="hidden" name="times_unit" value="${times_unit}"/>
+		<input type="hidden" name="type_data" value="2"/>
+	</form>
+</div>
+     
+<@getDatePickerRange idFieldFrom="fist_response_date_filter" idFieldTo="last_response_date_filter" language=locale />
+	 

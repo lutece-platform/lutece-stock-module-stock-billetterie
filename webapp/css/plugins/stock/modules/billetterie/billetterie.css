@@ -1,0 +1,20 @@
+/******************************************************************************/
+/*               ADMINISTRATION CSS STYLES   BILLETTERIE  			          */
+/******************************************************************************/
+
+.hide{
+	display:none;	
+}
+
+.error-message{
+	display : block;
+	color:#FF0000;
+	background-color:#FFC9CC;
+	font-weight:bold;
+	text-align:left;
+	clear:both;
+}
+
+.order-comment{
+
+}

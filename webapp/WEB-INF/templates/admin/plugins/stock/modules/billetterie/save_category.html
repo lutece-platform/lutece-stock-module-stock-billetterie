@@ -1,0 +1,22 @@
+<div class="content-box" >
+    <h2>${title!}</h2>
+    ${error!}
+    <form method="post"  name="save_category" id="save_category" action="jsp/admin/plugins/stock/modules/billetterie/DoSaveCategory.jsp">
+    	<input type="hidden" id="jsp_back" name="jsp_back" value="${jsp_back!}"/>
+        <p>
+			<div>
+				<label for="category_name" >#i18n{stock.create_category.name} * :</label>
+				<input type="text" id="name" name="name" size="60" maxlength="100" value="${category.name!}"/>
+			</div>
+			<div>
+				<label for="category_description" >#i18n{stock.create_category.description} :</label>
+				<input type="text" id="description" name="description" size="60" maxlength="100" value="${category.description!}"/>
+			</div>
+       	</p>
+		<p>   
+			<input type="hidden" id="category_id" name="id" value="${category.id!}"/>
+			<input type="submit" value="#i18n{module.stock.billetterie.message.buttonSave}" class="button" tabindex="3" />
+			<input class="button" type="submit" name="cancel" value="#i18n{portal.admin.message.buttonCancel}" />
+		</p>
+   </form>
+</div>

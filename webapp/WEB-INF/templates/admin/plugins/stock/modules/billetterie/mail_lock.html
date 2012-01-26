@@ -1,0 +1,18 @@
+Bonjour,
+
+
+<#if seance.idGenre == idTarifReduit>
+Vous trouverez ci-dessous la liste des personnes de la Mairie de Paris bénéficiaire du tarif réduit à ${seance.reductPrice!}€ pour ${seance.product.name!} le ${seance.date!} à ${seance.hour!}.
+<#else>
+Vous trouverez ci-dessous la liste des invités Mairie de Paris pour ${seance.product.name!} le ${seance.date!} à ${seance.hour!}.
+</#if>
+
+<#list liste_reservations as reservation>
+${reservation.userName!} - ${reservation.nameAgent!} ${reservation.firstNameAgent!} - ${reservation.quantity!} place(s)
+</#list>
+
+Merci encore à vous.
+
+
+Pour tout renseignement :
+coraline.lenoir@paris.fr ou 01.42.76.57.97.
