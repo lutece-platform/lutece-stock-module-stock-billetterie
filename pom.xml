@@ -54,9 +54,9 @@
 	</properties>
 	
 	<scm>
-		<connection>scm:svn:http://dev.lutece.paris.fr/svn/lutece/applications/kiosque/trunk/module-stock-kiosque</connection>
-		<developerConnection>scm:svn:https://dev.lutece.paris.fr/svn/lutece/applications/kiosque/trunk/module-stock-kiosque</developerConnection>
-		<url>scm:svn:http://dev.lutece.paris.fr/viewvc/applications/kiosque/trunk/module-stock-kiosque</url>
+		<connection>scm:svn:http://dev.lutece.paris.fr/svn/lutece/portal/trunk/plugins/applications/module-stock-billetterie</connection>
+		<developerConnection>scm:svn:https://dev.lutece.paris.fr/svn/lutece/portal/trunk/plugins/applications/module-stock-billetterie</developerConnection>
+		<url>http://dev.lutece.paris.fr/viewvc/lutece/portal/trunk/plugins/applications/module-stock-billetterie</url>
 	</scm> 
 	
 </project>
