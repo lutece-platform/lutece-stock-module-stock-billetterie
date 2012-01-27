@@ -1,44 +1,18 @@
---
--- Structure de la table `stock_purchase`
---
-
-CREATE TABLE IF NOT EXISTS `stock_purchase` (
-  `id_purchase` int(11) NOT NULL,
-  `userName` varchar(255) NOT NULL,
-  `quantity` int(11) NOT NULL,
-  `offer_id` int(11) NOT NULL,
-  PRIMARY KEY (`id_purchase`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 --
--- Structure de la table `stock_purchase_attribute`
+-- Contenu de la table `billetterie_portlet`
 --
 
-CREATE TABLE IF NOT EXISTS `stock_purchase_attribute` (
-  `Purchase_id_purchase` int(11) NOT NULL,
-  `attribute_key` varchar(255) NOT NULL,
-  `attribute_value` text NOT NULL,
-  PRIMARY KEY (`Purchase_id_purchase`,`attribute_key`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+INSERT INTO `billetterie_portlet` (`id_portlet`, `number_show`, `type_content_portlet`) VALUES
+(98, 8, 'a-laffiche'),
+(99, 5, 'a-venir');
+
 
 --
--- Structure de la table `stock_purchase_attribute_date`
+-- Contenu de la table `stock_offer_genre`
 --
 
-CREATE TABLE IF NOT EXISTS `stock_purchase_attribute_date` (
-  `Purchase_id_purchase` int(11) NOT NULL,
-  `attribute_key` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
-  `attribute_value` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`Purchase_id_purchase`,`attribute_key`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-
---
--- Structure de la table `stock_purchase_attribute_num`
---
-
-CREATE TABLE IF NOT EXISTS `stock_purchase_attribute_num` (
-  `Purchase_id_purchase` int(11) NOT NULL,
-  `attribute_key` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
-  `attribute_value` decimal(10,2) DEFAULT NULL,
-  PRIMARY KEY (`Purchase_id_purchase`,`attribute_key`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+INSERT INTO `stock_offer_genre` (`id_offer_genre`, `name`) VALUES
+(1, 'Tarif réduit'),
+(2, 'Invitation'),
+(3, 'Invitation spectacle enfants');
