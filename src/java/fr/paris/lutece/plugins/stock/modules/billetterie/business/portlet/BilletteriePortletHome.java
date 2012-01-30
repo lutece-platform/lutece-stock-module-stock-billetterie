@@ -5,45 +5,50 @@ import fr.paris.lutece.portal.business.portlet.PortletHome;
 import fr.paris.lutece.portal.business.portlet.PortletTypeHome;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 
-public class BilletteriePortletHome extends PortletHome {
 
-	// Static variable pointed at the DAO instance
-	private static IBilletterieDAO _dao = (IBilletterieDAO) SpringContextService
-			.getPluginBean("billetterie", "BilletteriePortletDAO");
+public class BilletteriePortletHome extends PortletHome
+{
 
-	/* This class implements the Singleton design pattern. */
-	private static BilletteriePortletHome _singleton = null;
+    // Static variable pointed at the DAO instance
+    private static IBilletterieDAO _dao = (IBilletterieDAO) SpringContextService.getPluginBean( "billetterie",
+            "BilletteriePortletDAO" );
 
-	/**
-	 * Constructor
-	 */
-	public BilletteriePortletHome() {
-		if (_singleton == null) {
-			_singleton = this;
-		}
-	}
+    /* This class implements the Singleton design pattern. */
+    private static BilletteriePortletHome _singleton = null;
 
+    /**
+     * Constructor
+     */
+    public BilletteriePortletHome( )
+    {
+        // if ( _singleton == null )
+        // {
+        // _singleton = this;
+        // }
+    }
 
+    public String getPortletTypeId( )
+    {
 
-	public String getPortletTypeId() {
+        String strCurrentClassName = this.getClass( ).getName( );
+        String strPortletTypeId = PortletTypeHome.getPortletTypeId( strCurrentClassName );
 
-		String strCurrentClassName = this.getClass().getName();
-		String strPortletTypeId = PortletTypeHome
-				.getPortletTypeId(strCurrentClassName);
+        return strPortletTypeId;
+    }
 
-		return strPortletTypeId;
-	}
+    public IPortletInterfaceDAO getDAO( )
+    {
+        return _dao;
 
-	public IPortletInterfaceDAO getDAO() {
-		return _dao;
+    }
 
-	}
+    public static PortletHome getInstance( )
+    {
+        if ( _singleton == null )
+        {
+            _singleton = new BilletteriePortletHome( );
+        }
 
-	public static PortletHome getInstance() {
-		if (_singleton == null) {
-			_singleton = new BilletteriePortletHome();
-		}
-
-		return _singleton;
-	}
+        return _singleton;
+    }
 }

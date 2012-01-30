@@ -121,7 +121,7 @@ public class NotificationJspBean  extends AbstractJspBean
      */
     public String getSendNotification( HttpServletRequest request )
     {
-    	NotificationDTO notification = new NotificationDTO( );
+        NotificationDTO notification;
         Map<String, Object> model = new HashMap<String, Object>( );
 
         // Manage validation errors
@@ -161,13 +161,13 @@ public class NotificationJspBean  extends AbstractJspBean
             {
             	notification.setNotificationAction( TicketsConstants.OFFER_STATUT_CANCEL );
             	// Set the default recipientsTo
-            	String recipientsTo = "";
+                StringBuilder recipientsTo = new StringBuilder( 100 ).append( "" );
             	for ( ReservationDTO purchase : listReservations )
             	{
-                    recipientsTo += purchase.getEmailAgent( )
-                            + AppPropertiesService.getProperty( PROPERTY_MAIL_SEPARATOR );
+                    recipientsTo.append( purchase.getEmailAgent( ) ).append(
+                            AppPropertiesService.getProperty( PROPERTY_MAIL_SEPARATOR ) );
             	}
-            	notification.setRecipientsTo( recipientsTo ); 
+                notification.setRecipientsTo( recipientsTo.toString( ) );
             	// Set the default subject
             	notification.setSubject( "Annulation du spectacle : " + seance.getProduct( ).getName( ) + " du " + seance.getDate( ) + 
             			" - " + seance.getHour( ) );

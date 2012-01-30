@@ -33,19 +33,6 @@
  */
 package fr.paris.lutece.plugins.stock.modules.billetterie.web;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-
 import fr.paris.lutece.plugins.stock.business.offer.OfferFilter;
 import fr.paris.lutece.plugins.stock.business.product.ProductFilter;
 import fr.paris.lutece.plugins.stock.business.purchase.PurchaseFilter;
@@ -71,6 +58,19 @@ import fr.paris.lutece.portal.web.constants.Parameters;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.html.DelegatePaginator;
 import fr.paris.lutece.util.html.HtmlTemplate;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 
 
 /**
@@ -297,7 +297,7 @@ public class OfferJspBean  extends AbstractJspBean
                 if ( StringUtils.isNotBlank( strProductId ) )
                 {
                     Integer nIdProduct = Integer.parseInt( strProductId );
-                	List<ShowDTO> showList = new ArrayList<ShowDTO>( );
+                    List<ShowDTO> showList;
                 	ProductFilter productFilter = new ProductFilter( );
                     productFilter.setIdProduct( nIdProduct );
                 	showList = _serviceProduct.findByFilter( productFilter );

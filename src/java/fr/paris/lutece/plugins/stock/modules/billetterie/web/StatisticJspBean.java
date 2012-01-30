@@ -155,8 +155,6 @@ public class StatisticJspBean extends AbstractJspBean
         Locale locale = getLocale( );
         HtmlTemplate template;
         int nNumberResponse = 0;
-        Date dFistResponseDate = null;
-        Date dLastResponseDate = null;
         Map<String, Object> model = new HashMap<String, Object>( );
 
         String strFistResponseDateFilter = request.getParameter( PARAMETER_FIRST_RESPONSE_DATE_FILTER );
@@ -202,10 +200,8 @@ public class StatisticJspBean extends AbstractJspBean
         model.put( MARK_NUMBER_RESPONSE, nNumberResponse );
         model.put( MARK_FIRST_RESPONSE_DATE_FILTER, ( tFistResponseDateFilter == null ) ? null : new Date(
                 tFistResponseDateFilter.getTime( ) ) );
-        model.put( MARK_FIRST_RESPONSE_DATE, dFistResponseDate );
         model.put( MARK_LAST_RESPONSE_DATE_FILTER, ( tLastResponseDateFilter == null ) ? null : new Date(
                 tLastResponseDateFilter.getTime( ) ) );
-        model.put( MARK_LAST_RESPONSE_DATE, dLastResponseDate );
         model.put( MARK_TIMES_UNIT, strTimesUnit );
         model.put( MARK_EXPORT_FORMAT_REF_LIST, ExportFormatHome.getListExport( plugin ) );
         setPageTitleProperty( PAGE_TITLE_MANAGE_PRODUCTS );
@@ -225,8 +221,6 @@ public class StatisticJspBean extends AbstractJspBean
         Locale locale = getLocale( );
         HtmlTemplate template;
         int nNumberResponse = 0;
-        Date dFistResponseDate = null;
-        Date dLastResponseDate = null;
         Map<String, Object> model = new HashMap<String, Object>( );
 
         String strFistResponseDateFilter = request.getParameter( PARAMETER_FIRST_RESPONSE_DATE_FILTER );
@@ -272,10 +266,8 @@ public class StatisticJspBean extends AbstractJspBean
         model.put( MARK_NUMBER_RESPONSE, nNumberResponse );
         model.put( MARK_FIRST_RESPONSE_DATE_FILTER, ( tFistResponseDateFilter == null ) ? null : new Date(
                 tFistResponseDateFilter.getTime( ) ) );
-        model.put( MARK_FIRST_RESPONSE_DATE, dFistResponseDate );
         model.put( MARK_LAST_RESPONSE_DATE_FILTER, ( tLastResponseDateFilter == null ) ? null : new Date(
                 tLastResponseDateFilter.getTime( ) ) );
-        model.put( MARK_LAST_RESPONSE_DATE, dLastResponseDate );
         model.put( MARK_TIMES_UNIT, strTimesUnit );
         model.put( MARK_EXPORT_FORMAT_REF_LIST, ExportFormatHome.getListExport( plugin ) );
         setPageTitleProperty( PAGE_TITLE_MANAGE_PURCHASE );

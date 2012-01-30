@@ -146,26 +146,25 @@ public class PortletBilletterie extends Portlet
 
         }
         XmlUtil.beginElement( strXml, TAG_BILLETTERIE_PORTLET );
-        XmlUtil.addElement( strXml, TAG_SHOW_TYPE_PORTLET,
- ( strContentPortlet.equals( "a-laffiche" ) ? "aLaffiche"
+        XmlUtil.addElement( strXml, TAG_SHOW_TYPE_PORTLET, ( strContentPortlet.equals( "a-laffiche" ) ? "aLaffiche"
                 : "aVenir" ) );
-      
+
         for ( ShowDTO showDTO : ListShow )
         {
             if ( !( strContentPortlet.equals( "a-venir" ) && showDTO.getAlaffiche( ) == true ) )
             {
-            XmlUtil.beginElement( strXml, TAG_SHOW );
-            XmlUtil.addElement( strXml, TAG_SHOW_ID, showDTO.getId( ) );
-            XmlUtil.addElement( strXml, TAG_SHOW_NAME, showDTO.getName( ) );
-            XmlUtil.addElement( strXml, TAG_SHOW_POSTER_NAME, showDTO.getPosterName( ) );
-            XmlUtil.addElement( strXml, TAG_SHOW_CATEGORY_NAME, showDTO.getCategoryName( ) );
-            XmlUtil.addElement( strXml, TAG_SHOW_START_DATE, showDTO.getStartDate( ) );
-            XmlUtil.addElement( strXml, TAG_SHOW_END_DATE, showDTO.getEndDate( ) );
-            XmlUtil.addElement( strXml, TAG_SHOW_DESCRIPTION, showDTO.getDescription( ) );
-            UrlItem url = new UrlItem( URL_SHOW );
-            url.addParameter( PARAMETER_STOCK_ID, showDTO.getId( ) );
-            XmlUtil.addElement( strXml, TAG_SHOW_URL, "<![CDATA[" + url.getUrl( ) + "]]>" );
-            XmlUtil.endElement( strXml, TAG_SHOW );
+                XmlUtil.beginElement( strXml, TAG_SHOW );
+                XmlUtil.addElement( strXml, TAG_SHOW_ID, showDTO.getId( ) );
+                XmlUtil.addElement( strXml, TAG_SHOW_NAME, showDTO.getName( ) );
+                XmlUtil.addElement( strXml, TAG_SHOW_POSTER_NAME, showDTO.getPosterName( ) );
+                XmlUtil.addElement( strXml, TAG_SHOW_CATEGORY_NAME, showDTO.getCategoryName( ) );
+                XmlUtil.addElement( strXml, TAG_SHOW_START_DATE, showDTO.getStartDate( ) );
+                XmlUtil.addElement( strXml, TAG_SHOW_END_DATE, showDTO.getEndDate( ) );
+                XmlUtil.addElement( strXml, TAG_SHOW_DESCRIPTION, showDTO.getDescription( ) );
+                UrlItem url = new UrlItem( URL_SHOW );
+                url.addParameter( PARAMETER_STOCK_ID, showDTO.getId( ) );
+                XmlUtil.addElement( strXml, TAG_SHOW_URL, "<![CDATA[" + url.getUrl( ) + "]]>" );
+                XmlUtil.endElement( strXml, TAG_SHOW );
             }
 
         }

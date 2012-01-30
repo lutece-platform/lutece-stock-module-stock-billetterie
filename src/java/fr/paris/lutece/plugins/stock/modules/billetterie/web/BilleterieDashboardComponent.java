@@ -63,7 +63,7 @@ public class BilleterieDashboardComponent extends DashboardComponent
     @Override
     public String getDashboardData( AdminUser user, HttpServletRequest request )
     {
-        HtmlTemplate template = new HtmlTemplate( );
+        HtmlTemplate template;
         IStatisticService statisticService = (IStatisticService) SpringContextService
 .getContext( ).getBean(
                 IStatisticService.class );
