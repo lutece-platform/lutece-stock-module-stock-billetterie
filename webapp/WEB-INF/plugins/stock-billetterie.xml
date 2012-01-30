@@ -154,7 +154,7 @@
 	  <servlet>
 	    <servlet-name>BilletterieSolrSearch</servlet-name>
 	    <servlet-class>fr.paris.lutece.plugins.stock.modules.billetterie.web.BilletterieSolrSearch</servlet-class>
-   		<url-pattern>/billetterieSolrSearch</url-pattern>
+   		<url-pattern>/servlet/plugins/billetterieSolrSearch</url-pattern>
 	  </servlet>
 	</servlets>
 	
