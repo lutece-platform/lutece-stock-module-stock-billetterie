@@ -11,6 +11,9 @@
 
 <div class="content-box" >
 	<h2>#i18n{module.stock.billetterie.list_offres.title}</h2>
+	<#list errors as error>
+		${error!}
+	</#list>
 	<div class="highlight-box">
 		<div style="visibility: visible; display: block;" id="filters">
 			<form action="jsp/admin/plugins/stock/modules/billetterie/ManageOffers.jsp" method="post">
