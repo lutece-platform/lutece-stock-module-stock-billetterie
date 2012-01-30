@@ -33,19 +33,6 @@
  */
 package fr.paris.lutece.plugins.stock.modules.billetterie.web;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-
 import fr.paris.lutece.plugins.stock.business.purchase.exception.PurchaseUnavailable;
 import fr.paris.lutece.plugins.stock.commons.ResultList;
 import fr.paris.lutece.plugins.stock.commons.exception.BusinessException;
@@ -60,6 +47,7 @@ import fr.paris.lutece.plugins.stock.modules.tickets.utils.constants.TicketsCons
 import fr.paris.lutece.plugins.stock.service.IPurchaseSessionManager;
 import fr.paris.lutece.plugins.stock.utils.DateUtils;
 import fr.paris.lutece.plugins.stock.utils.ListUtils;
+import fr.paris.lutece.plugins.stock.utils.NumberUtils;
 import fr.paris.lutece.plugins.stock.utils.constants.StockConstants;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.message.AdminMessage;
@@ -73,6 +61,19 @@ import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.html.DelegatePaginator;
 import fr.paris.lutece.util.html.HtmlTemplate;
 import fr.paris.lutece.util.html.Paginator;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 
 
 /**
@@ -95,6 +96,7 @@ public class PurchaseJspBean  extends AbstractJspBean
     public static final String MARK_CURRENT_DATE = "currentDate";
     public static final String MARK_LIST_OFFER_GENRE = "offerGenre_list";
     public static final String MARK_OFFER_ID = "offer_id";
+    public static final String MARK_PURCHASSE_ID = "purchase_id";
     public static final String MARK_QUANTITY_LIST = "quantity_list";
     public static final String MARK_ERRORS = "errors";
 
@@ -246,9 +248,15 @@ public class PurchaseJspBean  extends AbstractJspBean
         filter.setOrderAsc( true );
         
         String strOfferId = request.getParameter( MARK_OFFER_ID );
+        String purchaseId = request.getParameter( MARK_PURCHASSE_ID );
         if ( strOfferId != null )
         {
             SeanceDTO seance = this._serviceOffer.findSeanceById( Integer.parseInt( strOfferId ) );
+            if ( StringUtils.isNotEmpty( purchaseId ) && NumberUtils.validateInt( purchaseId ) )
+            {
+                ReservationDTO reservation = this._servicePurchase.findById( Integer.parseInt( purchaseId ) );
+                filter.setUserName( reservation.getUserName( ) );
+            }
         	filter.setIdOffer( seance.getId( ) );
         	filter.setProductName( seance.getProduct( ).getName( ) );
         	filter.setIdGenre( seance.getIdGenre( ) );
@@ -393,8 +401,9 @@ public class PurchaseJspBean  extends AbstractJspBean
         }
 
         String strArg = "?" + MARK_OFFER_ID + "=" + purchase.getOffer( ).getId( );
+        String strArgum = "&" + MARK_PURCHASSE_ID + "=" + purchase.getId( );
         
-        return AppPathService.getBaseUrl( request ) + JSP_MANAGE_PURCHASES + strArg;
+        return AppPathService.getBaseUrl( request ) + JSP_MANAGE_PURCHASES + strArg + strArgum;
     }
 
     /**
