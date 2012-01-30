@@ -106,7 +106,7 @@ public class OfferJspBean  extends AbstractJspBean
     // PARAMETERS
     public static final String PARAMETER_OFFER_ID = "offer_id";
     public static final String PARAMETER_OFFER_DUPLICATE = "duplicate";
-    public static final String PARAMETER_OFFER_PRODUCT_NAME = "productName";
+    public static final String PARAMETER_OFFER_PRODUCT_ID = "productId";
     public static final String PARAMETER_OFFER_GENRE_LIST = "offer_genre_list";
     public static final String PARAMETER_OFFER_GENRE_LIST_DEFAULT = "offer_genre_list_default";
     public static final String PARAMETER_BUTTON_DELETE = "delete";
@@ -198,12 +198,22 @@ public class OfferJspBean  extends AbstractJspBean
         setPageTitleProperty( PROPERTY_PAGE_TITLE_MANAGE_OFFER );
 
         OfferFilter filter = getOfferFilter( request );
-        String idProduct = request.getParameter( PARAMETER_PRODUCT_ID );
-        if ( StringUtils.isNotEmpty( idProduct ) )
+        if ( filter.getProductId( ) != null && filter.getProductId( ) > 0 )
         {
-            ShowDTO show = this._serviceProduct.findById( Integer.valueOf( idProduct ) );
+            ShowDTO show = this._serviceProduct.findById( filter.getProductId( ) );
             filter.setProductName( show.getName( ) );
         }
+        if ( StringUtils.isNotEmpty( filter.getProductName( ) ) )
+        {
+            ProductFilter productFilter = new ProductFilter( );
+            productFilter.setName( filter.getProductName( ) );
+            List<ShowDTO> listShow = this._serviceProduct.findByFilter( productFilter );
+            if ( !listShow.isEmpty( ) )
+            {
+                filter.setProductId( listShow.get( 0 ).getId( ) );
+            }
+        }
+
         List<String> orderList = new ArrayList<String>( );
         orderList.add( "date" );
         orderList.add( "product.name" );
@@ -264,7 +274,7 @@ public class OfferJspBean  extends AbstractJspBean
             // No error, get offer if modify
             String strOfferId = request.getParameter( PARAMETER_OFFER_ID );
             String strDuplicate = request.getParameter( PARAMETER_OFFER_DUPLICATE );
-            String strProductName = request.getParameter( PARAMETER_OFFER_PRODUCT_NAME );
+            String strProductId = request.getParameter( PARAMETER_OFFER_PRODUCT_ID );
             
             if ( strOfferId != null )
             {
@@ -284,11 +294,12 @@ public class OfferJspBean  extends AbstractJspBean
                 // Create new Offer
                 offer = new SeanceDTO( );
                 // If creation and filter "Spectacle" exist, pre-select the spectacle
-                if ( StringUtils.isNotBlank( strProductName ) )
+                if ( StringUtils.isNotBlank( strProductId ) )
                 {
+                    Integer nIdProduct = Integer.parseInt( strProductId );
                 	List<ShowDTO> showList = new ArrayList<ShowDTO>( );
                 	ProductFilter productFilter = new ProductFilter( );
-                	productFilter.setName( strProductName );
+                    productFilter.setIdProduct( nIdProduct );
                 	showList = _serviceProduct.findByFilter( productFilter );
                 	
                 	if ( showList.size( ) == 1 )
