@@ -35,6 +35,18 @@
  			<version>2.4.10-SNAPSHOT</version>
  		</dependency>
 		<dependency>
+ 			<groupId>fr.paris.lutece</groupId>
+ 			<artifactId>lutece-core</artifactId>
+            <version>3.0.8-SNAPSHOT</version>
+            <type>lutece-core</type>
+            <exclusions>
+            	<exclusion>
+            		<artifactId>commons-collections</artifactId>
+            		<groupId>commons-collections</groupId>
+            	</exclusion>
+            </exclusions>
+ 		</dependency>
+		<dependency>
 			<groupId>fr.paris.lutece.plugins</groupId>
 			<artifactId>plugin-mylutece</artifactId>
 			<version>3.0.1</version>
