@@ -280,7 +280,7 @@ public class OfferJspBean  extends AbstractJspBean
         if ( ve != null )
         {
             offer = (SeanceDTO) ve.getBean( );
-            model.put( "errors", getHtmlError( ve ) );
+            model.put( "error", getHtmlError( ve ) );
         }
         else
         {
