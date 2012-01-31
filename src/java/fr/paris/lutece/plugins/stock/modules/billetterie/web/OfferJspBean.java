@@ -94,6 +94,7 @@ public class OfferJspBean  extends AbstractJspBean
     public static final String MARK_OFFER_STATUT_CANCEL = "strStatutCancel";
     public static final String MARK_OFFER_STATUT_LOCK = "strStatutLock";
     public static final String MARK_CURRENT_DATE = "currentDate";
+    public static final String MARK_ERRORS = "errors";
 
     // JSP
     private static final String JSP_MANAGE_OFFERS = "jsp/admin/plugins/stock/modules/billetterie/ManageOffers.jsp";
@@ -135,6 +136,7 @@ public class OfferJspBean  extends AbstractJspBean
     private static final String MESSAGE_CONFIRMATION_DELETE_OFFER = "module.stock.billetterie.message.deleteOffer.confirmation";
     private static final String MESSAGE_TITLE_CONFIRMATION_DELETE_OFFER = "module.stock.billetterie.message.title.deleteOffer.confirmation";
     private static final String MESSAGE_OFFER_STATUT_ISNT_CANCEL = "module.stock.billetterie.message.offer.statut.isnt.cancel";
+    private static final String MESSAGE_SEARCH_PURCHASE_DATE = "module.stock.billetterie.message.search.purchase.date";
     
     // MEMBERS VARIABLES
     private int _nItemsPerPage;
@@ -197,7 +199,7 @@ public class OfferJspBean  extends AbstractJspBean
     {
         setPageTitleProperty( PROPERTY_PAGE_TITLE_MANAGE_OFFER );
 
-        OfferFilter filter = getOfferFilter( request );
+        SeanceFilter filter = (SeanceFilter) getOfferFilter( request );
         if ( filter.getProductId( ) != null && filter.getProductId( ) > 0 )
         {
             ShowDTO show = this._serviceProduct.findById( filter.getProductId( ) );
@@ -214,6 +216,19 @@ public class OfferJspBean  extends AbstractJspBean
             }
         }
 
+        // Fill the model
+        Map<String, Object> model = new HashMap<String, Object>( );
+        model.put( MARK_LOCALE, getLocale( ) );
+
+        // if date begin is after date end, add error
+        List<String> errors = new ArrayList<String>( );
+        if ( filter.getDateBegin( ) != null && filter.getDateEnd( ) != null
+                && filter.getDateBegin( ).after( filter.getDateEnd( ) ) )
+        {
+            errors.add( I18nService.getLocalizedString( MESSAGE_SEARCH_PURCHASE_DATE, request.getLocale( ) ) );
+        }
+
+        model.put( MARK_ERRORS, errors );
         List<String> orderList = new ArrayList<String>( );
         orderList.add( "date" );
         orderList.add( "product.name" );
@@ -226,9 +241,7 @@ public class OfferJspBean  extends AbstractJspBean
 
         DelegatePaginator<SeanceDTO> paginator = getPaginator( request, listAllOffer );
 
-        // Fill the model
-        Map<String, Object> model = new HashMap<String, Object>(  );
-        model.put( MARK_LOCALE, getLocale( ) );
+
 
         // the paginator
         model.put( TicketsConstants.MARK_NB_ITEMS_PER_PAGE, "" + _nItemsPerPage );
@@ -267,7 +280,7 @@ public class OfferJspBean  extends AbstractJspBean
         if ( ve != null )
         {
             offer = (SeanceDTO) ve.getBean( );
-            model.put( "error", getHtmlError( ve ) );
+            model.put( "errors", getHtmlError( ve ) );
         }
         else
         {
