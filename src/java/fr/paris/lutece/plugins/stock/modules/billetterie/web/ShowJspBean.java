@@ -33,24 +33,6 @@
  */
 package fr.paris.lutece.plugins.stock.modules.billetterie.web;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-import org.springframework.transaction.annotation.Transactional;
-
 import fr.paris.lutece.plugins.stock.business.category.CategoryFilter;
 import fr.paris.lutece.plugins.stock.business.product.ProductFilter;
 import fr.paris.lutece.plugins.stock.business.provider.ProviderFilter;
@@ -82,6 +64,24 @@ import fr.paris.lutece.portal.web.upload.MultipartHttpServletRequest;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.html.DelegatePaginator;
 import fr.paris.lutece.util.html.HtmlTemplate;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.springframework.transaction.annotation.Transactional;
 
 
 public class ShowJspBean extends AbstractJspBean
@@ -324,10 +324,10 @@ public class ShowJspBean extends AbstractJspBean
             validate( product );
 
             // Persist entity
-            _serviceProduct.doSaveProduct( product, request );
+            ShowDTO saveProduct = _serviceProduct.doSaveProduct( product, request );
 
             // Statistic management
-            _serviceStatistic.doManageProductSaving( product );
+            _serviceStatistic.doManageProductSaving( saveProduct );
         }
         catch ( FunctionnalException e )
         {

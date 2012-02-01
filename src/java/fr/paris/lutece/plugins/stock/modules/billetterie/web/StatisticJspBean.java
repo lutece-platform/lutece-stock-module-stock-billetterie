@@ -33,7 +33,6 @@
  */
 package fr.paris.lutece.plugins.stock.modules.billetterie.web;
 
-import fr.paris.lutece.plugins.form.business.ExportFormatHome;
 import fr.paris.lutece.plugins.form.utils.FormUtils;
 import fr.paris.lutece.plugins.stock.commons.exception.BusinessException;
 import fr.paris.lutece.plugins.stock.modules.tickets.business.ResultStatistic;
@@ -203,7 +202,7 @@ public class StatisticJspBean extends AbstractJspBean
         model.put( MARK_LAST_RESPONSE_DATE_FILTER, ( tLastResponseDateFilter == null ) ? null : new Date(
                 tLastResponseDateFilter.getTime( ) ) );
         model.put( MARK_TIMES_UNIT, strTimesUnit );
-        model.put( MARK_EXPORT_FORMAT_REF_LIST, ExportFormatHome.getListExport( plugin ) );
+        //        model.put( MARK_EXPORT_FORMAT_REF_LIST, ExportFormatHome.getListExport( plugin ) );
         setPageTitleProperty( PAGE_TITLE_MANAGE_PRODUCTS );
         template = AppTemplateService.getTemplate( TEMPLATE_MANAGE_PRODUCTS_STATISTICS, locale, model );
 
@@ -269,7 +268,7 @@ public class StatisticJspBean extends AbstractJspBean
         model.put( MARK_LAST_RESPONSE_DATE_FILTER, ( tLastResponseDateFilter == null ) ? null : new Date(
                 tLastResponseDateFilter.getTime( ) ) );
         model.put( MARK_TIMES_UNIT, strTimesUnit );
-        model.put( MARK_EXPORT_FORMAT_REF_LIST, ExportFormatHome.getListExport( plugin ) );
+        //model.put( MARK_EXPORT_FORMAT_REF_LIST, ExportFormatHome.getListExport( plugin ) );
         setPageTitleProperty( PAGE_TITLE_MANAGE_PURCHASE );
         template = AppTemplateService.getTemplate( TEMPLATE_MANAGE_PURCHASE_STATISTICS, locale, model );
 

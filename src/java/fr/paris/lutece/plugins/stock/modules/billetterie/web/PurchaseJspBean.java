@@ -390,10 +390,10 @@ public class PurchaseJspBean  extends AbstractJspBean
                 throw new BusinessException( purchase, MESSAGE_INSUFFICIENT_PLACE_REMAINING );
             }
             
-            _servicePurchase.doSavePurchase( purchase, request.getSession( ).getId( ) );
+            ReservationDTO saveReservation = _servicePurchase.doSavePurchase( purchase, request.getSession( ).getId( ) );
 
             // Statistic management
-            _serviceStatistic.doManagePurchaseSaving( purchase );
+            _serviceStatistic.doManagePurchaseSaving( saveReservation );
         }
         catch ( FunctionnalException e )
         {
