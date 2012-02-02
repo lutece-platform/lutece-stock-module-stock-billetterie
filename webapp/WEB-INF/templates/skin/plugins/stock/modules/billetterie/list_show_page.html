@@ -21,11 +21,11 @@
 				<div id="show_list_page">
 					<#list show_list as show>
 					<div class="show_details">
-						<a href="jsp/site/Portal.jsp?page=billetterie&action=fiche-spectacle&product_id=${show.id}">
+						<a href="jsp/site/Portal.jsp?page=billetterie&action=fiche-spectacle&product_id=${show.id}" title="${show.name!}">
 						<img src="images/poster/tb_${show.posterName}" alt="${show.name!}" />
 						</a> 
 						<br /> 
-						<a  class="en-savoir-plus" href="jsp/site/Portal.jsp?page=billetterie&action=fiche-spectacle&product_id=${show.id}"> 
+						<a  title="${show.name!}" class="en-savoir-plus" href="jsp/site/Portal.jsp?page=billetterie&action=fiche-spectacle&product_id=${show.id}"> 
 						${show.categoryName} 
 							<br /> 
 						EN SAVOIR PLUS
