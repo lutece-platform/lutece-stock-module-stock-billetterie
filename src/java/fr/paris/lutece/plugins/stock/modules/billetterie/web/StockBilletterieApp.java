@@ -55,7 +55,9 @@ import fr.paris.lutece.util.ReferenceItem;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.html.HtmlTemplate;
 
+import java.text.DateFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -235,6 +237,7 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
     private String getBookingBloc( ShowDTO show, String sDateSeance, Locale locale )
     {
 
+        final DateFormat sdfComboSeance = new SimpleDateFormat(TicketsConstants.FORMAT_COMBO_DATE_SEANCE);
         if ( sDateSeance == null )
         {
             return "";
@@ -243,7 +246,7 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
         Date dateSeance;
         try
         {
-            dateSeance = TicketsConstants.FORMAT_COMBO_DATE_SEANCE.parse( sDateSeance );
+            dateSeance = sdfComboSeance.parse( sDateSeance );
         }
         catch ( ParseException e )
         {
@@ -296,6 +299,14 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
         return quantityList;
     }
 
+    /**
+     * Gets the current list show page.
+     * 
+     * @param page the page
+     * @param request the request
+     * @param locale the locale
+     * @return the current list show page
+     */
     private XPage getCurrentListShowPage( XPage page, HttpServletRequest request, Locale locale )
     {
         List<String> orderList = new ArrayList<String>( );
@@ -314,6 +325,14 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
         return page;
     }
 
+    /**
+     * Gets the come list show page.
+     * 
+     * @param page the page
+     * @param request the request
+     * @param locale the locale
+     * @return the come list show page
+     */
     private XPage getComeListShowPage( XPage page, HttpServletRequest request, Locale locale )
     {
         List<String> orderList = new ArrayList<String>( );
