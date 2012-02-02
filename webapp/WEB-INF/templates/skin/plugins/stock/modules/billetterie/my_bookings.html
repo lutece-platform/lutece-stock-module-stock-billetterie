@@ -29,8 +29,7 @@
 								- ${booking.offer.hour}</td>
 							<td>${booking.offer.typeName}</td>
 							<td>${booking.quantity!}</td>
-							<td style="padding: 5px"><#if booking.offer.statut! !=
-								'annule'><a
+							<td style="padding: 5px"><#if booking.offer.statut! != 'annule'><a
 								title="#i18n{module.stock.billetterie.list_purchase.linkPrintTicket}"
 								href="jsp/site/plugins/jasper/DownloadFile.jsp?report_id=contremarque&report_type=pdf&value1=${booking.id!}"><img
 									src="images/local/skin/buttons/b_print.png"
@@ -51,7 +50,7 @@
 				</#if>
 
 				<#if pastBookingList!?has_content>
-				<h3>Archives</h3>
+				<h3 style="clear:both">Archives</h3>
 
 				<table class="archives">
 					<tbody>
