@@ -17,7 +17,7 @@
 						</a>
 						<div class="content-title"><h2>${show.name}</h2></div>
 						<#if show.with?has_content><p><strong>Distribution :</strong> <@nl2br>${show.with!}</@nl2br></p></#if>
-						<p><strong>Public :</strong> En famille, à partir de 9 ans</p>
+						<#if show.targetPublic?has_content><p><strong>Public :</strong> ${show.targetPublic!}</p></#if>
 						<p><strong>Genre :</strong> ${show.categoryName!}</p>
 						<p>
 							<strong>Salle :</strong>
