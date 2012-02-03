@@ -61,6 +61,8 @@ import fr.paris.lutece.portal.web.xpages.XPage;
 import fr.paris.lutece.portal.web.xpages.XPageApplication;
 import fr.paris.lutece.util.html.HtmlTemplate;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -223,6 +225,15 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
             }
 
             // Save booking into session
+            List<ReservationDTO> reservationList = (List<ReservationDTO>) request.getSession( ).getAttribute(
+                    PARAMETER_BOOKING_LIST );
+            if ( reservationList != null )
+            {
+                for ( ReservationDTO reservation : reservationList )
+                {
+                    _purchaseSessionManager.release( request.getSession( ).getId( ), reservation );
+                }
+            }
             request.getSession( ).setAttribute( PARAMETER_BOOKING_LIST, bookingList );
             request.getSession( ).setAttribute( "booking_check", bookingCheck );
 
@@ -305,8 +316,10 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
      * @param request http request
      * @param response http response
      * @return url to go
+     * @throws UnsupportedEncodingException
      */
     public String doCancelSaveReservation( HttpServletRequest request, HttpServletResponse response )
+            throws UnsupportedEncodingException
     {
         List<ReservationDTO> bookingList = (List<ReservationDTO>) request.getSession( ).getAttribute(
                 PARAMETER_BOOKING_LIST );
@@ -333,7 +346,7 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
                 // If error we display show page
                 return manageFunctionnalException( request, e, AppPathService.getBaseUrl( request )
                         + "jsp/site/Portal.jsp?page=billetterie&action=fiche-spectacle&product_id=" + nShowId
-                        + "&date_seance=" + seanceDate );
+                        + "&date_seance=" + URLEncoder.encode( seanceDate, "utf-8" ) );
             }
         }
 
