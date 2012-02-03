@@ -268,33 +268,33 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
                 || !request.getParameter( "booking_check" ).equals(
                         request.getSession( ).getAttribute( "booking_check" ) ) )
         {
-            SiteMessageService.setMessage( request,
-                    getMessage( PurchaseService.MESSAGE_ERROR_PURCHASE_SESSION_EXPIRED, request ),
+            SiteMessageService.setMessage( request, PurchaseService.MESSAGE_ERROR_PURCHASE_SESSION_EXPIRED,
                     SiteMessage.TYPE_ERROR, "jsp/site/Portal.jsp" );
         }
-
-        List<ReservationDTO> bookingList = (List<ReservationDTO>) request.getSession( ).getAttribute(
-                PARAMETER_BOOKING_LIST );
-        try
+        else
         {
-            bookingList = _purchaseService.doSavePurchaseList( bookingList, request.getSession( ).getId( ) );
-            sendBookingNotification( bookingList, request );
-        }
-        catch ( FunctionnalException e )
-        {
-            if ( bookingList != null )
+            List<ReservationDTO> bookingList = (List<ReservationDTO>) request.getSession( ).getAttribute(
+                    PARAMETER_BOOKING_LIST );
+            try
             {
-                // If error we display show page
-                SeanceDTO seance = _offerService.findSeanceById( bookingList.get( 0 ).getOffer( ).getId( ) );
-                return manageFunctionnalException( request, e, AppPathService.getBaseUrl( request )
-                        + "jsp/site/Portal.jsp?page=billetterie&action=fiche-spectacle&product_id="
-                        + seance.getProduct( ).getId( ) );
+                bookingList = _purchaseService.doSavePurchaseList( bookingList, request.getSession( ).getId( ) );
+                sendBookingNotification( bookingList, request );
             }
-            else
+            catch ( FunctionnalException e )
             {
-                SiteMessageService.setMessage( request,
-                        getMessage( PurchaseService.MESSAGE_ERROR_PURCHASE_SESSION_EXPIRED, request ),
-                        SiteMessage.TYPE_ERROR, "jsp/site/Portal.jsp" );
+                if ( bookingList != null )
+                {
+                    // If error we display show page
+                    SeanceDTO seance = _offerService.findSeanceById( bookingList.get( 0 ).getOffer( ).getId( ) );
+                    return manageFunctionnalException( request, e, AppPathService.getBaseUrl( request )
+                            + "jsp/site/Portal.jsp?page=billetterie&action=fiche-spectacle&product_id="
+                            + seance.getProduct( ).getId( ) );
+                }
+                else
+                {
+                    SiteMessageService.setMessage( request, PurchaseService.MESSAGE_ERROR_PURCHASE_SESSION_EXPIRED,
+                            SiteMessage.TYPE_ERROR, "jsp/site/Portal.jsp" );
+                }
             }
         }
         return AppPathService.getBaseUrl( request ) + "jsp/site/Portal.jsp?page=reservation&action=mes-reservations";

@@ -11,7 +11,6 @@
 					<form method="post" action="jsp/site/plugins/stock/modules/billetterie/DoCancelSaveReservation.jsp">
 						<input type="hidden" name="date_seance" value="${seance_date!}" />
 						<input type="hidden" name="product_id" value="${show_id!}" />
-						<input type="hidden" name="booking_check" value="${booking_check!}" />
 						<input type="submit" value="Annuler" class="btn-action" />
 					</form>
 	    		<#else>
@@ -29,6 +28,7 @@
 							<td>
 								<form action="jsp/site/plugins/stock/modules/billetterie/DoSaveReservation.jsp">
 									<input type="submit" value="Confirmer" class="btn-action" />
+									<input type="hidden" name="booking_check" value="${booking_check!}" />
 								</form>
 							</td>
 							<td>
