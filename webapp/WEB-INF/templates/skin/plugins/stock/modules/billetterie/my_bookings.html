@@ -34,7 +34,7 @@
 								href="jsp/site/plugins/jasper/DownloadFile.jsp?report_id=contremarque&report_type=pdf&value1=${booking.id!}"><img
 									src="images/local/skin/buttons/b_print.png"
 									alt="#i18n{module.stock.billetterie.list_purchase.linkPrintTicket}" />
-							</a> <a
+							</a> </#if><#if booking.offer.statut! != 'annule' && booking.offer.statut! != 'verrouille'><a
 								title="#i18n{module.stock.billetterie.list_purchase.linkCancelPurchase}"
 								href="jsp/site/Portal.jsp?page=reservation&action=delete-purchase&purchase_id=${booking.id!}"><img
 									height="22" width="22"
