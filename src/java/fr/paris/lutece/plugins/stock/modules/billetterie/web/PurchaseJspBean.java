@@ -42,7 +42,6 @@ import fr.paris.lutece.plugins.stock.modules.tickets.business.ReservationFilter;
 import fr.paris.lutece.plugins.stock.modules.tickets.business.SeanceDTO;
 import fr.paris.lutece.plugins.stock.modules.tickets.service.IPurchaseService;
 import fr.paris.lutece.plugins.stock.modules.tickets.service.ISeanceService;
-import fr.paris.lutece.plugins.stock.modules.tickets.service.IStatisticService;
 import fr.paris.lutece.plugins.stock.modules.tickets.utils.constants.TicketsConstants;
 import fr.paris.lutece.plugins.stock.service.IPurchaseSessionManager;
 import fr.paris.lutece.plugins.stock.utils.DateUtils;
@@ -162,8 +161,6 @@ public class PurchaseJspBean  extends AbstractJspBean
     private ISeanceService _serviceOffer;
     @Inject
     private IPurchaseSessionManager _purchaseSessionManager;
-    @Inject
-    private IStatisticService _serviceStatistic;
 
     private ReservationFilter _purchaseFilter;
 
@@ -392,8 +389,6 @@ public class PurchaseJspBean  extends AbstractJspBean
             
             ReservationDTO saveReservation = _servicePurchase.doSavePurchase( purchase, request.getSession( ).getId( ) );
 
-            // Statistic management
-            _serviceStatistic.doManagePurchaseSaving( saveReservation );
         }
         catch ( FunctionnalException e )
         {
@@ -473,8 +468,6 @@ public class PurchaseJspBean  extends AbstractJspBean
             return AdminMessageService.getMessageUrl( request, StockConstants.MESSAGE_ERROR_OCCUR,
                     AdminMessage.TYPE_STOP );
         }
-        //On supprimes les statistiques de la reservation
-        _serviceStatistic.doRemovePurchaseStatisticByIdPurchase( nIdPurchase );
 
         _servicePurchase.doDeletePurchase( nIdPurchase );
 

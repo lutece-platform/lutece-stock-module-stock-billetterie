@@ -94,14 +94,11 @@ public class StatisticJspBean extends AbstractJspBean
 
     //MARKS
     private static final String MARK_NUMBER_RESPONSE = "number_response";
-    private static final String MARK_FIRST_RESPONSE_DATE = "fist_response_date";
-    private static final String MARK_LAST_RESPONSE_DATE = "last_response_date";
     private static final String MARK_FIRST_RESPONSE_DATE_FILTER = "fist_response_date_filter";
     private static final String MARK_LAST_RESPONSE_DATE_FILTER = "last_response_date_filter";
     private static final String PARAMETER_FIRST_RESPONSE_DATE_FILTER = "fist_response_date_filter";
     private static final String PARAMETER_LAST_RESPONSE_DATE_FILTER = "last_response_date_filter";
     private static final String MARK_TIMES_UNIT = "times_unit";
-    private static final String MARK_EXPORT_FORMAT_REF_LIST = "export_format_list";
     private static final String PARAMETER_TIMES_UNIT = "times_unit";
     private static final String MARK_LOCALE = "locale";
     private static final String PARAMETER_TYPE_DATA = "type_data";
@@ -115,7 +112,8 @@ public class StatisticJspBean extends AbstractJspBean
 	private static final String PROPERTY_ENCODING = "stock-billetterie.csv.encoding";
     private static final String PROPERTY_NUMBER_RESPONSE_AXIS_X = "graph.numberResponseAxisX";
     private static final String PROPERTY_LABEL_AXIS_X = "module.stock.billetterie.manage_statistics.labelAxisX";
-    private static final String PROPERTY_LABEL_AXIS_Y = "module.stock.billetterie.manage_products_statistics.labelAxisY";
+    private static final String PROPERTY_LABEL_AXIS_Y_PRODUCT = "module.stock.billetterie.manage_products_statistics.labelAxisY";
+    private static final String PROPERTY_LABEL_AXIS_Y_PURCHASE = "module.stock.billetterie.manage_purchases_statistics.labelAxisY";
 
     public static String CONSTANT_PRODUCT_TYPE = "1";
     public static String CONSTANT_PURCHASE_TYPE = "2";
@@ -345,7 +343,17 @@ public class StatisticJspBean extends AbstractJspBean
         }
 
         String strLabelAxisX = I18nService.getLocalizedString( PROPERTY_LABEL_AXIS_X, locale );
-        String strLabelAxisY = I18nService.getLocalizedString( PROPERTY_LABEL_AXIS_Y, locale );
+        String strLabelAxisY;
+        if ( strTypeData.equals( CONSTANT_PRODUCT_TYPE ) )
+        {
+
+            strLabelAxisY = I18nService.getLocalizedString( PROPERTY_LABEL_AXIS_Y_PRODUCT, locale );
+        }
+        else
+        {
+            strLabelAxisY = I18nService.getLocalizedString( PROPERTY_LABEL_AXIS_Y_PURCHASE, locale );
+        }
+
         try
         {
             JFreeChart chart = StatisticService.createXYGraph( listStatisticGraph, strLabelAxisX, strLabelAxisY,
