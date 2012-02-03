@@ -166,6 +166,17 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
         Map<String, Object> model = new HashMap<String, Object>( );
         model.put( PARAMETER_SHOW_ID, showId );
 
+        // If user has already a booking in waiting state, remove it
+        List<ReservationDTO> reservationList = (List<ReservationDTO>) request.getSession( ).getAttribute(
+                PARAMETER_BOOKING_LIST );
+        if ( reservationList != null )
+        {
+            for ( ReservationDTO reservation : reservationList )
+            {
+                _purchaseSessionManager.release( request.getSession( ).getId( ), reservation );
+            }
+        }
+
         // Create booking list
         boolean nbPlacesInvalid = true;
         List<ReservationDTO> bookingList = new ArrayList<ReservationDTO>( );
@@ -225,15 +236,6 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
             }
 
             // Save booking into session
-            List<ReservationDTO> reservationList = (List<ReservationDTO>) request.getSession( ).getAttribute(
-                    PARAMETER_BOOKING_LIST );
-            if ( reservationList != null )
-            {
-                for ( ReservationDTO reservation : reservationList )
-                {
-                    _purchaseSessionManager.release( request.getSession( ).getId( ), reservation );
-                }
-            }
             request.getSession( ).setAttribute( PARAMETER_BOOKING_LIST, bookingList );
             request.getSession( ).setAttribute( "booking_check", bookingCheck );
 
