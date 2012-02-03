@@ -1,5 +1,6 @@
 <%@page import="fr.paris.lutece.portal.service.message.SiteMessageException"%>
 <%@page import="fr.paris.lutece.portal.service.util.AppPathService"%>
+<%@ page contentType="text/html; charset=UTF-8" %> 
 
 <jsp:useBean id="stockBilletterieReservationApp" scope="request" class="fr.paris.lutece.plugins.stock.modules.billetterie.web.StockBilletterieReservationApp" />
 
