@@ -67,6 +67,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -166,6 +167,8 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
         // Create booking list
         boolean nbPlacesInvalid = true;
         List<ReservationDTO> bookingList = new ArrayList<ReservationDTO>( );
+        // Avoid mixing purchase session (with two opened tabs for example)
+        String bookingCheck = UUID.randomUUID( ).toString( );
         try
         {
             int i = 0;
@@ -221,6 +224,7 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
 
             // Save booking into session
             request.getSession( ).setAttribute( PARAMETER_BOOKING_LIST, bookingList );
+            request.getSession( ).setAttribute( "booking_check", bookingCheck );
 
         }
         catch ( FunctionnalException e )
@@ -237,6 +241,7 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
         model.put( PARAMETER_BOOKING_LIST, bookingList );
         model.put( PARAMETER_SEANCE_DATE, request.getParameter( PARAMETER_SEANCE_DATE ) );
         model.put( PARAMETER_SHOW_NAME, showName );
+        model.put( "booking_check", bookingCheck );
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_DIR + "confirm_booking.html", locale, model );
 
@@ -258,6 +263,16 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
     public String doSaveReservation( HttpServletRequest request, HttpServletResponse response )
             throws SiteMessageException
     {
+        // Check mixing booking (with two tabs and two booking opened
+        if ( request.getParameter( "booking_check" ) == null
+                || !request.getParameter( "booking_check" ).equals(
+                        request.getSession( ).getAttribute( "booking_check" ) ) )
+        {
+            SiteMessageService.setMessage( request,
+                    getMessage( PurchaseService.MESSAGE_ERROR_PURCHASE_SESSION_EXPIRED, request ),
+                    SiteMessage.TYPE_ERROR, "jsp/site/Portal.jsp" );
+        }
+
         List<ReservationDTO> bookingList = (List<ReservationDTO>) request.getSession( ).getAttribute(
                 PARAMETER_BOOKING_LIST );
         try
