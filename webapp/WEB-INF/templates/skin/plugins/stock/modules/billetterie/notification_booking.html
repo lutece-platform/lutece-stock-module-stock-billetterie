@@ -9,23 +9,24 @@
 <body>
 <#assign booking=bookingList[0] />
 <p><strong>Bonjour ${booking.firstNameAgent} ${booking.nameAgent}</strong>,</p>
-
-<p>Nous vous remercions d'avoir réservé sur la Billetterie IntraParis.</p>
-<p>Vous trouverez ci-dessous le récapitulatif de votre réservation.</p>
-
-<h2>Récapitulatif de la réservation</h2></div>
+<p>
+Votre réservation a bien été prise en compte.<br />
+Vos places sont à retirer directement au théâtre à votre nom ½ h à l’avance.
+</p>
+<h3>Récapitulatif de la réservation</h3>
 <p><strong>Spectacle :</strong> ${booking.offer.product.name!}</p>
 <p><strong>Date :</strong> ${booking.offer.date!}  ${booking.offer.hour!}</p>
 <#list bookingList as booking>
 	<p><strong>Nombre de place ${booking.offer.typeName} :</strong> ${booking.quantity!} - <strong><a title="#i18n{module.stock.billetterie.list_purchase.linkPrintTicket}" href="jsp/site/plugins/jasper/DownloadFile.jsp?report_id=contremarque&report_type=pdf&value1=${booking.id!}">Imprimer la contremarque</a></strong></p>
 </#list>
-
-<#if bookingList?size == 1>
-<#else>
-<p>Veuillez vous présenter le jour de la représentation avec les <strong>${bookingList?size} contremarques</strong> à imprimer (une par type d'offre) en cliquant sur les liens ci-dessus.</p>
-</#if>
-
-<p>Vous pouvez également vous rendre sur <a href="jsp/site/Portal.jsp?page=reservation&action=mes-reservations">votre espace réservation</a> pour l'annuler ou réimprimer la contremarque.</p>
+<p>
+</p>
+<p>
+Bon spectacle !
+</p>
+<p>
+Pour tout renseignement, merci de contacter resatheatre.mci@paris.fr
+</p>
 
 
 </body>
