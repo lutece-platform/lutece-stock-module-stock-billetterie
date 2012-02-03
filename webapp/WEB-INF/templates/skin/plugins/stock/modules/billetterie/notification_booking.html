@@ -1,32 +1,17 @@
-
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="fr" xml:lang="fr">
-<head>
-<base href="${base_url}" />
-<meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
-<link rel="stylesheet" href="css/mail.css" type="text/css" />
-</head>
-<body>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr" xml:lang="fr"><head><base href="${base_url}" /><meta http-equiv="Content-Type" content="text/html;charset=UTF-8" /></head><body>
 <#assign booking=bookingList[0] />
-<p><strong>Bonjour ${booking.firstNameAgent} ${booking.nameAgent}</strong>,</p>
-<p>
-Votre réservation a bien été prise en compte.<br />
+<strong>Bonjour ${booking.firstNameAgent} ${booking.nameAgent}</strong>,
+Votre réservation a bien été prise en compte.
 Vos places sont à retirer directement au théâtre à votre nom ½ h à l’avance.
-</p>
+
 <h3>Récapitulatif de la réservation</h3>
-<p><strong>Spectacle :</strong> ${booking.offer.product.name!}</p>
-<p><strong>Date :</strong> ${booking.offer.date!}  ${booking.offer.hour!}</p>
+<strong>Spectacle :</strong> ${booking.offer.product.name!}
+<strong>Date :</strong> ${booking.offer.date!}  ${booking.offer.hour!}
 <#list bookingList as booking>
-	<p><strong>Nombre de place ${booking.offer.typeName} :</strong> ${booking.quantity!} - <strong><a title="#i18n{module.stock.billetterie.list_purchase.linkPrintTicket}" href="jsp/site/plugins/jasper/DownloadFile.jsp?report_id=contremarque&report_type=pdf&value1=${booking.id!}">Imprimer la contremarque</a></strong></p>
+	<strong>Nombre de place ${booking.offer.typeName} :</strong> ${booking.quantity!} - <strong><a title="#i18n{module.stock.billetterie.list_purchase.linkPrintTicket}" href="jsp/site/plugins/jasper/DownloadFile.jsp?report_id=contremarque&report_type=pdf&value1=${booking.id!}">Imprimer la contremarque</a></strong>
 </#list>
-<p>
-</p>
-<p>
+
 Bon spectacle !
-</p>
-<p>
+
 Pour tout renseignement, merci de contacter resatheatre.mci@paris.fr
-</p>
-
-
 </body>
