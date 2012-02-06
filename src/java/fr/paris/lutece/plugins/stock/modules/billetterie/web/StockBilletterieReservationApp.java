@@ -352,9 +352,10 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
             }
         }
 
-        return AppPathService.getBaseUrl( request )
+//        return AppPathService.getBaseUrl( request )
+        return "http://slnxvmlutece1.mtrl.fr.sopra:58080/billetterie/"
                 + "jsp/site/Portal.jsp?page=billetterie&action=fiche-spectacle&product_id=" + nShowId + "&date_seance="
-                + seanceDate;
+                + URLEncoder.encode( seanceDate, "utf-8" );
     }
 
     /**
