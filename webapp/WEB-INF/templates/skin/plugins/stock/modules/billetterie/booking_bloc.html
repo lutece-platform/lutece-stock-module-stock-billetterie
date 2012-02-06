@@ -45,7 +45,13 @@
 	  	<#list seanceList as seance>
 	  	<input type="hidden" name="seance_id" value="${seance.id}" />
 	  	<input type="hidden" name="seance_type_name" value="${seance.typeName}" />
-		<td><@placesNumberChooser idType=seance.idGenre idSeance=seance.id /></td>
+		<td>
+		<#if seance.quantity &gt; 0>
+			<@placesNumberChooser idType=seance.idGenre idSeance=seance.id />
+		<#else>
+			<input type="hidden" name="nb_places" value="0" />
+		</#if>
+		</td>
 	    </#list>
 	  </tr>
 	</table>
