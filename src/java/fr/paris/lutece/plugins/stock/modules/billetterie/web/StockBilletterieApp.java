@@ -77,12 +77,6 @@ import org.apache.commons.lang.StringUtils;
 public class StockBilletterieApp extends AbstractXPageApp implements XPageApplication
 {
 
-    private IShowService _showService = (IShowService) SpringContextService.getContext( ).getBean( "stock-tickets.showService" );
-    private IProviderService _providerService = (IProviderService) SpringContextService.getContext( ).getBean(
-            IProviderService.class );
-    private ISeanceService _offerService = (ISeanceService) SpringContextService.getContext( ).getBean(
-            "stock-tickets.seanceService" );
-
     // Templates
     private static final String TEMPLATE_DIR = "skin/plugins/stock/modules/billetterie/";
 
@@ -105,8 +99,23 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
     private static final int BOOKING_TO_COME = 1;
     private static final int BOOKING_PASSED = -1;
 
+    private IShowService _showService = (IShowService) SpringContextService.getContext( ).getBean(
+            "stock-tickets.showService" );
+    private IProviderService _providerService = (IProviderService) SpringContextService.getContext( ).getBean(
+            IProviderService.class );
+    private ISeanceService _offerService = (ISeanceService) SpringContextService.getContext( ).getBean(
+            "stock-tickets.seanceService" );
+
+
     /**
-     * Return page with action specified
+     * Return page with action specified.
+     * 
+     * @param request the request
+     * @param nMode the n mode
+     * @param plugin the plugin
+     * @return the page
+     * @throws UserNotSignedException the user not signed exception
+     * @throws SiteMessageException the site message exception
      */
     public XPage getPage( HttpServletRequest request, int nMode, Plugin plugin ) throws UserNotSignedException,
             SiteMessageException
@@ -198,8 +207,9 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
     }
 
     /**
-     * Calculate if show is open to book
-     * @param show
+     * Calculate if show is open to book.
+     * 
+     * @param show the show
      * @return 0 open, 1 to come, -1 passed
      */
     private int caculateBookingOpened( ShowDTO show )
@@ -224,20 +234,17 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
     }
 
     /**
-     * Return html for booking bloc into show page
+     * Return html for booking bloc into show page.
      * 
-     * @param page
-     *            xpage
-     * @param request
-     *            http request
-     * @param locale
-     *            locale
+     * @param show the show
+     * @param sDateSeance the s date seance
+     * @param locale locale
      * @return xpage
      */
     private String getBookingBloc( ShowDTO show, String sDateSeance, Locale locale )
     {
 
-        final DateFormat sdfComboSeance = new SimpleDateFormat(TicketsConstants.FORMAT_COMBO_DATE_SEANCE);
+        DateFormat sdfComboSeance = new SimpleDateFormat( TicketsConstants.FORMAT_COMBO_DATE_SEANCE );
         if ( sDateSeance == null )
         {
             return "";

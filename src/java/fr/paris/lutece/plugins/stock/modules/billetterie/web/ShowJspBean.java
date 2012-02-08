@@ -84,74 +84,134 @@ import org.apache.log4j.Logger;
 import org.springframework.transaction.annotation.Transactional;
 
 
+/**
+ * The Class ShowJspBean.
+ */
 public class ShowJspBean extends AbstractJspBean
 {
 
 
 
+    /** The Constant LOGGER. */
     public static final Logger LOGGER = Logger.getLogger( ShowJspBean.class );
 
 
+    /** The Constant PARAMETER_CATEGORY_ID. */
     public static final String PARAMETER_CATEGORY_ID = "product_id";
+
+    /** The Constant PARAMETER_PRODUCT_PARTNER_ID. */
     public static final String PARAMETER_PRODUCT_PARTNER_ID = "partnerId";
+
+    /** The Constant PARAMETER_PRODUCT_CATEGORY_ID. */
     public static final String PARAMETER_PRODUCT_CATEGORY_ID = "categoryId";
 
+    /** The Constant RIGHT_MANAGE_PRODUCTS. */
     public static final String RIGHT_MANAGE_PRODUCTS = "PRODUCTS_MANAGEMENT";
+
+    /** The Constant MARK_PRODUCT. */
     public static final String MARK_PRODUCT = "product";
+
+    /** The Constant MARK_TITLE. */
     public static final String MARK_TITLE = "title";
+
+    /** The Constant PARAMETER_PRODUCT_TYPE_LIST. */
     public static final String PARAMETER_PRODUCT_TYPE_LIST = "product_type_list";
+
+    /** The Constant PARAMETER_PRODUCT_TYPE_LIST_DEFAULT. */
     public static final String PARAMETER_PRODUCT_TYPE_LIST_DEFAULT = "product_type_list_default";
+
+    /** The Constant MARK_LIST_PRODUCTS. */
     private static final String MARK_LIST_PRODUCTS = "list_products";
+
+    /** The Constant MARK_LIST_CATEGORIES. */
     private static final String MARK_LIST_CATEGORIES = "category_list";
+
+    /** The Constant MARK_LIST_PROVIDERS. */
     private static final String MARK_LIST_PROVIDERS = "provider_list";
+
+    /** The Constant PARAMETER_POSTER. */
     private static final String PARAMETER_POSTER = "posterFile";
 
+    /** The Constant PROPERTY_POSTER_WIDTH. */
     private static final String PROPERTY_POSTER_WIDTH = "stock-billetterie.poster.width";
+
+    /** The Constant PROPERTY_POSTER_HEIGHT. */
     private static final String PROPERTY_POSTER_HEIGHT = "stock-billetterie.poster.height";
 
 
     // I18N
+    /** The Constant PAGE_TITLE_MANAGE_PRODUCT. */
     private static final String PAGE_TITLE_MANAGE_PRODUCT = "module.stock.billetterie.manage_product.title";
+
+    /** The Constant PAGE_TITLE_CREATE_PRODUCT. */
     private static final String PAGE_TITLE_CREATE_PRODUCT = "module.stock.billetterie.create_product.title";
+
+    /** The Constant PAGE_TITLE_MODIFY_PRODUCT. */
     private static final String PAGE_TITLE_MODIFY_PRODUCT = "module.stock.billetterie.save_product.title";
 
     // Properties
+    /** The Constant POSTER_FOLDER_PATH. */
     private static final String POSTER_FOLDER_PATH = "stock-billetterie.poster.folder.path";
 
     // JSP
+    /** The Constant JSP_MANAGE_PRODUCTS. */
     private static final String JSP_MANAGE_PRODUCTS = "jsp/admin/plugins/stock/modules/billetterie/ManageProducts.jsp";
+
+    /** The Constant CATEGORY_DO_DELETE_JSP. */
     private static final String CATEGORY_DO_DELETE_JSP = "jsp/admin/plugins/stock/modules/billetterie/DoDeleteProduct.jsp";
 
     // Templates
+    /** The Constant TEMPLATE_MANAGE_PRODUCTS. */
     private static final String TEMPLATE_MANAGE_PRODUCTS = "admin/plugins/stock/modules/billetterie/manage_products.html";
+
+    /** The Constant TEMPLATE_SAVE_PRODUCT. */
     private static final String TEMPLATE_SAVE_PRODUCT = "admin/plugins/stock/modules/billetterie/save_product.html";
     //
     // // Mark
 
     // MESSAGES
+    /** The Constant MESSAGE_CONFIRMATION_DELETE_PRODUCT. */
     private static final String MESSAGE_CONFIRMATION_DELETE_PRODUCT = "module.stock.billetterie.message.deleteProduct.confirmation";
+
+    /** The Constant MESSAGE_DELETE_SHOW_WITH_SEANCE. */
     private static final String MESSAGE_DELETE_SHOW_WITH_SEANCE = "module.stock.billetterie.message.deleteProduct.with.seance";
+
+    /** The Constant MESSAGE_ERROR_MANDATORY_POSTER. */
     private static final String MESSAGE_ERROR_MANDATORY_POSTER = "module.stock.billetterie.message.error.mandatory_poster";
 
     // Variables
+    /** The _n items per page. */
     private int _nItemsPerPage;
 
     // MEMBERS VARIABLES
+    /** The _service product. */
     @Inject
     @Named( "stock-tickets.showService" )
     private IShowService _serviceProduct;
+
+    /** The _service offer. */
     @Inject
     @Named( "stock-tickets.seanceService" )
     private ISeanceService _serviceOffer;
+
+    /** The _service provider. */
     @Inject
     private IProviderService _serviceProvider;
+
+    /** The _service category. */
     @Inject
     private ICategoryService _serviceCategory;
+
+    /** The _service statistic. */
     @Inject
     private IStatisticService _serviceStatistic;
 
+    /** The _product filter. */
     private ProductFilter _productFilter;
 
+    /**
+     * Instantiates a new show jsp bean.
+     */
     public ShowJspBean( )
     {
         _productFilter = new ShowFilter( );
@@ -209,12 +269,11 @@ public class ShowJspBean extends AbstractJspBean
     }
 
     /**
-     * Returns the form to modify a provider
+     * Returns the form to modify a provider.
      * 
-     * @param request
-     *            The Http request
-     * @param strProductClassName
-     *            The class name of the provider entity to modify
+     * @param request The Http request
+     * @param strProductClassName The class name of the provider entity to
+     *            modify
      * @return the html code of the provider form
      */
     @Transactional( readOnly = true )
@@ -294,10 +353,9 @@ public class ShowJspBean extends AbstractJspBean
     }
 
     /**
-     * Save a product
+     * Save a product.
      * 
-     * @param request
-     *            The HTTP request
+     * @param request The HTTP request
      * @return redirection url
      */
     public String doSaveProduct( HttpServletRequest request )
@@ -338,9 +396,11 @@ public class ShowJspBean extends AbstractJspBean
     }
 
     /**
-     * Get the poster in the request and write it on the disk
+     * Get the poster in the request and write it on the disk.
+     * 
      * @param request http request (multipart if contains poster)
      * @param product product entity
+     * @throws BusinessException the business exception
      */
     private void writePoster( HttpServletRequest request, ShowDTO product ) throws BusinessException
     {
@@ -401,10 +461,9 @@ public class ShowJspBean extends AbstractJspBean
     }
 
     /**
-     * Return the url of the JSP which called the last action
+     * Return the url of the JSP which called the last action.
      * 
-     * @param request
-     *            The Http request
+     * @param request The Http request
      * @return The url of the last JSP
      */
     private String doGoBack( HttpServletRequest request )
@@ -415,6 +474,12 @@ public class ShowJspBean extends AbstractJspBean
                 : AppPathService.getBaseUrl( request ) + JSP_MANAGE_PRODUCTS;
     }
 
+    /**
+     * Gets the product filter.
+     * 
+     * @param request the request
+     * @return the product filter
+     */
     private ProductFilter getProductFilter( HttpServletRequest request )
     {
         // SORT
@@ -447,10 +512,9 @@ public class ShowJspBean extends AbstractJspBean
     }
 
     /**
-     * Returns the confirmation message to delete a product
+     * Returns the confirmation message to delete a product.
      * 
-     * @param request
-     *            The Http request
+     * @param request The Http request
      * @return the html code message
      */
     public String getDeleteProduct( HttpServletRequest request )
@@ -496,10 +560,9 @@ public class ShowJspBean extends AbstractJspBean
     }
 
     /**
-     * Delete a product
+     * Delete a product.
      * 
-     * @param request
-     *            The Http request
+     * @param request The Http request
      * @return the html code message
      */
     public String doDeleteProduct( HttpServletRequest request )

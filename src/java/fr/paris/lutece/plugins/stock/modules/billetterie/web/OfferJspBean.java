@@ -81,29 +81,6 @@ public class OfferJspBean  extends AbstractJspBean
 {
     public static final Logger LOGGER = Logger.getLogger( OfferJspBean.class );
     
-    public static final String RIGHT_MANAGE_OFFERS = "OFFERS_MANAGEMENT";
-    public static final String RESOURCE_TYPE = "STOCK";
-
-    // MARKS
-    private static final String MARK_LIST_OFFERS = "list_offers";
-    private static final String MARK_LIST_PRODUCT = "product_list";
-    private static final String MARK_LIST_OFFER_GENRE = "offerGenre_list";
-    public static final String MARK_OFFER = "offer";
-    public static final String MARK_TITLE = "title";
-    public static final String MARK_LOCALE = "locale";
-    public static final String MARK_OFFER_STATUT_CANCEL = "strStatutCancel";
-    public static final String MARK_OFFER_STATUT_LOCK = "strStatutLock";
-    public static final String MARK_CURRENT_DATE = "currentDate";
-    public static final String MARK_ERRORS = "errors";
-
-    // JSP
-    private static final String JSP_MANAGE_OFFERS = "jsp/admin/plugins/stock/modules/billetterie/ManageOffers.jsp";
-    private static final String JSP_DO_DELETE_OFFER = "jsp/admin/plugins/stock/modules/billetterie/DoDeleteOffer.jsp";
-    
-    // TEMPLATES
-    private static final String TEMPLATE_MANAGE_OFFERS = "admin/plugins/stock/modules/billetterie/manage_offers.html";
-    private static final String TEMPLATE_SAVE_OFFER = "admin/plugins/stock/modules/billetterie/save_offer.html";
-
     // PARAMETERS
     public static final String PARAMETER_OFFER_ID = "offer_id";
     public static final String PARAMETER_OFFER_DUPLICATE = "duplicate";
@@ -126,6 +103,30 @@ public class OfferJspBean  extends AbstractJspBean
     public static final String PARAMETER_ORDER_DESC = "order_desc";
     public static final String PARAMETER_FILTER = "filter";
     public static final String PARAMETER_PRODUCT_ID = "product_id";
+
+    public static final String RIGHT_MANAGE_OFFERS = "OFFERS_MANAGEMENT";
+    public static final String RESOURCE_TYPE = "STOCK";
+
+    // MARKS
+    public static final String MARK_OFFER = "offer";
+    public static final String MARK_TITLE = "title";
+    public static final String MARK_LOCALE = "locale";
+    public static final String MARK_OFFER_STATUT_CANCEL = "strStatutCancel";
+    public static final String MARK_OFFER_STATUT_LOCK = "strStatutLock";
+    public static final String MARK_CURRENT_DATE = "currentDate";
+    public static final String MARK_ERRORS = "errors";
+    private static final String MARK_LIST_OFFERS = "list_offers";
+    private static final String MARK_LIST_PRODUCT = "product_list";
+    private static final String MARK_LIST_OFFER_GENRE = "offerGenre_list";
+
+    // JSP
+    private static final String JSP_MANAGE_OFFERS = "jsp/admin/plugins/stock/modules/billetterie/ManageOffers.jsp";
+    private static final String JSP_DO_DELETE_OFFER = "jsp/admin/plugins/stock/modules/billetterie/DoDeleteOffer.jsp";
+    
+    // TEMPLATES
+    private static final String TEMPLATE_MANAGE_OFFERS = "admin/plugins/stock/modules/billetterie/manage_offers.html";
+    private static final String TEMPLATE_SAVE_OFFER = "admin/plugins/stock/modules/billetterie/save_offer.html";
+
 
     // PAGE TITLES
     private static final String PROPERTY_PAGE_TITLE_MANAGE_OFFER = "module.stock.billetterie.list_offres.title";
@@ -150,6 +151,9 @@ public class OfferJspBean  extends AbstractJspBean
     private IPurchaseService _servicePurchase;
     private SeanceFilter _offerFilter;
 
+    /**
+     * Instantiates a new offer jsp bean.
+     */
     public OfferJspBean(  )
     {
         super(  );
@@ -157,11 +161,23 @@ public class OfferJspBean  extends AbstractJspBean
         _offerFilter = new SeanceFilter( );
     }
 
+    /**
+     * Builds the filter.
+     * 
+     * @param filter the filter
+     * @param request the request
+     */
     protected void buildFilter( OfferFilter filter, HttpServletRequest request )
     {
         populate( filter, request );
     }
     
+    /**
+     * Gets the offer filter.
+     * 
+     * @param request the request
+     * @return the offer filter
+     */
     private OfferFilter getOfferFilter( HttpServletRequest request )
     {
         // SORT
@@ -431,14 +447,17 @@ public class OfferJspBean  extends AbstractJspBean
         SeanceDTO seance = _serviceOffer.findSeanceById( nIdOffer );
 
         if ( !bookingList.isEmpty( ) && !seance.getStatut( ).equals( TicketsConstants.OFFER_STATUT_CANCEL ) )
-		{
-        	if ( !DateUtils.getDate( seance.getDate( ), false).before( DateUtils.getCurrentDate( ) ) )
-        	{
-        		return AdminMessageService.getMessageUrl( request, MESSAGE_OFFER_STATUT_ISNT_CANCEL, AdminMessage.TYPE_STOP );
-        	}
-		}
-        
-        return AdminMessageService.getMessageUrl(request, MESSAGE_CONFIRMATION_DELETE_OFFER, null, MESSAGE_TITLE_CONFIRMATION_DELETE_OFFER, JSP_DO_DELETE_OFFER, "_self", AdminMessage.TYPE_CONFIRMATION, urlParam, strJspBack);
+        {
+            if ( !DateUtils.getDate( seance.getDate( ), false ).before( DateUtils.getCurrentDate( ) ) )
+            {
+                return AdminMessageService.getMessageUrl( request, MESSAGE_OFFER_STATUT_ISNT_CANCEL,
+                        AdminMessage.TYPE_STOP );
+            }
+        }
+
+        return AdminMessageService.getMessageUrl( request, MESSAGE_CONFIRMATION_DELETE_OFFER, null,
+                MESSAGE_TITLE_CONFIRMATION_DELETE_OFFER, JSP_DO_DELETE_OFFER, "_self", AdminMessage.TYPE_CONFIRMATION,
+                urlParam, strJspBack );
     }
 
     /**

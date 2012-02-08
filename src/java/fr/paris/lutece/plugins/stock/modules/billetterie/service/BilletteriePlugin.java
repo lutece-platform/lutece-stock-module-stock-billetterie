@@ -33,34 +33,37 @@
  */
 package fr.paris.lutece.plugins.stock.modules.billetterie.service;
 
-import java.sql.Timestamp;
-
-import org.apache.commons.beanutils.ConvertUtils;
-
 import fr.paris.lutece.plugins.stock.modules.tickets.service.TicketsPlugin;
 import fr.paris.lutece.plugins.stock.utils.FloatConverter;
 import fr.paris.lutece.plugins.stock.utils.IntegerConverter;
 import fr.paris.lutece.plugins.stock.utils.TimestampConverter;
 import fr.paris.lutece.portal.service.util.AppLogService;
 
+import java.sql.Timestamp;
+
+import org.apache.commons.beanutils.ConvertUtils;
+
+
 /**
  * 
  * TicketsPlugin
  * 
  */
-public class BilletteriePlugin extends TicketsPlugin {
-	public static final String PLUGIN_NAME = "stock-billetterie";
+public class BilletteriePlugin extends TicketsPlugin
+{
+    public static final String PLUGIN_NAME = "stock-billetterie";
 
-	/**
-	 * Initialize the module billetterie
-	 */
-	public void init() {
-		super.init();
-		
-		// Initialize converters (beanutils)
-		AppLogService.debug( "Initializing converters..." );
-		ConvertUtils.register( new TimestampConverter( ), Timestamp.class );
+    /**
+     * Initialize the module billetterie
+     */
+    public void init( )
+    {
+        super.init( );
+
+        // Initialize converters (beanutils)
+        AppLogService.debug( "Initializing converters..." );
+        ConvertUtils.register( new TimestampConverter( ), Timestamp.class );
         ConvertUtils.register( new IntegerConverter( ), Integer.class );
         ConvertUtils.register( new FloatConverter( ), Float.class );
-	}
+    }
 }

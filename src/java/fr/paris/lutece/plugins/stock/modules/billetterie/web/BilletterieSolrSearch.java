@@ -38,6 +38,7 @@ import fr.paris.lutece.portal.service.util.AppPathService;
 
 import java.io.IOException;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -61,6 +62,14 @@ public class BilletterieSolrSearch extends HttpServlet {
 
     private static final Logger LOGGER = Logger.getLogger( BilletterieSolrSearch.class );
 
+    /**
+     * Get billetterie specific parameters and call Solr Module.
+     * 
+     * @param request the request
+     * @param response the response
+     * @throws ServletException the servlet exception
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
     protected void doGet( HttpServletRequest request, HttpServletResponse response ) throws ServletException,
             IOException
     {
@@ -68,20 +77,21 @@ public class BilletterieSolrSearch extends HttpServlet {
         sbReq.append( AppPathService.getBaseUrl( request ) ).append( "jsp/site/Portal.jsp?page=search-solr&" )
                 .append( request.getQueryString( ) );
 
+        SimpleDateFormat sdfXml = new SimpleDateFormat( DateUtils.XML_DATE_FORMAT );
         String sShowDateStart = request.getParameter( "show_date_start" );
         String sShowDateEnd = request.getParameter( "show_date_end" );
         if ( sShowDateStart != null )
         {
 
             Timestamp showDateStart = DateUtils.getDate( sShowDateStart, true );
-            String sXmlShowDateStart = DateUtils.XML_DATE_FORMAT.format( showDateStart );
+            String sXmlShowDateStart = sdfXml.format( showDateStart );
             sbReq.append( "&fq=end_date:[" ).append( sXmlShowDateStart ).append( " TO *]" );
         }
         if ( sShowDateEnd != null )
         {
 
             Timestamp showDateEnd = DateUtils.getDate( sShowDateEnd, true );
-            String sXmlShowDateEnd = DateUtils.XML_DATE_FORMAT.format( showDateEnd );
+            String sXmlShowDateEnd = sdfXml.format( showDateEnd );
 
             sbReq.append( "&fq=start_date:[* TO " ).append( sXmlShowDateEnd ).append( "]" );
         }

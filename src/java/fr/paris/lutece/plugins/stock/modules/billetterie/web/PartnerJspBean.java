@@ -65,14 +65,18 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.StringUtils;
 
 
+/**
+ * The Class PartnerJspBean.
+ */
 public class PartnerJspBean extends AbstractJspBean
 {
-    public static final String RIGHT_MANAGE_PARTNERS = "PARTNERS_MANAGEMENT";
-    public static final String MARK_PARTNER = "partner";
-    protected static final String MARK_NB_ITEMS_PER_PAGE = "nb_items_per_page";
     public static final String PARAMETER_PARTNER_TYPE_LIST = "partner_type_list";
     public static final String PARAMETER_PARTNER_TYPE_LIST_DEFAULT = "partner_type_list_default";
     public static final String PARAMETER_PARTNER_ID = "partner_id";
+    public static final String RIGHT_MANAGE_PARTNERS = "PARTNERS_MANAGEMENT";
+    public static final String MARK_PARTNER = "partner";
+    protected static final String MARK_NB_ITEMS_PER_PAGE = "nb_items_per_page";
+    protected static final String PROPERTY_DEFAULT_SESSION_PER_PAGE = "stock.itemsPerPage";
     private static final String MARK_LIST_PARTNERS = "list_partners";
 
     // I18N
@@ -91,7 +95,6 @@ public class PartnerJspBean extends AbstractJspBean
     private static final String MESSAGE_CONFIRMATION_DELETE_PARTNER = "module.stock.billetterie.message.deletePartner.confirmation";
     private static final String MESSAGE_DELETE_PARTNER_WITH_SHOW = "module.stock.billetterie.message.deletePartner.with.show";
 
-    protected static final String PROPERTY_DEFAULT_SESSION_PER_PAGE = "stock.itemsPerPage";
 
     // Variables
     // Paginator ManagePartners
@@ -105,17 +108,32 @@ public class PartnerJspBean extends AbstractJspBean
     @Named( "stock-tickets.showService" )
     private IShowService _serviceShow;
 
+    /**
+     * Instantiates a new partner jsp bean.
+     */
     public PartnerJspBean( )
     {
         super(  );
         _providerFilter = new ProviderFilter( );
     }
 
+    /**
+     * Builds the filter.
+     * 
+     * @param filter the filter
+     * @param request the request
+     */
     protected void buildFilter( ProviderFilter filter, HttpServletRequest request )
     {
         populate( filter, request );
     }
 
+    /**
+     * Gets the provider filter.
+     * 
+     * @param request the request
+     * @return the provider filter
+     */
     private ProviderFilter getProviderFilter( HttpServletRequest request )
     {
         // SORT
@@ -287,7 +305,8 @@ public class PartnerJspBean extends AbstractJspBean
             urlParam.put( StockConstants.MARK_JSP_BACK, strJspBack );
         }
 
-        // BO-CU01-E02-RGE01 : Aucun spectacle ne doit être rattaché à la salle sélectionnée
+        // BO-CU01-E02-RGE01 : Aucun spectacle ne doit être rattaché à la salle
+        // sélectionnée
         ShowFilter filter = new ShowFilter( );
         filter.setIdProvider( nIdProvider );
         ResultList<ShowDTO> bookingList = this._serviceShow.findByFilter( filter, null );

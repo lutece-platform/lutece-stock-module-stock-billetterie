@@ -92,7 +92,9 @@ public abstract class AbstractXPageApp
     }
 
     /**
-     * Validate a bean using jsr 303 specs
+     * Validate a bean using jsr 303 specs.
+     * 
+     * @param <T> the generic type
      * @param bean to validate
      * @throws ValidationException exception containing informations about
      *             errors and the bean
@@ -112,9 +114,12 @@ public abstract class AbstractXPageApp
     }
 
     /**
-     * Return authified user and throw technical exception if no user auth found
+     * Return authified user and throw technical exception if no user auth
+     * found.
+     * 
      * @param request http request
      * @return user lutece
+     * @throws TechnicalException the technical exception
      */
     protected LuteceUser getUser( HttpServletRequest request ) throws TechnicalException
     {
@@ -141,8 +146,10 @@ public abstract class AbstractXPageApp
     }
 
     /**
-     * Return localized message
+     * Return localized message.
+     * 
      * @param key i18n key
+     * @param request the request
      * @return localized message
      */
     protected String getMessage( String key, HttpServletRequest request )
@@ -151,8 +158,10 @@ public abstract class AbstractXPageApp
     }
 
     /**
-     * Return localized message with args
+     * Return localized message with args.
+     * 
      * @param key i18n key
+     * @param request the request
      * @param args args
      * @return localized message
      */
@@ -162,8 +171,10 @@ public abstract class AbstractXPageApp
     }
 
     /**
-     * Return html code for error message
-     * @param ve validation exception
+     * Return html code for error message.
+     * 
+     * @param e the e
+     * @param request the request
      * @return html
      */
     protected String getHtmlError( FunctionnalException e, HttpServletRequest request )
@@ -204,9 +215,16 @@ public abstract class AbstractXPageApp
         return template.getHtml( );
     }
 
+    /**
+     * Manage functionnal exception.
+     * 
+     * @param request the request
+     * @param e the e
+     * @param targetUrl the target url
+     * @return the string
+     */
     protected String manageFunctionnalException( HttpServletRequest request, FunctionnalException e, String targetUrl )
     {
-
         request.getSession( ).setAttribute( TicketsConstants.PARAMETER_ERROR, e );
         return targetUrl;
     }

@@ -70,16 +70,18 @@ import org.apache.commons.lang.StringUtils;
 public class AbstractJspBean extends PluginAdminPageJspBean
 {
 
-    private String _strCurrentPageIndex = "";
-    private int _nItemsPerPage;
-    public final int N_DEFAULT_ITEMS_PER_PAGE = AppPropertiesService.getPropertyInt(
+    public static final int N_DEFAULT_ITEMS_PER_PAGE = AppPropertiesService.getPropertyInt(
             TicketsConstants.PROPERTY_DEFAULT_ITEM_PER_PAGE, 50 );
     protected static final String MARK_FILTER = "filter";
     protected static final String MARK_PAGINATOR = "paginator";
     protected static final String MARK_NB_ITEMS_PER_PAGE = "nb_items_per_page";
+    private String _strCurrentPageIndex = "";
+    private int _nItemsPerPage;
 
     /**
-     * Return a paginator for the view using parameter in http request
+     * Return a paginator for the view using parameter in http request.
+     * 
+     * @param <T> the generic type
      * @param request http request
      * @param list bean list to paginate
      * @return paginator
@@ -123,7 +125,9 @@ public class AbstractJspBean extends PluginAdminPageJspBean
     }
     
     /**
-     * Validate a bean using jsr 303 specs
+     * Validate a bean using jsr 303 specs.
+     * 
+     * @param <T> the bean type
      * @param bean to validate
      * @throws ValidationException exception containing informations about
      *             errors and the bean
@@ -178,9 +182,10 @@ public class AbstractJspBean extends PluginAdminPageJspBean
         }
         return fe;
     }
+    
     /**
      * Return html code for error message
-     * @param ve validation exception
+     * @param e functionnal exception
      * @return html
      */
     protected String getHtmlError( FunctionnalException e )
@@ -221,6 +226,14 @@ public class AbstractJspBean extends PluginAdminPageJspBean
         return template.getHtml( );
     }
 
+    /**
+     * Manage functionnal exception. Save it into session
+     * 
+     * @param request the request
+     * @param e the e
+     * @param targetUrl the target url
+     * @return the string
+     */
     protected String manageFunctionnalException( HttpServletRequest request, FunctionnalException e, String targetUrl )
     {
 

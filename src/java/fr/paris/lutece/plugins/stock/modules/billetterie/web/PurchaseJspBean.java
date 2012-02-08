@@ -86,28 +86,6 @@ public class PurchaseJspBean  extends AbstractJspBean
     public static final String RESOURCE_TYPE = "STOCK";
     public static final String RIGHT_MANAGE_PURCHASES = "PURCHASES_MANAGEMENT";
 
-    // MARKS
-    private static final String MARK_LIST_PURCHASES = "list_purchases";
-    public static final String MARK_PURCHASE = "purchase";
-    public static final String MARK_TITLE = "title";
-    public static final String MARK_LOCALE = "locale";
-    public static final String MARK_PURCHASE_STATUT_CANCEL = "strStatutCancel";
-    public static final String MARK_CURRENT_DATE = "currentDate";
-    public static final String MARK_LIST_OFFER_GENRE = "offerGenre_list";
-    public static final String MARK_OFFER_ID = "offer_id";
-    public static final String MARK_PURCHASSE_ID = "purchase_id";
-    public static final String MARK_QUANTITY_LIST = "quantity_list";
-    public static final String MARK_ERRORS = "errors";
-
-    // JSP
-    private static final String JSP_MANAGE_PURCHASES = "jsp/admin/plugins/stock/modules/billetterie/ManagePurchase.jsp";
-    private static final String JSP_DO_DELETE_PURCHASE = "jsp/admin/plugins/stock/modules/billetterie/DoDeletePurchase.jsp";
-    private static final String JSP_MANAGE_OFFERS = "jsp/admin/plugins/stock/modules/billetterie/ManageOffers.jsp";
-    
-    // TEMPLATES
-    private static final String TEMPLATE_MANAGE_PURCHASES = "admin/plugins/stock/modules/billetterie/manage_purchases.html";
-    private static final String TEMPLATE_SAVE_PURCHASE = "admin/plugins/stock/modules/billetterie/save_purchase.html";
-
     // PARAMETERS
     public static final String PARAMETER_PURCHASE_ID = "purchase_id";
     public static final String PARAMETER_PURCHASE_DUPLICATE = "duplicate";
@@ -129,11 +107,17 @@ public class PurchaseJspBean  extends AbstractJspBean
     public static final String PARAMETER_ORDER_ASC = "order_asc";
     public static final String PARAMETER_ORDER_DESC = "order_desc";
     public static final String PARAMETER_FILTER = "filter";
-
-    // PAGE TITLES
-    private static final String PROPERTY_PAGE_TITLE_MANAGE_PURCHASE = "module.stock.billetterie.list_purchase.title";
-    private static final String PROPERTY_PAGE_TITLE_CREATE_PURCHASE = "module.stock.billetterie.create_purchase.title";
-    
+    // MARKS
+    public static final String MARK_PURCHASE = "purchase";
+    public static final String MARK_TITLE = "title";
+    public static final String MARK_LOCALE = "locale";
+    public static final String MARK_PURCHASE_STATUT_CANCEL = "strStatutCancel";
+    public static final String MARK_CURRENT_DATE = "currentDate";
+    public static final String MARK_LIST_OFFER_GENRE = "offerGenre_list";
+    public static final String MARK_OFFER_ID = "offer_id";
+    public static final String MARK_PURCHASSE_ID = "purchase_id";
+    public static final String MARK_QUANTITY_LIST = "quantity_list";
+    public static final String MARK_ERRORS = "errors";
     // PROPERTIES
     public static final Integer NB_PLACES_MAX_INVITATION = AppPropertiesService.getPropertyInt(
             "stock-billetterie.nb_places_max.invitation", 2 );
@@ -141,6 +125,22 @@ public class PurchaseJspBean  extends AbstractJspBean
             "stock-billetterie.nb_places_max.invitation_enfant", 2 );
     public static final Integer NB_PLACES_MAX_TARIF_REDUIT = AppPropertiesService.getPropertyInt(
             "stock-billetterie.nb_places_max.tarif_reduit", 2 );
+
+    private static final String MARK_LIST_PURCHASES = "list_purchases";
+    // JSP
+    private static final String JSP_MANAGE_PURCHASES = "jsp/admin/plugins/stock/modules/billetterie/ManagePurchase.jsp";
+    private static final String JSP_DO_DELETE_PURCHASE = "jsp/admin/plugins/stock/modules/billetterie/DoDeletePurchase.jsp";
+    private static final String JSP_MANAGE_OFFERS = "jsp/admin/plugins/stock/modules/billetterie/ManageOffers.jsp";
+    
+    // TEMPLATES
+    private static final String TEMPLATE_MANAGE_PURCHASES = "admin/plugins/stock/modules/billetterie/manage_purchases.html";
+    private static final String TEMPLATE_SAVE_PURCHASE = "admin/plugins/stock/modules/billetterie/save_purchase.html";
+
+
+    // PAGE TITLES
+    private static final String PROPERTY_PAGE_TITLE_MANAGE_PURCHASE = "module.stock.billetterie.list_purchase.title";
+    private static final String PROPERTY_PAGE_TITLE_CREATE_PURCHASE = "module.stock.billetterie.create_purchase.title";
+    
     
     // MESSAGES
     private static final String MESSAGE_CONFIRMATION_DELETE_PURCHASE = "module.stock.billetterie.message.deletePurchase.confirmation";
@@ -164,6 +164,9 @@ public class PurchaseJspBean  extends AbstractJspBean
 
     private ReservationFilter _purchaseFilter;
 
+    /**
+     * Instantiates a new purchase jsp bean.
+     */
     public PurchaseJspBean(  )
     {
         super(  );
@@ -171,11 +174,23 @@ public class PurchaseJspBean  extends AbstractJspBean
         _purchaseFilter = new ReservationFilter( );
     }
 
+    /**
+     * Builds the filter.
+     * 
+     * @param filter the filter
+     * @param request the request
+     */
     protected void buildFilter( ReservationFilter filter, HttpServletRequest request )
     {
         populate( filter, request );
     }
     
+    /**
+     * Gets the purchase filter.
+     * 
+     * @param request the request
+     * @return the purchase filter
+     */
     private ReservationFilter getPurchaseFilter( HttpServletRequest request )
     {
         // SORT
@@ -441,8 +456,10 @@ public class PurchaseJspBean  extends AbstractJspBean
         urlParam.put( PARAMETER_PURCHASE_ID, nIdPurchase );
 
         String strJspBack = JSP_MANAGE_PURCHASES;
-        
-        return AdminMessageService.getMessageUrl(request, MESSAGE_CONFIRMATION_DELETE_PURCHASE, null, MESSAGE_TITLE_CONFIRMATION_DELETE_PURCHASE, JSP_DO_DELETE_PURCHASE, "_self", AdminMessage.TYPE_CONFIRMATION, urlParam, strJspBack);
+
+        return AdminMessageService.getMessageUrl( request, MESSAGE_CONFIRMATION_DELETE_PURCHASE, null,
+                MESSAGE_TITLE_CONFIRMATION_DELETE_PURCHASE, JSP_DO_DELETE_PURCHASE, "_self",
+                AdminMessage.TYPE_CONFIRMATION, urlParam, strJspBack );
     }
 
     /**

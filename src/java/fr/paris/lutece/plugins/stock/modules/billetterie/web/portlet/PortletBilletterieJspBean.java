@@ -13,17 +13,38 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.StringUtils;
 
+
+/**
+ * Portlet for "A l'affiche" and "A venir"
+ */
 public class PortletBilletterieJspBean extends PortletJspBean
 {
 
+    /** The Constant MARK_WEBAPP_URL. */
     private static final String MARK_WEBAPP_URL = "webapp_url";
+
+    /** The Constant MARK_LOCALE. */
     private static final String MARK_LOCALE = "locale";
+
+    /** The Constant COMPLEMENT_URL_ADMIN_SITE. */
     private static final String COMPLEMENT_URL_ADMIN_SITE = "../../";
+
+    /** The Constant PARAMETRE_NUMBER_SHOW. */
     private static final String PARAMETRE_NUMBER_SHOW = "porlet_number_show";
+
+    /** The Constant PARAMETRE_TYPE_CONTENT_PORTLET. */
     private static final String PARAMETRE_TYPE_CONTENT_PORTLET = "type_content";
 
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * fr.paris.lutece.portal.web.portlet.PortletJspBean#getCreate(javax.servlet
+     * .http.HttpServletRequest)
+     */
     @Override
     public String getCreate( HttpServletRequest request )
     {
@@ -40,6 +61,13 @@ public class PortletBilletterieJspBean extends PortletJspBean
         return template.getHtml( );
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * fr.paris.lutece.portal.web.portlet.PortletJspBean#doCreate(javax.servlet
+     * .http.HttpServletRequest)
+     */
     @Override
     public String doCreate( HttpServletRequest request )
     {
@@ -66,6 +94,13 @@ public class PortletBilletterieJspBean extends PortletJspBean
         return COMPLEMENT_URL_ADMIN_SITE + getPageUrl( billetteriePortlet.getPageId( ) );
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * fr.paris.lutece.portal.web.portlet.PortletJspBean#getModify(javax.servlet
+     * .http.HttpServletRequest)
+     */
     @Override
     public String getModify( HttpServletRequest request )
     {
@@ -91,6 +126,13 @@ public class PortletBilletterieJspBean extends PortletJspBean
         return template.getHtml( );
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * fr.paris.lutece.portal.web.portlet.PortletJspBean#doModify(javax.servlet
+     * .http.HttpServletRequest)
+     */
     @Override
     public String doModify( HttpServletRequest request )
     {
@@ -116,10 +158,16 @@ public class PortletBilletterieJspBean extends PortletJspBean
 
     }
 
+    /**
+     * Gets the number show.
+     * 
+     * @param strNumberShow the str number show
+     * @return the number show
+     */
     private Integer getNumberShow( String strNumberShow )
     {
         int nShow;
-        if ( strNumberShow == "" )
+        if ( StringUtils.isEmpty( strNumberShow ) )
         {
             nShow = -1;
         }

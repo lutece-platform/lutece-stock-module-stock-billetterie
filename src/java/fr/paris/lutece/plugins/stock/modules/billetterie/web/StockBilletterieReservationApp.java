@@ -121,7 +121,14 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
             .getContext( ).getBean( IPurchaseSessionManager.class );
 
     /**
-     * Return page with action specified
+     * Return page with action specified.
+     * 
+     * @param request the request
+     * @param nMode the n mode
+     * @param plugin the plugin
+     * @return the page
+     * @throws UserNotSignedException the user not signed exception
+     * @throws SiteMessageException the site message exception
      */
     public XPage getPage( HttpServletRequest request, int nMode, Plugin plugin ) throws UserNotSignedException,
             SiteMessageException
@@ -149,11 +156,13 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
     }
 
     /**
-     * Returns xpage for confirm booking
+     * Returns xpage for confirm booking.
+     * 
      * @param page xpage
      * @param request http request
      * @param locale locale
      * @return xpage
+     * @throws UserNotSignedException the user not signed exception
      */
     private XPage getConfirmBooking( XPage page, HttpServletRequest request, Locale locale )
             throws UserNotSignedException
@@ -269,9 +278,11 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
 
     /**
      * Action for saving booking. Called by JSP.
+     * 
      * @param request http request
      * @param response http response
      * @return url to go
+     * @throws SiteMessageException the site message exception
      */
     public String doSaveReservation( HttpServletRequest request, HttpServletResponse response )
             throws SiteMessageException
@@ -315,10 +326,11 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
 
     /**
      * Action for cancel saving booking. Called by JSP.
+     * 
      * @param request http request
      * @param response http response
      * @return url to go
-     * @throws UnsupportedEncodingException
+     * @throws UnsupportedEncodingException the unsupported encoding exception
      */
     public String doCancelSaveReservation( HttpServletRequest request, HttpServletResponse response )
             throws UnsupportedEncodingException
@@ -360,11 +372,13 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
     }
 
     /**
-     * Returns page for managing user bookings
+     * Returns page for managing user bookings.
+     * 
      * @param page xpage
      * @param request http request
      * @param locale local
      * @return xpage
+     * @throws UserNotSignedException the user not signed exception
      */
     private XPage getMyBookings( XPage page, HttpServletRequest request, Locale locale ) throws UserNotSignedException
     {
@@ -415,11 +429,13 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
     }
 
     /**
-     * Returns page for deleting user booking
+     * Returns page for deleting user booking.
+     * 
      * @param page xpage
      * @param request http request
      * @param locale local
      * @return xpage
+     * @throws SiteMessageException the site message exception
      */
     public XPage getDeleteBooking( XPage page, HttpServletRequest request, Locale locale ) throws SiteMessageException
     {
@@ -459,6 +475,13 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
         return AppPathService.getBaseUrl( request ) + "jsp/site/Portal.jsp?page=reservation&action=mes-reservations";
     }
 
+    /**
+     * Send booking notification.
+     * 
+     * @param bookingList the booking list
+     * @param request the request
+     * @return the notification dto
+     */
     private NotificationDTO sendBookingNotification( List<ReservationDTO> bookingList, HttpServletRequest request )
     {
         

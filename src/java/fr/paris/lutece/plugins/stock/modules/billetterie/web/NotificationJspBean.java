@@ -95,7 +95,7 @@ public class NotificationJspBean  extends AbstractJspBean
 
     // PAGE TITLES
     private static final String PROPERTY_PAGE_TITLE_SEND_NOTIFICATION = "module.stock.billetterie.send_notification.title";
-    private static String PROPERTY_MAIL_SEPARATOR = "mail.list.separator";
+    private static final String PROPERTY_MAIL_SEPARATOR = "mail.list.separator";
 
     // MESSAGES
     private static final String MESSAGE_AVERTISSEMENT_CANCEL_OFFER = "module.stock.billetterie.message.cancelOffer.avertissement";
@@ -109,6 +109,9 @@ public class NotificationJspBean  extends AbstractJspBean
     @Inject
     private INotificationService _serviceNotification;
 
+    /**
+     * Instantiates a new notification jsp bean.
+     */
     public NotificationJspBean(  )
     {
         super(  );

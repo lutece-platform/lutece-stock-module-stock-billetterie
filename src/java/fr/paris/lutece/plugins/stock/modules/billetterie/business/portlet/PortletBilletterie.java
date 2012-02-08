@@ -78,46 +78,70 @@ public class PortletBilletterie extends Portlet
     private Integer nShow;
     private String typeContentPortlet;
 
+    /**
+     * Gets the type content portlet.
+     * 
+     * @return the type content portlet
+     */
     public String getTypeContentPortlet( )
     {
         return typeContentPortlet;
     }
 
+    /**
+     * Sets the type content portlet.
+     * 
+     * @param TypeContentPortlet the new type content portlet
+     */
     public void setTypeContentPortlet( String TypeContentPortlet )
     {
         this.typeContentPortlet = TypeContentPortlet;
     }
 
+    /**
+     * Instantiates a new portlet billetterie.
+     */
     public PortletBilletterie( )
     {
 
         setPortletTypeId( BilletteriePortletHome.getInstance( ).getPortletTypeId( ) );
     }
 
+    /**
+     * Gets the n show.
+     * 
+     * @return the n show
+     */
     public Integer getnShow( )
     {
         return nShow;
     }
 
+    /**
+     * Sets the n show.
+     * 
+     * @param nShow the new n show
+     */
     public void setnShow( Integer nShow )
     {
         this.nShow = nShow;
     }
 
+    /** The _show service. */
     private IShowService _showService = (IShowService) SpringContextService.getContext( ).getBean(
             ShowService.ID_SPRING_DEFAULT );
 
     /**
-     * get xml document
+     * get xml document.
      * 
-     * @param request
+     * @param request the request
      * @return string
      */
     public String getXml( HttpServletRequest request )
     {
         StringBuffer strXml = new StringBuffer( );
         PaginationProperties paginator;
-        List<ShowDTO> ListShow;
+        List<ShowDTO> listShow;
         Integer intNbre = getnShow( );
         String strContentPortlet = getTypeContentPortlet( );
         if ( intNbre != -1 )
@@ -136,22 +160,22 @@ public class PortletBilletterie extends Portlet
             orders.add( "dateEnd" );
             filter.setOrders( orders );
             filter.setOrderAsc( true );
-            ListShow = _showService.findByFilter( filter, paginator );
+            listShow = _showService.findByFilter( filter, paginator );
         }
         else
         {
             List<String> orders = new ArrayList<String>( );
             orders.add( "dateStart" );
-            ListShow = _showService.getComeProduct( orders, paginator );
+            listShow = _showService.getComeProduct( orders, paginator );
 
         }
         XmlUtil.beginElement( strXml, TAG_BILLETTERIE_PORTLET );
         XmlUtil.addElement( strXml, TAG_SHOW_TYPE_PORTLET, ( strContentPortlet.equals( "a-laffiche" ) ? "aLaffiche"
                 : "aVenir" ) );
 
-        for ( ShowDTO showDTO : ListShow )
+        for ( ShowDTO showDTO : listShow )
         {
-            if ( !( strContentPortlet.equals( "a-venir" ) && showDTO.getAlaffiche( ) == true ) )
+            if ( !( strContentPortlet.equals( "a-venir" ) && showDTO.getAlaffiche( ) ) )
             {
                 XmlUtil.beginElement( strXml, TAG_SHOW );
                 XmlUtil.addElement( strXml, TAG_SHOW_ID, showDTO.getId( ) );
@@ -173,6 +197,13 @@ public class PortletBilletterie extends Portlet
         return addPortletTags( strXml );
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * fr.paris.lutece.portal.business.XmlContent#getXmlDocument(javax.servlet
+     * .http.HttpServletRequest)
+     */
     public String getXmlDocument( HttpServletRequest request ) throws SiteMessageException
     {
         return XmlUtil.getXmlHeader( ) + getXml( request );

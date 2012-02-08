@@ -4,20 +4,29 @@ import fr.paris.lutece.portal.business.portlet.Portlet;
 import fr.paris.lutece.util.sql.DAOUtil;
 
 
+/**
+ * The Class BilletteriePortletDAO.
+ */
 public class BilletteriePortletDAO implements IBilletterieDAO
 {
 
     // Constants
+    /** The Constant SQL_QUERY_SELECT. */
     private static final String SQL_QUERY_SELECT = "SELECT id_portlet, number_show,type_content_portlet FROM billetterie_portlet WHERE id_portlet = ? ";
+
+    /** The Constant SQL_QUERY_INSERT. */
     private static final String SQL_QUERY_INSERT = "INSERT INTO billetterie_portlet ( id_portlet, number_show,type_content_portlet ) VALUES ( ?, ?,? )";
+
+    /** The Constant SQL_QUERY_DELETE. */
     private static final String SQL_QUERY_DELETE = "DELETE FROM billetterie_portlet WHERE id_portlet = ? ";
+
+    /** The Constant SQL_QUERY_UPDATE. */
     private static final String SQL_QUERY_UPDATE = "UPDATE billetterie_portlet SET id_portlet = ?, number_show = ?,type_content_portlet=? WHERE id_portlet = ? ";
 
     /**
-     * Delete record from table
+     * Delete record from table.
      * 
-     * @param nPortletId
-     *            The indentifier of the Portlet
+     * @param nPortletId The indentifier of the Portlet
      */
     public void delete( int nPortletId )
     {
@@ -47,10 +56,9 @@ public class BilletteriePortletDAO implements IBilletterieDAO
     }
 
     /**
-     * load the data of dbpagePortlet from the table
+     * load the data of dbpagePortlet from the table.
      * 
-     * @param nIdPortlet
-     *            The indentifier of the portlet
+     * @param nIdPortlet The indentifier of the portlet
      * @return portlet The instance of the object portlet
      */
     public Portlet load( int nIdPortlet )
@@ -71,10 +79,9 @@ public class BilletteriePortletDAO implements IBilletterieDAO
     }
 
     /**
-     * Update the record in the table
+     * Update the record in the table.
      * 
-     * @param portlet
-     *            The reference of the portlet
+     * @param portlet The reference of the portlet
      */
     public void store( Portlet portlet )
     {

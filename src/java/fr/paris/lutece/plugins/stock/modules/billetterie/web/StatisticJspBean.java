@@ -43,7 +43,6 @@ import fr.paris.lutece.plugins.stock.modules.tickets.utils.export.TicketsExportU
 import fr.paris.lutece.plugins.stock.utils.constants.StockConstants;
 import fr.paris.lutece.portal.service.admin.AdminUserService;
 import fr.paris.lutece.portal.service.i18n.I18nService;
-import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
@@ -78,8 +77,14 @@ import au.com.bytecode.opencsv.CSVWriter;
 import com.keypoint.PngEncoder;
 
 
+/**
+ * The Class StatisticJspBean.
+ */
 public class StatisticJspBean extends AbstractJspBean
 {
+    public static final String CONSTANT_PRODUCT_TYPE = "1";
+
+    public static final String CONSTANT_PURCHASE_TYPE = "2";
     //RIGHT
     public static final String RIGHT_MANAGE_STATISTICS = "STATISTICS_MANAGEMENT";
 
@@ -88,7 +93,7 @@ public class StatisticJspBean extends AbstractJspBean
     private static final String PAGE_TITLE_MANAGE_PURCHASE = "module.stock.billetterie.manage_purchase_statistics.pageTitle";
 
     //TEMPLATES
-	private static final String TEMPLATE_MANAGE_STATISTICS = "admin/plugins/stock/modules/billetterie/manage_statistics.html";
+    private static final String TEMPLATE_MANAGE_STATISTICS = "admin/plugins/stock/modules/billetterie/manage_statistics.html";
     private static final String TEMPLATE_MANAGE_PRODUCTS_STATISTICS = "admin/plugins/stock/modules/billetterie/manage_products_statistics.html";
     private static final String TEMPLATE_MANAGE_PURCHASE_STATISTICS = "admin/plugins/stock/modules/billetterie/manage_purchases_statistics.html";
 
@@ -96,11 +101,14 @@ public class StatisticJspBean extends AbstractJspBean
     private static final String MARK_NUMBER_RESPONSE = "number_response";
     private static final String MARK_FIRST_RESPONSE_DATE_FILTER = "fist_response_date_filter";
     private static final String MARK_LAST_RESPONSE_DATE_FILTER = "last_response_date_filter";
+
     private static final String PARAMETER_FIRST_RESPONSE_DATE_FILTER = "fist_response_date_filter";
     private static final String PARAMETER_LAST_RESPONSE_DATE_FILTER = "last_response_date_filter";
+
     private static final String MARK_TIMES_UNIT = "times_unit";
     private static final String PARAMETER_TIMES_UNIT = "times_unit";
     private static final String MARK_LOCALE = "locale";
+
     private static final String PARAMETER_TYPE_DATA = "type_data";
 
     //MESSAGES
@@ -115,21 +123,25 @@ public class StatisticJspBean extends AbstractJspBean
     private static final String PROPERTY_LABEL_AXIS_Y_PRODUCT = "module.stock.billetterie.manage_products_statistics.labelAxisY";
     private static final String PROPERTY_LABEL_AXIS_Y_PURCHASE = "module.stock.billetterie.manage_purchases_statistics.labelAxisY";
 
-    public static String CONSTANT_PRODUCT_TYPE = "1";
-    public static String CONSTANT_PURCHASE_TYPE = "2";
 
+    /** The _service statistic. */
     @Inject
     private IStatisticService _serviceStatistic;
 
+    /**
+     * Instantiates a new statistic jsp bean.
+     */
     public StatisticJspBean(  )
     {
         super(  );
     }
 
     /**
-     * Generates a HTML form that displays the link to manage the visitors statistics and polls
-    * @param request the Http request
-    * @return HTML
+     * Generates a HTML form that displays the link to manage the visitors
+     * statistics and polls.
+     * 
+     * @param request the Http request
+     * @return HTML
      */
     public String getManageStatistics( HttpServletRequest request )
     {
@@ -142,13 +154,13 @@ public class StatisticJspBean extends AbstractJspBean
     }
 
     /**
-     * Gets the form result page
+     * Gets the form result page.
+     * 
      * @param request the http request
      * @return the form test page
      */
     public String getManageProducts( HttpServletRequest request )
     {
-        Plugin plugin = getPlugin( );
         Locale locale = getLocale( );
         HtmlTemplate template;
         int nNumberResponse = 0;
@@ -208,13 +220,13 @@ public class StatisticJspBean extends AbstractJspBean
     }
 
     /**
-     * Gets the form result page
+     * Gets the form result page.
+     * 
      * @param request the http request
      * @return the form test page
      */
     public String getManagePurchases( HttpServletRequest request )
     {
-        Plugin plugin = getPlugin( );
         Locale locale = getLocale( );
         HtmlTemplate template;
         int nNumberResponse = 0;
@@ -275,10 +287,10 @@ public class StatisticJspBean extends AbstractJspBean
 
     /**
      * write in the http response the statistic graph of all response submit who
-     * verify the date filter
+     * verify the date filter.
+     * 
      * @param request the http request
      * @param response The http response
-     * 
      */
     public void doGenerateGraph( HttpServletRequest request, HttpServletResponse response )
     {
@@ -375,11 +387,12 @@ public class StatisticJspBean extends AbstractJspBean
     }
 
     /**
-    * Exports all the statistics visitors filtered
-    * @param request The Http request
-    * @param response The Http response
-    * @return The Url after the export
-    */
+     * Exports all the statistics visitors filtered.
+     * 
+     * @param request The Http request
+     * @param response The Http response
+     * @return The Url after the export
+     */
     public String doExportStatistics( HttpServletRequest request, HttpServletResponse response )
     {
         String strFistResponseDateFilter = request.getParameter( PARAMETER_FIRST_RESPONSE_DATE_FILTER );
