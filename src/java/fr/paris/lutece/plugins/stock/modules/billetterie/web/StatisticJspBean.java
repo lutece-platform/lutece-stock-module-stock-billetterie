@@ -33,13 +33,13 @@
  */
 package fr.paris.lutece.plugins.stock.modules.billetterie.web;
 
-import fr.paris.lutece.plugins.form.utils.FormUtils;
 import fr.paris.lutece.plugins.stock.commons.exception.BusinessException;
 import fr.paris.lutece.plugins.stock.modules.tickets.business.ResultStatistic;
 import fr.paris.lutece.plugins.stock.modules.tickets.service.IStatisticService;
 import fr.paris.lutece.plugins.stock.modules.tickets.service.StatisticService;
 import fr.paris.lutece.plugins.stock.modules.tickets.utils.constants.TicketsConstants;
 import fr.paris.lutece.plugins.stock.modules.tickets.utils.export.TicketsExportUtils;
+import fr.paris.lutece.plugins.stock.utils.DateUtils;
 import fr.paris.lutece.plugins.stock.utils.constants.StockConstants;
 import fr.paris.lutece.portal.service.admin.AdminUserService;
 import fr.paris.lutece.portal.service.i18n.I18nService;
@@ -84,6 +84,9 @@ public class StatisticJspBean extends AbstractJspBean
 {
     public static final String CONSTANT_PRODUCT_TYPE = "1";
 
+    public static final String CONSTANT_GROUP_BY_DAY = "0";
+    public static final String CONSTANT_GROUP_BY_WEEK = "1";
+    public static final String CONSTANT_GROUP_BY_MONTH = "2";
     public static final String CONSTANT_PURCHASE_TYPE = "2";
     //RIGHT
     public static final String RIGHT_MANAGE_STATISTICS = "STATISTICS_MANAGEMENT";
@@ -187,14 +190,14 @@ public class StatisticJspBean extends AbstractJspBean
 
         if ( strFistResponseDateFilter != null )
         {
-            tFistResponseDateFilter = FormUtils.getDateFirstMinute(
-                    DateUtil.formatDate( strFistResponseDateFilter, locale ), locale );
+            tFistResponseDateFilter = DateUtils.getDateFirstMinute( DateUtil.formatDate( strFistResponseDateFilter,
+                    locale ) );
         }
 
         if ( strLastResponseDateFilter != null )
         {
-            tLastResponseDateFilter = FormUtils.getDateLastMinute(
-                    DateUtil.formatDate( strLastResponseDateFilter, locale ), locale );
+            tLastResponseDateFilter = DateUtils.getDateLastMinute( DateUtil.formatDate( strLastResponseDateFilter,
+                    locale ) );
         }
 
         nNumberResponse = _serviceStatistic.getCountProductsByDates( strFistResponseDateFilter,
@@ -202,7 +205,7 @@ public class StatisticJspBean extends AbstractJspBean
 
         if ( strTimesUnit == null )
         {
-            strTimesUnit = FormUtils.CONSTANT_GROUP_BY_DAY;
+            strTimesUnit = CONSTANT_GROUP_BY_DAY;
         }
 
         model.put( MARK_LOCALE, AdminUserService.getLocale( request ).getLanguage( ) );
@@ -253,14 +256,14 @@ public class StatisticJspBean extends AbstractJspBean
 
         if ( strFistResponseDateFilter != null )
         {
-            tFistResponseDateFilter = FormUtils.getDateFirstMinute(
-                    DateUtil.formatDate( strFistResponseDateFilter, locale ), locale );
+            tFistResponseDateFilter = DateUtils.getDateFirstMinute( DateUtil.formatDate( strFistResponseDateFilter,
+                    locale ) );
         }
 
         if ( strLastResponseDateFilter != null )
         {
-            tLastResponseDateFilter = FormUtils.getDateLastMinute(
-                    DateUtil.formatDate( strLastResponseDateFilter, locale ), locale );
+            tLastResponseDateFilter = DateUtils.getDateLastMinute( DateUtil.formatDate( strLastResponseDateFilter,
+                    locale ) );
         }
 
         nNumberResponse = _serviceStatistic.getCountPurchasesByDates( strFistResponseDateFilter,
@@ -268,7 +271,7 @@ public class StatisticJspBean extends AbstractJspBean
 
         if ( strTimesUnit == null )
         {
-            strTimesUnit = FormUtils.CONSTANT_GROUP_BY_DAY;
+            strTimesUnit = CONSTANT_GROUP_BY_DAY;
         }
 
         model.put( MARK_LOCALE, AdminUserService.getLocale( request ).getLanguage( ) );
@@ -381,7 +384,6 @@ public class StatisticJspBean extends AbstractJspBean
         }
         catch ( Exception e )
         {
-            System.out.println( e );
             AppLogService.error( e );
         }
     }
