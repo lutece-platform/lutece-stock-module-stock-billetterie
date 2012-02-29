@@ -99,6 +99,9 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
     private static final int BOOKING_TO_COME = 1;
     private static final int BOOKING_PASSED = -1;
 
+    private static final String PROPERTY_POSTER_PATH = "stock-billetterie.poster.path";
+    private static final String PROPERTY_POSTER_TB_PATH = "stock-billetterie.poster.tb.path";
+
     private IShowService _showService = (IShowService) SpringContextService.getContext( ).getBean(
             "stock-tickets.showService" );
     private IProviderService _providerService = (IProviderService) SpringContextService.getContext( ).getBean(
@@ -179,6 +182,7 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
         model.put( "show", show );
         
         model.put( "partner", _providerService.findByIdWithProducts( show.getIdProvider( ) ) );
+        model.put( "url_poster", AppPropertiesService.getProperty( PROPERTY_POSTER_PATH ) );
 
         // Calculate if show is open to book
         model.put( "booking_opened", caculateBookingOpened( show ) );
@@ -322,6 +326,7 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
         Map<String, Object> model = new HashMap<String, Object>( );
         model.put( "show_list", currentListShow );
         model.put( "type_list", "aLaffiche" );
+        model.put( "url_poster", AppPropertiesService.getProperty( PROPERTY_POSTER_TB_PATH ) );
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_DIR + "list_show_page.html", locale, model );
         page.setContent( template.getHtml( ) );
 
@@ -348,6 +353,7 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
         Map<String, Object> model = new HashMap<String, Object>( );
         model.put( "show_list", comeListShow );
         model.put( "type_list", "aVenir" );
+        model.put( "url_poster", AppPropertiesService.getProperty( PROPERTY_POSTER_TB_PATH ) );
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_DIR + "list_show_page.html", locale, model );
         page.setContent( template.getHtml( ) );
 

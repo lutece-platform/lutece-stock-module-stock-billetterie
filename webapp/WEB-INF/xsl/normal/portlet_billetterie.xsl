@@ -21,7 +21,7 @@
 								<xsl:attribute name="title"><xsl:value-of select="name"/></xsl:attribute>
 								<xsl:attribute name="href"><xsl:value-of select="url"/></xsl:attribute>
 								<img>
-									<xsl:attribute name="src"><![CDATA[images/poster/tb_]]><xsl:value-of select="posterName"/></xsl:attribute>
+									<xsl:attribute name="src"><xsl:value-of select="posterUrl"/></xsl:attribute>
 									<xsl:attribute name="alt"><xsl:value-of select="name"/></xsl:attribute>
 								</img>
 							</a>

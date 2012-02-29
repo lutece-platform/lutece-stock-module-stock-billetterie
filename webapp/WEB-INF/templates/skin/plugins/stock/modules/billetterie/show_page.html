@@ -12,9 +12,7 @@
 				<div id="show_page">
 					
 					<div id="bloc-entete">
-						<a href="images/poster/${show.posterName}" class="thickbox" title="${show.name}"/>
-							<img src="images/poster/${show.posterName}" class="poster" alt="Affiche ${show.name}"/>
-						</a>
+						<img src="${url_poster}${show.id}" class="poster" alt="Affiche ${show.name}"/>
 						<div class="content-title"><h2>${show.name}</h2></div>
 						<#if show.with?has_content><p><strong>Distribution :</strong> <@nl2br>${show.with!}</@nl2br></p></#if>
 						<#if show.targetPublic?has_content><p><strong>Public :</strong> ${show.targetPublic!}</p></#if>
