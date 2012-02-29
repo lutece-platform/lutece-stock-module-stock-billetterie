@@ -44,6 +44,7 @@ import fr.paris.lutece.plugins.stock.modules.tickets.service.ISeanceService;
 import fr.paris.lutece.plugins.stock.modules.tickets.utils.constants.TicketsConstants;
 import fr.paris.lutece.plugins.stock.utils.constants.StockConstants;
 import fr.paris.lutece.portal.service.i18n.I18nService;
+import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
@@ -55,8 +56,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.inject.Inject;
-import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
@@ -101,12 +100,12 @@ public class NotificationJspBean  extends AbstractJspBean
     private static final String MESSAGE_AVERTISSEMENT_CANCEL_OFFER = "module.stock.billetterie.message.cancelOffer.avertissement";
     private static final String MESSAGE_AVERTISSEMENT_SEND_OFFER = "module.stock.billetterie.message.sendOffer.avertissement";
     
-    @Inject
-    @Named( "stock-tickets.seanceService" )
+    // @Inject
+    // @Named( "stock-tickets.seanceService" )
     private ISeanceService _serviceOffer;
-    @Inject
+    // @Inject
     private IPurchaseService _servicePurchase;
-    @Inject
+    // @Inject
     private INotificationService _serviceNotification;
 
     /**
@@ -114,7 +113,10 @@ public class NotificationJspBean  extends AbstractJspBean
      */
     public NotificationJspBean(  )
     {
-        super(  );
+        super( );
+        _serviceOffer = (ISeanceService) SpringContextService.getBean( "stock-tickets.seanceService" );
+        _servicePurchase = SpringContextService.getContext( ).getBean( IPurchaseService.class );
+        _serviceNotification = SpringContextService.getContext( ).getBean( INotificationService.class );
     }
 
     /**

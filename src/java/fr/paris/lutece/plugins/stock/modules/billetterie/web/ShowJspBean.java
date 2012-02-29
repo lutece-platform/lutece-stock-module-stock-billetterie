@@ -56,6 +56,7 @@ import fr.paris.lutece.plugins.stock.utils.constants.StockConstants;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
+import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
@@ -74,11 +75,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.inject.Inject;
-import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.transaction.annotation.Transactional;
@@ -89,6 +89,7 @@ import org.springframework.transaction.annotation.Transactional;
  */
 public class ShowJspBean extends AbstractJspBean
 {
+
 
 
 
@@ -129,6 +130,8 @@ public class ShowJspBean extends AbstractJspBean
     /** The Constant MARK_LIST_PROVIDERS. */
     private static final String MARK_LIST_PROVIDERS = "provider_list";
 
+    private static final String MARK_URL_POSTER = "url_poster";
+
     /** The Constant PARAMETER_POSTER. */
     private static final String PARAMETER_POSTER = "posterFile";
 
@@ -138,6 +141,7 @@ public class ShowJspBean extends AbstractJspBean
     /** The Constant PROPERTY_POSTER_HEIGHT. */
     private static final String PROPERTY_POSTER_HEIGHT = "stock-billetterie.poster.height";
 
+    private static final String PROPERTY_POSTER_PATH = "stock-billetterie.poster.path";
 
     // I18N
     /** The Constant PAGE_TITLE_MANAGE_PRODUCT. */
@@ -179,31 +183,32 @@ public class ShowJspBean extends AbstractJspBean
     /** The Constant MESSAGE_ERROR_MANDATORY_POSTER. */
     private static final String MESSAGE_ERROR_MANDATORY_POSTER = "module.stock.billetterie.message.error.mandatory_poster";
 
+
     // Variables
     /** The _n items per page. */
     private int _nItemsPerPage;
 
     // MEMBERS VARIABLES
     /** The _service product. */
-    @Inject
-    @Named( "stock-tickets.showService" )
+    // @Inject
+    // @Named( "stock-tickets.showService" )
     private IShowService _serviceProduct;
 
     /** The _service offer. */
-    @Inject
-    @Named( "stock-tickets.seanceService" )
+    // @Inject
+    // @Named( "stock-tickets.seanceService" )
     private ISeanceService _serviceOffer;
 
     /** The _service provider. */
-    @Inject
+    // @Inject
     private IProviderService _serviceProvider;
 
     /** The _service category. */
-    @Inject
+    // @Inject
     private ICategoryService _serviceCategory;
 
     /** The _service statistic. */
-    @Inject
+    // @Inject
     private IStatisticService _serviceStatistic;
 
     /** The _product filter. */
@@ -215,6 +220,11 @@ public class ShowJspBean extends AbstractJspBean
     public ShowJspBean( )
     {
         _productFilter = new ShowFilter( );
+        _serviceProduct = (IShowService) SpringContextService.getBean( "stock-tickets.showService" );
+        _serviceOffer = (ISeanceService) SpringContextService.getBean( "stock-tickets.seanceService" );
+        _serviceProvider = SpringContextService.getContext( ).getBean( IProviderService.class );
+        _serviceCategory = SpringContextService.getContext( ).getBean( ICategoryService.class );
+        _serviceStatistic = SpringContextService.getContext( ).getBean( IStatisticService.class );
     }
 
 
@@ -337,6 +347,7 @@ public class ShowJspBean extends AbstractJspBean
 
         model.put( StockConstants.MARK_JSP_BACK, request.getParameter( StockConstants.MARK_JSP_BACK ) );
         model.put( MARK_PRODUCT, product );
+        model.put( MARK_URL_POSTER, AppPropertiesService.getProperty( PROPERTY_POSTER_PATH ) );
 
         if ( product.getId( ) != null && product.getId( ) != 0 )
         {
@@ -375,14 +386,14 @@ public class ShowJspBean extends AbstractJspBean
 
         try
         {
-            // Get and save the poster
-            writePoster( request, product );
+            // Get and save the poster into temp files
+            File[] filePosterArray = writePoster( request, product );
 
             // Controls mandatory fields
             validate( product );
 
             // Persist entity
-            ShowDTO saveProduct = _serviceProduct.doSaveProduct( product, request );
+            ShowDTO saveProduct = _serviceProduct.doSaveProduct( product, filePosterArray );
 
             // Statistic management
             _serviceStatistic.doManageProductSaving( saveProduct );
@@ -400,10 +411,12 @@ public class ShowJspBean extends AbstractJspBean
      * 
      * @param request http request (multipart if contains poster)
      * @param product product entity
+     * @return the poster image file (0 : thumbnail, 1 : full size)
      * @throws BusinessException the business exception
      */
-    private void writePoster( HttpServletRequest request, ShowDTO product ) throws BusinessException
+    private File[] writePoster( HttpServletRequest request, ShowDTO product ) throws BusinessException
     {
+        File[] filePosterArray = null;
         boolean fileGotten = false;
         //File uploaded
         if ( request instanceof MultipartHttpServletRequest )
@@ -424,7 +437,9 @@ public class ShowJspBean extends AbstractJspBean
                 {
                     InputStream fisPoster = fileItem.getInputStream( );
                     
-                    File fPoster = new File( new File( posterFolderPath ), fileItem.getName( ) );
+                    // File fPoster = new File( new File( posterFolderPath ),
+                    // fileItem.getName( ) );
+                    File fPoster = File.createTempFile( FilenameUtils.getBaseName( fileItem.getName( ) ), null );
 
                     // Generate unique name
                     fPoster = fr.paris.lutece.plugins.stock.utils.FileUtils.getUniqueFile( fPoster );
@@ -433,13 +448,15 @@ public class ShowJspBean extends AbstractJspBean
                     fr.paris.lutece.plugins.stock.utils.FileUtils.writeInputStreamToFile( fisPoster, fPoster );
 
                     // Create a thumbnail image
-                    ImageUtils.createThumbnail( fPoster,
+                    File fTbPoster = ImageUtils.createThumbnail( fPoster,
                             AppPropertiesService.getPropertyInt( PROPERTY_POSTER_WIDTH, 120 ),
                             AppPropertiesService.getPropertyInt( PROPERTY_POSTER_HEIGHT, 200 ) );
 
                     // Save file name into entity
                     product.setPosterName( fPoster.getName( ) );
                     fileGotten = true;
+
+                    filePosterArray = new File[] { fTbPoster, fPoster };
 
                 }
                 catch ( IOException e )
@@ -458,6 +475,7 @@ public class ShowJspBean extends AbstractJspBean
             }
             
         }
+        return filePosterArray;
     }
 
     /**

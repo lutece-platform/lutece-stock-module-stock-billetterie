@@ -42,6 +42,7 @@ import fr.paris.lutece.plugins.stock.modules.tickets.service.ShowService;
 import fr.paris.lutece.portal.business.portlet.Portlet;
 import fr.paris.lutece.portal.service.message.SiteMessageException;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
+import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.util.url.UrlItem;
 import fr.paris.lutece.util.xml.XmlUtil;
 
@@ -67,13 +68,14 @@ public class PortletBilletterie extends Portlet
     private static final String TAG_SHOW_CATEGORY_NAME = "categoryName";
     private static final String TAG_SHOW_START_DATE = "date_debut";
     private static final String TAG_SHOW_END_DATE = "date_fin";
-    private static final String TAG_SHOW_POSTER_NAME = "posterName";
+    private static final String TAG_SHOW_POSTER_URL = "posterUrl";
     private static final String TAG_SHOW_DESCRIPTION = "description";
     private static final String TAG_SHOW_TYPE_PORTLET = "typePortlet";
     private static final String TAG_SHOW = "show";
     private static final String TAG_SHOW_URL = "url";
     private static final String PARAMETER_STOCK_ID = "product_id";
     private static final String URL_SHOW = "jsp/site/Portal.jsp?page=billetterie&action=fiche-spectacle";
+    private static final String PROPERTY_POSTER_TB_PATH = "stock-billetterie.poster.tb.path";
     // ////////////////////
     private Integer nShow;
     private String typeContentPortlet;
@@ -180,7 +182,9 @@ public class PortletBilletterie extends Portlet
                 XmlUtil.beginElement( strXml, TAG_SHOW );
                 XmlUtil.addElement( strXml, TAG_SHOW_ID, showDTO.getId( ) );
                 XmlUtil.addElement( strXml, TAG_SHOW_NAME, showDTO.getName( ) );
-                XmlUtil.addElement( strXml, TAG_SHOW_POSTER_NAME, showDTO.getPosterName( ) );
+                XmlUtil.addElement( strXml, TAG_SHOW_POSTER_URL,
+                        "<![CDATA[" + AppPropertiesService.getProperty( PROPERTY_POSTER_TB_PATH ) + showDTO.getId( )
+                                + "]]>" );
                 XmlUtil.addElement( strXml, TAG_SHOW_CATEGORY_NAME, showDTO.getCategoryName( ) );
                 XmlUtil.addElement( strXml, TAG_SHOW_START_DATE, showDTO.getStartDate( ) );
                 XmlUtil.addElement( strXml, TAG_SHOW_END_DATE, showDTO.getEndDate( ) );

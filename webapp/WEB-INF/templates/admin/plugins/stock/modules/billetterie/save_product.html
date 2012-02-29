@@ -9,7 +9,7 @@
 				<label for="poster" >#i18n{module.stock.billetterie.save_product.poster} * :</label>
 				<#if product.posterName?has_content>
 					<input type="hidden" name="posterName" value="${product.posterName}" />
-					<img src="images/poster/tb_${product.posterName}" style="float:left; margin-right: 5px;"/>
+					<img src="${url_poster}${product.id}" style="float:left; margin-right: 5px;"/>
 					<p>Renseigner le champ ci-dessous pour modifier le poster :</p>
 				</#if>
 				<input type="file" id="poster" name="posterFile" size="60" maxlength="100" />

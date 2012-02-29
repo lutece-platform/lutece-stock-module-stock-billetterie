@@ -51,6 +51,7 @@ import fr.paris.lutece.plugins.stock.utils.constants.StockConstants;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
+import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
@@ -67,8 +68,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.inject.Inject;
-import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
@@ -154,12 +153,12 @@ public class PurchaseJspBean  extends AbstractJspBean
     private int _nDefaultItemsPerPage;
     private String _strCurrentPageIndex;
     private int _nItemsPerPage;
-    @Inject
+    // @Inject
     private IPurchaseService _servicePurchase;
-    @Inject
-    @Named( "stock-tickets.seanceService" )
+    // @Inject
+    // @Named( "stock-tickets.seanceService" )
     private ISeanceService _serviceOffer;
-    @Inject
+    // @Inject
     private IPurchaseSessionManager _purchaseSessionManager;
 
     private ReservationFilter _purchaseFilter;
@@ -172,6 +171,9 @@ public class PurchaseJspBean  extends AbstractJspBean
         super(  );
 
         _purchaseFilter = new ReservationFilter( );
+        _servicePurchase = SpringContextService.getContext( ).getBean( IPurchaseService.class );
+        _serviceOffer = (ISeanceService) SpringContextService.getBean( "stock-tickets.seanceService" );
+        _purchaseSessionManager = SpringContextService.getContext( ).getBean( IPurchaseSessionManager.class );
     }
 
     /**

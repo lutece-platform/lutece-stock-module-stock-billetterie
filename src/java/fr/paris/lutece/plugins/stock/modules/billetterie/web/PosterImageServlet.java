@@ -33,38 +33,42 @@
  */
 package fr.paris.lutece.plugins.stock.modules.billetterie.web;
 
-import fr.paris.lutece.plugins.stock.utils.DateUtils;
-import fr.paris.lutece.portal.service.util.AppPathService;
+import fr.paris.lutece.plugins.stock.modules.tickets.service.IShowService;
+import fr.paris.lutece.portal.service.spring.SpringContextService;
 
 import java.io.IOException;
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
 
 import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 
 /**
  * Used for special solr queries
- *
+ * 
  * @author abataille
  */
-public class BilletterieSolrSearch extends HttpServlet {
+public class PosterImageServlet extends HttpServlet
+{
 
     /**  
      *
      */
-    private static final long serialVersionUID = -806886865678792151L;
+    private static final long serialVersionUID = -1165966480942742905L;
+    private static final Logger LOGGER = Logger.getLogger( PosterImageServlet.class );
 
-    private static final Logger LOGGER = Logger.getLogger( BilletterieSolrSearch.class );
+    /** The product service. */
+    private IShowService _productService = (IShowService) SpringContextService
+            .getBean( "stock-tickets.showService" );
 
     /**
-     * Get billetterie specific parameters and call Solr Module.
+     * Returns poster image
      * 
      * @param request the request
      * @param response the response
@@ -74,32 +78,31 @@ public class BilletterieSolrSearch extends HttpServlet {
     protected void doGet( HttpServletRequest request, HttpServletResponse response ) throws ServletException,
             IOException
     {
-        StringBuilder sbReq = new StringBuilder( 100 );
-        sbReq.append( AppPathService.getBaseUrl( request ) ).append( "jsp/site/Portal.jsp?page=search-solr&" )
-                .append( request.getQueryString( ) );
-
-        SimpleDateFormat sdfXml = new SimpleDateFormat( DateUtils.XML_DATE_FORMAT );
-        String sShowDateStart = request.getParameter( "show_date_start" );
-        String sShowDateEnd = request.getParameter( "show_date_end" );
-        if ( StringUtils.isNotEmpty( sShowDateStart ) )
+        String sIdProduct = request.getParameter( "product_id" );
+        if ( StringUtils.isNotEmpty( sIdProduct ) )
         {
+            Integer idProduct = Integer.parseInt( sIdProduct );
+            boolean isThumbnail = request.getParameter( "tb" ) != null && request.getParameter( "tb" ).equals( "true" );
+            byte[] bImage;
+            if ( isThumbnail )
+            {
+                bImage = _productService.getTbImage( idProduct );
+            }
+            else
+            {
+                bImage = _productService.getImage( idProduct );
+            }
+            response.setContentLength( bImage.length );
+            response.setContentType( "image/jpeg" );
 
-            Timestamp showDateStart = DateUtils.getDate( sShowDateStart, true );
-            String sXmlShowDateStart = sdfXml.format( showDateStart );
-            sbReq.append( "&fq=end_date:[" ).append( sXmlShowDateStart ).append( " TO *]" );
+            ServletOutputStream os = response.getOutputStream( );
+            IOUtils.write( bImage, os );
+            os.close( );
         }
-        if ( StringUtils.isNotEmpty( sShowDateEnd ) )
+        else
         {
-
-            Timestamp showDateEnd = DateUtils.getDate( sShowDateEnd, true );
-            String sXmlShowDateEnd = sdfXml.format( showDateEnd );
-
-            sbReq.append( "&fq=start_date:[* TO " ).append( sXmlShowDateEnd ).append( "]" );
+            LOGGER.error( "Appel de PosterImageServlet avec un id de produit null" );
         }
-
-        LOGGER.debug( "Requête SOLR de date, redirection vers " + sbReq.toString( ) );
-        response.sendRedirect( sbReq.toString( ) );
-
     }
 
 }

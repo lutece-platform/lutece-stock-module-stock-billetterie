@@ -12,14 +12,5 @@
     
     <tx:annotation-driven/>
 	<!--  Declaration des JspBean -->
-	<bean id="stock-billetterie.offerJspBean" class="fr.paris.lutece.plugins.stock.modules.billetterie.web.OfferJspBean" />
-	<bean id="stock-billetterie.purchaseJspBean" class="fr.paris.lutece.plugins.stock.modules.billetterie.web.PurchaseJspBean" />
-	<bean id="stock-billetterie.notificationJspBean" class="fr.paris.lutece.plugins.stock.modules.billetterie.web.NotificationJspBean" />
-	<bean id="stock-billetterie.partnerJspBean" class="fr.paris.lutece.plugins.stock.modules.billetterie.web.PartnerJspBean" />
-	<bean id="stock-billetterie.categoryJspBean" class="fr.paris.lutece.plugins.stock.modules.billetterie.web.CategoryJspBean" />
-	<bean id="stock-billetterie.productJspBean" class="fr.paris.lutece.plugins.stock.modules.billetterie.web.ShowJspBean" />
-	<bean id="stock-billetterie.statisticJspBean" class="fr.paris.lutece.plugins.stock.modules.billetterie.web.StatisticJspBean" />
 	<bean id="BilletteriePortletDAO"  class="fr.paris.lutece.plugins.stock.modules.billetterie.business.portlet.BilletteriePortletDAO" />  
 </beans>
-
- 	

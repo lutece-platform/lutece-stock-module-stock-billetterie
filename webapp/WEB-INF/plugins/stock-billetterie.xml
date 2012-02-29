@@ -155,6 +155,11 @@
 	    <servlet-class>fr.paris.lutece.plugins.stock.modules.billetterie.web.BilletterieSolrSearch</servlet-class>
    		<url-pattern>/servlet/plugins/billetterieSolrSearch</url-pattern>
 	  </servlet>
+	  <servlet>
+	    <servlet-name>PosterImageServlet</servlet-name>
+	    <servlet-class>fr.paris.lutece.plugins.stock.modules.billetterie.web.PosterImageServlet</servlet-class>
+   		<url-pattern>/servlet/plugins/poster</url-pattern>
+	  </servlet>
 	</servlets>
 	
     <!-- Dashboard components -->

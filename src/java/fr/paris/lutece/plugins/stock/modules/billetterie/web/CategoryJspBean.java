@@ -46,6 +46,7 @@ import fr.paris.lutece.plugins.stock.utils.constants.StockConstants;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
+import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPathService;
@@ -61,8 +62,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.inject.Inject;
-import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
@@ -142,15 +141,15 @@ public class CategoryJspBean extends AbstractJspBean
 
     // MEMBERS VARIABLES
     /** The _service category. */
-    @Inject
+    // @Inject
     private ICategoryService _serviceCategory;
 
     /** The _category filter. */
     private CategoryFilter _categoryFilter;
 
     /** The _service show. */
-    @Inject
-    @Named( "stock-tickets.showService" )
+    // @Inject
+    // @Named( "stock-tickets.showService" )
     private IShowService _serviceShow;
 
     /**
@@ -160,6 +159,8 @@ public class CategoryJspBean extends AbstractJspBean
     {
         // super( );
         _categoryFilter = new CategoryFilter( );
+        _serviceCategory = SpringContextService.getContext( ).getBean( ICategoryService.class );
+        _serviceShow = (IShowService) SpringContextService.getBean( "stock-tickets.showService" );
     }
 
     /**

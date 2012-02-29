@@ -45,6 +45,7 @@ import fr.paris.lutece.plugins.stock.modules.tickets.utils.constants.TicketsCons
 import fr.paris.lutece.plugins.stock.utils.constants.StockConstants;
 import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
+import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPathService;
@@ -58,8 +59,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.inject.Inject;
-import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
@@ -101,11 +100,11 @@ public class PartnerJspBean extends AbstractJspBean
     private int _nItemsPerPage;
 
     // MEMBERS VARIABLES
-    @Inject
+    // @Inject
     private IProviderService _serviceProvider;
     private ProviderFilter _providerFilter;
-    @Inject
-    @Named( "stock-tickets.showService" )
+    // @Inject
+    // @Named( "stock-tickets.showService" )
     private IShowService _serviceShow;
 
     /**
@@ -115,6 +114,8 @@ public class PartnerJspBean extends AbstractJspBean
     {
         super(  );
         _providerFilter = new ProviderFilter( );
+        _serviceProvider = SpringContextService.getContext( ).getBean( IProviderService.class );
+        _serviceShow = (IShowService) SpringContextService.getBean( "stock-tickets.showService" );
     }
 
     /**

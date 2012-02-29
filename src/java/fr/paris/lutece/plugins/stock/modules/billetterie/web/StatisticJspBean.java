@@ -43,6 +43,7 @@ import fr.paris.lutece.plugins.stock.utils.DateUtils;
 import fr.paris.lutece.plugins.stock.utils.constants.StockConstants;
 import fr.paris.lutece.portal.service.admin.AdminUserService;
 import fr.paris.lutece.portal.service.i18n.I18nService;
+import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
@@ -63,7 +64,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -128,7 +128,7 @@ public class StatisticJspBean extends AbstractJspBean
 
 
     /** The _service statistic. */
-    @Inject
+    // @Inject
     private IStatisticService _serviceStatistic;
 
     /**
@@ -137,6 +137,7 @@ public class StatisticJspBean extends AbstractJspBean
     public StatisticJspBean(  )
     {
         super(  );
+        _serviceStatistic = SpringContextService.getContext( ).getBean( IStatisticService.class );
     }
 
     /**

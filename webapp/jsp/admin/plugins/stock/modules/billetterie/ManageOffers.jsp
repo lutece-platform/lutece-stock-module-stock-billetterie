@@ -3,10 +3,10 @@
 
 <%@page import="fr.paris.lutece.portal.service.spring.SpringContextService"%>
 <%@page import="fr.paris.lutece.plugins.stock.modules.billetterie.web.OfferJspBean"%>
+<jsp:useBean id="offer" scope="session" class="fr.paris.lutece.plugins.stock.modules.billetterie.web.OfferJspBean" />
 <% 
-OfferJspBean partner = (OfferJspBean)SpringContextService.getBean( "stock-billetterie.offerJspBean" );
-	partner.init( request, OfferJspBean.RIGHT_MANAGE_OFFERS);
+offer.init( request, OfferJspBean.RIGHT_MANAGE_OFFERS);
 %>
-<%= partner.getManageOffers( request ) %>
+<%= offer.getManageOffers( request ) %>
 
 <%@ include file="../../../../AdminFooter.jsp" %>
