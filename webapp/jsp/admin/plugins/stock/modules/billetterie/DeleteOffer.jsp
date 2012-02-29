@@ -1,5 +1,4 @@
 <%@ page errorPage="../../../../ErrorPage.jsp" %>
-<%@page import="fr.paris.lutece.portal.service.spring.SpringContextService"%>
 <%@page import="fr.paris.lutece.plugins.stock.modules.billetterie.web.OfferJspBean"%>
 <jsp:useBean id="offer" scope="session" class="fr.paris.lutece.plugins.stock.modules.billetterie.web.OfferJspBean" />
 <%

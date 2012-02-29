@@ -2,7 +2,6 @@
 <jsp:include page="../../../../AdminHeader.jsp" />
 
 
-<%@page import="fr.paris.lutece.portal.service.spring.SpringContextService"%>
 <%@page import="fr.paris.lutece.plugins.stock.modules.billetterie.web.ShowJspBean"%>
 <jsp:useBean id="product" scope="session" class="fr.paris.lutece.plugins.stock.modules.billetterie.web.ShowJspBean" />
 <% 
