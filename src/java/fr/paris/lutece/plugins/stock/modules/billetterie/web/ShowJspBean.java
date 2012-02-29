@@ -154,8 +154,6 @@ public class ShowJspBean extends AbstractJspBean
     private static final String PAGE_TITLE_MODIFY_PRODUCT = "module.stock.billetterie.save_product.title";
 
     // Properties
-    /** The Constant POSTER_FOLDER_PATH. */
-    private static final String POSTER_FOLDER_PATH = "stock-billetterie.poster.folder.path";
 
     // JSP
     /** The Constant JSP_MANAGE_PRODUCTS. */
@@ -426,13 +424,6 @@ public class ShowJspBean extends AbstractJspBean
             
             if ( fileItem != null && fileItem.getSize( ) > 0 )
             {
-                String posterFolderPath = AppPropertiesService.getProperty( POSTER_FOLDER_PATH );
-                if ( StringUtils.isEmpty( posterFolderPath ) )
-                {
-                    throw new TechnicalException(
-                            "Configuration du répertoire de stockage des affiches non trouvées. Veuillez renseigner la propriété "
-                                    + POSTER_FOLDER_PATH );
-                }
                 try
                 {
                     InputStream fisPoster = fileItem.getInputStream( );
