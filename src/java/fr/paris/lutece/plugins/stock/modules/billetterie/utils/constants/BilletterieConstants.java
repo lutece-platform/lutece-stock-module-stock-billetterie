@@ -31,50 +31,32 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.stock.modules.billetterie.business.portlet;
-
-import fr.paris.lutece.portal.business.portlet.IPortletInterfaceDAO;
-import fr.paris.lutece.portal.business.portlet.Portlet;
-
+package fr.paris.lutece.plugins.stock.modules.billetterie.utils.constants;
 
 /**
- * The Interface IBilletterieDAO.
+ * 
+ * Utilitary class of constants for module-stock-billetterie
+ * 
  */
-public interface IBilletterieDAO extends IPortletInterfaceDAO
+public final class BilletterieConstants
 {
+    /** The Constant TARGET_SELF. */
+    public static final String TARGET_SELF = "_self";
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * fr.paris.lutece.portal.business.portlet.IPortletInterfaceDAO#insert(fr
-     * .paris.lutece.portal.business.portlet.Portlet)
+    /** The Constant ID. */
+    public static final String ID = "id";
+
+    /** The Constant NAME. */
+    public static final String NAME = "name";
+
+    /** The Constant ERROR. */
+    public static final String ERROR = "error";
+
+    /**
+     * Prevent instantiation as it is only a constant class
      */
-    public void insert( Portlet portlet );
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * fr.paris.lutece.portal.business.portlet.IPortletInterfaceDAO#delete(int)
-     */
-    public void delete( int nPortletId );
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * fr.paris.lutece.portal.business.portlet.IPortletInterfaceDAO#load(int)
-     */
-    public Portlet load( int nPortletId );
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * fr.paris.lutece.portal.business.portlet.IPortletInterfaceDAO#store(fr
-     * .paris.lutece.portal.business.portlet.Portlet)
-     */
-    public void store( Portlet portlet );
-
+    private BilletterieConstants( )
+    {
+    };
 }
+

@@ -77,17 +77,55 @@ import org.apache.commons.lang.StringUtils;
 public class StockBilletterieApp extends AbstractXPageApp implements XPageApplication
 {
 
+    // Beans
+    private static final String BEAN_STOCK_TICKETS_SEANCE_SERVICE = "stock-tickets.seanceService";
+    private static final String BEAN_STOCK_TICKETS_SHOW_SERVICE = "stock-tickets.showService";
+
     // Templates
     private static final String TEMPLATE_DIR = "skin/plugins/stock/modules/billetterie/";
+    private static final String TEMPLATE_BOOKING_BLOC = "booking_bloc.html";
+    private static final String TEMPLATE_LIST_SHOW_PAGE = "list_show_page.html";
+    private static final String TEMPLATE_SHOW_PAGE = "show_page.html";
 
     // Parameters
     private static final String PARAMETER_DATE_SEANCE = "date_seance";
     private static final String PARAMETER_PRODUCT_ID = "product_id";
     private static final String PARAMETER_ACTION = "action";
 
+    // Marks
+    private static final String MARK_TYPE_LIST = "type_list";
+    private static final String MARK_SHOW_LIST = "show_list";
+    private static final String MARK_SEANCE_DATE = "seance_date";
+    private static final String MARK_SEANCE_LIST = "seanceList";
+    private static final String MARK_S_SEANCE_DATE = "sSeanceDate";
+    private static final String MARK_BLOC_RESERVATION = "bloc_reservation";
+    private static final String MARK_USER = "user";
+    private static final String MARK_SEANCE_DATE_LIST = "seance_date_list";
+    private static final String MARK_BOOKING_OPENED = "booking_opened";
+    private static final String MARK_URL_POSTER = "url_poster";
+    private static final String MARK_PARTNER = "partner";
+    private static final String MARK_SHOW = "show";
+
+    // Actions
     private static final String ACTION_SHOW_PAGE = "fiche-spectacle";
     private static final String ACTION_CURRENT_SHOW_LIST = "a-laffiche";
     private static final String ACTION_COME_SHOW_LIST = "a-venir";
+
+    // Messages
+    private static final String MESSAGE_ERROR_PARSING_SHOW_DATE = "Erreur lors du parsing de la date de séance";
+
+    // Properties
+    private static final String PROPERTY_POSTER_PATH = "stock-billetterie.poster.path";
+    private static final String PROPERTY_POSTER_TB_PATH = "stock-billetterie.poster.tb.path";
+    private static final String PROPERTY_NB_PLACES_MAX_TARIF_REDUIT = "stock-billetterie.nb_places_max.tarif_reduit";
+    private static final String PROPERTY_NB_PLACES_MAX_INVITATION_ENFANT = "stock-billetterie.nb_places_max.invitation_enfant";
+    private static final String PROPERTY_NB_PLACES_MAX_INVITATION = "stock-billetterie.nb_places_max.invitation";
+
+    // Order filters
+    private static final String ORDER_FILTER_DATE = "date";
+    private static final String ORDER_FILTER_DATE_END = "dateEnd";
+    private static final String ORDER_FILTER_DATE_START = "dateStart";
+
     // Constants
     private static final String TITLE_CURRENT_SHOW_LIST = "module.stock.billetterie.show_list.aLaffiche.title";
     private static final String TITLE_COME_SHOW_LIST = "module.stock.billetterie.show_list.aVenir.title";
@@ -99,15 +137,15 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
     private static final int BOOKING_TO_COME = 1;
     private static final int BOOKING_PASSED = -1;
 
-    private static final String PROPERTY_POSTER_PATH = "stock-billetterie.poster.path";
-    private static final String PROPERTY_POSTER_TB_PATH = "stock-billetterie.poster.tb.path";
+    private static final String TYPE_A_VENIR = "aVenir";
+    private static final String TYPE_A_LAFFICHE = "aLaffiche";
 
     private IShowService _showService = (IShowService) SpringContextService.getContext( ).getBean(
-            "stock-tickets.showService" );
+            BEAN_STOCK_TICKETS_SHOW_SERVICE );
     private IProviderService _providerService = (IProviderService) SpringContextService.getContext( ).getBean(
             IProviderService.class );
     private ISeanceService _offerService = (ISeanceService) SpringContextService.getContext( ).getBean(
-            "stock-tickets.seanceService" );
+            BEAN_STOCK_TICKETS_SEANCE_SERVICE );
 
 
     /**
@@ -179,29 +217,29 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
             model.put( TicketsConstants.PARAMETER_ERROR, getHtmlError( fe, request ) );
         }
 
-        model.put( "show", show );
+        model.put( MARK_SHOW, show );
         
-        model.put( "partner", _providerService.findByIdWithProducts( show.getIdProvider( ) ) );
-        model.put( "url_poster", AppPropertiesService.getProperty( PROPERTY_POSTER_PATH ) );
+        model.put( MARK_PARTNER, _providerService.findByIdWithProducts( show.getIdProvider( ) ) );
+        model.put( MARK_URL_POSTER, AppPropertiesService.getProperty( PROPERTY_POSTER_PATH ) );
 
         // Calculate if show is open to book
-        model.put( "booking_opened", caculateBookingOpened( show ) );
+        model.put( MARK_BOOKING_OPENED, caculateBookingOpened( show ) );
 
         // Get seance list
         SeanceFilter filter = new SeanceFilter( );
         filter.setOrderAsc( false );
         List<String> orderList = new ArrayList<String>( );
-        orderList.add( "date" );
+        orderList.add( ORDER_FILTER_DATE );
         filter.setOrders( orderList );
-        model.put( "seance_date_list", _offerService.findSeanceByShow( show.getId( ), filter ) );
+        model.put( MARK_SEANCE_DATE_LIST, _offerService.findSeanceByShow( show.getId( ), filter ) );
 
         // If user authenticated, display booking bloc
-        model.put( "user", getUser( request ) );
+        model.put( MARK_USER, getUser( request ) );
 
-        model.put( "bloc_reservation", getBookingBloc( show, sSeanceDate, locale ) );
-        model.put( "sSeanceDate", sSeanceDate );
+        model.put( MARK_BLOC_RESERVATION, getBookingBloc( show, sSeanceDate, locale ) );
+        model.put( MARK_S_SEANCE_DATE, sSeanceDate );
 
-        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_DIR + "show_page.html", locale, model );
+        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_DIR + TEMPLATE_SHOW_PAGE, locale, model );
 
         page.setContent( template.getHtml( ) );
         page.setPathLabel( show.getName( ) );
@@ -251,7 +289,7 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
         DateFormat sdfComboSeance = new SimpleDateFormat( TicketsConstants.FORMAT_COMBO_DATE_SEANCE );
         if ( sDateSeance == null )
         {
-            return "";
+            return StringUtils.EMPTY;
         }
 
         Date dateSeance;
@@ -261,34 +299,42 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
         }
         catch ( ParseException e )
         {
-            throw new TechnicalException( "Erreur lors du parsing de la date de séance", e );
+            throw new TechnicalException( MESSAGE_ERROR_PARSING_SHOW_DATE, e );
         }
         List<SeanceDTO> seanceList = _offerService.findSeanceByDate( show.getId( ), dateSeance );
 
         // Generates template
         Map<String, Object> model = new HashMap<String, Object>( );
 
-        model.put( "seanceList", seanceList );
+        model.put( MARK_SEANCE_LIST, seanceList );
         // Add nb max purchase per offer type
-        ReferenceList quantityList = getNumberList( AppPropertiesService.getPropertyInt(
-                "stock-billetterie.nb_places_max.invitation", 2 ) );
+        ReferenceList quantityList = new ReferenceList( );
+        ReferenceItem refItem = new ReferenceItem( );
+        String strInteger = String.valueOf( 0 );
+        refItem.setCode( strInteger );
+        refItem.setName( strInteger );
+        quantityList.add( refItem );
+        refItem = new ReferenceItem( );
+        strInteger = AppPropertiesService.getProperty( PROPERTY_NB_PLACES_MAX_INVITATION, "2" );
+        refItem.setCode( strInteger );
+        refItem.setName( strInteger );
+        quantityList.add( refItem );
         model.put( MAX_RESERVATION_INVITATION, quantityList );
 
         quantityList = getNumberList( AppPropertiesService.getPropertyInt(
-                "stock-billetterie.nb_places_max.invitation_enfant", 2 ) );
+                PROPERTY_NB_PLACES_MAX_INVITATION_ENFANT, 2 ) );
         model.put( MAX_RESERVATION_INVITATION_ENFANT, quantityList );
 
         quantityList = getNumberList( AppPropertiesService.getPropertyInt(
-                "stock-billetterie.nb_places_max.tarif_reduit", 2 ) );
+                PROPERTY_NB_PLACES_MAX_TARIF_REDUIT, 2 ) );
         model.put( MAX_RESERVATION_TARIF_REDUIT, quantityList );
 
-        model.put( "seance_date", sDateSeance );
-        model.put( "show", show );
+        model.put( MARK_SEANCE_DATE, sDateSeance );
+        model.put( MARK_SHOW, show );
 
-        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_DIR + "booking_bloc.html", locale, model );
+        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_DIR + TEMPLATE_BOOKING_BLOC, locale, model );
 
         return template.getHtml( );
-        // return "";
     }
 
     /**
@@ -321,13 +367,13 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
     private XPage getCurrentListShowPage( XPage page, HttpServletRequest request, Locale locale )
     {
         List<String> orderList = new ArrayList<String>( );
-        orderList.add( "dateEnd" );
+        orderList.add( ORDER_FILTER_DATE_END );
         List<ShowDTO> currentListShow = _showService.getCurrentProduct( orderList, null );
         Map<String, Object> model = new HashMap<String, Object>( );
-        model.put( "show_list", currentListShow );
-        model.put( "type_list", "aLaffiche" );
-        model.put( "url_poster", AppPropertiesService.getProperty( PROPERTY_POSTER_TB_PATH ) );
-        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_DIR + "list_show_page.html", locale, model );
+        model.put( MARK_SHOW_LIST, currentListShow );
+        model.put( MARK_TYPE_LIST, TYPE_A_LAFFICHE );
+        model.put( MARK_URL_POSTER, AppPropertiesService.getProperty( PROPERTY_POSTER_TB_PATH ) );
+        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_DIR + TEMPLATE_LIST_SHOW_PAGE, locale, model );
         page.setContent( template.getHtml( ) );
 
         String title = getMessage( TITLE_CURRENT_SHOW_LIST, request );
@@ -348,13 +394,13 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
     private XPage getComeListShowPage( XPage page, HttpServletRequest request, Locale locale )
     {
         List<String> orderList = new ArrayList<String>( );
-        orderList.add( "dateStart" );
+        orderList.add( ORDER_FILTER_DATE_START );
         List<ShowDTO> comeListShow = _showService.getComeProduct( orderList, null );
         Map<String, Object> model = new HashMap<String, Object>( );
-        model.put( "show_list", comeListShow );
-        model.put( "type_list", "aVenir" );
-        model.put( "url_poster", AppPropertiesService.getProperty( PROPERTY_POSTER_TB_PATH ) );
-        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_DIR + "list_show_page.html", locale, model );
+        model.put( MARK_SHOW_LIST, comeListShow );
+        model.put( MARK_TYPE_LIST, TYPE_A_VENIR );
+        model.put( MARK_URL_POSTER, AppPropertiesService.getProperty( PROPERTY_POSTER_TB_PATH ) );
+        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_DIR + TEMPLATE_LIST_SHOW_PAGE, locale, model );
         page.setContent( template.getHtml( ) );
 
         String title = getMessage( TITLE_COME_SHOW_LIST, request );

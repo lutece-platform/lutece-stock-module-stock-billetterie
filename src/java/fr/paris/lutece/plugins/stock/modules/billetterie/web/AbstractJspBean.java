@@ -72,10 +72,14 @@ public class AbstractJspBean extends PluginAdminPageJspBean
 
     public static final int N_DEFAULT_ITEMS_PER_PAGE = AppPropertiesService.getPropertyInt(
             TicketsConstants.PROPERTY_DEFAULT_ITEM_PER_PAGE, 50 );
+    protected static final String ERROR_MESSAGE_KEY = "module.stock.billetterie.validation.error";
+    protected static final String ERROR_TEMPLATE = "admin/plugins/stock/modules/billetterie/error.html";
+    protected static final String FIELD_MESSAGE_PREFIX = "module.stock.billetterie.field.";
     protected static final String MARK_FILTER = "filter";
-    protected static final String MARK_PAGINATOR = "paginator";
+    protected static final String MARK_MESSAGE_LIST = "messageList";
     protected static final String MARK_NB_ITEMS_PER_PAGE = "nb_items_per_page";
-    private String _strCurrentPageIndex = "";
+    protected static final String MARK_PAGINATOR = "paginator";
+    private String _strCurrentPageIndex = StringUtils.EMPTY;
     private int _nItemsPerPage;
 
     /**
@@ -206,9 +210,9 @@ public class AbstractJspBean extends PluginAdminPageJspBean
             // message
             for ( ConstraintViolation<?> constraintViolation : ve.getConstraintViolationList( ) )
             {
-                String fieldName = getMessage( "module.stock.billetterie.field." + typeName + "."
+                String fieldName = getMessage( FIELD_MESSAGE_PREFIX + typeName + "."
                         + constraintViolation.getPropertyPath( ) );
-                messageList.add( getMessage( "module.stock.billetterie.validation.error",
+                messageList.add( getMessage( ERROR_MESSAGE_KEY,
                         String.valueOf( constraintViolation.getInvalidValue( ) ), fieldName,
                         constraintViolation.getMessage( ) ) );
             }
@@ -219,9 +223,9 @@ public class AbstractJspBean extends PluginAdminPageJspBean
             messageList.add( getMessage( be.getCode( ), be.getArguments( ) ) );
         }
         
-        model.put( "messageList", messageList );
+        model.put( MARK_MESSAGE_LIST, messageList );
 
-        HtmlTemplate template = AppTemplateService.getTemplate( "admin/plugins/stock/modules/billetterie/error.html",
+        HtmlTemplate template = AppTemplateService.getTemplate( ERROR_TEMPLATE,
                 getLocale( ), model );
         return template.getHtml( );
     }

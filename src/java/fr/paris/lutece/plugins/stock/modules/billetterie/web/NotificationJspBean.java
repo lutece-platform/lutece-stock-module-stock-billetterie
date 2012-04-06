@@ -35,6 +35,7 @@ package fr.paris.lutece.plugins.stock.modules.billetterie.web;
 
 import fr.paris.lutece.plugins.stock.business.purchase.PurchaseFilter;
 import fr.paris.lutece.plugins.stock.commons.exception.FunctionnalException;
+import fr.paris.lutece.plugins.stock.modules.billetterie.utils.constants.BilletterieConstants;
 import fr.paris.lutece.plugins.stock.modules.tickets.business.NotificationDTO;
 import fr.paris.lutece.plugins.stock.modules.tickets.business.ReservationDTO;
 import fr.paris.lutece.plugins.stock.modules.tickets.business.SeanceDTO;
@@ -83,9 +84,14 @@ public class NotificationJspBean  extends AbstractJspBean
     public static final String MARK_SEANCE = "seance";
     public static final String MARK_LIST_RESERVATION = "liste_reservations";
     public static final String MARK_TARIF_REDUIT_ID = "idTarifReduit";
+    public static final String MARK_BASE_URL = "base_url";
+
+    // BEAN
+    private static final String BEAN_STOCK_TICKETS_SEANCE_SERVICE = "stock-tickets.seanceService";
 
     // JSP
     private static final String JSP_MANAGE_OFFERS = "jsp/admin/plugins/stock/modules/billetterie/ManageOffers.jsp";
+    private static final String JSP_SEND_NOTIFICATION = "SendNotification.jsp";
     
     // TEMPLATES
     private static final String TEMPLATE_SEND_NOTIFICATION = "admin/plugins/stock/modules/billetterie/send_notification.html";
@@ -99,6 +105,9 @@ public class NotificationJspBean  extends AbstractJspBean
     // MESSAGES
     private static final String MESSAGE_AVERTISSEMENT_CANCEL_OFFER = "module.stock.billetterie.message.cancelOffer.avertissement";
     private static final String MESSAGE_AVERTISSEMENT_SEND_OFFER = "module.stock.billetterie.message.sendOffer.avertissement";
+
+    // ORDER FILTER
+    private static final String ORDER_FILTER_USER_NAME = "userName";
     
     // @Inject
     // @Named( "stock-tickets.seanceService" )
@@ -114,7 +123,7 @@ public class NotificationJspBean  extends AbstractJspBean
     public NotificationJspBean(  )
     {
         super( );
-        _serviceOffer = (ISeanceService) SpringContextService.getBean( "stock-tickets.seanceService" );
+        _serviceOffer = (ISeanceService) SpringContextService.getBean( BEAN_STOCK_TICKETS_SEANCE_SERVICE );
         _servicePurchase = SpringContextService.getContext( ).getBean( IPurchaseService.class );
         _serviceNotification = SpringContextService.getContext( ).getBean( INotificationService.class );
     }
@@ -134,7 +143,7 @@ public class NotificationJspBean  extends AbstractJspBean
         if ( ve != null )
         {
         	notification = ( NotificationDTO ) ve.getBean( );
-            model.put( "error", getHtmlError( ve ) );
+            model.put( BilletterieConstants.ERROR, getHtmlError( ve ) );
         }
         else
         {
@@ -155,7 +164,7 @@ public class NotificationJspBean  extends AbstractJspBean
         	notification.setIdOffer( idOffer );
             List<String> orderList = new ArrayList<String>( );
             PurchaseFilter filter = new PurchaseFilter( );
-            orderList.add( "userName" );
+            orderList.add( ORDER_FILTER_USER_NAME );
             filter.setOrders( orderList );
             filter.setOrderAsc( true );
             filter.setIdOffer( idOffer );
@@ -166,7 +175,7 @@ public class NotificationJspBean  extends AbstractJspBean
             {
             	notification.setNotificationAction( TicketsConstants.OFFER_STATUT_CANCEL );
             	// Set the default recipientsTo
-                StringBuilder recipientsTo = new StringBuilder( 100 ).append( "" );
+                StringBuilder recipientsTo = new StringBuilder( 100 );
             	for ( ReservationDTO purchase : listReservations )
             	{
                     recipientsTo.append( purchase.getEmailAgent( ) ).append(
@@ -178,7 +187,7 @@ public class NotificationJspBean  extends AbstractJspBean
             			" - " + seance.getHour( ) );
             	// Set the default message
                 Map<String, Object> modelMail = new HashMap<String, Object>( );
-                modelMail.put( "base_url", AppPathService.getBaseUrl( request ) );
+                modelMail.put( MARK_BASE_URL, AppPathService.getBaseUrl( request ) );
                 modelMail.put( MARK_SEANCE, seance );
                 HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_MAIL_CANCEL, request.getLocale( ), modelMail );
             	notification.setMessage( template.getHtml( ) );
@@ -195,7 +204,7 @@ public class NotificationJspBean  extends AbstractJspBean
             			" - " + seance.getHour( ) );
             	// Set the default message
                 Map<String, Object> modelMail = new HashMap<String, Object>( );
-                modelMail.put( "base_url", AppPathService.getBaseUrl( request ) );
+                modelMail.put( MARK_BASE_URL, AppPathService.getBaseUrl( request ) );
                 modelMail.put( MARK_SEANCE, seance );
                 modelMail.put( MARK_TARIF_REDUIT_ID, TicketsConstants.OFFER_TYPE_REDUCT_ID );
                 modelMail.put( MARK_LIST_RESERVATION, listReservations );
@@ -206,13 +215,13 @@ public class NotificationJspBean  extends AbstractJspBean
         	else
         	{
             	// Set the default recipientsTo
-            	String recipientsTo = "";
+                StringBuilder recipientsTo = new StringBuilder( );
             	for ( ReservationDTO purchase : listReservations )
             	{
-                    recipientsTo += purchase.getEmailAgent( )
-                            + AppPropertiesService.getProperty( PROPERTY_MAIL_SEPARATOR );
+                    recipientsTo.append( purchase.getEmailAgent( ) ).append(
+                            AppPropertiesService.getProperty( PROPERTY_MAIL_SEPARATOR ) );
             	}
-            	notification.setRecipientsTo( recipientsTo );
+                notification.setRecipientsTo( recipientsTo.toString( ) );
         	}
         }
 
@@ -252,7 +261,7 @@ public class NotificationJspBean  extends AbstractJspBean
      */
     public String doSendNotification( HttpServletRequest request )
     {
-        if ( StringUtils.isNotBlank( request.getParameter( "cancel" ) ) )
+        if ( StringUtils.isNotBlank( request.getParameter( StockConstants.PARAMETER_BUTTON_CANCEL ) ) )
         {
             return doGoBack( request );
         }
@@ -282,7 +291,7 @@ public class NotificationJspBean  extends AbstractJspBean
         }
         catch ( FunctionnalException e )
         {
-            return manageFunctionnalException( request, e, "SendNotification.jsp" );
+            return manageFunctionnalException( request, e, JSP_SEND_NOTIFICATION );
         }
 
         return doGoBack( request );

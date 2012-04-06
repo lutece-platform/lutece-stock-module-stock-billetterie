@@ -40,6 +40,7 @@ import fr.paris.lutece.plugins.stock.commons.ResultList;
 import fr.paris.lutece.plugins.stock.commons.exception.BusinessException;
 import fr.paris.lutece.plugins.stock.commons.exception.FunctionnalException;
 import fr.paris.lutece.plugins.stock.commons.exception.TechnicalException;
+import fr.paris.lutece.plugins.stock.modules.billetterie.utils.constants.BilletterieConstants;
 import fr.paris.lutece.plugins.stock.modules.tickets.business.SeanceDTO;
 import fr.paris.lutece.plugins.stock.modules.tickets.business.SeanceFilter;
 import fr.paris.lutece.plugins.stock.modules.tickets.business.ShowDTO;
@@ -121,6 +122,12 @@ public class ShowJspBean extends AbstractJspBean
     /** The Constant PARAMETER_PRODUCT_TYPE_LIST_DEFAULT. */
     public static final String PARAMETER_PRODUCT_TYPE_LIST_DEFAULT = "product_type_list_default";
 
+    /** The Constant BEAN_STOCK_TICKETS_SEANCE_SERVICE. */
+    private static final String BEAN_STOCK_TICKETS_SEANCE_SERVICE = "stock-tickets.seanceService";
+
+    /** The Constant BEAN_STOCK_TICKETS_SHOW_SERVICE. */
+    private static final String BEAN_STOCK_TICKETS_SHOW_SERVICE = "stock-tickets.showService";
+
     /** The Constant MARK_LIST_PRODUCTS. */
     private static final String MARK_LIST_PRODUCTS = "list_products";
 
@@ -132,8 +139,14 @@ public class ShowJspBean extends AbstractJspBean
 
     private static final String MARK_URL_POSTER = "url_poster";
 
+    /** The Constant MARK_PUBLIC_LIST. */
+    private static final String MARK_PUBLIC_LIST = "public_list";
+
     /** The Constant PARAMETER_POSTER. */
     private static final String PARAMETER_POSTER = "posterFile";
+
+    /** The Constant PARAMETER_A_LAFFICHE. */
+    private static final String PARAMETER_A_LAFFICHE = "aLaffiche";
 
     /** The Constant PROPERTY_POSTER_WIDTH. */
     private static final String PROPERTY_POSTER_WIDTH = "stock-billetterie.poster.width";
@@ -142,6 +155,9 @@ public class ShowJspBean extends AbstractJspBean
     private static final String PROPERTY_POSTER_HEIGHT = "stock-billetterie.poster.height";
 
     private static final String PROPERTY_POSTER_PATH = "stock-billetterie.poster.path";
+
+    /** The Constant PROPERTY_STOCK_BILLETTERIE_SHOW_PUBLIC. */
+    private static final String PROPERTY_STOCK_BILLETTERIE_SHOW_PUBLIC = "stock-billetterie.show.public";
 
     // I18N
     /** The Constant PAGE_TITLE_MANAGE_PRODUCT. */
@@ -158,6 +174,9 @@ public class ShowJspBean extends AbstractJspBean
     // JSP
     /** The Constant JSP_MANAGE_PRODUCTS. */
     private static final String JSP_MANAGE_PRODUCTS = "jsp/admin/plugins/stock/modules/billetterie/ManageProducts.jsp";
+
+    /** The Constant JSP_SAVE_PRODUCT. */
+    private static final String JSP_SAVE_PRODUCT = "SaveProduct.jsp";
 
     /** The Constant CATEGORY_DO_DELETE_JSP. */
     private static final String CATEGORY_DO_DELETE_JSP = "jsp/admin/plugins/stock/modules/billetterie/DoDeleteProduct.jsp";
@@ -180,6 +199,9 @@ public class ShowJspBean extends AbstractJspBean
 
     /** The Constant MESSAGE_ERROR_MANDATORY_POSTER. */
     private static final String MESSAGE_ERROR_MANDATORY_POSTER = "module.stock.billetterie.message.error.mandatory_poster";
+
+    /** The Constant ERROR_MESSAGE_GET_AFFICHE. */
+    private static final String MESSAGE_ERROR_GET_AFFICHE = "Problème lors de la récupération de l'affiche";
 
 
     // Variables
@@ -218,8 +240,8 @@ public class ShowJspBean extends AbstractJspBean
     public ShowJspBean( )
     {
         _productFilter = new ShowFilter( );
-        _serviceProduct = (IShowService) SpringContextService.getBean( "stock-tickets.showService" );
-        _serviceOffer = (ISeanceService) SpringContextService.getBean( "stock-tickets.seanceService" );
+        _serviceProduct = (IShowService) SpringContextService.getBean( BEAN_STOCK_TICKETS_SHOW_SERVICE );
+        _serviceOffer = (ISeanceService) SpringContextService.getBean( BEAN_STOCK_TICKETS_SEANCE_SERVICE );
         _serviceProvider = SpringContextService.getContext( ).getBean( IProviderService.class );
         _serviceCategory = SpringContextService.getContext( ).getBean( ICategoryService.class );
         _serviceStatistic = SpringContextService.getContext( ).getBean( IStatisticService.class );
@@ -239,7 +261,7 @@ public class ShowJspBean extends AbstractJspBean
 
         ProductFilter filter = getProductFilter( request );
         List<String> orderList = new ArrayList<String>( );
-        orderList.add( "name" );
+        orderList.add( BilletterieConstants.NAME );
         filter.setOrderAsc( true );
         filter.setOrders( orderList );
         
@@ -251,7 +273,7 @@ public class ShowJspBean extends AbstractJspBean
 
         // Fill the model
         Map<String, Object> model = new HashMap<String, Object>( );
-        model.put( TicketsConstants.MARK_NB_ITEMS_PER_PAGE, "" + _nItemsPerPage );
+        model.put( TicketsConstants.MARK_NB_ITEMS_PER_PAGE, String.valueOf( _nItemsPerPage ) );
         model.put( TicketsConstants.MARK_PAGINATOR, paginator );
         model.put( MARK_LIST_PRODUCTS, paginator.getPageItems( ) );
 
@@ -259,12 +281,16 @@ public class ShowJspBean extends AbstractJspBean
         ProviderFilter providerFilter = new ProviderFilter( );
         providerFilter.setOrderAsc( true );
         providerFilter.setOrders( orderList );
-        ReferenceList providerComboList = ListUtils.toReferenceList( _serviceProvider.findByFilter( providerFilter, null ), "id", "name",
+        ReferenceList providerComboList = ListUtils.toReferenceList(
+                _serviceProvider.findByFilter( providerFilter, null ), BilletterieConstants.ID,
+                BilletterieConstants.NAME,
         		StockConstants.EMPTY_STRING );
         CategoryFilter categoryFilter = new CategoryFilter( );
         categoryFilter.setOrderAsc( true );
         categoryFilter.setOrders( orderList );
-        ReferenceList categoryComboList = ListUtils.toReferenceList( _serviceCategory.findByFilter( categoryFilter, null ), "id", "name",
+        ReferenceList categoryComboList = ListUtils.toReferenceList(
+                _serviceCategory.findByFilter( categoryFilter, null ), BilletterieConstants.ID,
+                BilletterieConstants.NAME,
                 StockConstants.EMPTY_STRING );
         model.put( MARK_LIST_PROVIDERS, providerComboList );
         model.put( MARK_LIST_CATEGORIES, categoryComboList );
@@ -294,7 +320,7 @@ public class ShowJspBean extends AbstractJspBean
         if ( fe != null )
         {
             product = (ShowDTO) fe.getBean( );
-            model.put( "error", getHtmlError( fe ) );
+            model.put( BilletterieConstants.ERROR, getHtmlError( fe ) );
         }
         else
         {
@@ -327,20 +353,24 @@ public class ShowJspBean extends AbstractJspBean
 
         // Combo
         List<String> orderList = new ArrayList<String>( );
-        orderList.add( "name" );
+        orderList.add( BilletterieConstants.NAME );
         ProviderFilter providerFilter = new ProviderFilter( );
         providerFilter.setOrderAsc( true );
         providerFilter.setOrders( orderList );
-        ReferenceList providerComboList = ListUtils.toReferenceList( _serviceProvider.findByFilter( providerFilter, null ), "id", "name",
+        ReferenceList providerComboList = ListUtils.toReferenceList(
+                _serviceProvider.findByFilter( providerFilter, null ), BilletterieConstants.ID,
+                BilletterieConstants.NAME,
         		StockConstants.EMPTY_STRING );
         CategoryFilter categoryFilter = new CategoryFilter( );
         categoryFilter.setOrderAsc( true );
         categoryFilter.setOrders( orderList );
-        ReferenceList categoryComboList = ListUtils.toReferenceList( _serviceCategory.findByFilter( categoryFilter, null ), "id", "name",
+        ReferenceList categoryComboList = ListUtils.toReferenceList(
+                _serviceCategory.findByFilter( categoryFilter, null ), BilletterieConstants.ID,
+                BilletterieConstants.NAME,
                 StockConstants.EMPTY_STRING );
         model.put( MARK_LIST_PROVIDERS, providerComboList );
         model.put( MARK_LIST_CATEGORIES, categoryComboList );
-        model.put( "public_list", ListUtils.getPropertyList( "stock-billetterie.show.public" ) );
+        model.put( MARK_PUBLIC_LIST, ListUtils.getPropertyList( PROPERTY_STOCK_BILLETTERIE_SHOW_PUBLIC ) );
 
 
         model.put( StockConstants.MARK_JSP_BACK, request.getParameter( StockConstants.MARK_JSP_BACK ) );
@@ -376,7 +406,7 @@ public class ShowJspBean extends AbstractJspBean
 
         ShowDTO product = new ShowDTO( );
         populate( product, request );
-        if ( StringUtils.isNotEmpty( request.getParameter( "aLaffiche" ) ) )
+        if ( StringUtils.isNotEmpty( request.getParameter( PARAMETER_A_LAFFICHE ) ) )
         {
             product.setAlaffiche( true );
         }
@@ -398,7 +428,7 @@ public class ShowJspBean extends AbstractJspBean
         }
         catch ( FunctionnalException e )
         {
-            return manageFunctionnalException( request, e, "SaveProduct.jsp" );
+            return manageFunctionnalException( request, e, JSP_SAVE_PRODUCT );
         }
 
         return doGoBack( request );
@@ -452,7 +482,7 @@ public class ShowJspBean extends AbstractJspBean
                 }
                 catch ( IOException e )
                 {
-                    throw new TechnicalException( "Problème lors de la récupération de l'affiche", e );
+                    throw new TechnicalException( MESSAGE_ERROR_GET_AFFICHE, e );
                 }
             }
         }
@@ -501,7 +531,7 @@ public class ShowJspBean extends AbstractJspBean
         ProductFilter filter = new ShowFilter( );
         populate( filter, request );
 
-        if ( StringUtils.isNotEmpty( request.getParameter( "aLaffiche" ) ) )
+        if ( StringUtils.isNotEmpty( request.getParameter( PARAMETER_A_LAFFICHE ) ) )
         {
             filter.setAlaffiche( true );
         }

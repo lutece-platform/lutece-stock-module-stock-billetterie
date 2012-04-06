@@ -36,6 +36,7 @@ package fr.paris.lutece.plugins.stock.modules.billetterie.web;
 import fr.paris.lutece.plugins.stock.business.provider.ProviderFilter;
 import fr.paris.lutece.plugins.stock.commons.ResultList;
 import fr.paris.lutece.plugins.stock.commons.exception.FunctionnalException;
+import fr.paris.lutece.plugins.stock.modules.billetterie.utils.constants.BilletterieConstants;
 import fr.paris.lutece.plugins.stock.modules.tickets.business.PartnerDTO;
 import fr.paris.lutece.plugins.stock.modules.tickets.business.ShowDTO;
 import fr.paris.lutece.plugins.stock.modules.tickets.business.ShowFilter;
@@ -78,13 +79,18 @@ public class PartnerJspBean extends AbstractJspBean
     protected static final String PROPERTY_DEFAULT_SESSION_PER_PAGE = "stock.itemsPerPage";
     private static final String MARK_LIST_PARTNERS = "list_partners";
 
+    // BEANS
+    private static final String BEAN_STOCK_TICKETS_SHOW_SERVICE = "stock-tickets.showService";
+
     // I18N
     private static final String PAGE_TITLE_MANAGE_PARTNER = "module.stock.billetterie.manage_partner.title";
     private static final String PAGE_TITLE_CREATE_PARTNER = "module.stock.billetterie.create_partner.title";
     private static final String PAGE_TITLE_MODIFY_PARTNER = "module.stock.billetterie.modify_partner.title";
 
     // JSP
+    private static final String JSP_DO_DELETE_PARTNER = "jsp/admin/plugins/stock/modules/billetterie/DoDeletePartner.jsp";
     private static final String JSP_MANAGE_PARTNERS = "jsp/admin/plugins/stock/modules/billetterie/ManagePartners.jsp";
+    private static final String JSP_SAVE_PARTNER = "SavePartner.jsp";
 
     // Templates
     private static final String TEMPLATE_MANAGE_PARTNERS = "admin/plugins/stock/modules/billetterie/manage_partners.html";
@@ -93,7 +99,6 @@ public class PartnerJspBean extends AbstractJspBean
     //MESSAGES
     private static final String MESSAGE_CONFIRMATION_DELETE_PARTNER = "module.stock.billetterie.message.deletePartner.confirmation";
     private static final String MESSAGE_DELETE_PARTNER_WITH_SHOW = "module.stock.billetterie.message.deletePartner.with.show";
-
 
     // Variables
     // Paginator ManagePartners
@@ -115,7 +120,7 @@ public class PartnerJspBean extends AbstractJspBean
         super(  );
         _providerFilter = new ProviderFilter( );
         _serviceProvider = SpringContextService.getContext( ).getBean( IProviderService.class );
-        _serviceShow = (IShowService) SpringContextService.getBean( "stock-tickets.showService" );
+        _serviceShow = (IShowService) SpringContextService.getBean( BEAN_STOCK_TICKETS_SHOW_SERVICE );
     }
 
     /**
@@ -168,7 +173,7 @@ public class PartnerJspBean extends AbstractJspBean
 
         ProviderFilter filter = getProviderFilter( request );
         List<String> orderList = new ArrayList<String>( );
-        orderList.add( "name" );
+        orderList.add( BilletterieConstants.NAME );
         filter.setOrders( orderList );
         filter.setOrderAsc( true );
 
@@ -181,7 +186,7 @@ public class PartnerJspBean extends AbstractJspBean
         Map<String, Object> model = new HashMap<String, Object>(  );
 
         // the paginator
-        model.put( TicketsConstants.MARK_NB_ITEMS_PER_PAGE, "" + _nItemsPerPage );
+        model.put( TicketsConstants.MARK_NB_ITEMS_PER_PAGE, String.valueOf( _nItemsPerPage ) );
         model.put( TicketsConstants.MARK_PAGINATOR, paginator );
         model.put( MARK_LIST_PARTNERS, paginator.getPageItems(  ) );
         // the filter
@@ -207,7 +212,7 @@ public class PartnerJspBean extends AbstractJspBean
         if ( ve != null )
         {
             provider = (PartnerDTO) ve.getBean( );
-            model.put( "error", getHtmlError( ve ) );
+            model.put( BilletterieConstants.ERROR, getHtmlError( ve ) );
         }
         else
         {
@@ -248,7 +253,7 @@ public class PartnerJspBean extends AbstractJspBean
      */
     public String doSavePartner( HttpServletRequest request )
     {
-        if ( StringUtils.isNotBlank( request.getParameter( "cancel" ) ) )
+        if ( StringUtils.isNotBlank( request.getParameter( StockConstants.PARAMETER_BUTTON_CANCEL ) ) )
         {
             return doGoBack( request );
         }
@@ -264,7 +269,7 @@ public class PartnerJspBean extends AbstractJspBean
         }
         catch ( FunctionnalException e )
         {
-            return manageFunctionnalException( request, e, "SavePartner.jsp" );
+            return manageFunctionnalException( request, e, JSP_SAVE_PARTNER );
         }
 
         return doGoBack( request );
@@ -294,7 +299,7 @@ public class PartnerJspBean extends AbstractJspBean
                     AdminMessage.TYPE_STOP );
         }
 
-        UrlItem url = new UrlItem( "jsp/admin/plugins/stock/modules/billetterie/DoDeletePartner.jsp" );
+        UrlItem url = new UrlItem( JSP_DO_DELETE_PARTNER );
 
         Map<String, Object> urlParam = new HashMap<String, Object>( );
         urlParam.put( PARAMETER_PARTNER_ID, nIdProvider );

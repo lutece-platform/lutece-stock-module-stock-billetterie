@@ -53,6 +53,10 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class BilleterieDashboardComponent extends DashboardComponent
 {
+    private static final String MARK_NB_PURCHASE_COUNT_OF_MONTH = "nbPurchaseCountDuMois";
+    private static final String MARK_NB_PURCHASE_COUNT_OF_DAY = "nbPurchaseCountDuJour";
+    private static final String MARK_NB_PRODUCT_A_VENIR = "nbProductAVenir";
+    private static final String MARK_NB_PRODUCT_A_L_AFFICHE = "nbProductALAffiche";
     // TEMPLATES
     private static final String TEMPLATE_ADMIN_DASHBOARD = "admin/plugins/stock/modules/billetterie/billeterie_dashboard.html";
 
@@ -71,17 +75,17 @@ public class BilleterieDashboardComponent extends DashboardComponent
         Integer nProductCountALAffiche = statisticService.getCountProductALAffiche( );
         Integer nProductCountAVenir = statisticService.getCountProductAVenir( );
 
-        Integer nbPurchaseCountDuJour = statisticService.getCountPurchaseOfDay( );
-        Integer nbPurchaseCountDuMois = statisticService.getCountPurchaseOfMonth( );
+        Integer nbPurchaseCountOfDay = statisticService.getCountPurchaseOfDay( );
+        Integer nbPurchaseCountOfMonth = statisticService.getCountPurchaseOfMonth( );
 
         // Fill the model
         Map<String, Object> model = new HashMap<String, Object>( );
 
-        model.put( "nbProductALAffiche", nProductCountALAffiche );
-        model.put( "nbProductAVenir", nProductCountAVenir );
+        model.put( MARK_NB_PRODUCT_A_L_AFFICHE, nProductCountALAffiche );
+        model.put( MARK_NB_PRODUCT_A_VENIR, nProductCountAVenir );
 
-        model.put( "nbPurchaseCountDuJour", nbPurchaseCountDuJour );
-        model.put( "nbPurchaseCountDuMois", nbPurchaseCountDuMois );
+        model.put( MARK_NB_PURCHASE_COUNT_OF_DAY, nbPurchaseCountOfDay );
+        model.put( MARK_NB_PURCHASE_COUNT_OF_MONTH, nbPurchaseCountOfMonth );
 
         template = AppTemplateService.getTemplate( TEMPLATE_ADMIN_DASHBOARD, user.getLocale( ), model );
         return template.getHtml( );

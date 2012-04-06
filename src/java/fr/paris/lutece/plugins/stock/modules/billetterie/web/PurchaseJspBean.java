@@ -37,6 +37,7 @@ import fr.paris.lutece.plugins.stock.business.purchase.exception.PurchaseUnavail
 import fr.paris.lutece.plugins.stock.commons.ResultList;
 import fr.paris.lutece.plugins.stock.commons.exception.BusinessException;
 import fr.paris.lutece.plugins.stock.commons.exception.FunctionnalException;
+import fr.paris.lutece.plugins.stock.modules.billetterie.utils.constants.BilletterieConstants;
 import fr.paris.lutece.plugins.stock.modules.tickets.business.ReservationDTO;
 import fr.paris.lutece.plugins.stock.modules.tickets.business.ReservationFilter;
 import fr.paris.lutece.plugins.stock.modules.tickets.business.SeanceDTO;
@@ -61,6 +62,7 @@ import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.html.DelegatePaginator;
 import fr.paris.lutece.util.html.HtmlTemplate;
 import fr.paris.lutece.util.html.Paginator;
+import fr.paris.lutece.util.url.UrlItem;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -84,6 +86,9 @@ public class PurchaseJspBean  extends AbstractJspBean
     
     public static final String RESOURCE_TYPE = "STOCK";
     public static final String RIGHT_MANAGE_PURCHASES = "PURCHASES_MANAGEMENT";
+
+    // BEANS
+    private static final String BEAN_STOCK_TICKETS_SEANCE_SERVICE = "stock-tickets.seanceService";
 
     // PARAMETERS
     public static final String PARAMETER_PURCHASE_ID = "purchase_id";
@@ -130,6 +135,7 @@ public class PurchaseJspBean  extends AbstractJspBean
     private static final String JSP_MANAGE_PURCHASES = "jsp/admin/plugins/stock/modules/billetterie/ManagePurchase.jsp";
     private static final String JSP_DO_DELETE_PURCHASE = "jsp/admin/plugins/stock/modules/billetterie/DoDeletePurchase.jsp";
     private static final String JSP_MANAGE_OFFERS = "jsp/admin/plugins/stock/modules/billetterie/ManageOffers.jsp";
+    private static final String JSP_SAVE_PURCHASE = "SavePurchase.jsp";
     
     // TEMPLATES
     private static final String TEMPLATE_MANAGE_PURCHASES = "admin/plugins/stock/modules/billetterie/manage_purchases.html";
@@ -148,6 +154,12 @@ public class PurchaseJspBean  extends AbstractJspBean
     private static final String MESSAGE_SEARCH_OFFER_DATE = "module.stock.billetterie.message.search.offer.date";
     private static final String MESSAGE_SEARCH_PURCHASE_DATE = "module.stock.billetterie.message.search.purchase.date";
     
+    // ORDER FILTERS
+    private static final String ORDER_FILTER_DATE = "date";
+    private static final String ORDER_FILTER_OFFER_TYPE_NAME = "offer.type.name";
+    private static final String ORDER_FILTER_OFFER_DATE = "offer.date";
+    private static final String ORDER_FILTER_OFFER_PRODUCT_NAME = "offer.product.name";
+
     // MEMBERS VARIABLES
     // Paginator
     private int _nDefaultItemsPerPage;
@@ -172,7 +184,7 @@ public class PurchaseJspBean  extends AbstractJspBean
 
         _purchaseFilter = new ReservationFilter( );
         _servicePurchase = SpringContextService.getContext( ).getBean( IPurchaseService.class );
-        _serviceOffer = (ISeanceService) SpringContextService.getBean( "stock-tickets.seanceService" );
+        _serviceOffer = (ISeanceService) SpringContextService.getBean( BEAN_STOCK_TICKETS_SEANCE_SERVICE );
         _purchaseSessionManager = SpringContextService.getContext( ).getBean( IPurchaseSessionManager.class );
     }
 
@@ -254,10 +266,10 @@ public class PurchaseJspBean  extends AbstractJspBean
 
         // OrderList for purchase list
         List<String> orderList = new ArrayList<String>( );
-        orderList.add( "date" );
-        orderList.add( "offer.product.name" );
-        orderList.add( "offer.date" );
-        orderList.add( "offer.type.name" );
+        orderList.add( ORDER_FILTER_DATE );
+        orderList.add( ORDER_FILTER_OFFER_PRODUCT_NAME );
+        orderList.add( ORDER_FILTER_OFFER_DATE );
+        orderList.add( ORDER_FILTER_OFFER_TYPE_NAME );
         filter.setOrders( orderList );
         filter.setOrderAsc( true );
         
@@ -287,11 +299,12 @@ public class PurchaseJspBean  extends AbstractJspBean
         model.put( MARK_LOCALE, getLocale( ) );
 
         // the paginator
-        model.put( TicketsConstants.MARK_NB_ITEMS_PER_PAGE, "" + _nItemsPerPage );
+        model.put( TicketsConstants.MARK_NB_ITEMS_PER_PAGE, String.valueOf( _nItemsPerPage ) );
         model.put( TicketsConstants.MARK_PAGINATOR, paginator );
         model.put( MARK_LIST_PURCHASES, paginator.getPageItems(  ) );
         // Combo
-        ReferenceList offerGenreComboList = ListUtils.toReferenceList( _serviceOffer.findAllGenre( ), "id", "name",
+        ReferenceList offerGenreComboList = ListUtils.toReferenceList( _serviceOffer.findAllGenre( ),
+                BilletterieConstants.ID, BilletterieConstants.NAME,
                 StockConstants.EMPTY_STRING );
         model.put( MARK_LIST_OFFER_GENRE, offerGenreComboList );
         // offer statut cancel
@@ -322,7 +335,7 @@ public class PurchaseJspBean  extends AbstractJspBean
         if ( ve != null )
         {
             purchase = (ReservationDTO) ve.getBean( );
-            model.put( "error", getHtmlError( ve ) );
+            model.put( BilletterieConstants.ERROR, getHtmlError( ve ) );
             strIdOffer = purchase.getOffer( ).getId( ).toString( );
         }
         else
@@ -381,7 +394,7 @@ public class PurchaseJspBean  extends AbstractJspBean
      */
     public String doSavePurchase( HttpServletRequest request )
     {
-        if ( StringUtils.isNotBlank( request.getParameter( "cancel" ) ) )
+        if ( StringUtils.isNotBlank( request.getParameter( StockConstants.PARAMETER_BUTTON_CANCEL ) ) )
         {
             return doGoBack( request );
         }
@@ -404,18 +417,19 @@ public class PurchaseJspBean  extends AbstractJspBean
                 throw new BusinessException( purchase, MESSAGE_INSUFFICIENT_PLACE_REMAINING );
             }
             
-            ReservationDTO saveReservation = _servicePurchase.doSavePurchase( purchase, request.getSession( ).getId( ) );
+            _servicePurchase.doSavePurchase( purchase, request.getSession( ).getId( ) );
 
         }
         catch ( FunctionnalException e )
         {
-            return manageFunctionnalException( request, e, "SavePurchase.jsp" );
+            return manageFunctionnalException( request, e, JSP_SAVE_PURCHASE );
         }
 
-        String strArg = "?" + MARK_OFFER_ID + "=" + purchase.getOffer( ).getId( );
-        String strArgum = "&" + MARK_PURCHASSE_ID + "=" + purchase.getId( );
+        UrlItem redirection = new UrlItem( AppPathService.getBaseUrl( request ) );
+        redirection.addParameter( MARK_OFFER_ID, purchase.getOffer( ).getId( ) );
+        redirection.addParameter( MARK_PURCHASSE_ID, purchase.getId( ) );
         
-        return AppPathService.getBaseUrl( request ) + JSP_MANAGE_PURCHASES + strArg + strArgum;
+        return redirection.getUrl( );
     }
 
     /**
@@ -460,7 +474,7 @@ public class PurchaseJspBean  extends AbstractJspBean
         String strJspBack = JSP_MANAGE_PURCHASES;
 
         return AdminMessageService.getMessageUrl( request, MESSAGE_CONFIRMATION_DELETE_PURCHASE, null,
-                MESSAGE_TITLE_CONFIRMATION_DELETE_PURCHASE, JSP_DO_DELETE_PURCHASE, "_self",
+                MESSAGE_TITLE_CONFIRMATION_DELETE_PURCHASE, JSP_DO_DELETE_PURCHASE, BilletterieConstants.TARGET_SELF,
                 AdminMessage.TYPE_CONFIRMATION, urlParam, strJspBack );
     }
 

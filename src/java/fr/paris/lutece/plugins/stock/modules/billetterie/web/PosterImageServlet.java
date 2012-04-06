@@ -57,6 +57,11 @@ import org.apache.log4j.Logger;
 public class PosterImageServlet extends HttpServlet
 {
 
+    private static final String ERROR_MESSAGE = "Appel de PosterImageServlet avec un id de produit null";
+    private static final String CONTENT_TYPE_IMAGE_JPEG = "image/jpeg";
+    private static final String PARAMETER_TB = "tb";
+    private static final String PARAMETER_PRODUCT_ID = "product_id";
+    private static final String BEAN_STOCK_TICKETS_SHOW_SERVICE = "stock-tickets.showService";
     /**  
      *
      */
@@ -65,7 +70,7 @@ public class PosterImageServlet extends HttpServlet
 
     /** The product service. */
     private IShowService _productService = (IShowService) SpringContextService
-            .getBean( "stock-tickets.showService" );
+            .getBean( BEAN_STOCK_TICKETS_SHOW_SERVICE );
 
     /**
      * Returns poster image
@@ -78,11 +83,12 @@ public class PosterImageServlet extends HttpServlet
     protected void doGet( HttpServletRequest request, HttpServletResponse response ) throws ServletException,
             IOException
     {
-        String sIdProduct = request.getParameter( "product_id" );
+        String sIdProduct = request.getParameter( PARAMETER_PRODUCT_ID );
         if ( StringUtils.isNotEmpty( sIdProduct ) )
         {
             Integer idProduct = Integer.parseInt( sIdProduct );
-            boolean isThumbnail = request.getParameter( "tb" ) != null && request.getParameter( "tb" ).equals( "true" );
+            boolean isThumbnail = request.getParameter( PARAMETER_TB ) != null
+                    && request.getParameter( PARAMETER_TB ).equals( String.valueOf( true ) );
             byte[] bImage;
             if ( isThumbnail )
             {
@@ -93,7 +99,7 @@ public class PosterImageServlet extends HttpServlet
                 bImage = _productService.getImage( idProduct );
             }
             response.setContentLength( bImage.length );
-            response.setContentType( "image/jpeg" );
+            response.setContentType( CONTENT_TYPE_IMAGE_JPEG );
 
             ServletOutputStream os = response.getOutputStream( );
             IOUtils.write( bImage, os );
@@ -101,7 +107,7 @@ public class PosterImageServlet extends HttpServlet
         }
         else
         {
-            LOGGER.error( "Appel de PosterImageServlet avec un id de produit null" );
+            LOGGER.error( ERROR_MESSAGE );
         }
     }
 

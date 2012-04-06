@@ -38,6 +38,7 @@ import fr.paris.lutece.plugins.stock.business.product.ProductFilter;
 import fr.paris.lutece.plugins.stock.business.purchase.PurchaseFilter;
 import fr.paris.lutece.plugins.stock.commons.ResultList;
 import fr.paris.lutece.plugins.stock.commons.exception.FunctionnalException;
+import fr.paris.lutece.plugins.stock.modules.billetterie.utils.constants.BilletterieConstants;
 import fr.paris.lutece.plugins.stock.modules.tickets.business.ReservationDTO;
 import fr.paris.lutece.plugins.stock.modules.tickets.business.SeanceDTO;
 import fr.paris.lutece.plugins.stock.modules.tickets.business.SeanceFilter;
@@ -121,6 +122,7 @@ public class OfferJspBean  extends AbstractJspBean
     // JSP
     private static final String JSP_MANAGE_OFFERS = "jsp/admin/plugins/stock/modules/billetterie/ManageOffers.jsp";
     private static final String JSP_DO_DELETE_OFFER = "jsp/admin/plugins/stock/modules/billetterie/DoDeleteOffer.jsp";
+    private static final String JSP_SAVE_OFFER = "SaveOffer.jsp";
     
     // TEMPLATES
     private static final String TEMPLATE_MANAGE_OFFERS = "admin/plugins/stock/modules/billetterie/manage_offers.html";
@@ -137,6 +139,15 @@ public class OfferJspBean  extends AbstractJspBean
     private static final String MESSAGE_TITLE_CONFIRMATION_DELETE_OFFER = "module.stock.billetterie.message.title.deleteOffer.confirmation";
     private static final String MESSAGE_OFFER_STATUT_ISNT_CANCEL = "module.stock.billetterie.message.offer.statut.isnt.cancel";
     private static final String MESSAGE_SEARCH_PURCHASE_DATE = "module.stock.billetterie.message.search.purchase.date";
+
+    // BEANS
+    private static final String BEAN_STOCK_TICKETS_SHOW_SERVICE = "stock-tickets.showService";
+    private static final String BEAN_STOCK_TICKETS_SEANCE_SERVICE = "stock-tickets.seanceService";
+
+    // ORDER FILTERS
+    private static final String ORDER_FILTER_DATE = "date";
+    private static final String ORDER_FILTER_PRODUCT_NAME = "product.name";
+    private static final String ORDER_FILTER_TYPE_NAME = "type.name";
     
     // MEMBERS VARIABLES
     private int _nItemsPerPage;
@@ -158,8 +169,8 @@ public class OfferJspBean  extends AbstractJspBean
         super(  );
 
         _offerFilter = new SeanceFilter( );
-        _serviceOffer = (ISeanceService) SpringContextService.getBean( "stock-tickets.seanceService" );
-        _serviceProduct = (IShowService) SpringContextService.getBean( "stock-tickets.showService" );
+        _serviceOffer = (ISeanceService) SpringContextService.getBean( BEAN_STOCK_TICKETS_SEANCE_SERVICE );
+        _serviceProduct = (IShowService) SpringContextService.getBean( BEAN_STOCK_TICKETS_SHOW_SERVICE );
         _servicePurchase = SpringContextService.getContext( ).getBean( IPurchaseService.class );
     }
 
@@ -248,9 +259,9 @@ public class OfferJspBean  extends AbstractJspBean
 
         model.put( MARK_ERRORS, errors );
         List<String> orderList = new ArrayList<String>( );
-        orderList.add( "date" );
-        orderList.add( "product.name" );
-        orderList.add( "type.name" );
+        orderList.add( ORDER_FILTER_DATE );
+        orderList.add( ORDER_FILTER_PRODUCT_NAME );
+        orderList.add( ORDER_FILTER_TYPE_NAME );
         filter.setOrders( orderList );
         filter.setOrderAsc( true );
 
@@ -262,13 +273,14 @@ public class OfferJspBean  extends AbstractJspBean
 
 
         // the paginator
-        model.put( TicketsConstants.MARK_NB_ITEMS_PER_PAGE, "" + _nItemsPerPage );
+        model.put( TicketsConstants.MARK_NB_ITEMS_PER_PAGE, String.valueOf( _nItemsPerPage ) );
         model.put( TicketsConstants.MARK_PAGINATOR, paginator );
         model.put( MARK_LIST_OFFERS, paginator.getPageItems(  ) );
         // the filter
         model.put( TicketsConstants.MARK_FILTER, filter );
         // Combo
-        ReferenceList offerGenreComboList = ListUtils.toReferenceList( _serviceOffer.findAllGenre( ), "id", "name",
+        ReferenceList offerGenreComboList = ListUtils.toReferenceList( _serviceOffer.findAllGenre( ),
+                BilletterieConstants.ID, BilletterieConstants.NAME,
                 StockConstants.EMPTY_STRING );
         model.put( MARK_LIST_OFFER_GENRE, offerGenreComboList );
         // offer statut
@@ -298,7 +310,7 @@ public class OfferJspBean  extends AbstractJspBean
         if ( ve != null )
         {
             offer = (SeanceDTO) ve.getBean( );
-            model.put( "error", getHtmlError( ve ) );
+            model.put( BilletterieConstants.ERROR, getHtmlError( ve ) );
         }
         else
         {
@@ -316,7 +328,7 @@ public class OfferJspBean  extends AbstractJspBean
                 if ( StringUtils.isNotEmpty( strDuplicate ) )
                 {
                 	offer.setId( null );
-                	offer.setStatut( "" );
+                    offer.setStatut( StringUtils.EMPTY );
                 }
             }
             else
@@ -343,11 +355,13 @@ public class OfferJspBean  extends AbstractJspBean
         
         // Combo
         List<String> orderList = new ArrayList<String>( );
-        orderList.add( "name" );
+        orderList.add( BilletterieConstants.NAME );
         ReferenceList productComboList = ListUtils.toReferenceList(
-                _serviceProduct.getCurrentAndComeProduct( orderList ), "id", "name",
+                _serviceProduct.getCurrentAndComeProduct( orderList ), BilletterieConstants.ID,
+                BilletterieConstants.NAME,
                 StockConstants.EMPTY_STRING );
-        ReferenceList offerGenreComboList = ListUtils.toReferenceList( _serviceOffer.findAllGenre( ), "id", "name",
+        ReferenceList offerGenreComboList = ListUtils.toReferenceList( _serviceOffer.findAllGenre( ),
+                BilletterieConstants.ID, BilletterieConstants.NAME,
                 StockConstants.EMPTY_STRING );
         model.put( MARK_LIST_PRODUCT, productComboList );
         model.put( MARK_LIST_OFFER_GENRE, offerGenreComboList );
@@ -378,7 +392,7 @@ public class OfferJspBean  extends AbstractJspBean
      */
     public String doSaveOffer( HttpServletRequest request )
     {
-        if ( StringUtils.isNotBlank( request.getParameter( "cancel" ) ) )
+        if ( StringUtils.isNotBlank( request.getParameter( StockConstants.PARAMETER_BUTTON_CANCEL ) ) )
         {
             return doGoBack( request );
         }
@@ -394,7 +408,7 @@ public class OfferJspBean  extends AbstractJspBean
         }
         catch ( FunctionnalException e )
         {
-            return manageFunctionnalException( request, e, "SaveOffer.jsp" );
+            return manageFunctionnalException( request, e, JSP_SAVE_OFFER );
         }
 
         return doGoBack( request );
@@ -458,7 +472,8 @@ public class OfferJspBean  extends AbstractJspBean
         }
 
         return AdminMessageService.getMessageUrl( request, MESSAGE_CONFIRMATION_DELETE_OFFER, null,
-                MESSAGE_TITLE_CONFIRMATION_DELETE_OFFER, JSP_DO_DELETE_OFFER, "_self", AdminMessage.TYPE_CONFIRMATION,
+                MESSAGE_TITLE_CONFIRMATION_DELETE_OFFER, JSP_DO_DELETE_OFFER, BilletterieConstants.TARGET_SELF,
+                AdminMessage.TYPE_CONFIRMATION,
                 urlParam, strJspBack );
     }
 

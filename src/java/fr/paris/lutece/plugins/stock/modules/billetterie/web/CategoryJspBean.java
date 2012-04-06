@@ -37,6 +37,7 @@ import fr.paris.lutece.plugins.stock.business.category.Category;
 import fr.paris.lutece.plugins.stock.business.category.CategoryFilter;
 import fr.paris.lutece.plugins.stock.commons.ResultList;
 import fr.paris.lutece.plugins.stock.commons.exception.FunctionnalException;
+import fr.paris.lutece.plugins.stock.modules.billetterie.utils.constants.BilletterieConstants;
 import fr.paris.lutece.plugins.stock.modules.tickets.business.ShowDTO;
 import fr.paris.lutece.plugins.stock.modules.tickets.business.ShowFilter;
 import fr.paris.lutece.plugins.stock.modules.tickets.service.ICategoryService;
@@ -72,6 +73,8 @@ import org.apache.commons.lang.StringUtils;
  */
 public class CategoryJspBean extends AbstractJspBean
 {
+    /** The Constant BEAN_STOCK_TICKETS_SHOW_SERVICE. */
+    private static final String BEAN_STOCK_TICKETS_SHOW_SERVICE = "stock-tickets.showService";
 
     /** The Constant PARAMETER_CATEGORY_ID. */
     public static final String PARAMETER_CATEGORY_ID = "category_id";
@@ -113,6 +116,9 @@ public class CategoryJspBean extends AbstractJspBean
 
     /** The Constant CATEGORY_DO_DELETE_JSP. */
     private static final String CATEGORY_DO_DELETE_JSP = "jsp/admin/plugins/stock/modules/billetterie/DoDeleteCategory.jsp";
+
+    /** The Constant JSP_SAVE_CATEGORY. */
+    private static final String JSP_SAVE_CATEGORY = "SaveCategory.jsp";
 
     // Templates
     /** The Constant TEMPLATE_MANAGE_CATEGORIES. */
@@ -160,7 +166,7 @@ public class CategoryJspBean extends AbstractJspBean
         // super( );
         _categoryFilter = new CategoryFilter( );
         _serviceCategory = SpringContextService.getContext( ).getBean( ICategoryService.class );
-        _serviceShow = (IShowService) SpringContextService.getBean( "stock-tickets.showService" );
+        _serviceShow = (IShowService) SpringContextService.getBean( BEAN_STOCK_TICKETS_SHOW_SERVICE );
     }
 
     /**
@@ -193,7 +199,7 @@ public class CategoryJspBean extends AbstractJspBean
 
         CategoryFilter filter = getCategoryFilter( request );
         List<String> orderList = new ArrayList<String>( );
-        orderList.add( "name" );
+        orderList.add( BilletterieConstants.NAME );
         filter.setOrders( orderList );
         filter.setOrderAsc( true );
 
@@ -205,7 +211,7 @@ public class CategoryJspBean extends AbstractJspBean
         // Fill the model
         Map<String, Object> model = new HashMap<String, Object>( );
 
-        model.put( TicketsConstants.MARK_NB_ITEMS_PER_PAGE, "" + _nItemsPerPage );
+        model.put( TicketsConstants.MARK_NB_ITEMS_PER_PAGE, String.valueOf( _nItemsPerPage ) );
         model.put( TicketsConstants.MARK_PAGINATOR, paginator );
         model.put( MARK_LIST_CATEGORIES, paginator.getPageItems( ) );
         // the filter
@@ -234,7 +240,7 @@ public class CategoryJspBean extends AbstractJspBean
         if ( fe != null )
         {
             category = (Category) fe.getBean( );
-            model.put( "error", getHtmlError( fe ) );
+            model.put( BilletterieConstants.ERROR, getHtmlError( fe ) );
         }
         else
         {
@@ -293,7 +299,7 @@ public class CategoryJspBean extends AbstractJspBean
         }
         catch ( FunctionnalException e )
         {
-            return manageFunctionnalException( request, e, "SaveCategory.jsp" );
+            return manageFunctionnalException( request, e, JSP_SAVE_CATEGORY );
 
         }
 

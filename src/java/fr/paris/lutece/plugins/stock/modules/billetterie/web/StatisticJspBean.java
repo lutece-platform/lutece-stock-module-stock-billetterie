@@ -34,6 +34,7 @@
 package fr.paris.lutece.plugins.stock.modules.billetterie.web;
 
 import fr.paris.lutece.plugins.stock.commons.exception.BusinessException;
+import fr.paris.lutece.plugins.stock.modules.billetterie.utils.constants.BilletterieConstants;
 import fr.paris.lutece.plugins.stock.modules.tickets.business.ResultStatistic;
 import fr.paris.lutece.plugins.stock.modules.tickets.service.IStatisticService;
 import fr.paris.lutece.plugins.stock.modules.tickets.service.StatisticService;
@@ -82,6 +83,8 @@ import com.keypoint.PngEncoder;
  */
 public class StatisticJspBean extends AbstractJspBean
 {
+    private static final String CONTENT_TYPE_IMAGE_PNG = "image/PNG";
+
     public static final String CONSTANT_PRODUCT_TYPE = "1";
 
     public static final String CONSTANT_GROUP_BY_DAY = "0";
@@ -182,7 +185,7 @@ public class StatisticJspBean extends AbstractJspBean
                     DateUtil.formatDate( strLastResponseDateFilter, locale ) ) )
             {
                 BusinessException fe = new BusinessException( null, MESSAGE_ERROR_INVALID_DATE );
-                model.put( "error", getHtmlError( fe ) );
+                model.put( BilletterieConstants.ERROR, getHtmlError( fe ) );
             }
         }
 
@@ -248,7 +251,7 @@ public class StatisticJspBean extends AbstractJspBean
                     DateUtil.formatDate( strLastResponseDateFilter, locale ) ) )
             {
                 BusinessException fe = new BusinessException( null, MESSAGE_ERROR_INVALID_DATE );
-                model.put( "error", getHtmlError( fe ) );
+                model.put( BilletterieConstants.ERROR, getHtmlError( fe ) );
             }
         }
 
@@ -377,7 +380,7 @@ public class StatisticJspBean extends AbstractJspBean
 
             ChartRenderingInfo info = new ChartRenderingInfo( new StandardEntityCollection( ) );
             BufferedImage chartImage = chart.createBufferedImage( 600, 200, info );
-            response.setContentType( "image/PNG" );
+            response.setContentType( CONTENT_TYPE_IMAGE_PNG );
 
             PngEncoder encoder = new PngEncoder( chartImage, false, 0, 9 );
             response.getOutputStream( ).write( encoder.pngEncode( ) );

@@ -68,6 +68,12 @@ import org.apache.log4j.Logger;
 public abstract class AbstractXPageApp
 {
 
+    private static final String AUTHENTIFICATION_ERROR_MESSAGE = "Impossible de détecter une authentification.";
+    private static final String POPULATE_ERROR_MESSAGE = "Erreur lors de la recuperation des donnees du formulaire.";
+    private static final String ERROR_MESSAGE_KEY = "module.stock.billetterie.validation.error";
+    private static final String ERROR_TEMPLATE = "admin/plugins/stock/modules/billetterie/error.html";
+    private static final String FIELD_MESSAGE_PREFIX = "module.stock.billetterie.field.";
+    private static final String MARK_MESSAGE_LIST = "messageList";
     private static final Logger LOGGER = Logger.getLogger( AbstractXPageApp.class );
 
     /**
@@ -83,11 +89,11 @@ public abstract class AbstractXPageApp
         }
         catch ( IllegalAccessException e )
         {
-            LOGGER.error( "Erreur lors de la recuperation des donnees du formulaire.", e );
+            LOGGER.error( POPULATE_ERROR_MESSAGE, e );
         }
         catch ( InvocationTargetException e )
         {
-            LOGGER.error( "Erreur lors de la recuperation des donnees du formulaire.", e );
+            LOGGER.error( POPULATE_ERROR_MESSAGE, e );
         }
     }
 
@@ -130,7 +136,7 @@ public abstract class AbstractXPageApp
         }
         catch ( UserNotSignedException e )
         {
-            throw new TechnicalException( "Impossible de détecter une authentification.", e );
+            throw new TechnicalException( AUTHENTIFICATION_ERROR_MESSAGE, e );
         }
             // DEBUT BOUCHON
         // LuteceUser user = new BasicLuteceUser( "abataille@sopragroup.com",
@@ -195,9 +201,9 @@ public abstract class AbstractXPageApp
             // message
             for ( ConstraintViolation<?> constraintViolation : ve.getConstraintViolationList( ) )
             {
-                String fieldName = getMessage( "module.stock.billetterie.field." + typeName + "."
-                        + constraintViolation.getPropertyPath( ), request );
-                messageList.add( getMessage( "module.stock.billetterie.validation.error", request,
+                String fieldName = getMessage(
+                        FIELD_MESSAGE_PREFIX + typeName + "." + constraintViolation.getPropertyPath( ), request );
+                messageList.add( getMessage( ERROR_MESSAGE_KEY, request,
                         String.valueOf( constraintViolation.getInvalidValue( ) ), fieldName,
                         constraintViolation.getMessage( ) ) );
             }
@@ -208,10 +214,9 @@ public abstract class AbstractXPageApp
             messageList.add( getMessage( be.getCode( ), request, be.getArguments( ) ) );
         }
 
-        model.put( "messageList", messageList );
+        model.put( MARK_MESSAGE_LIST, messageList );
 
-        HtmlTemplate template = AppTemplateService.getTemplate( "skin/plugins/stock/modules/billetterie/error.html",
-                request.getLocale( ), model );
+        HtmlTemplate template = AppTemplateService.getTemplate( ERROR_TEMPLATE, request.getLocale( ), model );
         return template.getHtml( );
     }
 

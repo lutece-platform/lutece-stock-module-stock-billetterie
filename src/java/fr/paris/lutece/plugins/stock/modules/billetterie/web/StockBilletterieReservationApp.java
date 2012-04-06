@@ -39,6 +39,7 @@ import fr.paris.lutece.plugins.stock.commons.ResultList;
 import fr.paris.lutece.plugins.stock.commons.exception.BusinessException;
 import fr.paris.lutece.plugins.stock.commons.exception.FunctionnalException;
 import fr.paris.lutece.plugins.stock.commons.exception.TechnicalException;
+import fr.paris.lutece.plugins.stock.modules.billetterie.utils.constants.BilletterieConstants;
 import fr.paris.lutece.plugins.stock.modules.tickets.business.NotificationDTO;
 import fr.paris.lutece.plugins.stock.modules.tickets.business.ReservationDTO;
 import fr.paris.lutece.plugins.stock.modules.tickets.business.SeanceDTO;
@@ -60,6 +61,7 @@ import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.web.xpages.XPage;
 import fr.paris.lutece.portal.web.xpages.XPageApplication;
 import fr.paris.lutece.util.html.HtmlTemplate;
+import fr.paris.lutece.util.url.UrlItem;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -83,7 +85,13 @@ import org.apache.commons.lang.StringUtils;
  */
 public class StockBilletterieReservationApp extends AbstractXPageApp implements XPageApplication
 {
-
+    private static final String PAGE_BOOKING = "reservation";
+    private static final String PARAMETER_DATE_SCEANCE = "date_sceance";
+    private static final String ACTION_SHOW_DETAILS = "fiche-spectacle";
+    private static final String PAGE_TICKETING = "billetterie";
+    private static final String PARAMETER_PAGE = "page";
+    private static final String JSP_DO_DELETE_RESERVATION = "jsp/site/plugins/stock/modules/billetterie/DoDeleteReservation.jsp";
+    private static final String JSP_PORTAL = "jsp/site/Portal.jsp";
     // I18n
     private static final String TITLE_MY_BOOKINGS = "module.stock.billetterie.my_bookings.title";
     private static final String TITLE_CONFIRM_BOOKING = "module.stock.billetterie.confirm_booking.title";
@@ -91,6 +99,7 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
     private static final String MESSAGE_INSUFFICIENT_PLACE_REMAINING = "module.stock.billetterie.message.error.insufficient_place_remaining";
     private static final String MESSAGE_CONFIRM_DELETE_PURCHASE_TITLE = "module.stock.billetterie.message.confirm.delete.purchase.title";
     private static final String MESSAGE_CONFIRM_DELETE_PURCHASE = "module.stock.billetterie.message.confirm.delete.purchase";
+    private static final String MESSAGE_NOTIFICATION_BOOKING_SUBJECT = "module.stock.billetterie.notification.booking.subject";
     // Parameters
     private static final String PARAMETER_SEANCE_DATE = "seance_date";
     private static final String PARAMETER_SHOW_NAME = "show_name";
@@ -103,13 +112,23 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
     private static final String PARAMETER_SEANCE_ID = "seance_id";
     private static final String PARAMETER_PURCHASE_ID = "purchase_id";
     private static final String PARAMETER_ACTION = "action";
+    private static final String PARAMETER_PRODUCT_ID = "product_id";
+    private static final String PARAMETER_DATE_SEANCE = "date_seance";
+    private static final String PARAMETER_BOOKING_CHECK = "booking_check";
     // Actions
     private static final String ACTION_MY_BOOKINGS = "mes-reservations";
     private static final String ACTION_BOOK = "reserver";
     private static final String ACTION_DELETE_BOOKING = "delete-purchase";
-
+    // Marks
+    private static final String MARK_BASE_URL = "base_url";
+    private static final String MARK_USER = "user";
     // Templates
     private static final String TEMPLATE_DIR = "skin/plugins/stock/modules/billetterie/";
+    private static final String TEMPLATE_NOTIFICATION_BOOKING = "notification_booking.html";
+    private static final String TEMPLATE_MY_BOOKINGS = "my_bookings.html";
+    private static final String TEMPLATE_CONFIRM_BOOKING = "confirm_booking.html";
+
+    private static final String ENCODING_UTF_8 = "utf-8";
 
     private ISeanceService _offerService = (ISeanceService) SpringContextService.getContext( ).getBean(
             ISeanceService.class );
@@ -246,15 +265,18 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
 
             // Save booking into session
             request.getSession( ).setAttribute( PARAMETER_BOOKING_LIST, bookingList );
-            request.getSession( ).setAttribute( "booking_check", bookingCheck );
+            request.getSession( ).setAttribute( PARAMETER_BOOKING_CHECK, bookingCheck );
 
         }
         catch ( FunctionnalException e )
         {
             String htmlError = getHtmlError( e, request );
-            model.put( "error", htmlError );
-            manageFunctionnalException( request, e,
-                    "jsp/site/Portal.jsp?page=billetterie&action=fiche-spectacle&product_id=" + showId );
+            model.put( BilletterieConstants.ERROR, htmlError );
+            UrlItem targetUrl = new UrlItem( JSP_PORTAL );
+            targetUrl.addParameter( PARAMETER_PAGE, PAGE_TICKETING );
+            targetUrl.addParameter( PARAMETER_ACTION, ACTION_SHOW_DETAILS );
+            targetUrl.addParameter( PARAMETER_PRODUCT_ID, showId );
+            manageFunctionnalException( request, e, targetUrl.getUrl( ) );
         }
 
         // Generates template
@@ -263,9 +285,9 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
         model.put( PARAMETER_BOOKING_LIST, bookingList );
         model.put( PARAMETER_SEANCE_DATE, request.getParameter( PARAMETER_SEANCE_DATE ) );
         model.put( PARAMETER_SHOW_NAME, showName );
-        model.put( "booking_check", bookingCheck );
+        model.put( PARAMETER_BOOKING_CHECK, bookingCheck );
 
-        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_DIR + "confirm_booking.html", locale, model );
+        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_DIR + TEMPLATE_CONFIRM_BOOKING, locale, model );
 
         getErrorOnce( request );
 
@@ -288,12 +310,12 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
             throws SiteMessageException
     {
         // Check mixing booking (with two tabs and two booking opened
-        if ( request.getParameter( "booking_check" ) == null
-                || !request.getParameter( "booking_check" ).equals(
-                        request.getSession( ).getAttribute( "booking_check" ) ) )
+        if ( request.getParameter( PARAMETER_BOOKING_CHECK ) == null
+                || !request.getParameter( PARAMETER_BOOKING_CHECK ).equals(
+                        request.getSession( ).getAttribute( PARAMETER_BOOKING_CHECK ) ) )
         {
             SiteMessageService.setMessage( request, PurchaseService.MESSAGE_ERROR_PURCHASE_SESSION_EXPIRED,
-                    SiteMessage.TYPE_ERROR, "jsp/site/Portal.jsp" );
+                    SiteMessage.TYPE_ERROR, JSP_PORTAL );
         }
         else
         {
@@ -310,18 +332,23 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
                 {
                     // If error we display show page
                     SeanceDTO seance = _offerService.findSeanceById( bookingList.get( 0 ).getOffer( ).getId( ) );
-                    return manageFunctionnalException( request, e, AppPathService.getBaseUrl( request )
-                            + "jsp/site/Portal.jsp?page=billetterie&action=fiche-spectacle&product_id="
-                            + seance.getProduct( ).getId( ) );
+                    UrlItem targetUrl = new UrlItem( AppPathService.getBaseUrl( request ) + JSP_PORTAL );
+                    targetUrl.addParameter( PARAMETER_PAGE, PAGE_TICKETING );
+                    targetUrl.addParameter( PARAMETER_ACTION, ACTION_SHOW_DETAILS );
+                    targetUrl.addParameter( PARAMETER_PRODUCT_ID, seance.getProduct( ).getId( ) );
+                    return manageFunctionnalException( request, e, targetUrl.getUrl( ) );
                 }
                 else
                 {
                     SiteMessageService.setMessage( request, PurchaseService.MESSAGE_ERROR_PURCHASE_SESSION_EXPIRED,
-                            SiteMessage.TYPE_ERROR, "jsp/site/Portal.jsp" );
+                            SiteMessage.TYPE_ERROR, JSP_PORTAL );
                 }
             }
         }
-        return AppPathService.getBaseUrl( request ) + "jsp/site/Portal.jsp?page=reservation&action=mes-reservations";
+        UrlItem returnUrl = new UrlItem( AppPathService.getBaseUrl( request ) + JSP_PORTAL );
+        returnUrl.addParameter( PARAMETER_PAGE, PAGE_BOOKING );
+        returnUrl.addParameter( PARAMETER_ACTION, ACTION_MY_BOOKINGS );
+        return returnUrl.getUrl( );
     }
 
     /**
@@ -337,8 +364,8 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
     {
         List<ReservationDTO> bookingList = (List<ReservationDTO>) request.getSession( ).getAttribute(
                 PARAMETER_BOOKING_LIST );
-        String seanceDate = request.getParameter( "date_seance" );
-        String showId = request.getParameter( "product_id" );
+        String seanceDate = request.getParameter( PARAMETER_DATE_SEANCE );
+        String showId = request.getParameter( PARAMETER_PRODUCT_ID );
         Integer nShowId;
         try
         {
@@ -346,8 +373,14 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
         }
         catch ( NumberFormatException e )
         {
-            return AppPathService.getBaseUrl( request ) + "jsp/site/Portal.jsp";
+            return AppPathService.getBaseUrl( request ) + JSP_PORTAL;
         }
+
+        UrlItem targetUrl = new UrlItem( AppPathService.getBaseUrl( request ) + JSP_PORTAL );
+        targetUrl.addParameter( PARAMETER_PAGE, PAGE_TICKETING );
+        targetUrl.addParameter( PARAMETER_ACTION, ACTION_SHOW_DETAILS );
+        targetUrl.addParameter( PARAMETER_PRODUCT_ID, nShowId );
+        targetUrl.addParameter( PARAMETER_DATE_SCEANCE, URLEncoder.encode( seanceDate, ENCODING_UTF_8 ) );
 
         if ( bookingList != null && !bookingList.isEmpty( ) )
         {
@@ -358,17 +391,11 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
             catch ( FunctionnalException e )
             {
                 // If error we display show page
-                return manageFunctionnalException( request, e, AppPathService.getBaseUrl( request )
-                        + "jsp/site/Portal.jsp?page=billetterie&action=fiche-spectacle&product_id=" + nShowId
-                        + "&date_seance=" + URLEncoder.encode( seanceDate, "utf-8" ) );
+                return manageFunctionnalException( request, e, targetUrl.getUrl( ) );
             }
         }
 
-        return AppPathService.getBaseUrl( request )
-                // return
-                // "http://slnxvmlutece1.mtrl.fr.sopra:58080/billetterie/"
-                + "jsp/site/Portal.jsp?page=billetterie&action=fiche-spectacle&product_id=" + nShowId + "&date_seance="
-                + URLEncoder.encode( seanceDate, "utf-8" );
+        return targetUrl.getUrl( );
     }
 
     /**
@@ -397,7 +424,7 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
         List<ReservationDTO> toComeBookingList = new ArrayList<ReservationDTO>( );
         List<ReservationDTO> oldBookingList = new ArrayList<ReservationDTO>( );
         Date seanceDate;
-        Date today = new Date();
+        Date today = new Date( );
         for ( ReservationDTO booking : bookingList )
         {
             seanceDate = booking.getOffer( ).getDateHour( );
@@ -416,9 +443,9 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
         model.put( PARAMETER_NEXT_BOOKING_LIST, toComeBookingList );
         model.put( PARAMETER_PAST_BOOKING_LIST, oldBookingList );
 
-        model.put( "user", getUser( request ) );
+        model.put( MARK_USER, getUser( request ) );
 
-        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_DIR + "my_bookings.html", locale, model );
+        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_DIR + TEMPLATE_MY_BOOKINGS, locale, model );
 
         page.setContent( template.getHtml( ) );
         String pageTitle = getMessage( TITLE_MY_BOOKINGS, request );
@@ -442,16 +469,15 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
         String purchaseId = request.getParameter( PARAMETER_PURCHASE_ID );
         if ( StringUtils.isEmpty( purchaseId ) || !StringUtils.isNumeric( purchaseId ) )
         {
-            throw new TechnicalException( "Paramètre " + PARAMETER_SEANCE_ID + " invalide : " + purchaseId );
+            throw new TechnicalException( "Paramètre " + PARAMETER_SEANCE_ID + " invalide   : " + purchaseId );
         }
 
         Map<String, Object> model = new HashMap<String, Object>( );
         model.put( PARAMETER_PURCHASE_ID, purchaseId );
 
         SiteMessageService.setMessage( request, MESSAGE_CONFIRM_DELETE_PURCHASE, null,
-                MESSAGE_CONFIRM_DELETE_PURCHASE_TITLE,
-                "jsp/site/plugins/stock/modules/billetterie/DoDeleteReservation.jsp", null,
-                SiteMessage.TYPE_CONFIRMATION, model );
+                MESSAGE_CONFIRM_DELETE_PURCHASE_TITLE, JSP_DO_DELETE_RESERVATION, null, SiteMessage.TYPE_CONFIRMATION,
+                model );
 
         return null;
     }
@@ -472,7 +498,10 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
 
         _purchaseService.doDeletePurchase( Integer.valueOf( purchaseId ) );
 
-        return AppPathService.getBaseUrl( request ) + "jsp/site/Portal.jsp?page=reservation&action=mes-reservations";
+        UrlItem returnUrl = new UrlItem( AppPathService.getBaseUrl( request ) + JSP_PORTAL );
+        returnUrl.addParameter( PARAMETER_PAGE, PAGE_BOOKING );
+        returnUrl.addParameter( PARAMETER_ACTION, ACTION_MY_BOOKINGS );
+        return returnUrl.getUrl( );
     }
 
     /**
@@ -484,21 +513,20 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
      */
     private NotificationDTO sendBookingNotification( List<ReservationDTO> bookingList, HttpServletRequest request )
     {
-        
+
         //Generate mail content
         Map<String, Object> model = new HashMap<String, Object>( );
         model.put( PARAMETER_BOOKING_LIST, bookingList );
-        model.put( "base_url", AppPathService.getBaseUrl( request ) );
-        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_DIR + "notification_booking.html",
-                request.getLocale( ),
-                model );
+        model.put( MARK_BASE_URL, AppPathService.getBaseUrl( request ) );
+        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_DIR + TEMPLATE_NOTIFICATION_BOOKING,
+                request.getLocale( ), model );
 
         // Create mail object
         NotificationDTO notificationDTO = new NotificationDTO( );
         ReservationDTO reservation = bookingList.get( 0 );
         notificationDTO.setRecipientsTo( reservation.getEmailAgent( ) );
-        notificationDTO.setSubject( getMessage( "module.stock.billetterie.notification.booking.subject", request,
-                reservation.getOffer( ).getName( ) ) );
+        notificationDTO.setSubject( getMessage( MESSAGE_NOTIFICATION_BOOKING_SUBJECT, request, reservation.getOffer( )
+                .getName( ) ) );
         notificationDTO.setMessage( template.getHtml( ) );
 
         // Send it
