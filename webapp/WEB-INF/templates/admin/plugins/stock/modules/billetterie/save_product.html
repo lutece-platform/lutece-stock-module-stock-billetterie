@@ -7,7 +7,7 @@
         
 			<div>
 				<label for="poster" >#i18n{module.stock.billetterie.save_product.poster} * :</label>
-				<#if product.posterName?has_content>
+				<#if product.id?? && product.posterName?has_content>
 					<input type="hidden" name="posterName" value="${product.posterName}" />
 					<img src="${url_poster}${product.id}" style="float:left; margin-right: 5px;"/>
 					<p>Renseigner le champ ci-dessous pour modifier le poster :</p>
@@ -32,7 +32,7 @@
 			</div>
 			<div>
 				<label>#i18n{module.stock.billetterie.save_product.with} :</label>
-				<textarea name="with" cols="60" rows="5" maxlength="100">${product.with!}</textarea>
+				<textarea name="with" cols="60" rows="5" maxlength="500">${product.with!}</textarea>
 			</div>
 			<div>
 				<label>#i18n{module.stock.billetterie.save_product.targetPublic} :</label>
