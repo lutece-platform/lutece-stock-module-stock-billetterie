@@ -1,0 +1,15 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr" xml:lang="fr"><head><base href="${base_url}" /><meta http-equiv="Content-Type" content="text/html;charset=UTF-8" /></head><body>
+<strong>Bonjour ${purchase.firstNameAgent} ${purchase.nameAgent}</strong>,
+Votre réservation a bien été prise en compte.
+Vos places sont à retirer directement au théâtre à votre nom ½ h à l’avance.
+
+<h3>Récapitulatif de la réservation</h3>
+<strong>Spectacle :</strong> ${purchase.offer.product.name!}
+<strong>Date :</strong> ${purchase.offer.date!}  ${purchase.offer.hour!}
+<strong>Nombre de place ${purchase.offer.typeName} :</strong> ${purchase.quantity!} - <strong><a title="#i18n{module.stock.billetterie.list_purchase.linkPrintTicket}" href="jsp/site/plugins/jasper/DownloadFile.jsp?report_id=contremarque&report_type=pdf&value1=${purchase.id!}">Imprimer la contremarque</a></strong>
+
+
+Bon spectacle !
+
+Pour tout renseignement, merci de contacter resatheatre.mci@paris.fr
+</body>

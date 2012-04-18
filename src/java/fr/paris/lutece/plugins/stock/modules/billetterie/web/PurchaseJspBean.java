@@ -38,9 +38,11 @@ import fr.paris.lutece.plugins.stock.commons.ResultList;
 import fr.paris.lutece.plugins.stock.commons.exception.BusinessException;
 import fr.paris.lutece.plugins.stock.commons.exception.FunctionnalException;
 import fr.paris.lutece.plugins.stock.modules.billetterie.utils.constants.BilletterieConstants;
+import fr.paris.lutece.plugins.stock.modules.tickets.business.NotificationDTO;
 import fr.paris.lutece.plugins.stock.modules.tickets.business.ReservationDTO;
 import fr.paris.lutece.plugins.stock.modules.tickets.business.ReservationFilter;
 import fr.paris.lutece.plugins.stock.modules.tickets.business.SeanceDTO;
+import fr.paris.lutece.plugins.stock.modules.tickets.service.INotificationService;
 import fr.paris.lutece.plugins.stock.modules.tickets.service.IPurchaseService;
 import fr.paris.lutece.plugins.stock.modules.tickets.service.ISeanceService;
 import fr.paris.lutece.plugins.stock.modules.tickets.utils.constants.TicketsConstants;
@@ -82,53 +84,91 @@ import org.apache.log4j.Logger;
  */
 public class PurchaseJspBean  extends AbstractJspBean
 {
+    /** The logger for this jspBean */
     public static final Logger LOGGER = Logger.getLogger( PurchaseJspBean.class );
     
+    /** The constant String RESOURCE_TYPE */
     public static final String RESOURCE_TYPE = "STOCK";
+    /** The constant String RIGHT_MANAGE_PURCHASES */
     public static final String RIGHT_MANAGE_PURCHASES = "PURCHASES_MANAGEMENT";
+
+    // PARAMETERS
+    /** The constant String PARAMETER_PURCHASE_ID */
+    public static final String PARAMETER_PURCHASE_ID = "purchase_id";
+    /** The constant String PARAMETER_PURCHASE_DUPLICATE */
+    public static final String PARAMETER_PURCHASE_DUPLICATE = "duplicate";
+    /** The constant String PARAMETER_PURCHASE_PRODUCT_NAME */
+    public static final String PARAMETER_PURCHASE_PRODUCT_NAME = "productName";
+    /** The constant String PARAMETER_PURCHASE_GENRE_LIST */
+    public static final String PARAMETER_PURCHASE_GENRE_LIST = "purchase_genre_list";
+    /** The constant String PARAMETER_PURCHASE_GENRE_LIST_DEFAULT */
+    public static final String PARAMETER_PURCHASE_GENRE_LIST_DEFAULT = "purchase_genre_list_default";
+    /** The constant String PARAMETER_BUTTON_DELETE */
+    public static final String PARAMETER_BUTTON_DELETE = "delete";
+    /** The constant String PARAMETER_FILTER_NAME */
+    public static final String PARAMETER_FILTER_NAME = "filter_name";
+    /** The constant String PARAMETER_FILTER_ID */
+    public static final String PARAMETER_FILTER_ID = "filter_id";
+    /** The constant String PARAMETER_FILTER_PARTNER_NAME */
+    public static final String PARAMETER_FILTER_PARTNER_NAME = "filter_partner_name";
+    /** The constant String PARAMETER_FILTER_PARTNER_NICKNAME */
+    public static final String PARAMETER_FILTER_PARTNER_NICKNAME = "filter_partner_nickname";
+    /** The constant String PARAMETER_FILTER_PURCHASE_TYPE */
+    public static final String PARAMETER_FILTER_PURCHASE_TYPE = "filter_purchase_type";
+    /** The constant String PARAMETER_FILTER_DATE_BEGIN */
+    public static final String PARAMETER_FILTER_DATE_BEGIN = "filter_date_begin";
+    /** The constant String PARAMETER_FILTER_DATE_END */
+    public static final String PARAMETER_FILTER_DATE_END = "filter_date_end";
+    /** The constant String PARAMETER_ORDER_BY_ID */
+    public static final String PARAMETER_ORDER_BY_ID = "order_by_id";
+    /** The constant String PARAMETER_ORDER_BY_LABEL */
+    public static final String PARAMETER_ORDER_BY_LABEL = "order_by_label";
+    /** The constant String PARAMETER_ORDER_BY_PLACE */
+    public static final String PARAMETER_ORDER_BY_PLACE = "order_by_place";
+    /** The constant String PARAMETER_ORDER_BY_TYPE */
+    public static final String PARAMETER_ORDER_BY_TYPE = "order_by_type";
+    /** The constant String PARAMETER_ORDER_ASC */
+    public static final String PARAMETER_ORDER_ASC = "order_asc";
+    /** The constant String PARAMETER_ORDER_DESC */
+    public static final String PARAMETER_ORDER_DESC = "order_desc";
+    /** The constant String PARAMETER_FILTER */
+    public static final String PARAMETER_FILTER = "filter";
+    // MARKS
+    /** The constant String MARK_PURCHASE */
+    public static final String MARK_PURCHASE = "purchase";
+    /** The constant String MARK_TITLE */
+    public static final String MARK_TITLE = "title";
+    /** The constant String MARK_LOCALE */
+    public static final String MARK_LOCALE = "locale";
+    /** The constant String MARK_PURCHASE_STATUT_CANCEL */
+    public static final String MARK_PURCHASE_STATUT_CANCEL = "strStatutCancel";
+    /** The constant String MARK_CURRENT_DATE */
+    public static final String MARK_CURRENT_DATE = "currentDate";
+    /** The constant String MARK_LIST_OFFER_GENRE */
+    public static final String MARK_LIST_OFFER_GENRE = "offerGenre_list";
+    /** The constant String MARK_OFFER_ID */
+    public static final String MARK_OFFER_ID = "offer_id";
+    /** The constant String MARK_PURCHASSE_ID */
+    public static final String MARK_PURCHASSE_ID = "purchase_id";
+    /** The constant String MARK_QUANTITY_LIST */
+    public static final String MARK_QUANTITY_LIST = "quantity_list";
+    /** The constant String MARK_ERRORS */
+    public static final String MARK_ERRORS = "errors";
+    /** The constant String MARK_BASE_URL */
+    public static final String MARK_BASE_URL = "base_url";
+    // PROPERTIES
+    /** The constant Integer NB_PLACES_MAX_INVITATION */
+    public static final Integer NB_PLACES_MAX_INVITATION = AppPropertiesService.getPropertyInt(
+            "stock-billetterie.nb_places_max.invitation", 2 );
+    /** The constant Integer NB_PLACES_MAX_INVITATION_SPECTACLE */
+    public static final Integer NB_PLACES_MAX_INVITATION_SPECTACLE = AppPropertiesService.getPropertyInt(
+            "stock-billetterie.nb_places_max.invitation_enfant", 2 );
+    /** The constant Integer NB_PLACES_MAX_TARIF_REDUIT */
+    public static final Integer NB_PLACES_MAX_TARIF_REDUIT = AppPropertiesService.getPropertyInt(
+            "stock-billetterie.nb_places_max.tarif_reduit", 2 );
 
     // BEANS
     private static final String BEAN_STOCK_TICKETS_SEANCE_SERVICE = "stock-tickets.seanceService";
-
-    // PARAMETERS
-    public static final String PARAMETER_PURCHASE_ID = "purchase_id";
-    public static final String PARAMETER_PURCHASE_DUPLICATE = "duplicate";
-    public static final String PARAMETER_PURCHASE_PRODUCT_NAME = "productName";
-    public static final String PARAMETER_PURCHASE_GENRE_LIST = "purchase_genre_list";
-    public static final String PARAMETER_PURCHASE_GENRE_LIST_DEFAULT = "purchase_genre_list_default";
-    public static final String PARAMETER_BUTTON_DELETE = "delete";
-    public static final String PARAMETER_FILTER_NAME = "filter_name";
-    public static final String PARAMETER_FILTER_ID = "filter_id";
-    public static final String PARAMETER_FILTER_PARTNER_NAME = "filter_partner_name";
-    public static final String PARAMETER_FILTER_PARTNER_NICKNAME = "filter_partner_nickname";
-    public static final String PARAMETER_FILTER_PURCHASE_TYPE = "filter_purchase_type";
-    public static final String PARAMETER_FILTER_DATE_BEGIN = "filter_date_begin";
-    public static final String PARAMETER_FILTER_DATE_END = "filter_date_end";
-    public static final String PARAMETER_ORDER_BY_ID = "order_by_id";
-    public static final String PARAMETER_ORDER_BY_LABEL = "order_by_label";
-    public static final String PARAMETER_ORDER_BY_PLACE = "order_by_place";
-    public static final String PARAMETER_ORDER_BY_TYPE = "order_by_type";
-    public static final String PARAMETER_ORDER_ASC = "order_asc";
-    public static final String PARAMETER_ORDER_DESC = "order_desc";
-    public static final String PARAMETER_FILTER = "filter";
-    // MARKS
-    public static final String MARK_PURCHASE = "purchase";
-    public static final String MARK_TITLE = "title";
-    public static final String MARK_LOCALE = "locale";
-    public static final String MARK_PURCHASE_STATUT_CANCEL = "strStatutCancel";
-    public static final String MARK_CURRENT_DATE = "currentDate";
-    public static final String MARK_LIST_OFFER_GENRE = "offerGenre_list";
-    public static final String MARK_OFFER_ID = "offer_id";
-    public static final String MARK_PURCHASSE_ID = "purchase_id";
-    public static final String MARK_QUANTITY_LIST = "quantity_list";
-    public static final String MARK_ERRORS = "errors";
-    // PROPERTIES
-    public static final Integer NB_PLACES_MAX_INVITATION = AppPropertiesService.getPropertyInt(
-            "stock-billetterie.nb_places_max.invitation", 2 );
-    public static final Integer NB_PLACES_MAX_INVITATION_SPECTACLE = AppPropertiesService.getPropertyInt(
-            "stock-billetterie.nb_places_max.invitation_enfant", 2 );
-    public static final Integer NB_PLACES_MAX_TARIF_REDUIT = AppPropertiesService.getPropertyInt(
-            "stock-billetterie.nb_places_max.tarif_reduit", 2 );
 
     private static final String MARK_LIST_PURCHASES = "list_purchases";
     // JSP
@@ -136,10 +176,12 @@ public class PurchaseJspBean  extends AbstractJspBean
     private static final String JSP_DO_DELETE_PURCHASE = "jsp/admin/plugins/stock/modules/billetterie/DoDeletePurchase.jsp";
     private static final String JSP_MANAGE_OFFERS = "jsp/admin/plugins/stock/modules/billetterie/ManageOffers.jsp";
     private static final String JSP_SAVE_PURCHASE = "SavePurchase.jsp";
+    private static final String JSP_DO_NOTIFY_PURCHASE = "jsp/admin/plugins/stock/modules/billetterie/DoNotifyPurchase.jsp";
     
     // TEMPLATES
     private static final String TEMPLATE_MANAGE_PURCHASES = "admin/plugins/stock/modules/billetterie/manage_purchases.html";
     private static final String TEMPLATE_SAVE_PURCHASE = "admin/plugins/stock/modules/billetterie/save_purchase.html";
+    private static final String TEMPLATE_NOTIFICATION_BOOKING = "admin/plugins/stock/modules/billetterie/notification_booking.html";
 
 
     // PAGE TITLES
@@ -153,6 +195,9 @@ public class PurchaseJspBean  extends AbstractJspBean
     private static final String MESSAGE_TITLE_CONFIRMATION_DELETE_PURCHASE = "module.stock.billetterie.message.title.deletePurchase.confirmation";
     private static final String MESSAGE_SEARCH_OFFER_DATE = "module.stock.billetterie.message.search.offer.date";
     private static final String MESSAGE_SEARCH_PURCHASE_DATE = "module.stock.billetterie.message.search.purchase.date";
+    private static final String MESSAGE_NOTIFICATION_BOOKING_SUBJECT = "module.stock.billetterie.notification.booking.subject";
+    private static final String MESSAGE_NOTIFY_PURCHASE_CONFIRMATION = "module.stock.billetterie.message.notifyPurchase.confirmation";
+    private static final String MESSAGE_TITLE_NOTIFY_PURCHASE_CONFIRMATION = "module.stock.billetterie.message.title.notifyPurchase.confirmation";
     
     // ORDER FILTERS
     private static final String ORDER_FILTER_DATE = "date";
@@ -175,6 +220,8 @@ public class PurchaseJspBean  extends AbstractJspBean
 
     private ReservationFilter _purchaseFilter;
 
+    private INotificationService _serviceNotification;
+
     /**
      * Instantiates a new purchase jsp bean.
      */
@@ -186,6 +233,7 @@ public class PurchaseJspBean  extends AbstractJspBean
         _servicePurchase = SpringContextService.getContext( ).getBean( IPurchaseService.class );
         _serviceOffer = (ISeanceService) SpringContextService.getBean( BEAN_STOCK_TICKETS_SEANCE_SERVICE );
         _purchaseSessionManager = SpringContextService.getContext( ).getBean( IPurchaseSessionManager.class );
+        _serviceNotification = SpringContextService.getContext( ).getBean( INotificationService.class );
     }
 
     /**
@@ -425,7 +473,7 @@ public class PurchaseJspBean  extends AbstractJspBean
             return manageFunctionnalException( request, e, JSP_SAVE_PURCHASE );
         }
 
-        UrlItem redirection = new UrlItem( AppPathService.getBaseUrl( request ) );
+        UrlItem redirection = new UrlItem( AppPathService.getBaseUrl( request ) + JSP_MANAGE_PURCHASES );
         redirection.addParameter( MARK_OFFER_ID, purchase.getOffer( ).getId( ) );
         redirection.addParameter( MARK_PURCHASSE_ID, purchase.getId( ) );
         
@@ -503,6 +551,91 @@ public class PurchaseJspBean  extends AbstractJspBean
         }
 
         _servicePurchase.doDeletePurchase( nIdPurchase );
+
+        return doGoBack( request );
+    }
+    
+    /**
+     * Returns the confirmation message to notify purchaser
+     * 
+     * @param request The Http request
+     * @return the html code message
+     */
+    public String getNotifyPurchase( HttpServletRequest request )
+    {
+
+        String strPurchaseId = request.getParameter( PARAMETER_PURCHASE_ID );
+
+        Integer nIdPurchase;
+
+        try
+        {
+            nIdPurchase = Integer.parseInt( strPurchaseId );
+        }
+        catch ( NumberFormatException e )
+        {
+            LOGGER.debug( e );
+
+            return AdminMessageService.getMessageUrl( request, StockConstants.MESSAGE_ERROR_OCCUR, AdminMessage.TYPE_STOP );
+        }
+        ReservationDTO purchase = _servicePurchase.findById( nIdPurchase );
+
+        Object[] args = new Object[] { purchase.getEmailAgent( ), purchase.getOffer( ).getProduct( ).getName( ),
+                purchase.getOffer( ).getDate( ), purchase.getOffer( ).getHour( ), purchase.getOffer( ).getTypeName( ),
+                purchase.getQuantity( ), };
+
+        Map<String, Object> urlParam = new HashMap<String, Object>( );
+        urlParam.put( PARAMETER_PURCHASE_ID, nIdPurchase );
+
+        String strJspBack = JSP_MANAGE_PURCHASES;
+
+        return AdminMessageService.getMessageUrl( request, MESSAGE_NOTIFY_PURCHASE_CONFIRMATION, args,
+                MESSAGE_TITLE_NOTIFY_PURCHASE_CONFIRMATION, JSP_DO_NOTIFY_PURCHASE, BilletterieConstants.TARGET_SELF,
+                AdminMessage.TYPE_CONFIRMATION, urlParam, strJspBack );
+    }
+    
+    /**
+     * Send booking notification.
+     * 
+     * @param request The Http request
+     * @return the html code message
+     */
+    public String doNotifyPurchase( HttpServletRequest request )
+    {
+        String strPurchaseId = request.getParameter( PARAMETER_PURCHASE_ID );
+
+        Integer nIdPurchase;
+
+        try
+        {
+            nIdPurchase = Integer.parseInt( strPurchaseId );
+        }
+        catch ( NumberFormatException e )
+        {
+            LOGGER.debug( e );
+
+            return AdminMessageService.getMessageUrl( request, StockConstants.MESSAGE_ERROR_OCCUR, AdminMessage.TYPE_STOP );
+        }
+        
+        ReservationDTO purchase = _servicePurchase.findById( nIdPurchase );
+        
+        //Generate mail content
+        Map<String, Object> model = new HashMap<String, Object>( );
+        model.put( MARK_PURCHASE, purchase );
+        model.put( MARK_BASE_URL, AppPathService.getBaseUrl( request ) );
+        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_NOTIFICATION_BOOKING,
+                request.getLocale( ), model );
+
+        // Create mail object
+        NotificationDTO notificationDTO = new NotificationDTO( );
+        notificationDTO.setRecipientsTo( purchase.getEmailAgent( ) );
+        String[] args = new String[] { purchase.getOffer( ).getName( ), };
+        notificationDTO.setSubject( I18nService.getLocalizedString( MESSAGE_NOTIFICATION_BOOKING_SUBJECT, args,
+                request.getLocale( ) ) );
+        notificationDTO.setMessage( template.getHtml( ) );
+
+        // Send it
+        _serviceNotification.send( notificationDTO );
 
         return doGoBack( request );
     }

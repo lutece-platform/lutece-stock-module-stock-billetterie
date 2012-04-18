@@ -33,14 +33,14 @@
  */
 package fr.paris.lutece.plugins.stock.modules.billetterie.web;
 
-import fr.paris.lutece.plugins.stock.business.category.Category;
 import fr.paris.lutece.plugins.stock.business.category.CategoryFilter;
 import fr.paris.lutece.plugins.stock.commons.ResultList;
 import fr.paris.lutece.plugins.stock.commons.exception.FunctionnalException;
 import fr.paris.lutece.plugins.stock.modules.billetterie.utils.constants.BilletterieConstants;
+import fr.paris.lutece.plugins.stock.modules.tickets.business.ShowCategoryDTO;
 import fr.paris.lutece.plugins.stock.modules.tickets.business.ShowDTO;
 import fr.paris.lutece.plugins.stock.modules.tickets.business.ShowFilter;
-import fr.paris.lutece.plugins.stock.modules.tickets.service.ICategoryService;
+import fr.paris.lutece.plugins.stock.modules.tickets.service.IShowCategoryService;
 import fr.paris.lutece.plugins.stock.modules.tickets.service.IShowService;
 import fr.paris.lutece.plugins.stock.modules.tickets.utils.constants.TicketsConstants;
 import fr.paris.lutece.plugins.stock.utils.constants.StockConstants;
@@ -73,9 +73,6 @@ import org.apache.commons.lang.StringUtils;
  */
 public class CategoryJspBean extends AbstractJspBean
 {
-    /** The Constant BEAN_STOCK_TICKETS_SHOW_SERVICE. */
-    private static final String BEAN_STOCK_TICKETS_SHOW_SERVICE = "stock-tickets.showService";
-
     /** The Constant PARAMETER_CATEGORY_ID. */
     public static final String PARAMETER_CATEGORY_ID = "category_id";
 
@@ -99,6 +96,9 @@ public class CategoryJspBean extends AbstractJspBean
 
     /** The Constant PARAMETER_FILTER_NAME. */
     private static final String PARAMETER_FILTER_NAME = "filter_name";
+
+    /** The Constant BEAN_STOCK_TICKETS_SHOW_SERVICE. */
+    private static final String BEAN_STOCK_TICKETS_SHOW_SERVICE = "stock-tickets.showService";
 
     // I18N
     /** The Constant PAGE_TITLE_MANAGE_CATEGORY. */
@@ -148,7 +148,7 @@ public class CategoryJspBean extends AbstractJspBean
     // MEMBERS VARIABLES
     /** The _service category. */
     // @Inject
-    private ICategoryService _serviceCategory;
+    private IShowCategoryService _serviceCategory;
 
     /** The _category filter. */
     private CategoryFilter _categoryFilter;
@@ -165,7 +165,7 @@ public class CategoryJspBean extends AbstractJspBean
     {
         // super( );
         _categoryFilter = new CategoryFilter( );
-        _serviceCategory = SpringContextService.getContext( ).getBean( ICategoryService.class );
+        _serviceCategory = SpringContextService.getContext( ).getBean( IShowCategoryService.class );
         _serviceShow = (IShowService) SpringContextService.getBean( BEAN_STOCK_TICKETS_SHOW_SERVICE );
     }
 
@@ -203,10 +203,10 @@ public class CategoryJspBean extends AbstractJspBean
         filter.setOrders( orderList );
         filter.setOrderAsc( true );
 
-        ResultList<Category> listAllCATEGORY = _serviceCategory
+        ResultList<ShowCategoryDTO> listAllCATEGORY = _serviceCategory
                 .findByFilter( filter, getPaginationProperties( request ) );
 
-        DelegatePaginator<Category> paginator = getPaginator( request, listAllCATEGORY );
+        DelegatePaginator<ShowCategoryDTO> paginator = getPaginator( request, listAllCATEGORY );
 
         // Fill the model
         Map<String, Object> model = new HashMap<String, Object>( );
@@ -233,13 +233,13 @@ public class CategoryJspBean extends AbstractJspBean
     public String getSaveCategory( HttpServletRequest request, String strCategoryClassName )
     {
 
-        Category category = null;
+        ShowCategoryDTO category = null;
         Map<String, Object> model = new HashMap<String, Object>( );
 
         FunctionnalException fe = getErrorOnce( request );
         if ( fe != null )
         {
-            category = (Category) fe.getBean( );
+            category = (ShowCategoryDTO) fe.getBean( );
             model.put( BilletterieConstants.ERROR, getHtmlError( fe ) );
         }
         else
@@ -254,7 +254,7 @@ public class CategoryJspBean extends AbstractJspBean
             else
             {
                 setPageTitleProperty( PAGE_TITLE_CREATE_CATEGORY );
-                category = new Category( );
+                category = new ShowCategoryDTO( );
             }
         }
 
@@ -288,7 +288,7 @@ public class CategoryJspBean extends AbstractJspBean
             return doGoBack( request );
         }
 
-        Category category = new Category( );
+        ShowCategoryDTO category = new ShowCategoryDTO( );
         populate( category, request );
 
         try

@@ -53,7 +53,7 @@ import javax.servlet.http.HttpServletRequest;
 
 
 /**
- * DOCUMENT ME!
+ * class PortletBilletterie
  * 
  * @author kHamidi
  */
@@ -66,6 +66,7 @@ public class PortletBilletterie extends Portlet
     private static final String TAG_SHOW_ID = "id";
     private static final String TAG_SHOW_NAME = "name";
     private static final String TAG_SHOW_CATEGORY_NAME = "categoryName";
+    private static final String TAG_SHOW_CATEGORY_COLOR = "categoryColor";
     private static final String TAG_SHOW_START_DATE = "date_debut";
     private static final String TAG_SHOW_END_DATE = "date_fin";
     private static final String TAG_SHOW_POSTER_URL = "posterUrl";
@@ -77,28 +78,12 @@ public class PortletBilletterie extends Portlet
     private static final String URL_SHOW = "jsp/site/Portal.jsp?page=billetterie&action=fiche-spectacle";
     private static final String PROPERTY_POSTER_TB_PATH = "stock-billetterie.poster.tb.path";
     // ////////////////////
-    private Integer nShow;
-    private String typeContentPortlet;
+    private Integer _nShow;
+    private String _typeContentPortlet;
 
-    /**
-     * Gets the type content portlet.
-     * 
-     * @return the type content portlet
-     */
-    public String getTypeContentPortlet( )
-    {
-        return typeContentPortlet;
-    }
-
-    /**
-     * Sets the type content portlet.
-     * 
-     * @param TypeContentPortlet the new type content portlet
-     */
-    public void setTypeContentPortlet( String TypeContentPortlet )
-    {
-        this.typeContentPortlet = TypeContentPortlet;
-    }
+    /** The _show service. */
+    private IShowService _showService = (IShowService) SpringContextService.getContext( ).getBean(
+            ShowService.ID_SPRING_DEFAULT );
 
     /**
      * Instantiates a new portlet billetterie.
@@ -110,13 +95,33 @@ public class PortletBilletterie extends Portlet
     }
 
     /**
+     * Gets the type content portlet.
+     * 
+     * @return the type content portlet
+     */
+    public String getTypeContentPortlet( )
+    {
+        return _typeContentPortlet;
+    }
+
+    /**
+     * Sets the type content portlet.
+     * 
+     * @param typeContentPortlet the new type content portlet
+     */
+    public void setTypeContentPortlet( String typeContentPortlet )
+    {
+        this._typeContentPortlet = typeContentPortlet;
+    }
+
+    /**
      * Gets the n show.
      * 
      * @return the n show
      */
     public Integer getnShow( )
     {
-        return nShow;
+        return _nShow;
     }
 
     /**
@@ -126,12 +131,8 @@ public class PortletBilletterie extends Portlet
      */
     public void setnShow( Integer nShow )
     {
-        this.nShow = nShow;
+        this._nShow = nShow;
     }
-
-    /** The _show service. */
-    private IShowService _showService = (IShowService) SpringContextService.getContext( ).getBean(
-            ShowService.ID_SPRING_DEFAULT );
 
     /**
      * get xml document.
@@ -186,6 +187,7 @@ public class PortletBilletterie extends Portlet
                         "<![CDATA[" + AppPropertiesService.getProperty( PROPERTY_POSTER_TB_PATH ) + showDTO.getId( )
                                 + "]]>" );
                 XmlUtil.addElement( strXml, TAG_SHOW_CATEGORY_NAME, showDTO.getCategoryName( ) );
+                XmlUtil.addElement( strXml, TAG_SHOW_CATEGORY_COLOR, showDTO.getCategoryColor( ) );
                 XmlUtil.addElement( strXml, TAG_SHOW_START_DATE, showDTO.getStartDate( ) );
                 XmlUtil.addElement( strXml, TAG_SHOW_END_DATE, showDTO.getEndDate( ) );
                 XmlUtil.addElement( strXml, TAG_SHOW_DESCRIPTION, showDTO.getDescription( ) );
@@ -201,13 +203,7 @@ public class PortletBilletterie extends Portlet
         return addPortletTags( strXml );
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * fr.paris.lutece.portal.business.XmlContent#getXmlDocument(javax.servlet
-     * .http.HttpServletRequest)
-     */
+    /** {@inheritDoc} */
     public String getXmlDocument( HttpServletRequest request ) throws SiteMessageException
     {
         return XmlUtil.getXmlHeader( ) + getXml( request );

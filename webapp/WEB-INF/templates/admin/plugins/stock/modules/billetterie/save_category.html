@@ -1,3 +1,20 @@
+
+<SCRIPT LANGUAGE="JavaScript">
+	function makeArray(q){
+		for(i=1 ; i <= q ; i++)
+		{
+			this[i]=0;
+		}
+	}
+
+	Colors = new makeArray(7);
+	Colors[1] = "00";
+	Colors[2] = "33";
+	Colors[3] = "66";
+	Colors[4] = "99";
+	Colors[5] = "CC";
+	Colors[6] = "FF";
+</script>
 <div class="content-box" >
     <h2>${title!}</h2>
     ${error!}
@@ -12,6 +29,37 @@
 				<label for="category_description" >#i18n{stock.create_category.description} :</label>
 				<input type="text" id="description" name="description" size="60" maxlength="100" value="${category.description!}"/>
 			</div>
+	       	<div>
+	            <label for="color" >#i18n{module.stock.billetterie.create_category.labelColor} :</label>
+	            <#if category.color?exists>
+	            	<input type="text" size="10" id="color" name="color" maxlength="7" value="${category.color}"/>
+	        	<#else>
+	        		<input type="text" size="10" id="color" name="color" maxlength="7" value=""/>
+	        	</#if>
+	        </div>
+	        <div>
+	            <label for="color_picker" >#i18n{module.stock.billetterie.create_category.labelColorPicker} : </label>
+				<table id="color_picker" style='width: 10%;' border="0" align=center>
+	 				<tr>
+						<script language="JavaScript">
+	 						for(i=1 ; i <= 6 ; i++)
+	 	 					{
+	 							for(j=1 ; j <= 6 ; j++)
+	 	 						{
+	 								for(k=1 ; k <= 6 ; k++)
+	 	 							{
+										var thiscolor = Colors[i] + Colors[j] + Colors[k];
+										document.writeln("<td style='padding:0 0 0 0; border: none;' bgcolor = \"#" + thiscolor + "\" align = center><a ");
+										document.writeln("\'\' onClick = \"document.getElementById('color').value = \'#" + thiscolor + "\'\">" + '_' + "</a></td>");
+	
+	 								}
+	 							}
+	 							document.writeln("<TR>");
+	 						}
+	 					</script>
+	 				</tr>
+	 			</table>
+	        </div>
        	</p>
 		<p>   
 			<input type="hidden" id="category_id" name="id" value="${category.id!}"/>

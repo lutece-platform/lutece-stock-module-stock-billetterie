@@ -16,7 +16,7 @@
 					<xsl:for-each select="billetterie/show">
 
 						<div class="show_details">
-
+							<xsl:attribute name="style">background-color: <xsl:value-of select="categoryColor"/>;</xsl:attribute>
 							<a>
 								<xsl:attribute name="title"><xsl:value-of select="name"/></xsl:attribute>
 								<xsl:attribute name="href"><xsl:value-of select="url"/></xsl:attribute>
@@ -29,7 +29,7 @@
 							<a class="en-savoir-plus">
 								<xsl:attribute name="href"><![CDATA[jsp/site/Portal.jsp?page=billetterie&action=fiche-spectacle&product_id=]]><xsl:value-of select="id"/></xsl:attribute>
 								<xsl:attribute name="title">Détails du spectacle</xsl:attribute>
-								<xsl:value-of select="categoryName" />
+								<xsl:value-of select="name" />
 								<br/>
 								EN SAVOIR	PLUS
 							</a>

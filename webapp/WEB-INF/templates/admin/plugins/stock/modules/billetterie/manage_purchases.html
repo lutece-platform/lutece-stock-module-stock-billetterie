@@ -71,7 +71,7 @@
 				    		${(purchase.offer.typeName)!}
 				    	</td>
 				    	<td>
-				    		${purchase.userName!}
+				    		${purchase.firstNameAgent!} ${purchase.nameAgent!} <#if purchase.emailAgent??>&lt;${purchase.emailAgent}&gt;</#if>
 				    	</td>
 				    	<td>
 				    		${purchase.quantity!}
@@ -82,6 +82,9 @@
 			        		</a>
 			        		<a title="#i18n{module.stock.billetterie.list_purchase.linkCancelPurchase}" href="jsp/admin/plugins/stock/modules/billetterie/DeletePurchase.jsp?purchase_id=${purchase.id!}"> 
 			        			<img src="images/admin/skin/plugins/stock/modules/billetterie/disable.png" alt="#i18n{module.stock.billetterie.list_purchase.linkCancelPurchase}" /> 
+			        		</a>
+			        		<a title="#i18n{module.stock.billetterie.list_purchase.linkNotifiyPurchase}" href="jsp/admin/plugins/stock/modules/billetterie/NotifyPurchase.jsp?purchase_id=${purchase.id!}"> 
+			        			<img src="images/local/skin/buttons/b_send.png" alt="#i18n{module.stock.billetterie.list_purchase.linkNotifiyPurchase}" /> 
 			        		</a>
 			            </td>
 				    </tr>

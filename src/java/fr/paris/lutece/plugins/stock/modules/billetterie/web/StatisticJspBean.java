@@ -83,15 +83,20 @@ import com.keypoint.PngEncoder;
  */
 public class StatisticJspBean extends AbstractJspBean
 {
-    private static final String CONTENT_TYPE_IMAGE_PNG = "image/PNG";
-
+    /** The constant String CONSTANT_PRODUCT_TYPE */
     public static final String CONSTANT_PRODUCT_TYPE = "1";
 
+    /** The constant String CONSTANT_GROUP_BY_DAY */
     public static final String CONSTANT_GROUP_BY_DAY = "0";
+    /** The constant String CONSTANT_GROUP_BY_WEEK */
     public static final String CONSTANT_GROUP_BY_WEEK = "1";
+    /** The constant String CONSTANT_GROUP_BY_MONTH */
     public static final String CONSTANT_GROUP_BY_MONTH = "2";
+    /** The constant String CONSTANT_PURCHASE_TYPE */
     public static final String CONSTANT_PURCHASE_TYPE = "2";
+
     //RIGHT
+    /** The constant String RIGHT_MANAGE_STATISTICS */
     public static final String RIGHT_MANAGE_STATISTICS = "STATISTICS_MANAGEMENT";
 
     //PAGES TITLES
@@ -129,6 +134,7 @@ public class StatisticJspBean extends AbstractJspBean
     private static final String PROPERTY_LABEL_AXIS_Y_PRODUCT = "module.stock.billetterie.manage_products_statistics.labelAxisY";
     private static final String PROPERTY_LABEL_AXIS_Y_PURCHASE = "module.stock.billetterie.manage_purchases_statistics.labelAxisY";
 
+    private static final String CONTENT_TYPE_IMAGE_PNG = "image/PNG";
 
     /** The _service statistic. */
     // @Inject

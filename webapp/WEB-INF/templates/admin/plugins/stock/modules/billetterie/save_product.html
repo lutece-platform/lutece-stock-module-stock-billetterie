@@ -1,3 +1,4 @@
+<#include "/admin/util/editor/editor.html" />
 <div class="content-box" >
     <h2>${title!}</h2>
     ${error!}
@@ -45,7 +46,9 @@
 			</div>
 			<div>
 				<label for="product_description" >#i18n{module.stock.billetterie.save_product.description} :</label>
-				<textarea id="description" name="description" cols="60" rows="10" maxlength="2000">${product.description!}</textarea>
+				<div class="editor">
+					<textarea id="description" name="description" cols="90" rows="10" maxlength="2000" class="richtext">${product.description!}</textarea>
+				</div>
 			</div>
 			<div>
 				<label>#i18n{module.stock.billetterie.save_product.start} * :</label>
@@ -68,3 +71,4 @@
 		</p>
    </form>
 </div>
+<@initEditor />

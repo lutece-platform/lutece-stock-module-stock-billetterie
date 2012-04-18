@@ -90,10 +90,6 @@ import org.springframework.transaction.annotation.Transactional;
  */
 public class ShowJspBean extends AbstractJspBean
 {
-
-
-
-
     /** The Constant LOGGER. */
     public static final Logger LOGGER = Logger.getLogger( ShowJspBean.class );
 
@@ -158,6 +154,12 @@ public class ShowJspBean extends AbstractJspBean
 
     /** The Constant PROPERTY_STOCK_BILLETTERIE_SHOW_PUBLIC. */
     private static final String PROPERTY_STOCK_BILLETTERIE_SHOW_PUBLIC = "stock-billetterie.show.public";
+
+    /** The Constant MARK_WEBAPP_URL. */
+    private static final String MARK_WEBAPP_URL = "webapp_url";
+
+    /** The Constant MARK_LOCALE. */
+    private static final String MARK_LOCALE = "locale";
 
     // I18N
     /** The Constant PAGE_TITLE_MANAGE_PRODUCT. */
@@ -376,6 +378,10 @@ public class ShowJspBean extends AbstractJspBean
         model.put( StockConstants.MARK_JSP_BACK, request.getParameter( StockConstants.MARK_JSP_BACK ) );
         model.put( MARK_PRODUCT, product );
         model.put( MARK_URL_POSTER, AppPropertiesService.getProperty( PROPERTY_POSTER_PATH ) );
+
+        // Richtext editor parameters
+        model.put( MARK_WEBAPP_URL, AppPathService.getBaseUrl( request ) );
+        model.put( MARK_LOCALE, request.getLocale( ) );
 
         if ( product.getId( ) != null && product.getId( ) != 0 )
         {
