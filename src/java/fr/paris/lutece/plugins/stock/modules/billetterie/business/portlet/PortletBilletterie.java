@@ -190,7 +190,8 @@ public class PortletBilletterie extends Portlet
                 XmlUtil.addElement( strXml, TAG_SHOW_CATEGORY_COLOR, showDTO.getCategoryColor( ) );
                 XmlUtil.addElement( strXml, TAG_SHOW_START_DATE, showDTO.getStartDate( ) );
                 XmlUtil.addElement( strXml, TAG_SHOW_END_DATE, showDTO.getEndDate( ) );
-                XmlUtil.addElement( strXml, TAG_SHOW_DESCRIPTION, showDTO.getDescription( ) );
+                // XmlUtil.addElement( strXml, TAG_SHOW_DESCRIPTION,
+                // showDTO.getDescription( ) );
                 UrlItem url = new UrlItem( URL_SHOW );
                 url.addParameter( PARAMETER_STOCK_ID, showDTO.getId( ) );
                 XmlUtil.addElement( strXml, TAG_SHOW_URL, "<![CDATA[" + url.getUrl( ) + "]]>" );

@@ -8,7 +8,7 @@ Vos places sont à retirer directement au théâtre à votre nom ½ h à l’ava
 <strong>Spectacle :</strong> ${booking.offer.product.name!}
 <strong>Date :</strong> ${booking.offer.date!}  ${booking.offer.hour!}
 <#list bookingList as booking>
-	<strong>Nombre de place ${booking.offer.typeName} :</strong> ${booking.quantity!} - <strong><a title="#i18n{module.stock.billetterie.list_purchase.linkPrintTicket}" href="jsp/site/plugins/jasper/DownloadFile.jsp?report_id=contremarque&report_type=pdf&value1=${booking.id!}">Imprimer la contremarque</a></strong>
+	<strong>Nombre de place ${booking.offer.typeName} :</strong> ${booking.quantity!} - <strong><a title="#i18n{module.stock.billetterie.list_purchase.linkPrintTicket}" href="jsp/site/plugins/jasper/DownloadFile.jsp?report_id=contremarque&report_type=pdf&value1=${booking.id!}&value2=${purchase.userName!}">Imprimer la contremarque</a></strong>
 </#list>
 
 Bon spectacle !

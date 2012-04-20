@@ -105,6 +105,8 @@ public class NotificationJspBean  extends AbstractJspBean
     // MESSAGES
     private static final String MESSAGE_AVERTISSEMENT_CANCEL_OFFER = "module.stock.billetterie.message.cancelOffer.avertissement";
     private static final String MESSAGE_AVERTISSEMENT_SEND_OFFER = "module.stock.billetterie.message.sendOffer.avertissement";
+    private static final String MESSAGE_NOTIFICATION_CANCEL_SUBJECT = "module.stock.billetterie.notification.cancel.subject";
+    private static final String MESSAGE_NOTIFICATION_BOOKING_LIST_SUBJECT = "module.stock.billetterie.notification.bookingList.subject";
 
     // ORDER FILTER
     private static final String ORDER_FILTER_USER_NAME = "userName";
@@ -183,8 +185,8 @@ public class NotificationJspBean  extends AbstractJspBean
             	}
                 notification.setRecipientsTo( recipientsTo.toString( ) );
             	// Set the default subject
-            	notification.setSubject( "Annulation du spectacle : " + seance.getProduct( ).getName( ) + " du " + seance.getDate( ) + 
-            			" - " + seance.getHour( ) );
+                notification.setSubject( getMessage( MESSAGE_NOTIFICATION_CANCEL_SUBJECT, seance.getProduct( )
+                        .getName( ), seance.getDate( ), seance.getHour( ) ) );
             	// Set the default message
                 Map<String, Object> modelMail = new HashMap<String, Object>( );
                 modelMail.put( MARK_BASE_URL, AppPathService.getBaseUrl( request ) );
@@ -198,11 +200,10 @@ public class NotificationJspBean  extends AbstractJspBean
             	notification.setNotificationAction( TicketsConstants.OFFER_STATUT_LOCK );
             	// Set the default recipientsTo
             	notification.setRecipientsTo( seance.getProduct( ).getProviderMail( ) ); 
-            	// Set the default subject
-                notification.setSubject( "Liste des réservations - " + seance.getProduct( ).getName( ) + " "
-                        + seance.getDate( ) +
-            			" - " + seance.getHour( ) );
-            	// Set the default message
+                // Set the default subject
+                notification.setSubject( getMessage( MESSAGE_NOTIFICATION_BOOKING_LIST_SUBJECT, seance
+                        .getProduct( ).getName( ) + " " + seance.getDate( ) + " - " + seance.getHour( ) ) );
+                // Set the default message
                 Map<String, Object> modelMail = new HashMap<String, Object>( );
                 modelMail.put( MARK_BASE_URL, AppPathService.getBaseUrl( request ) );
                 modelMail.put( MARK_SEANCE, seance );
