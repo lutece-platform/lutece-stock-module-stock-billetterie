@@ -31,13 +31,12 @@
 			</div>
 	       	<div>
 	            <label for="color" >#i18n{module.stock.billetterie.create_category.labelColor} :</label>
-	            <#if category.color?exists>
-	            	<input type="text" size="10" id="color" name="color" maxlength="7" value="${category.color}"/>
-	        	<#else>
-	        		<input type="text" size="10" id="color" name="color" maxlength="7" value=""/>
-	        	</#if>
+	            <div>
+	            <input type="text" size="10" id="color" name="color" maxlength="7" value="${category.color!}" style="float:left"/>
+	        	<div style="width:15px;height:15px;background-color:${category.color!}; display:inline-block; margin:3px 0 0 2px" id="bloc_couleur"></div>
+	        	</div>
 	        </div>
-	        <div>
+	        <div style="clear:left">
 	            <label for="color_picker" >#i18n{module.stock.billetterie.create_category.labelColorPicker} : </label>
 				<table id="color_picker" style='width: 10%;' border="0" align=center>
 	 				<tr>
