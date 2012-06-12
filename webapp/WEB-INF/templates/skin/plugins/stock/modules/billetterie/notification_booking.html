@@ -5,7 +5,7 @@ Votre réservation a bien été prise en compte.
 Vos places sont à retirer directement au théâtre à votre nom ½ h à l’avance.
 
 <h3>Récapitulatif de la réservation</h3>
-<strong>Spectacle :</strong> ${booking.offer.product.name!}
+<strong>Spectacle :</strong> ${booking.offer.product.name!} - ${booking.offer.product.providerName!} ${booking.offer.product.providerAddress!}
 <strong>Date :</strong> ${booking.offer.date!}  ${booking.offer.hour!}
 <#list bookingList as booking>
 	<strong>Nombre de place ${booking.offer.typeName} :</strong> ${booking.quantity!} - <strong><a title="#i18n{module.stock.billetterie.list_purchase.linkPrintTicket}" href="jsp/site/plugins/jasper/DownloadFile.jsp?report_id=contremarque&report_type=pdf&value1=${booking.id!}&value2=${booking.userName!}">Imprimer la contremarque</a></strong>
