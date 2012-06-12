@@ -329,7 +329,7 @@ public class PurchaseJspBean  extends AbstractJspBean
             if ( StringUtils.isNotEmpty( purchaseId ) && NumberUtils.validateInt( purchaseId ) )
             {
                 ReservationDTO reservation = this._servicePurchase.findById( Integer.parseInt( purchaseId ) );
-                filter.setUserName( reservation.getUserName( ) );
+                filter.setUserName( reservation.getNameAgent( ) );
             }
         	filter.setIdOffer( seance.getId( ) );
         	filter.setProductName( seance.getProduct( ).getName( ) );
