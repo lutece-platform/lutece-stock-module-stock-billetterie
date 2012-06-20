@@ -178,7 +178,7 @@ public class PortletBilletterie extends Portlet
 
         for ( ShowDTO showDTO : listShow )
         {
-            if ( !( strContentPortlet.equals( "a-venir" ) && showDTO.getAlaffiche( ) ) )
+            if ( strContentPortlet.equals( "a-venir" ) || ( !strContentPortlet.equals( "a-venir" ) && showDTO.getAlaffiche( ) ) )
             {
                 XmlUtil.beginElement( strXml, TAG_SHOW );
                 XmlUtil.addElement( strXml, TAG_SHOW_ID, showDTO.getId( ) );
