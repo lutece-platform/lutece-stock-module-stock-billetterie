@@ -1,3 +1,45 @@
+<script type="text/javascript">
+$(document).ready(function(){
+	//Manage display of additionnal contacts
+	var MAX_CONTACT=4;
+	for(i=2; i<=MAX_CONTACT; i++)
+	{
+		if($('#provider_contact_name'+i).val() || $('#provider_phone_number'+i).val() || $('#provider_mail'+i).val())
+		{
+			for(j=2; j<=i; j++)
+			{
+				$('#bloc_contact'+j).show();
+			}
+		}
+		else
+		{
+			$('#bloc_contact'+i).hide();
+		}
+	}
+	//Hide button if max contact displayed
+	if($('#bloc_contact'+MAX_CONTACT+':visible').length > 0)
+	{
+		$('#more_contact').hide();
+	}
+	
+	$('#more_contact').click(function(){
+		for(i=2; i<=MAX_CONTACT; i++)
+		{
+			//Test if bloc hidden
+			if($('#bloc_contact'+i+':visible').length == 0)			
+			{
+				$('#bloc_contact'+i).show();
+				if(i == MAX_CONTACT)
+				{
+					$('#more_contact').hide();
+				}
+				break;
+			}
+		}
+	});
+});
+</script>
+	
 	<div class="content-box" >
 	
 		    
@@ -7,32 +49,89 @@
 	    <form method="post" action="jsp/admin/plugins/stock/modules/billetterie/DoSavePartner.jsp">
 	    	<input type="hidden" id="partner_id" name="id" value="${partner.id!}"/>
 	    	<input type="hidden" id="jsp_back" name="jsp_back" value="${jsp_back!}"/>
-	        <p>
-				<div>
-					<label for="provider_name" >#i18n{module.stock.billetterie.field.PartnerDTO.name} * :</label>
-					<input type="text" id="provider_name" name="name" size="60" maxlength="100" value="${partner.name!}"/>
+	        <div class="highlight-box">
+				<div class="highlight-box-content"> 
+					<div>
+						<label for="provider_name" >#i18n{module.stock.billetterie.field.PartnerDTO.name} * :</label>
+						<input type="text" id="provider_name" name="name" size="60" maxlength="100" value="${partner.name!}"/>
+					</div>
+					<div>
+						<label for="provider_address" >#i18n{stock.create_provider.address} :</label>
+						<input type="text" id="provider_address" name="address" size="60" maxlength="250"  value="${partner.address!}"/>
+					</div>
+					<div>
+						<label for="provider_comment" >#i18n{stock.create_provider.comment} :</label>
+						<input type="text" id="provider_comment" name="comment" size="60" maxlength="250"  value="${partner.comment!}"/>
+					</div>
 				</div>
-				<div>
-					<label for="provider_address" >#i18n{stock.create_provider.address} :</label>
-					<input type="text" id="provider_address" name="address" size="60" maxlength="250"  value="${partner.address!}"/>
-				</div>
-				<div>
-					<label for="provider_comment" >#i18n{stock.create_provider.comment} :</label>
-					<input type="text" id="provider_comment" name="comment" size="60" maxlength="250"  value="${partner.comment!}"/>
-				</div>
-				<div>
-					<label for="provider_contact_name" >#i18n{stock.create_provider.contact} :</label>
-					<input type="text" id="provider_contact_name" name="contactName" size="60" maxlength="60"  value="${partner.contactName!}"/>
-				</div>
-				<div>
-					<label for="provider_phone_number" >#i18n{stock.create_provider.phoneNumber} * :</label>
-					<input type="text" id="provider_phone_number" name="phoneNumber" size="60" maxlength="10"  value="${partner.phoneNumber!}"/>
-				</div>
-		        <div>
-					<label for="provider_mail" >#i18n{stock.create_provider.mail} * :</label>
-					<input type="text" id="provider_mail" name="mail" size="60" maxlength="50"  value="${partner.mail!}"/>
-				</div>
-	       	</p>
+			</div>
+			<div class="highlight-box">
+				<div class="highlight-box-content"> 
+					<div>
+						<label for="provider_contact_name" >#i18n{stock.create_provider.contact} :</label>
+						<input type="text" id="provider_contact_name" name="contactName" size="60" maxlength="60"  value="${partner.contactName!}"/>
+					</div>
+					<div>
+						<label for="provider_phone_number" >#i18n{stock.create_provider.phoneNumber} * :</label>
+						<input type="text" id="provider_phone_number" name="phoneNumber" size="60" maxlength="10"  value="${partner.phoneNumber!}"/>
+					</div>
+			        <div>
+						<label for="provider_mail" >#i18n{stock.create_provider.mail} * :</label>
+						<input type="text" id="provider_mail" name="mail" size="60" maxlength="50"  value="${partner.mail!}"/>
+					</div>
+					<br>
+					<div id="bloc_contact2">
+						<div>
+							<label for="provider_contact_name2" >#i18n{stock.create_provider.contact} :</label>
+							<input type="text" id="provider_contact_name2" name="contactName2" size="60" maxlength="60"  value="${partner.contactName2!}"/>
+						</div>
+						<div>
+							<label for="provider_phone_number2" >#i18n{stock.create_provider.phoneNumber} :</label>
+							<input type="text" id="provider_phone_number2" name="phoneNumber2" size="60" maxlength="10"  value="${partner.phoneNumber2!}"/>
+						</div>
+				        <div>
+							<label for="provider_mail2" >#i18n{stock.create_provider.mail} :</label>
+							<input type="text" id="provider_mail2" name="mail2" size="60" maxlength="50"  value="${partner.mail2!}"/>
+						</div>
+					</div>
+					<br>
+					
+					<div id="bloc_contact3">
+						<div>
+							<label for="provider_contact_name3" >#i18n{stock.create_provider.contact} :</label>
+							<input type="text" id="provider_contact_name3" name="contactName3" size="60" maxlength="60"  value="${partner.contactName3!}"/>
+						</div>
+						<div>
+							<label for="provider_phone_number3" >#i18n{stock.create_provider.phoneNumber} :</label>
+							<input type="text" id="provider_phone_number3" name="phoneNumber3" size="60" maxlength="10"  value="${partner.phoneNumber3!}"/>
+						</div>
+				        <div>
+							<label for="provider_mail3" >#i18n{stock.create_provider.mail} :</label>
+							<input type="text" id="provider_mail3" name="mail3" size="60" maxlength="50"  value="${partner.mail3!}"/>
+						</div>
+					</div>
+					<br>
+					
+					<div id="bloc_contact4">
+						<div>
+							<label for="provider_contact_name4" >#i18n{stock.create_provider.contact} :</label>
+							<input type="text" id="provider_contact_name4" name="contactName4" size="60" maxlength="60"  value="${partner.contactName4!}"/>
+						</div>
+						<div>
+							<label for="provider_phone_number4" >#i18n{stock.create_provider.phoneNumber} :</label>
+							<input type="text" id="provider_phone_number4" name="phoneNumber4" size="60" maxlength="10"  value="${partner.phoneNumber4!}"/>
+						</div>
+				        <div>
+							<label for="provider_mail4" >#i18n{stock.create_provider.mail} :</label>
+							<input type="text" id="provider_mail4" name="mail4" size="60" maxlength="50"  value="${partner.mail4!}"/>
+						</div>
+					</div>
+					<div>
+						<label>&nbsp;</label>
+						<input type="button" value="Contact supplémentaire" id="more_contact" class="button" />
+					</div>
+		       	</div>
+	       	</div>
 			<p>   
 				<input type="submit" value="#i18n{module.stock.billetterie.message.buttonSave}" class="button" tabindex="3" />
 				<input class="button" type="submit" name="cancel" value="#i18n{portal.admin.message.buttonCancel}" />
