@@ -3,7 +3,7 @@
 	<name>stock-billetterie</name>
 	<class>fr.paris.lutece.plugins.stock.modules.billetterie.service.BilletteriePlugin
 	</class>
-	<version>1.0.4</version>
+	<version>1.0.5</version>
 	<description>module.stock.billetterie.module.description</description>
 	<documentation/>
 	<installation/>
