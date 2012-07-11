@@ -209,7 +209,6 @@ public class PurchaseJspBean  extends AbstractJspBean
     // Paginator
     private int _nDefaultItemsPerPage;
     private String _strCurrentPageIndex;
-    private int _nItemsPerPage;
     // @Inject
     private IPurchaseService _servicePurchase;
     // @Inject

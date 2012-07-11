@@ -150,7 +150,6 @@ public class OfferJspBean  extends AbstractJspBean
     private static final String ORDER_FILTER_TYPE_NAME = "type.name";
     
     // MEMBERS VARIABLES
-    private int _nItemsPerPage;
     // @Inject
     // @Named( "stock-tickets.seanceService" )
     private ISeanceService _serviceOffer;

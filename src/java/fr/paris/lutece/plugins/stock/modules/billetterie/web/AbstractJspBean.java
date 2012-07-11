@@ -80,7 +80,7 @@ public class AbstractJspBean extends PluginAdminPageJspBean
     protected static final String MARK_NB_ITEMS_PER_PAGE = "nb_items_per_page";
     protected static final String MARK_PAGINATOR = "paginator";
     private String _strCurrentPageIndex = StringUtils.EMPTY;
-    private int _nItemsPerPage;
+    protected int _nItemsPerPage;
 
     /**
      * Return a paginator for the view using parameter in http request.

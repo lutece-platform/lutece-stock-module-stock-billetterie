@@ -206,9 +206,6 @@ public class ShowJspBean extends AbstractJspBean
     private static final String MESSAGE_ERROR_GET_AFFICHE = "Problème lors de la récupération de l'affiche";
 
 
-    // Variables
-    /** The _n items per page. */
-    private int _nItemsPerPage;
 
     // MEMBERS VARIABLES
     /** The _service product. */

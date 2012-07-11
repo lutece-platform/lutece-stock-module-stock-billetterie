@@ -134,16 +134,7 @@ public class CategoryJspBean extends AbstractJspBean
     /** The Constant MESSAGE_DELETE_CATEGORY_WITH_SHOW. */
     private static final String MESSAGE_DELETE_CATEGORY_WITH_SHOW = "module.stock.billetterie.message.deleteCategory.with.show";
 
-    // Variables
-    // Paginator ManageCategories
-    /** The _n default items per page. */
-    private int _nDefaultItemsPerPage;
 
-    /** The _str current page index. */
-    private String _strCurrentPageIndex;
-
-    /** The _n items per page. */
-    private int _nItemsPerPage;
 
     // MEMBERS VARIABLES
     /** The _service category. */
@@ -190,12 +181,6 @@ public class CategoryJspBean extends AbstractJspBean
     public String getManageCategories( HttpServletRequest request )
     {
         setPageTitleProperty( PAGE_TITLE_MANAGE_CATEGORY );
-
-        _strCurrentPageIndex = Paginator.getPageIndex( request, Paginator.PARAMETER_PAGE_INDEX, _strCurrentPageIndex );
-        _nDefaultItemsPerPage = AppPropertiesService.getPropertyInt( TicketsConstants.PROPERTY_DEFAULT_ITEM_PER_PAGE,
-                50 );
-        _nItemsPerPage = Paginator.getItemsPerPage( request, Paginator.PARAMETER_ITEMS_PER_PAGE, _nItemsPerPage,
-                _nDefaultItemsPerPage );
 
         CategoryFilter filter = getCategoryFilter( request );
         List<String> orderList = new ArrayList<String>( );

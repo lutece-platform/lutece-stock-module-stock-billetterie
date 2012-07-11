@@ -100,9 +100,6 @@ public class PartnerJspBean extends AbstractJspBean
     private static final String MESSAGE_CONFIRMATION_DELETE_PARTNER = "module.stock.billetterie.message.deletePartner.confirmation";
     private static final String MESSAGE_DELETE_PARTNER_WITH_SHOW = "module.stock.billetterie.message.deletePartner.with.show";
 
-    // Variables
-    // Paginator ManagePartners
-    private int _nItemsPerPage;
 
     // MEMBERS VARIABLES
     // @Inject
