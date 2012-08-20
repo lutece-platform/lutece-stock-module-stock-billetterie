@@ -62,10 +62,17 @@ import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.portal.web.constants.Parameters;
+import fr.paris.lutece.portal.web.resource.ExtendableResourcePluginActionManager;
 import fr.paris.lutece.portal.web.upload.MultipartHttpServletRequest;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.html.DelegatePaginator;
 import fr.paris.lutece.util.html.HtmlTemplate;
+
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.io.IOException;
@@ -77,12 +84,6 @@ import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-import org.springframework.transaction.annotation.Transactional;
 
 
 /**
@@ -249,7 +250,7 @@ public class ShowJspBean extends AbstractJspBean
 
     /**
      * Generates a HTML form that displays all products.
-     * 
+     *
      * @param request
      *            the Http request
      * @return HTML
@@ -263,7 +264,7 @@ public class ShowJspBean extends AbstractJspBean
         orderList.add( BilletterieConstants.NAME );
         filter.setOrderAsc( true );
         filter.setOrders( orderList );
-        
+
         ResultList<ShowDTO> listAllProduct = _serviceProduct
                 .findByFilter( filter, getPaginationProperties( request ) );
 
@@ -303,7 +304,7 @@ public class ShowJspBean extends AbstractJspBean
 
     /**
      * Returns the form to modify a provider.
-     * 
+     *
      * @param request The Http request
      * @param strProductClassName The class name of the provider entity to
      *            modify
@@ -348,6 +349,8 @@ public class ShowJspBean extends AbstractJspBean
                     product.setIdCategory( Integer.parseInt( strCategoryId ) );
                 }
             }
+
+            ExtendableResourcePluginActionManager.fillModel( request, getUser( ), model, strProductId, ShowDTO.PROPERTY_RESOURCE_TYPE );
         }
 
         // Combo
@@ -396,7 +399,7 @@ public class ShowJspBean extends AbstractJspBean
 
     /**
      * Save a product.
-     * 
+     *
      * @param request The HTTP request
      * @return redirection url
      */
@@ -439,7 +442,7 @@ public class ShowJspBean extends AbstractJspBean
 
     /**
      * Get the poster in the request and write it on the disk.
-     * 
+     *
      * @param request http request (multipart if contains poster)
      * @param product product entity
      * @return the poster image file (0 : thumbnail, 1 : full size)
@@ -454,13 +457,13 @@ public class ShowJspBean extends AbstractJspBean
         {
             MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
             FileItem fileItem = multipartRequest.getFile( PARAMETER_POSTER );
-            
+
             if ( fileItem != null && fileItem.getSize( ) > 0 )
             {
                 try
                 {
                     InputStream fisPoster = fileItem.getInputStream( );
-                    
+
                     // File fPoster = new File( new File( posterFolderPath ),
                     // fileItem.getName( ) );
                     File fPoster = File.createTempFile( FilenameUtils.getBaseName( fileItem.getName( ) ), null );
@@ -497,14 +500,14 @@ public class ShowJspBean extends AbstractJspBean
             {
                 throw new BusinessException( product, MESSAGE_ERROR_MANDATORY_POSTER );
             }
-            
+
         }
         return filePosterArray;
     }
 
     /**
      * Return the url of the JSP which called the last action.
-     * 
+     *
      * @param request The Http request
      * @return The url of the last JSP
      */
@@ -518,7 +521,7 @@ public class ShowJspBean extends AbstractJspBean
 
     /**
      * Gets the product filter.
-     * 
+     *
      * @param request the request
      * @return the product filter
      */
@@ -555,7 +558,7 @@ public class ShowJspBean extends AbstractJspBean
 
     /**
      * Returns the confirmation message to delete a product.
-     * 
+     *
      * @param request The Http request
      * @return the html code message
      */
@@ -590,7 +593,7 @@ public class ShowJspBean extends AbstractJspBean
         // Only product without seance can be delete
         SeanceFilter filter = new SeanceFilter( );
         filter.setProductId( nIdProduct );
-        ResultList<SeanceDTO> bookingList = this._serviceOffer.findByFilter( filter, null );
+        ResultList<SeanceDTO> bookingList = _serviceOffer.findByFilter( filter, null );
 
         if ( bookingList != null && !bookingList.isEmpty( ) )
         {
@@ -603,7 +606,7 @@ public class ShowJspBean extends AbstractJspBean
 
     /**
      * Delete a product.
-     * 
+     *
      * @param request The Http request
      * @return the html code message
      */

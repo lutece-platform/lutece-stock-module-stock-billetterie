@@ -1,16 +1,15 @@
-
-
 </div>
+
 <#-- results -->
 <div id="two-zones-second" class="span-18 last" role="main">
-	<div class="span-18 last">
+
+	@Extender[${show.id!},stock-product,hit,{show:true}]@
 	
-	
+	<div class="span-18 last notitle">
 	    <div class="portlet">
 	    	<div class="portlet-content">
 		${error!}
 				<div id="show_page">
-					
 					<div id="bloc-entete">
 						<img src="${url_poster}${show.id}" class="poster" alt="Affiche ${show.name}"/>
 						<div class="content-title"><h2>${show.name}</h2></div>
@@ -59,4 +58,5 @@
 			</div>
 		</div>
 	</div>
+	@Extender[${show.id!},stock-product,comment]@
 </div>
