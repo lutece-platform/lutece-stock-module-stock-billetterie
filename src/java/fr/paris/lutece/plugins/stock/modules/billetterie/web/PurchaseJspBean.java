@@ -56,6 +56,7 @@ import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
+import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.portal.web.constants.Parameters;
@@ -66,6 +67,7 @@ import fr.paris.lutece.util.html.HtmlTemplate;
 import fr.paris.lutece.util.html.Paginator;
 import fr.paris.lutece.util.url.UrlItem;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -73,6 +75,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -369,7 +372,7 @@ public class PurchaseJspBean  extends AbstractJspBean
      * @param request The HTTP request
      * @return HTML Form
      */
-    public String getSavePurchase( HttpServletRequest request )
+    public String getSavePurchase( HttpServletRequest request, HttpServletResponse response )
     {
         ReservationDTO purchase = null;
         Map<String, Object> model = new HashMap<String, Object>( );
@@ -412,6 +415,11 @@ public class PurchaseJspBean  extends AbstractJspBean
     		{
     			quantity = NB_PLACES_MAX_TARIF_REDUIT;
     		}
+            // Libère la réservation prévue sur la page de réservation
+            _purchaseSessionManager.release( request.getSession( ).getId( ), purchase );
+            // Update quantity with quantity in session for this offer
+            quantity = _purchaseSessionManager.updateQuantityWithSession( quantity, idOffer, seance.getQuantity( ) );
+
     		ReferenceList quantityList = new ReferenceList( );
     		for ( Integer i = 1; i <= quantity; i++ )
     		{
@@ -421,6 +429,31 @@ public class PurchaseJspBean  extends AbstractJspBean
         		quantityList.add( refItem );
     		}
     		model.put( MARK_QUANTITY_LIST, quantityList );
+
+            // Reserve tickets
+            try
+            {
+                boolean noQuantity = false;
+                if ( purchase.getQuantity( ) == null )
+                {
+                    purchase.setQuantity( 1 );
+                    noQuantity = true;
+                }
+                _purchaseSessionManager.reserve( request.getSession( ).getId( ), purchase );
+            }
+            catch ( PurchaseUnavailable e )
+            {
+                try
+                {
+                    response.sendRedirect( AdminMessageService.getMessageUrl( request,
+                            MESSAGE_INSUFFICIENT_PLACE_REMAINING, AdminMessage.TYPE_STOP ) );
+                }
+                catch ( IOException e1 )
+                {
+                    AppLogService.error( e1 );
+                }
+                return null;
+            }
         }
 
         // Add the JSP wich called this action
@@ -441,22 +474,26 @@ public class PurchaseJspBean  extends AbstractJspBean
      */
     public String doSavePurchase( HttpServletRequest request )
     {
-        if ( StringUtils.isNotBlank( request.getParameter( StockConstants.PARAMETER_BUTTON_CANCEL ) ) )
-        {
-            return doGoBack( request );
-        }
-
         ReservationDTO purchase = new ReservationDTO( );
         populate( purchase, request );
         purchase.setDate( DateUtils.getCurrentDateString( ) );
+
+        if ( StringUtils.isNotBlank( request.getParameter( StockConstants.PARAMETER_BUTTON_CANCEL ) ) )
+        {
+            return doCancelPurchase( request, purchase );
+        }
 
         try
         {
             // Controls mandatory fields
             validate( purchase );
+
             // Reserve tickets
             try
             {
+                // Libère la réservation prévue sur la page de réservation
+                _purchaseSessionManager.release( request.getSession( ).getId( ), purchase );
+                // Réserve avec les nouvelles valeurs saisies par l'utilisateur
                 _purchaseSessionManager.reserve( request.getSession( ).getId( ), purchase );
             }
             catch ( PurchaseUnavailable e )
@@ -477,6 +514,24 @@ public class PurchaseJspBean  extends AbstractJspBean
         redirection.addParameter( MARK_PURCHASSE_ID, purchase.getId( ) );
         
         return redirection.getUrl( );
+    }
+
+    /**
+     * Return the url of the JSP which called the last action and release
+     * reservation from session
+     * @param request The Http request
+     * @param purchase the purchase to cancel
+     * @return The url of the last JSP
+     */
+    private String doCancelPurchase( HttpServletRequest request, ReservationDTO purchase )
+    {
+        // Libère la réservation prévue sur la page de réservation
+        _purchaseSessionManager.release( request.getSession( ).getId( ), purchase );
+
+        String strJspBack = request.getParameter( StockConstants.MARK_JSP_BACK );
+
+        return StringUtils.isNotBlank( strJspBack ) ? ( AppPathService.getBaseUrl( request ) + strJspBack )
+                : AppPathService.getBaseUrl( request ) + JSP_MANAGE_PURCHASES;
     }
 
     /**

@@ -42,6 +42,7 @@ import fr.paris.lutece.plugins.stock.modules.tickets.service.IProviderService;
 import fr.paris.lutece.plugins.stock.modules.tickets.service.ISeanceService;
 import fr.paris.lutece.plugins.stock.modules.tickets.service.IShowService;
 import fr.paris.lutece.plugins.stock.modules.tickets.utils.constants.TicketsConstants;
+import fr.paris.lutece.plugins.stock.service.IPurchaseSessionManager;
 import fr.paris.lutece.plugins.stock.utils.DateUtils;
 import fr.paris.lutece.portal.service.message.SiteMessageException;
 import fr.paris.lutece.portal.service.plugin.Plugin;
@@ -146,6 +147,8 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
             IProviderService.class );
     private ISeanceService _offerService = (ISeanceService) SpringContextService.getContext( ).getBean(
             BEAN_STOCK_TICKETS_SEANCE_SERVICE );
+    private final IPurchaseSessionManager _purchaseSessionManager = (IPurchaseSessionManager) SpringContextService
+            .getContext( ).getBean( IPurchaseSessionManager.class );
 
 
     /**
@@ -302,6 +305,13 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
             throw new TechnicalException( MESSAGE_ERROR_PARSING_SHOW_DATE, e );
         }
         List<SeanceDTO> seanceList = _offerService.findSeanceByDate( show.getId( ), dateSeance );
+
+        for ( SeanceDTO seance : seanceList )
+        {
+            // Update quantity with quantity in session for this offer
+            seance.setQuantity( _purchaseSessionManager.updateQuantityWithSession( seance.getQuantity( ),
+                    seance.getId( ), seance.getQuantity( ) ) );
+        }
 
         // Generates template
         Map<String, Object> model = new HashMap<String, Object>( );

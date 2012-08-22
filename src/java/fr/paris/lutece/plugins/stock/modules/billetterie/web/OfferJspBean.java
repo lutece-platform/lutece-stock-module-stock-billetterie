@@ -47,6 +47,7 @@ import fr.paris.lutece.plugins.stock.modules.tickets.service.IPurchaseService;
 import fr.paris.lutece.plugins.stock.modules.tickets.service.ISeanceService;
 import fr.paris.lutece.plugins.stock.modules.tickets.service.IShowService;
 import fr.paris.lutece.plugins.stock.modules.tickets.utils.constants.TicketsConstants;
+import fr.paris.lutece.plugins.stock.service.IPurchaseSessionManager;
 import fr.paris.lutece.plugins.stock.utils.DateUtils;
 import fr.paris.lutece.plugins.stock.utils.ListUtils;
 import fr.paris.lutece.plugins.stock.utils.constants.StockConstants;
@@ -158,6 +159,7 @@ public class OfferJspBean  extends AbstractJspBean
     private IShowService _serviceProduct;
     // @Inject
     private IPurchaseService _servicePurchase;
+    private IPurchaseSessionManager _purchaseSessionManager;
     private SeanceFilter _offerFilter;
 
     /**
@@ -170,6 +172,7 @@ public class OfferJspBean  extends AbstractJspBean
         _offerFilter = new SeanceFilter( );
         _serviceOffer = (ISeanceService) SpringContextService.getBean( BEAN_STOCK_TICKETS_SEANCE_SERVICE );
         _serviceProduct = (IShowService) SpringContextService.getBean( BEAN_STOCK_TICKETS_SHOW_SERVICE );
+        _purchaseSessionManager = SpringContextService.getContext( ).getBean( IPurchaseSessionManager.class );
         _servicePurchase = SpringContextService.getContext( ).getBean( IPurchaseService.class );
     }
 
@@ -266,6 +269,13 @@ public class OfferJspBean  extends AbstractJspBean
 
         ResultList<SeanceDTO> listAllOffer = _serviceOffer
                 .findByFilter( filter, getPaginationProperties( request ) );
+
+        for ( SeanceDTO seance : listAllOffer )
+        {
+            // Update quantity with quantity in session for this offer
+            seance.setQuantity( _purchaseSessionManager.updateQuantityWithSession( seance.getQuantity( ),
+                    seance.getId( ), seance.getQuantity( ) ) );
+        }
 
         DelegatePaginator<SeanceDTO> paginator = getPaginator( request, listAllOffer );
 
