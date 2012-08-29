@@ -274,7 +274,7 @@ public class OfferJspBean  extends AbstractJspBean
         {
             // Update quantity with quantity in session for this offer
             seance.setQuantity( _purchaseSessionManager.updateQuantityWithSession( seance.getQuantity( ),
-                    seance.getId( ), seance.getQuantity( ) ) );
+                    seance.getId( ) ) );
         }
 
         DelegatePaginator<SeanceDTO> paginator = getPaginator( request, listAllOffer );

@@ -310,7 +310,7 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
         {
             // Update quantity with quantity in session for this offer
             seance.setQuantity( _purchaseSessionManager.updateQuantityWithSession( seance.getQuantity( ),
-                    seance.getId( ), seance.getQuantity( ) ) );
+                    seance.getId( ) ) );
         }
 
         // Generates template

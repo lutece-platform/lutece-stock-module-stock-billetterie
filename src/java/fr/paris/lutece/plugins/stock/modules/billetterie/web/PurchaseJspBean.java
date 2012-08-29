@@ -418,7 +418,11 @@ public class PurchaseJspBean  extends AbstractJspBean
             // Libère la réservation prévue sur la page de réservation
             _purchaseSessionManager.release( request.getSession( ).getId( ), purchase );
             // Update quantity with quantity in session for this offer
-            quantity = _purchaseSessionManager.updateQuantityWithSession( quantity, idOffer, seance.getQuantity( ) );
+            if ( seance.getQuantity( ) < quantity )
+            {
+                quantity = seance.getQuantity( );
+            }
+            quantity = _purchaseSessionManager.updateQuantityWithSession( quantity, idOffer );
 
     		ReferenceList quantityList = new ReferenceList( );
     		for ( Integer i = 1; i <= quantity; i++ )
