@@ -433,11 +433,9 @@ public class PurchaseJspBean  extends AbstractJspBean
             // Reserve tickets
             try
             {
-                boolean noQuantity = false;
                 if ( purchase.getQuantity( ) == null )
                 {
-                    purchase.setQuantity( 1 );
-                    noQuantity = true;
+                    purchase.setQuantity( quantity );
                 }
                 _purchaseSessionManager.reserve( request.getSession( ).getId( ), purchase );
             }
