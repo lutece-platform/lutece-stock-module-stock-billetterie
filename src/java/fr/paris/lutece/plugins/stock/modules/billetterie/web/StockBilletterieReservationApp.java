@@ -225,6 +225,8 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
                 }
             }
 
+            // Set user informations
+            LuteceUser user = this.getUser( request );
             // Create booking list
             boolean bPlacesInvalid = true;
             bookingList = new ArrayList<ReservationDTO>( );
@@ -251,8 +253,6 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
                             booking.getOffer( ).setTypeName( seanceTypeNameList[i] );
                             booking.setQuantity( nbPlaces );
                             booking.setDate( DateUtils.getCurrentDateString( ) );
-                            // Set user informations
-                            LuteceUser user = this.getUser( request );
                             if ( user != null )
                             {
                                 booking.setUserName( user.getName( ) );
@@ -261,18 +261,19 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
                                 booking.setNameAgent( user.getUserInfo( LuteceUser.NAME_FAMILY ) );
 
                                 bAuthentified = true;
+                                
+                                // Reserve tickets
+                                try
+                                {
+                                    _purchaseSessionManager.reserve( request.getSession( ).getId( ), booking );
+                                }
+                                catch ( PurchaseUnavailable e )
+                                {
+                                    throw new BusinessException( null, MESSAGE_INSUFFICIENT_PLACE_REMAINING );
+                                }
                             }
                             bookingList.add( booking );
 
-                            // Reserve tickets
-                            try
-                            {
-                                _purchaseSessionManager.reserve( request.getSession( ).getId( ), booking );
-                            }
-                            catch ( PurchaseUnavailable e )
-                            {
-                                throw new BusinessException( null, MESSAGE_INSUFFICIENT_PLACE_REMAINING );
-                            }
                         }
                     }
 
