@@ -33,7 +33,6 @@
  */
 package fr.paris.lutece.plugins.stock.modules.billetterie.web;
 
-import fr.paris.lutece.plugins.stock.business.purchase.exception.PurchaseException;
 import fr.paris.lutece.plugins.stock.business.purchase.exception.PurchaseUnavailable;
 import fr.paris.lutece.plugins.stock.commons.ResultList;
 import fr.paris.lutece.plugins.stock.commons.exception.BusinessException;
@@ -419,11 +418,12 @@ public class PurchaseJspBean  extends AbstractJspBean
             // Libère la réservation prévue sur la page de réservation
             _purchaseSessionManager.release( request.getSession( ).getId( ), purchase );
             // Update quantity with quantity in session for this offer
-            if ( seance.getQuantity( ) < quantity )
+            if ( quantity > seance.getQuantity( ) )
             {
                 quantity = seance.getQuantity( );
             }
             quantity = _purchaseSessionManager.updateQuantityWithSession( quantity, idOffer );
+            seance.setQuantity( quantity );
 
     		ReferenceList quantityList = new ReferenceList( );
     		for ( Integer i = 1; i <= quantity; i++ )
