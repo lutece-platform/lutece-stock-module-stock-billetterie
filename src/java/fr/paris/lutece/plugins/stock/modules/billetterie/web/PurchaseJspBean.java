@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.stock.modules.billetterie.web;
 
+import fr.paris.lutece.plugins.stock.business.purchase.exception.PurchaseException;
 import fr.paris.lutece.plugins.stock.business.purchase.exception.PurchaseUnavailable;
 import fr.paris.lutece.plugins.stock.commons.ResultList;
 import fr.paris.lutece.plugins.stock.commons.exception.BusinessException;
@@ -437,6 +438,11 @@ public class PurchaseJspBean  extends AbstractJspBean
             // Reserve tickets
             try
             {
+                if ( quantity == 0 )
+                {
+                    throw new PurchaseUnavailable( purchase.getId( ), MESSAGE_INSUFFICIENT_PLACE_REMAINING );
+                }
+
                 if ( purchase.getQuantity( ) == null )
                 {
                     purchase.setQuantity( quantity );
