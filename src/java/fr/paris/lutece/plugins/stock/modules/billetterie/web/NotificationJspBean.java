@@ -170,7 +170,7 @@ public class NotificationJspBean  extends AbstractJspBean
             filter.setOrders( orderList );
             filter.setOrderAsc( true );
             filter.setIdOffer( idOffer );
-        	List<ReservationDTO> listReservations = this._servicePurchase.findByFilter( filter, getPaginationProperties( request ) );
+            List<ReservationDTO> listReservations = this._servicePurchase.findByFilter( filter, null );
         	
         	// If the action is to cancel the offer
         	if ( StringUtils.isNotEmpty( strCancel ) || ( notification.getNotificationAction( ) != null && notification.getNotificationAction( ).equals( TicketsConstants.OFFER_STATUT_CANCEL ) ) )
