@@ -39,7 +39,6 @@ import fr.paris.lutece.plugins.stock.business.provider.ProviderFilter;
 import fr.paris.lutece.plugins.stock.commons.ResultList;
 import fr.paris.lutece.plugins.stock.commons.exception.BusinessException;
 import fr.paris.lutece.plugins.stock.commons.exception.FunctionnalException;
-import fr.paris.lutece.plugins.stock.commons.exception.TechnicalException;
 import fr.paris.lutece.plugins.stock.modules.billetterie.utils.constants.BilletterieConstants;
 import fr.paris.lutece.plugins.stock.modules.tickets.business.SeanceDTO;
 import fr.paris.lutece.plugins.stock.modules.tickets.business.SeanceFilter;
@@ -68,12 +67,6 @@ import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.html.DelegatePaginator;
 import fr.paris.lutece.util.html.HtmlTemplate;
 
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -84,6 +77,12 @@ import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.springframework.transaction.annotation.Transactional;
 
 
 /**
@@ -204,7 +203,7 @@ public class ShowJspBean extends AbstractJspBean
     private static final String MESSAGE_ERROR_MANDATORY_POSTER = "module.stock.billetterie.message.error.mandatory_poster";
 
     /** The Constant ERROR_MESSAGE_GET_AFFICHE. */
-    private static final String MESSAGE_ERROR_GET_AFFICHE = "Problème lors de la récupération de l'affiche";
+    private static final String MESSAGE_ERROR_GET_AFFICHE = "module.stock.billetterie.message.error.get.affiche";
 
 
 
@@ -488,7 +487,7 @@ public class ShowJspBean extends AbstractJspBean
                 }
                 catch ( IOException e )
                 {
-                    throw new TechnicalException( MESSAGE_ERROR_GET_AFFICHE, e );
+                    throw new BusinessException( product, MESSAGE_ERROR_GET_AFFICHE );
                 }
             }
         }
