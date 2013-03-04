@@ -12,7 +12,11 @@
 				<div id="show_page">
 					<div id="bloc-entete">
 						<img src="${url_poster}${show.id}" class="poster" alt="Affiche ${show.name}"/>
-						<div class="content-title"><h2>${show.name}</h2></div>
+						<div class="content-title"><h2>${show.name} <#if partner.accessible!>
+							<img src="images/skin/plugins/stock/modules/billetterie/accessibility.png" title="#i18n{module.stock.billetterie.accessibleForReducedMobility}" alt="#i18n{module.stock.billetterie.accessibleForReducedMobility}"/>
+						</#if></h2>
+						
+						</div>
 						<#if show.with?has_content><p><strong>Distribution :</strong> <@nl2br>${show.with!}</@nl2br></p></#if>
 						<#if show.targetPublic?has_content><p><strong>Public :</strong> ${show.targetPublic!}</p></#if>
 						<p><strong>Genre :</strong> ${show.categoryName!}</p>
@@ -23,6 +27,13 @@
 							${partner.address!}
 						</p>
 						<p><strong>Dates :</strong> du ${show.startDate!} au ${show.endDate!}</p>
+						<#if partner.accessible! && (partner.accessibleComment!) != "" >
+							<p><strong>Accessibilité : </strong>${partner.accessibleComment!}</p>
+						</#if>
+						<#if (partner.metroComment!) != "" >
+							<p><strong>Métro : </strong>${partner.metroComment!}</p>
+						</#if>
+						
 					</div>
 					
 					<div id="bloc-presentation">

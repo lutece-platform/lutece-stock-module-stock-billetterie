@@ -35,6 +35,7 @@ package fr.paris.lutece.plugins.stock.modules.billetterie.web;
 
 import fr.paris.lutece.plugins.stock.business.provider.ProviderFilter;
 import fr.paris.lutece.plugins.stock.commons.ResultList;
+import fr.paris.lutece.plugins.stock.commons.exception.BusinessException;
 import fr.paris.lutece.plugins.stock.commons.exception.FunctionnalException;
 import fr.paris.lutece.plugins.stock.modules.billetterie.utils.constants.BilletterieConstants;
 import fr.paris.lutece.plugins.stock.modules.tickets.business.PartnerDTO;
@@ -99,7 +100,7 @@ public class PartnerJspBean extends AbstractJspBean
     //MESSAGES
     private static final String MESSAGE_CONFIRMATION_DELETE_PARTNER = "module.stock.billetterie.message.deletePartner.confirmation";
     private static final String MESSAGE_DELETE_PARTNER_WITH_SHOW = "module.stock.billetterie.message.deletePartner.with.show";
-
+    private static final String MESSAGE_ERROR_NO_COMMENT_IF_NOT_ACCESSIBLE = "module.stock.billetterie.message.noCommentIfNotAccessible";
 
     // MEMBERS VARIABLES
     // @Inject
@@ -263,6 +264,11 @@ public class PartnerJspBean extends AbstractJspBean
             // Controls mandatory fields
             validate( provider );
             _serviceProvider.doSaveProvider( provider );
+
+            if ( !provider.isAccessible( ) && provider.getAccessibleComment( ) != StringUtils.EMPTY )
+            {
+                throw new BusinessException( provider, MESSAGE_ERROR_NO_COMMENT_IF_NOT_ACCESSIBLE );
+            }
         }
         catch ( FunctionnalException e )
         {
