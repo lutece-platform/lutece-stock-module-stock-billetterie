@@ -84,6 +84,7 @@ public class OfferJspBean  extends AbstractJspBean
     
     // PARAMETERS
     public static final String PARAMETER_OFFER_ID = "offer_id";
+    public static final String PARAMETER_OFFERS_ID = "offers_id";
     public static final String PARAMETER_OFFER_DUPLICATE = "duplicate";
     public static final String PARAMETER_OFFER_PRODUCT_ID = "productId";
     public static final String PARAMETER_OFFER_GENRE_LIST = "offer_genre_list";
@@ -123,6 +124,7 @@ public class OfferJspBean  extends AbstractJspBean
     // JSP
     private static final String JSP_MANAGE_OFFERS = "jsp/admin/plugins/stock/modules/billetterie/ManageOffers.jsp";
     private static final String JSP_DO_DELETE_OFFER = "jsp/admin/plugins/stock/modules/billetterie/DoDeleteOffer.jsp";
+    private static final String JSP_DO_MASSE_DELETE_OFFER = "jsp/admin/plugins/stock/modules/billetterie/DoMasseDeleteOffer.jsp";
     private static final String JSP_SAVE_OFFER = "SaveOffer.jsp";
     
     // TEMPLATES
@@ -137,8 +139,11 @@ public class OfferJspBean  extends AbstractJspBean
     
     // MESSAGES
     private static final String MESSAGE_CONFIRMATION_DELETE_OFFER = "module.stock.billetterie.message.deleteOffer.confirmation";
+    private static final String MESSAGE_CONFIRMATION_MASSE_DELETE_OFFER = "module.stock.billetterie.message.deleteOffer.masseConfirmation";
     private static final String MESSAGE_TITLE_CONFIRMATION_DELETE_OFFER = "module.stock.billetterie.message.title.deleteOffer.confirmation";
+    private static final String MESSAGE_TITLE_CONFIRMATION_MASSE_DELETE_OFFER = "module.stock.billetterie.message.title.masseDeleteOffer.confirmation";
     private static final String MESSAGE_OFFER_STATUT_ISNT_CANCEL = "module.stock.billetterie.message.offer.statut.isnt.cancel";
+    private static final String MESSAGE_DELETE_MASSE_OFFER_NO_OFFER_CHECK = "module.stock.billetterie.message.deleteMasseOffer.noCaseCheck";
     private static final String MESSAGE_SEARCH_PURCHASE_DATE = "module.stock.billetterie.message.search.purchase.date";
 
     // BEANS
@@ -511,6 +516,98 @@ public class OfferJspBean  extends AbstractJspBean
         }
 
         _serviceOffer.doDeleteOffer( nIdOffer );
+
+        return doGoBack( request );
+    }
+
+    /**
+     * Returns the confirmation message to delete an offer
+     * 
+     * @param request The Http request
+     * @return the html code message
+     */
+    public String getMasseDeleteOffer( HttpServletRequest request )
+    {
+        ArrayList<Integer> offersIdToDelete = new ArrayList<Integer>( );
+        String[] parameterValues = request.getParameterValues( "offers_id" );
+        // if no case checked
+        if ( parameterValues == null )
+        {
+            return AdminMessageService
+.getMessageUrl( request, MESSAGE_DELETE_MASSE_OFFER_NO_OFFER_CHECK,
+                    AdminMessage.TYPE_STOP );
+        }
+
+        try
+        {
+            for ( String id : parameterValues )
+            {
+                offersIdToDelete.add( Integer.parseInt( id ) );
+            }
+        }
+        catch ( NumberFormatException e )
+        {
+            LOGGER.debug( e );
+
+            return AdminMessageService.getMessageUrl( request, StockConstants.MESSAGE_ERROR_OCCUR,
+                    AdminMessage.TYPE_STOP );
+        }
+
+        String strJspBack = JSP_MANAGE_OFFERS;
+        PurchaseFilter filter = new PurchaseFilter( );
+
+        Map<String, Object> urlParam = new HashMap<String, Object>( );
+        int i = 0;
+        for ( Integer nIdOffer : offersIdToDelete )
+        {
+            urlParam.put( "offre" + i++, nIdOffer );
+            filter.setIdOffer( nIdOffer );
+            ResultList<ReservationDTO> bookingList = _servicePurchase.findByFilter( filter, null );
+            // // BO-E07-RGE02 : Only offer with date before current date or offer
+            // with statut "Cancel" can be delete
+            SeanceDTO seance = _serviceOffer.findSeanceById( nIdOffer );
+
+            if ( !bookingList.isEmpty( ) && !seance.getStatut( ).equals( TicketsConstants.OFFER_STATUT_CANCEL ) )
+            {
+                if ( !DateUtils.getDate( seance.getDate( ), false ).before( DateUtils.getCurrentDate( ) ) )
+                {
+                    return AdminMessageService.getMessageUrl( request, MESSAGE_OFFER_STATUT_ISNT_CANCEL,
+                            AdminMessage.TYPE_STOP );
+                }
+            }
+        }
+        
+        return AdminMessageService.getMessageUrl( request, MESSAGE_CONFIRMATION_MASSE_DELETE_OFFER, null,
+                MESSAGE_TITLE_CONFIRMATION_MASSE_DELETE_OFFER, JSP_DO_MASSE_DELETE_OFFER,
+                BilletterieConstants.TARGET_SELF,
+                AdminMessage.TYPE_CONFIRMATION, urlParam, strJspBack );
+    }
+
+    /**
+     * Delete offer on masse
+     * 
+     * @param request The Http request which contains the offer checked
+     * @return the html code message
+     */
+    public String doMasseDeleteOffer( HttpServletRequest request )
+    {
+        ArrayList<Integer> listOffer = new ArrayList<Integer>( );
+
+        try
+        {
+            for ( Object key : request.getParameterMap( ).keySet( ) )
+            {
+                listOffer.add( Integer.parseInt( request.getParameter( (String) key ) ) );
+            }
+        }
+        catch ( NumberFormatException e )
+        {
+            LOGGER.debug( e );
+
+            return AdminMessageService.getMessageUrl( request, StockConstants.MESSAGE_ERROR_OCCUR,
+                    AdminMessage.TYPE_STOP );
+        }
+        _serviceOffer.doMasseDeleteOffer( listOffer );
 
         return doGoBack( request );
     }

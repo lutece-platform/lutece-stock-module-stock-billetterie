@@ -45,69 +45,76 @@
 			</form>
 		</div>
 	</div>
-	<@paginationAdmin paginator=paginator combo=1 />	
-	<table>
-		<tbody>
-		    <tr>
-		    	<th></th>
-	        	<th>#i18n{module.stock.billetterie.list_offres.filter.name}</th>
-	        	<th>#i18n{module.stock.billetterie.list_offres.filter.product}</th>
-	        	<th>#i18n{module.stock.billetterie.list_offres.type}</th>
-	        	<th>#i18n{module.stock.billetterie.save_offer.date}</th>
-	        	<th>#i18n{module.stock.billetterie.save_offer.quantity}</th>
-	        	<th>#i18n{module.stock.billetterie.save_offer.sessions.actions}</th>
-	    	</tr>
-	    	<#if list_offers?has_content>
-			    <#list list_offers as offer>
-				    <tr>
-				    	<td><#if offer.statut == strStatutCancel><strong style="color:red"><em>Annulé</em> </strong>
-				    		<#elseif offer.statut == strStatutLock><strong style="color:red"><em>Verrouillé</em></strong></#if></td>
-			        	<td><a href="jsp/admin/plugins/stock/modules/billetterie/SaveOffer.jsp?offer_id=${offer.id!}">${offer.name!}</a></td>
-			        	<td><a href="jsp/admin/plugins/stock/modules/billetterie/SaveProduct.jsp?product_id=${offer.product.id!}">${offer.product.name!}</a></td>
-			        	<td>${offer.typeName!}</td>
-			        	<td>${offer.date!} - ${(offer.hour)!}</td>
-			        	<td>${offer.quantity!}</td>
-			        	<td>
-			        		<a title="#i18n{module.stock.billetterie.list_offres.linkShowReservation}" href="jsp/admin/plugins/stock/modules/billetterie/ManagePurchase.jsp?offer_id=${offer.id!}"> 
-			        			<img src="images/admin/skin/actions/show_ticket.png" alt="#i18n{module.stock.billetterie.list_offres.linkShowReservation}" /> 
-			        		</a>
-			        		<#if ( offer.date?date("dd/MM/yyyy") &gt;= currentDate?date("dd/MM/yyyy") ) && ( offer.statut != strStatutCancel ) && ( offer.quantity > 0 )>
-				        		<a title="#i18n{module.stock.billetterie.list_offres.linkCreateReservation}" href="jsp/admin/plugins/stock/modules/billetterie/SavePurchase.jsp?offer_id=${offer.id!}"> 
-				        			<img src="images/admin/skin/actions/create_ticket.png" alt="#i18n{module.stock.billetterie.list_offres.linkCreateReservation}" /> 
+	<@paginationAdmin paginator=paginator combo=1 />
+	<form action="jsp/admin/plugins/stock/modules/billetterie/MasseDeleteOffer.jsp" method="post">
+		<table>
+			<tbody>
+			    <tr>
+			    	<th></th>
+			    	<th>#i18n{module.stock.billetterie.list_offres.masseDelete}</th>
+		        	<th>#i18n{module.stock.billetterie.list_offres.filter.name}</th>
+		        	<th>#i18n{module.stock.billetterie.list_offres.filter.product}</th>
+		        	<th>#i18n{module.stock.billetterie.list_offres.type}</th>
+		        	<th>#i18n{module.stock.billetterie.save_offer.date}</th>
+		        	<th>#i18n{module.stock.billetterie.save_offer.quantity}</th>
+		        	<th>#i18n{module.stock.billetterie.save_offer.sessions.actions}</th>
+		    	</tr>
+		    	<#if list_offers?has_content>
+				    <#list list_offers as offer>
+					    <tr>
+					    	<td><#if offer.statut == strStatutCancel><strong style="color:red"><em>#i18n{module.stock.billetterie.list_offres.cancel}</em> </strong>
+					    		<#elseif offer.statut == strStatutLock><strong style="color:red"><em>#i18n{module.stock.billetterie.list_offres.lock}</em></strong></#if></td>
+				        	<td><input type="checkbox" name="offers_id" value="${offer.id!}" /></td>
+				        	<td><a href="jsp/admin/plugins/stock/modules/billetterie/SaveOffer.jsp?offer_id=${offer.id!}">${offer.name!}</a></td>
+				        	<td><a href="jsp/admin/plugins/stock/modules/billetterie/SaveProduct.jsp?product_id=${offer.product.id!}">${offer.product.name!}</a></td>
+				        	<td>${offer.typeName!}</td>
+				        	<td>${offer.date!} - ${(offer.hour)!}</td>
+				        	<td>${offer.quantity!}</td>
+				        	<td>
+				        		<a title="#i18n{module.stock.billetterie.list_offres.linkShowReservation}" href="jsp/admin/plugins/stock/modules/billetterie/ManagePurchase.jsp?offer_id=${offer.id!}"> 
+				        			<img src="images/admin/skin/actions/show_ticket.png" alt="#i18n{module.stock.billetterie.list_offres.linkShowReservation}" /> 
 				        		</a>
-			        		</#if>
-			        		<a title="#i18n{module.stock.billetterie.list_offres.linkSendReservation}" href="jsp/admin/plugins/stock/modules/billetterie/SendNotification.jsp?offer_id=${offer.id!}&lock=true"> 
-			        			<img src="images/admin/skin/actions/lock.png" alt="#i18n{module.stock.billetterie.list_offres.linkSendReservation}" /> 
-			        		</a>
-			        		<a title="#i18n{module.stock.billetterie.list_offres.linkSendNotification}" href="jsp/admin/plugins/stock/modules/billetterie/SendNotification.jsp?offer_id=${offer.id!}"> 
-			        			<img src="images/admin/skin/actions/send_reservation.png" alt="#i18n{module.stock.billetterie.list_offres.linkSendNotification}" /> 
-			        		</a>
-			        		<a title="#i18n{module.stock.billetterie.list_offres.linkModifyOffer}" href="jsp/admin/plugins/stock/modules/billetterie/SaveOffer.jsp?offer_id=${offer.id!}"> 
-			        			<img src="images/admin/skin/actions/modify.png" alt="#i18n{module.stock.billetterie.list_offres.linkModifyOffer}" /> 
-			        		</a>
-			        		<a title="#i18n{module.stock.billetterie.list_offres.linkDuplicateOffer}" href="jsp/admin/plugins/stock/modules/billetterie/SaveOffer.jsp?offer_id=${offer.id!}&duplicate=true"> 
-			        			<img src="images/admin/skin/plugins/stock/modules/billetterie/editcopy.png" alt="#i18n{module.stock.billetterie.list_offres.linkDuplicateOffer}" /> 
-			        		</a>
-			        		<#if offer.statut != strStatutCancel && ( offer.date?date("dd/MM/yyyy") &gt;= currentDate?date("dd/MM/yyyy") )>
-				        		<a title="#i18n{module.stock.billetterie.list_offres.linkCanceloffer}" href="jsp/admin/plugins/stock/modules/billetterie/SendNotification.jsp?offer_id=${offer.id!}&cancel=true"> 
-				        			<img src="images/admin/skin/plugins/stock/modules/billetterie/disable.png" alt="#i18n{module.stock.billetterie.list_offres.linkCanceloffer}" /> 
+				        		<#if ( offer.date?date("dd/MM/yyyy") &gt;= currentDate?date("dd/MM/yyyy") ) && ( offer.statut != strStatutCancel ) && ( offer.quantity > 0 )>
+					        		<a title="#i18n{module.stock.billetterie.list_offres.linkCreateReservation}" href="jsp/admin/plugins/stock/modules/billetterie/SavePurchase.jsp?offer_id=${offer.id!}"> 
+					        			<img src="images/admin/skin/actions/create_ticket.png" alt="#i18n{module.stock.billetterie.list_offres.linkCreateReservation}" /> 
+					        		</a>
+				        		</#if>
+				        		<a title="#i18n{module.stock.billetterie.list_offres.linkSendReservation}" href="jsp/admin/plugins/stock/modules/billetterie/SendNotification.jsp?offer_id=${offer.id!}&lock=true"> 
+				        			<img src="images/admin/skin/actions/lock.png" alt="#i18n{module.stock.billetterie.list_offres.linkSendReservation}" /> 
 				        		</a>
-				        	</#if>
-			            	<a  title="#i18n{module.stock.billetterie.list_offres.linkDeleteOffer}" href="jsp/admin/plugins/stock/modules/billetterie/DeleteOffer.jsp?offer_id=${offer.id!}"> 
-			            		<img src="images/admin/skin/actions/delete.png" alt="#i18n{module.stock.billetterie.list_offres.linkDeleteOffer}" />
-			            	</a>
-			            </td>
-				    </tr>
-			    </#list>
-			<#else>
-				<tr>
-					<td colspan="6">
-						Aucun résultat trouvé. Veuillez élargir votre recherche ou créer une représentation.
-					</td>
-				</tr>
-			</#if>
-		</tbody>
-	</table>
+				        		<a title="#i18n{module.stock.billetterie.list_offres.linkSendNotification}" href="jsp/admin/plugins/stock/modules/billetterie/SendNotification.jsp?offer_id=${offer.id!}"> 
+				        			<img src="images/admin/skin/actions/send_reservation.png" alt="#i18n{module.stock.billetterie.list_offres.linkSendNotification}" /> 
+				        		</a>
+				        		<a title="#i18n{module.stock.billetterie.list_offres.linkModifyOffer}" href="jsp/admin/plugins/stock/modules/billetterie/SaveOffer.jsp?offer_id=${offer.id!}"> 
+				        			<img src="images/admin/skin/actions/modify.png" alt="#i18n{module.stock.billetterie.list_offres.linkModifyOffer}" /> 
+				        		</a>
+				        		<a title="#i18n{module.stock.billetterie.list_offres.linkDuplicateOffer}" href="jsp/admin/plugins/stock/modules/billetterie/SaveOffer.jsp?offer_id=${offer.id!}&duplicate=true"> 
+				        			<img src="images/admin/skin/plugins/stock/modules/billetterie/editcopy.png" alt="#i18n{module.stock.billetterie.list_offres.linkDuplicateOffer}" /> 
+				        		</a>
+				        		<#if offer.statut != strStatutCancel && ( offer.date?date("dd/MM/yyyy") &gt;= currentDate?date("dd/MM/yyyy") )>
+					        		<a title="#i18n{module.stock.billetterie.list_offres.linkCanceloffer}" href="jsp/admin/plugins/stock/modules/billetterie/SendNotification.jsp?offer_id=${offer.id!}&cancel=true"> 
+					        			<img src="images/admin/skin/plugins/stock/modules/billetterie/disable.png" alt="#i18n{module.stock.billetterie.list_offres.linkCanceloffer}" /> 
+					        		</a>
+					        	</#if>
+				            	<a  title="#i18n{module.stock.billetterie.list_offres.linkDeleteOffer}" href="jsp/admin/plugins/stock/modules/billetterie/DeleteOffer.jsp?offer_id=${offer.id!}"> 
+				            		<img src="images/admin/skin/actions/delete.png" alt="#i18n{module.stock.billetterie.list_offres.linkDeleteOffer}" />
+				            	</a>
+				            </td>
+					    </tr>
+				    </#list>
+				<#else>
+					<tr>
+						<td colspan="6">
+							#i18n{module.stock.billetterie.list_offres.noresult}
+						</td>
+					</tr>
+				</#if>
+			</tbody>
+		</table>
+		<#if list_offers?has_content>
+		<input class="button" type="submit" value="#i18n{module.stock.billetterie.list_offres.button.masseDelete}" />
+		</#if>
+	</form>
 </div>
 <@getDatePickerRange idFieldFrom="filter_date_begin" idFieldTo="filter_date_end" language="${locale!}" />
 <@getDatePicker idField="filter_date_or" language="${locale!}" />
