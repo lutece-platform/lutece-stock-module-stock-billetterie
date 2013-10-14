@@ -43,9 +43,11 @@ import fr.paris.lutece.plugins.stock.modules.tickets.service.ISeanceService;
 import fr.paris.lutece.plugins.stock.modules.tickets.service.IShowService;
 import fr.paris.lutece.plugins.stock.modules.tickets.utils.constants.TicketsConstants;
 import fr.paris.lutece.plugins.stock.service.IPurchaseSessionManager;
+import fr.paris.lutece.plugins.stock.service.ISubscriptionProductService;
 import fr.paris.lutece.plugins.stock.utils.DateUtils;
 import fr.paris.lutece.portal.service.message.SiteMessageException;
 import fr.paris.lutece.portal.service.plugin.Plugin;
+import fr.paris.lutece.portal.service.security.LuteceUser;
 import fr.paris.lutece.portal.service.security.UserNotSignedException;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
@@ -92,6 +94,7 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
     private static final String PARAMETER_DATE_SEANCE = "date_seance";
     private static final String PARAMETER_PRODUCT_ID = "product_id";
     private static final String PARAMETER_ACTION = "action";
+    private static final String PARAMETER_SUBSCRIBE = "subscribe";
 
     // Marks
     private static final String MARK_TYPE_LIST = "type_list";
@@ -106,6 +109,8 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
     private static final String MARK_URL_POSTER = "url_poster";
     private static final String MARK_PARTNER = "partner";
     private static final String MARK_SHOW = "show";
+    private static final String MARK_SUBSCRIBE = "subscribe";
+    private static final String MARK_USER_EMAIL = "user_email";
 
     // Actions
     private static final String ACTION_SHOW_PAGE = "fiche-spectacle";
@@ -133,6 +138,8 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
     private static final String MAX_RESERVATION_INVITATION = "nb_max_invitation";
     private static final String MAX_RESERVATION_INVITATION_ENFANT = "nb_max_invitation_enfant";
     private static final String MAX_RESERVATION_TARIF_REDUIT = "nb_max_tarif_reduit";
+    private static final String STRING_TRUE = "true";
+    private static final String STRING_FALSE = "false";
 
     private static final int BOOKING_OPENED = 0;
     private static final int BOOKING_TO_COME = 1;
@@ -145,6 +152,8 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
             BEAN_STOCK_TICKETS_SHOW_SERVICE );
     private IProviderService _providerService = (IProviderService) SpringContextService.getContext( ).getBean(
             IProviderService.class );
+    private ISubscriptionProductService _subscriptionProductService = (ISubscriptionProductService) SpringContextService
+            .getContext( ).getBean( ISubscriptionProductService.class );
     private ISeanceService _offerService = (ISeanceService) SpringContextService.getContext( ).getBean(
             BEAN_STOCK_TICKETS_SEANCE_SERVICE );
     private final IPurchaseSessionManager _purchaseSessionManager = (IPurchaseSessionManager) SpringContextService
@@ -201,6 +210,7 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
     {
         String sIdShow = request.getParameter( PARAMETER_PRODUCT_ID );
         String sSeanceDate = request.getParameter( PARAMETER_DATE_SEANCE );
+        String strSubscribe = request.getParameter( PARAMETER_SUBSCRIBE );
         Integer idShow = -1;
 
         if ( StringUtils.isNotEmpty( sIdShow ) && StringUtils.isNumeric( sIdShow ) )
@@ -221,7 +231,6 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
         }
 
         model.put( MARK_SHOW, show );
-        
         model.put( MARK_PARTNER, _providerService.findByIdWithProducts( show.getIdProvider( ) ) );
         model.put( MARK_URL_POSTER, AppPropertiesService.getProperty( PROPERTY_POSTER_PATH ) );
 
@@ -236,12 +245,51 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
         filter.setOrders( orderList );
         model.put( MARK_SEANCE_DATE_LIST, _offerService.findSeanceByShow( show.getId( ), filter ) );
 
-        // If user authenticated, display booking bloc
-        model.put( MARK_USER, getUser( request ) );
+        //Get the user
+        LuteceUser currentUser = getUser( request );
 
+        // If user authenticated, display booking bloc
+        model.put( MARK_USER, currentUser );
         model.put( MARK_BLOC_RESERVATION, getBookingBloc( show, sSeanceDate, locale ) );
         model.put( MARK_S_SEANCE_DATE, sSeanceDate );
 
+        //if the user wants to subscribe to the show (get an email if a new representation is added)
+        if ( currentUser != null )
+        {
+            SubscriptionProductJspBean jspBean = new SubscriptionProductJspBean( );
+            boolean isSubscribe = false;
+
+            //if user want to subscribe or unsubscribe to the product
+            if ( strSubscribe != null )
+            {
+                if ( strSubscribe.equals( STRING_TRUE ) )
+                {
+                    jspBean.doSubscribeToProduct( request, currentUser );
+                    isSubscribe = true;
+                    model.put( MARK_USER_EMAIL, currentUser.getUserInfo( LuteceUser.HOME_INFO_ONLINE_EMAIL ) );
+                }
+                else
+                {
+                    jspBean.doUnsubscribeToProduct( request, currentUser );
+                }
+            }
+            else
+            {
+                isSubscribe = jspBean.isSubscribeToProduct( request, currentUser );
+            }
+            
+            if ( !isSubscribe )
+            {
+                model.put( MARK_SUBSCRIBE, STRING_TRUE );
+            }
+            else
+            {
+                model.put( MARK_USER_EMAIL, currentUser.getUserInfo( LuteceUser.HOME_INFO_ONLINE_EMAIL ) );
+            }
+
+        }
+        
+        
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_DIR + TEMPLATE_SHOW_PAGE, locale, model );
 
         page.setContent( template.getHtml( ) );
@@ -321,6 +369,11 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
         ReferenceList quantityList = new ReferenceList( );
         ReferenceItem refItem = new ReferenceItem( );
         String strInteger = String.valueOf( 0 );
+        refItem.setCode( strInteger );
+        refItem.setName( strInteger );
+        quantityList.add( refItem );
+        strInteger = String.valueOf( 1 );
+        refItem = new ReferenceItem( );
         refItem.setCode( strInteger );
         refItem.setName( strInteger );
         quantityList.add( refItem );

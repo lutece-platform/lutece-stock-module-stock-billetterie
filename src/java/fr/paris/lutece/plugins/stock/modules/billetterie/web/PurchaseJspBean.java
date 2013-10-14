@@ -190,6 +190,7 @@ public class PurchaseJspBean  extends AbstractJspBean
     // PAGE TITLES
     private static final String PROPERTY_PAGE_TITLE_MANAGE_PURCHASE = "module.stock.billetterie.list_purchase.title";
     private static final String PROPERTY_PAGE_TITLE_CREATE_PURCHASE = "module.stock.billetterie.create_purchase.title";
+    private static final String PROPERTY_PAGE_TITLE_MODIFY_PURCHASE = "module.stock.billetterie.modify_purchase.title";
     
     
     // MESSAGES
@@ -263,14 +264,14 @@ public class PurchaseJspBean  extends AbstractJspBean
         // "filter" in request  ==> new filter. use old one otherwise
         if ( request.getParameter( TicketsConstants.PARAMETER_FILTER ) != null )
         {
-        	ReservationFilter filter = new ReservationFilter( );
+            ReservationFilter filter = new ReservationFilter( );
             buildFilter( filter, request );
             _purchaseFilter = filter;
         }
 
         if ( strSortedAttributeName != null )
         {
-        	_purchaseFilter.getOrders( ).add( strSortedAttributeName );
+            _purchaseFilter.getOrders( ).add( strSortedAttributeName );
 
             String strAscSort = request.getParameter( Parameters.SORTED_ASC );
             boolean bIsAscSort = Boolean.parseBoolean( strAscSort );
@@ -333,11 +334,11 @@ public class PurchaseJspBean  extends AbstractJspBean
                 ReservationDTO reservation = this._servicePurchase.findById( Integer.parseInt( purchaseId ) );
                 filter.setUserName( reservation.getNameAgent( ) );
             }
-        	filter.setIdOffer( seance.getId( ) );
-        	filter.setProductName( seance.getProduct( ).getName( ) );
-        	filter.setIdGenre( seance.getIdGenre( ) );
-        	filter.setDateBeginOffer( DateUtils.getDate( seance.getDate( ), false ) );
-        	filter.setDateEndOffer( DateUtils.getDate( seance.getDate( ), false ) );
+            filter.setIdOffer( seance.getId( ) );
+            filter.setProductName( seance.getProduct( ).getName( ) );
+            filter.setIdGenre( seance.getIdGenre( ) );
+            filter.setDateBeginOffer( DateUtils.getDate( seance.getDate( ), false ) );
+            filter.setDateEndOffer( DateUtils.getDate( seance.getDate( ), false ) );
         }
 
         ResultList<ReservationDTO> listAllPurchase = _servicePurchase
@@ -379,6 +380,7 @@ public class PurchaseJspBean  extends AbstractJspBean
         model.put( MARK_LOCALE, getLocale( ) );
 
         String strIdOffer;
+        String strIdPurchase = request.getParameter( MARK_PURCHASSE_ID );
         
         // Manage validation errors
         FunctionnalException ve = getErrorOnce( request );
@@ -390,31 +392,45 @@ public class PurchaseJspBean  extends AbstractJspBean
         }
         else
         {
-        	strIdOffer = request.getParameter( MARK_OFFER_ID );
+            strIdOffer = request.getParameter( MARK_OFFER_ID );
             setPageTitleProperty( PROPERTY_PAGE_TITLE_CREATE_PURCHASE );
             // Create new Purchase
             purchase = new ReservationDTO( );
         }
         
+        // modification page only
+        if ( strIdPurchase != null )
+        {
+            Integer nIdPurchase = Integer.parseInt( strIdPurchase );
+
+            //get the info of the purchase
+            purchase = _servicePurchase.findById( nIdPurchase );
+
+            strIdOffer = purchase.getOfferId( ).toString( );
+
+            model.put( MARK_PURCHASSE_ID, nIdPurchase );
+
+        }
+
         if ( strIdOffer != null )
         {
-        	Integer idOffer = Integer.parseInt( strIdOffer );
+            Integer idOffer = Integer.parseInt( strIdOffer );
             SeanceDTO seance = this._serviceOffer.findSeanceById( idOffer );
-        	purchase.setOffer( seance );
-        	
-    		Integer quantity;
-    		if ( seance.getTypeName( ).equals( TicketsConstants.OFFER_TYPE_INVITATION ) )
-    		{
-    			quantity = NB_PLACES_MAX_INVITATION;
-    		}
-    		else if ( seance.getTypeName( ).equals( TicketsConstants.OFFER_TYPE_INVITATION_SPECTACLE_ENFANT ) )
-    		{
-    			quantity = NB_PLACES_MAX_INVITATION_SPECTACLE;
-    		}
-    		else
-    		{
-    			quantity = NB_PLACES_MAX_TARIF_REDUIT;
-    		}
+            purchase.setOffer( seance );
+            
+            Integer quantity;
+            if ( seance.getTypeName( ).equals( TicketsConstants.OFFER_TYPE_INVITATION ) )
+            {
+                quantity = NB_PLACES_MAX_INVITATION;
+            }
+            else if ( seance.getTypeName( ).equals( TicketsConstants.OFFER_TYPE_INVITATION_SPECTACLE_ENFANT ) )
+            {
+                quantity = NB_PLACES_MAX_INVITATION_SPECTACLE;
+            }
+            else
+            {
+                quantity = NB_PLACES_MAX_TARIF_REDUIT;
+            }
             // Libère la réservation prévue sur la page de réservation
             _purchaseSessionManager.release( request.getSession( ).getId( ), purchase );
             // Update quantity with quantity in session for this offer
@@ -425,15 +441,15 @@ public class PurchaseJspBean  extends AbstractJspBean
             quantity = _purchaseSessionManager.updateQuantityWithSession( quantity, idOffer );
             seance.setQuantity( quantity );
 
-    		ReferenceList quantityList = new ReferenceList( );
-    		for ( Integer i = 1; i <= quantity; i++ )
-    		{
-        		ReferenceItem refItem = new ReferenceItem( );
-        		refItem.setCode( i.toString( ) );
-        		refItem.setName( i.toString( ) );
-        		quantityList.add( refItem );
-    		}
-    		model.put( MARK_QUANTITY_LIST, quantityList );
+            ReferenceList quantityList = new ReferenceList( );
+            for ( Integer i = 1; i <= quantity; i++ )
+            {
+                ReferenceItem refItem = new ReferenceItem( );
+                refItem.setCode( i.toString( ) );
+                refItem.setName( i.toString( ) );
+                quantityList.add( refItem );
+            }
+            model.put( MARK_QUANTITY_LIST, quantityList );
 
             // Reserve tickets
             try
@@ -467,7 +483,19 @@ public class PurchaseJspBean  extends AbstractJspBean
         // Add the JSP wich called this action
         model.put( StockConstants.MARK_JSP_BACK, JSP_MANAGE_OFFERS );
         model.put( MARK_PURCHASE, purchase );
-        model.put( MARK_TITLE, I18nService.getLocalizedString( PROPERTY_PAGE_TITLE_CREATE_PURCHASE, Locale.getDefault( ) ) );
+
+        if ( strIdPurchase != null || purchase.getId( ) != null )
+        {
+            setPageTitleProperty( PROPERTY_PAGE_TITLE_MODIFY_PURCHASE );
+            model.put( MARK_TITLE,
+                    I18nService.getLocalizedString( PROPERTY_PAGE_TITLE_MODIFY_PURCHASE, Locale.getDefault( ) ) );
+        }
+        else
+        {
+            model.put( MARK_TITLE,
+                    I18nService.getLocalizedString( PROPERTY_PAGE_TITLE_CREATE_PURCHASE, Locale.getDefault( ) ) );
+
+        }
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_SAVE_PURCHASE, getLocale( ), model );
 
@@ -483,33 +511,65 @@ public class PurchaseJspBean  extends AbstractJspBean
     public String doSavePurchase( HttpServletRequest request )
     {
         ReservationDTO purchase = new ReservationDTO( );
-        populate( purchase, request );
-        purchase.setDate( DateUtils.getCurrentDateString( ) );
+        String strIdPurchase = request.getParameter( PARAMETER_PURCHASE_ID );
+
 
         if ( StringUtils.isNotBlank( request.getParameter( StockConstants.PARAMETER_BUTTON_CANCEL ) ) )
         {
-            return doCancelPurchase( request, purchase );
+            if ( strIdPurchase != null )
+            {
+
+                return AppPathService.getBaseUrl( request ) + JSP_MANAGE_PURCHASES;
+
+            }
+            else
+            {
+                return doCancelPurchase( request, purchase );
+            }
+
         }
 
+        if ( StringUtils.isNotBlank( strIdPurchase ) )
+        {
+            //case of modification
+            Integer nIdPurchase = Integer.parseInt( strIdPurchase );
+            purchase = _servicePurchase.findById( nIdPurchase );
+            populate( purchase, request );
+
+
+            _servicePurchase.update( purchase );
+        }
+        else
+        {
+            //case of creation
+            populate( purchase, request );
+            purchase.setDate( DateUtils.getCurrentDateString( ) );
+        }
         try
         {
             // Controls mandatory fields
             validate( purchase );
 
-            // Reserve tickets
-            try
+            if ( StringUtils.isBlank( strIdPurchase ) )
             {
-                // Libère la réservation prévue sur la page de réservation
-                _purchaseSessionManager.release( request.getSession( ).getId( ), purchase );
-                // Réserve avec les nouvelles valeurs saisies par l'utilisateur
-                _purchaseSessionManager.reserve( request.getSession( ).getId( ), purchase );
+                try
+                {
+                    
+                    // Reserve tickets
+                    // Libère la réservation prévue sur la page de réservation
+                    _purchaseSessionManager.release( request.getSession( ).getId( ), purchase );
+    
+                    // Réserve avec les nouvelles valeurs saisies par l'utilisateur
+                    _purchaseSessionManager.reserve( request.getSession( ).getId( ), purchase );
+    
+                }
+                catch ( PurchaseUnavailable e )
+                {
+                    throw new BusinessException( purchase, MESSAGE_INSUFFICIENT_PLACE_REMAINING );
+                }
+
+                _servicePurchase.doSavePurchase( purchase, request.getSession( ).getId( ) );
             }
-            catch ( PurchaseUnavailable e )
-            {
-                throw new BusinessException( purchase, MESSAGE_INSUFFICIENT_PLACE_REMAINING );
-            }
-            
-            _servicePurchase.doSavePurchase( purchase, request.getSession( ).getId( ) );
 
         }
         catch ( FunctionnalException e )
@@ -517,10 +577,11 @@ public class PurchaseJspBean  extends AbstractJspBean
             return manageFunctionnalException( request, e, JSP_SAVE_PURCHASE );
         }
 
+
         UrlItem redirection = new UrlItem( AppPathService.getBaseUrl( request ) + JSP_MANAGE_PURCHASES );
         redirection.addParameter( MARK_OFFER_ID, purchase.getOffer( ).getId( ) );
         redirection.addParameter( MARK_PURCHASSE_ID, purchase.getId( ) );
-        
+
         return redirection.getUrl( );
     }
 

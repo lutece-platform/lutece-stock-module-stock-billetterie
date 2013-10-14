@@ -1,0 +1,14 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr" xml:lang="fr">
+<head>
+	<base href="${base_url}" />
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+</head>
+<body>
+	<strong>Bonjour </strong>,<br /><br />Une nouvelle représentation : <i>${product.name!} est disponible</i><br />Vous pouvez dès maintenant effectuer une réservation.<br />
+	<h3>Récapitulatif de l'offre:</h3><strong>Spectacle :</strong> <i>${product.name!} - ${offer.name!}</i> <br /><strong>Date :</strong> ${offer.date!} à ${offer.hour!}<br />
+	<strong>Nombre de place :</strong> ${offer.initialQuantity!}<br />
+	<br />
+	Bon spectacle !<br />
+	<br />
+	Pour tout renseignement, merci de contacter resatheatre.mci@paris.fr<br />
+</body>

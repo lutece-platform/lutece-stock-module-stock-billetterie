@@ -77,6 +77,9 @@
 				    		${purchase.quantity!}
 				    	</td>
 			        	<td>
+			        		<a title="#i18n{module.stock.billetterie.list_purchase.modifyPurchase}" href="jsp/admin/plugins/stock/modules/billetterie/SavePurchase.jsp?purchase_id=${purchase.id!}"> 
+			        			<img src="images/admin/skin/actions/modify.png" alt="#i18n{module.stock.billetterie.list_purchase.modifyPurchase}" /> 
+			        		</a>
 			        		<a title="#i18n{module.stock.billetterie.list_purchase.linkPrintTicket}" href="servlet/plugins/jasper/downloadFile?report_id=contremarque&report_type=pdf&value1=${purchase.id!}&value2=${purchase.userName!}"> 
 			        			<img src="images/local/skin/buttons/b_print.png" alt="#i18n{module.stock.billetterie.list_purchase.linkPrintTicket}" /> 
 			        		</a>

@@ -288,7 +288,6 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
                 // Save booking into session
                 request.getSession( ).setAttribute( PARAMETER_BOOKING_LIST, bookingList );
                 request.getSession( ).setAttribute( PARAMETER_BOOKING_CHECK, bookingCheck );
-
             }
             catch ( BusinessException e )
             {
@@ -300,7 +299,6 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
                 targetUrl.addParameter( PARAMETER_PRODUCT_ID, showId );
                 SiteMessageService.setMessage( request, e.getCode( ), SiteMessage.TYPE_STOP, targetUrl.getUrl( ) );
             }
-
         }
         // Manage errors
         else

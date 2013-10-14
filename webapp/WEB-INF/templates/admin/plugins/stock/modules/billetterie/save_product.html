@@ -66,6 +66,10 @@ ${extendableResourceActionsHtml!}
 				<label>#i18n{module.stock.billetterie.save_product.website} :</label>
 				<input type="text" name="website" size="60" maxlength="100" value="${product.website!}"/>
 			</div>
+			<div>
+				<label>#i18n{module.stock.billetterie.save_product.subscriptionPossible} ? :</label>
+				<input type="checkbox" id="subscribable" name="subscribable" <#if product.subscribable?has_content && product.subscribable>checked="checked"</#if>/>
+			</div>
        	</p>
 		<p>   
 			<input type="hidden" id="product_id" name="id" value="${product.id!}"/>

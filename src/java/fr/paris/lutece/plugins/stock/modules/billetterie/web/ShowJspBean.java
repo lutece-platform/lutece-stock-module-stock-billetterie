@@ -34,8 +34,10 @@
 package fr.paris.lutece.plugins.stock.modules.billetterie.web;
 
 import fr.paris.lutece.plugins.stock.business.category.CategoryFilter;
+import fr.paris.lutece.plugins.stock.business.product.Product;
 import fr.paris.lutece.plugins.stock.business.product.ProductFilter;
 import fr.paris.lutece.plugins.stock.business.provider.ProviderFilter;
+import fr.paris.lutece.plugins.stock.business.subscription.SubscriptionProductFilter;
 import fr.paris.lutece.plugins.stock.commons.ResultList;
 import fr.paris.lutece.plugins.stock.commons.exception.BusinessException;
 import fr.paris.lutece.plugins.stock.commons.exception.FunctionnalException;
@@ -50,6 +52,7 @@ import fr.paris.lutece.plugins.stock.modules.tickets.service.ISeanceService;
 import fr.paris.lutece.plugins.stock.modules.tickets.service.IShowService;
 import fr.paris.lutece.plugins.stock.modules.tickets.service.IStatisticService;
 import fr.paris.lutece.plugins.stock.modules.tickets.utils.constants.TicketsConstants;
+import fr.paris.lutece.plugins.stock.service.ISubscriptionProductService;
 import fr.paris.lutece.plugins.stock.utils.ImageUtils;
 import fr.paris.lutece.plugins.stock.utils.ListUtils;
 import fr.paris.lutece.plugins.stock.utils.constants.StockConstants;
@@ -230,6 +233,8 @@ public class ShowJspBean extends AbstractJspBean
     // @Inject
     private IStatisticService _serviceStatistic;
 
+    private ISubscriptionProductService _subscriptionProductService;
+
     /** The _product filter. */
     private ProductFilter _productFilter;
 
@@ -244,6 +249,8 @@ public class ShowJspBean extends AbstractJspBean
         _serviceProvider = SpringContextService.getContext( ).getBean( IProviderService.class );
         _serviceCategory = SpringContextService.getContext( ).getBean( ICategoryService.class );
         _serviceStatistic = SpringContextService.getContext( ).getBean( IStatisticService.class );
+        _subscriptionProductService = (ISubscriptionProductService) SpringContextService.getContext( ).getBean(
+                ISubscriptionProductService.class );
     }
 
 
@@ -628,6 +635,13 @@ public class ShowJspBean extends AbstractJspBean
         }
         //On supprime les statistiques du spectacle
         _serviceStatistic.doRemoveProductStatisticByIdProduct( nIdProduct );
+        
+        //delete the subscription link to the product
+        Product product = new Product( );
+        product.setId( nIdProduct );
+        SubscriptionProductFilter filter = new SubscriptionProductFilter( );
+        filter.setProduct( product );
+        _subscriptionProductService.doDeleteByFilter( filter );
 
         _serviceProduct.doDeleteProduct( nIdProduct );
 

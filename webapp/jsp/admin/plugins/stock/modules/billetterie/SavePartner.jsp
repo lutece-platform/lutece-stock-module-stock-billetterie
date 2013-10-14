@@ -1,4 +1,5 @@
 <%@ include file="billetterie_header.inc.jsp" %>
+
 <%@page import="fr.paris.lutece.plugins.stock.modules.billetterie.web.PartnerJspBean"%>
 <jsp:useBean id="partner" scope="session" class="fr.paris.lutece.plugins.stock.modules.billetterie.web.PartnerJspBean" />
 <% 

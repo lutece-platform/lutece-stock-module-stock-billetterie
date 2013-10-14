@@ -34,20 +34,30 @@
 package fr.paris.lutece.plugins.stock.modules.billetterie.web;
 
 import fr.paris.lutece.plugins.stock.business.offer.OfferFilter;
+import fr.paris.lutece.plugins.stock.business.product.Product;
 import fr.paris.lutece.plugins.stock.business.product.ProductFilter;
 import fr.paris.lutece.plugins.stock.business.purchase.PurchaseFilter;
+import fr.paris.lutece.plugins.stock.business.subscription.SubscriptionProduct;
+import fr.paris.lutece.plugins.stock.business.subscription.SubscriptionProductFilter;
 import fr.paris.lutece.plugins.stock.commons.ResultList;
 import fr.paris.lutece.plugins.stock.commons.exception.FunctionnalException;
 import fr.paris.lutece.plugins.stock.modules.billetterie.utils.constants.BilletterieConstants;
+import fr.paris.lutece.plugins.stock.modules.tickets.business.NotificationDTO;
+import fr.paris.lutece.plugins.stock.modules.tickets.business.PartnerDTO;
 import fr.paris.lutece.plugins.stock.modules.tickets.business.ReservationDTO;
 import fr.paris.lutece.plugins.stock.modules.tickets.business.SeanceDTO;
 import fr.paris.lutece.plugins.stock.modules.tickets.business.SeanceFilter;
 import fr.paris.lutece.plugins.stock.modules.tickets.business.ShowDTO;
+import fr.paris.lutece.plugins.stock.modules.tickets.service.INotificationService;
+import fr.paris.lutece.plugins.stock.modules.tickets.service.IProviderService;
 import fr.paris.lutece.plugins.stock.modules.tickets.service.IPurchaseService;
 import fr.paris.lutece.plugins.stock.modules.tickets.service.ISeanceService;
 import fr.paris.lutece.plugins.stock.modules.tickets.service.IShowService;
 import fr.paris.lutece.plugins.stock.modules.tickets.utils.constants.TicketsConstants;
+import fr.paris.lutece.plugins.stock.modules.tickets.utils.export.TicketsExportUtils;
 import fr.paris.lutece.plugins.stock.service.IPurchaseSessionManager;
+import fr.paris.lutece.plugins.stock.service.ISubscriptionProductService;
+import fr.paris.lutece.plugins.stock.utils.CsvUtils;
 import fr.paris.lutece.plugins.stock.utils.DateUtils;
 import fr.paris.lutece.plugins.stock.utils.ListUtils;
 import fr.paris.lutece.plugins.stock.utils.constants.StockConstants;
@@ -56,12 +66,16 @@ import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
+import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPathService;
+import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.portal.web.constants.Parameters;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.html.DelegatePaginator;
 import fr.paris.lutece.util.html.HtmlTemplate;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -69,6 +83,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -87,6 +102,7 @@ public class OfferJspBean  extends AbstractJspBean
     public static final String PARAMETER_OFFERS_ID = "offers_id";
     public static final String PARAMETER_OFFER_DUPLICATE = "duplicate";
     public static final String PARAMETER_OFFER_PRODUCT_ID = "productId";
+    public static final String PARAMETER_OFFER_ID_PRODUCT = "product.id";
     public static final String PARAMETER_OFFER_GENRE_LIST = "offer_genre_list";
     public static final String PARAMETER_OFFER_GENRE_LIST_DEFAULT = "offer_genre_list_default";
     public static final String PARAMETER_BUTTON_DELETE = "delete";
@@ -105,21 +121,28 @@ public class OfferJspBean  extends AbstractJspBean
     public static final String PARAMETER_ORDER_DESC = "order_desc";
     public static final String PARAMETER_FILTER = "filter";
     public static final String PARAMETER_PRODUCT_ID = "product_id";
+    public static final String PARAMETER_REFRESH_CONTACT = "refresh_contact";
 
     public static final String RIGHT_MANAGE_OFFERS = "OFFERS_MANAGEMENT";
     public static final String RESOURCE_TYPE = "STOCK";
 
     // MARKS
     public static final String MARK_OFFER = "offer";
+    public static final String MARK_PRODUCT = "product";
     public static final String MARK_TITLE = "title";
     public static final String MARK_LOCALE = "locale";
     public static final String MARK_OFFER_STATUT_CANCEL = "strStatutCancel";
     public static final String MARK_OFFER_STATUT_LOCK = "strStatutLock";
     public static final String MARK_CURRENT_DATE = "currentDate";
     public static final String MARK_ERRORS = "errors";
+    public static final String MARK_CONTACT_LIST = "contact_list";
     private static final String MARK_LIST_OFFERS = "list_offers";
     private static final String MARK_LIST_PRODUCT = "product_list";
     private static final String MARK_LIST_OFFER_GENRE = "offerGenre_list";
+    public static final String MARK_PURCHASE = "purchase";
+    public static final String MARK_BASE_URL = "base_url";
+    public static final String MARK_USER_NAME = "userName";
+    private static final String MARK_RESERVE = "RESERVATIONS";
 
     // JSP
     private static final String JSP_MANAGE_OFFERS = "jsp/admin/plugins/stock/modules/billetterie/ManageOffers.jsp";
@@ -130,7 +153,7 @@ public class OfferJspBean  extends AbstractJspBean
     // TEMPLATES
     private static final String TEMPLATE_MANAGE_OFFERS = "admin/plugins/stock/modules/billetterie/manage_offers.html";
     private static final String TEMPLATE_SAVE_OFFER = "admin/plugins/stock/modules/billetterie/save_offer.html";
-
+    private static final String TEMPLATE_NOTIFICATION_CREATE_OFFER = "admin/plugins/stock/modules/billetterie/notification_create_offer.html";
 
     // PAGE TITLES
     private static final String PROPERTY_PAGE_TITLE_MANAGE_OFFER = "module.stock.billetterie.list_offres.title";
@@ -143,18 +166,25 @@ public class OfferJspBean  extends AbstractJspBean
     private static final String MESSAGE_TITLE_CONFIRMATION_DELETE_OFFER = "module.stock.billetterie.message.title.deleteOffer.confirmation";
     private static final String MESSAGE_TITLE_CONFIRMATION_MASSE_DELETE_OFFER = "module.stock.billetterie.message.title.masseDeleteOffer.confirmation";
     private static final String MESSAGE_OFFER_STATUT_ISNT_CANCEL = "module.stock.billetterie.message.offer.statut.isnt.cancel";
+    private static final String MESSAGE_OFFER_STATUT_ISNT_MASSE_CANCEL = "module.stock.billetterie.message.offer.statut.isnt.masseCancel";
     private static final String MESSAGE_DELETE_MASSE_OFFER_NO_OFFER_CHECK = "module.stock.billetterie.message.deleteMasseOffer.noCaseCheck";
     private static final String MESSAGE_SEARCH_PURCHASE_DATE = "module.stock.billetterie.message.search.purchase.date";
+    private static final String MESSAGE_NOTIFICATION_OFFER_PRODUCT = "module.stock.billetterie.notification.offer.product";
 
     // BEANS
     private static final String BEAN_STOCK_TICKETS_SHOW_SERVICE = "stock-tickets.showService";
     private static final String BEAN_STOCK_TICKETS_SEANCE_SERVICE = "stock-tickets.seanceService";
+    private static final String BEAN_STOCK_TICKETS_PARTNER_SERVICE = "stock-tickets.providerService";
 
     // ORDER FILTERS
     private static final String ORDER_FILTER_DATE = "date";
     private static final String ORDER_FILTER_PRODUCT_NAME = "product.name";
     private static final String ORDER_FILTER_TYPE_NAME = "type.name";
     
+    //PROPERTIES
+    private static final String PROPERTY_ENCODING = "stock-billetterie.csv.encoding";
+    private static final String PROPERTY_PURCHASE_STAT_EXPORT_FILE_NAME = "stock-billetterie.csv.purchase.file.name";
+
     // MEMBERS VARIABLES
     // @Inject
     // @Named( "stock-tickets.seanceService" )
@@ -162,8 +192,10 @@ public class OfferJspBean  extends AbstractJspBean
     // @Inject
     // @Named( "stock-tickets.showService" )
     private IShowService _serviceProduct;
-    // @Inject
+    private IProviderService _servicePartner;
     private IPurchaseService _servicePurchase;
+    private INotificationService _serviceNotification;
+    private ISubscriptionProductService _subscriptionProductService;
     private IPurchaseSessionManager _purchaseSessionManager;
     private SeanceFilter _offerFilter;
 
@@ -177,8 +209,12 @@ public class OfferJspBean  extends AbstractJspBean
         _offerFilter = new SeanceFilter( );
         _serviceOffer = (ISeanceService) SpringContextService.getBean( BEAN_STOCK_TICKETS_SEANCE_SERVICE );
         _serviceProduct = (IShowService) SpringContextService.getBean( BEAN_STOCK_TICKETS_SHOW_SERVICE );
+        _servicePartner = (IProviderService) SpringContextService.getBean( BEAN_STOCK_TICKETS_PARTNER_SERVICE );
         _purchaseSessionManager = SpringContextService.getContext( ).getBean( IPurchaseSessionManager.class );
         _servicePurchase = SpringContextService.getContext( ).getBean( IPurchaseService.class );
+        _serviceNotification = SpringContextService.getContext( ).getBean( INotificationService.class );
+        _subscriptionProductService = (ISubscriptionProductService) SpringContextService.getContext( ).getBean(
+                ISubscriptionProductService.class );
     }
 
     /**
@@ -333,36 +369,59 @@ public class OfferJspBean  extends AbstractJspBean
             String strDuplicate = request.getParameter( PARAMETER_OFFER_DUPLICATE );
             String strProductId = request.getParameter( PARAMETER_OFFER_PRODUCT_ID );
             
-            if ( strOfferId != null )
+            //Modification of an existing offer
+            if ( StringUtils.isNotEmpty( strOfferId ) )
             {
                 setPageTitleProperty( PROPERTY_PAGE_TITLE_MODIFY_OFFER );
                 Integer nIdOffer = Integer.parseInt( strOfferId );
                 offer = _serviceOffer.findSeanceById( nIdOffer );
+                int idProvider = 0;
+
+                if ( request.getParameter( PARAMETER_REFRESH_CONTACT ) != null )
+                {
+                    //case of wanting to get the contact which can be link to the offer
+                    populate( offer, request );
+                    String strIdProduct = request.getParameter( PARAMETER_OFFER_ID_PRODUCT );
+                    idProvider = _serviceProduct.findById( Integer.valueOf( strIdProduct ) ).getIdProvider( );
+                }
+                else
+                {
+                    //case of taking the contact linking to the offer
+                    idProvider = offer.getProduct( ).getIdProvider( );
+                }
+
+                model.put( MARK_CONTACT_LIST, getContactComboList( idProvider ) );
+                
                 // Duplicate offer, set id to 0 to create a new offer
                 if ( StringUtils.isNotEmpty( strDuplicate ) )
                 {
                 	offer.setId( null );
                     offer.setStatut( StringUtils.EMPTY );
                 }
-            }
+            }//Create a new offer
             else
             {
                 setPageTitleProperty( PROPERTY_PAGE_TITLE_CREATE_OFFER );
                 // Create new Offer
                 offer = new SeanceDTO( );
                 // If creation and filter "Spectacle" exist, pre-select the spectacle
-                if ( StringUtils.isNotBlank( strProductId ) )
+                if ( StringUtils.isNotBlank( strProductId ) && !strProductId.equals( "0" ) )
                 {
                     Integer nIdProduct = Integer.parseInt( strProductId );
-                    List<ShowDTO> showList;
-                	ProductFilter productFilter = new ProductFilter( );
-                    productFilter.setIdProduct( nIdProduct );
-                	showList = _serviceProduct.findByFilter( productFilter );
-                	
-                	if ( showList.size( ) == 1 )
-                	{
-                		offer.setProduct( showList.get( 0 ) );
-                	}
+                    offer.setProduct( _serviceProduct.findById( nIdProduct ) );
+                }
+                else
+                {
+                    populate( offer, request );
+                }
+
+                if ( request.getParameter( PARAMETER_OFFER_ID_PRODUCT ) != null
+                        && !request.getParameter( PARAMETER_OFFER_ID_PRODUCT ).equals( "-1" ) )
+                {
+                    SeanceDTO findSeanceById = _serviceOffer.findSeanceById( Integer.valueOf( request
+                            .getParameter( PARAMETER_OFFER_ID_PRODUCT ) ) );
+                    int idProvider = findSeanceById.getProduct( ).getIdProvider( );
+                    model.put( MARK_CONTACT_LIST, getContactComboList( idProvider ) );
                 }
             }
         }
@@ -398,6 +457,14 @@ public class OfferJspBean  extends AbstractJspBean
         return getAdminPage( template.getHtml( ) );
     }
 
+    private ReferenceList getContactComboList( int idProvider )
+    {
+        PartnerDTO findById = _servicePartner.findById( idProvider );
+        ReferenceList contactComboList = ListUtils.toReferenceList( findById.getContactList( ),
+                BilletterieConstants.ID, BilletterieConstants.NAME, StockConstants.EMPTY_STRING );
+        return contactComboList;
+    }
+
 
     /**
      * Save a offer
@@ -413,6 +480,7 @@ public class OfferJspBean  extends AbstractJspBean
 
         SeanceDTO offer = new SeanceDTO( );
         populate( offer, request );
+        // make sur you set the initial quantity only in the first save offer, not in modify offer
 
         try
         {
@@ -424,8 +492,59 @@ public class OfferJspBean  extends AbstractJspBean
         {
             return manageFunctionnalException( request, e, JSP_SAVE_OFFER );
         }
+        
+        if ( StringUtils.isBlank( request.getParameter( PARAMETER_OFFER_ID ) ) )
+        {
+            doNotifyCreateOffer( request, offer );
+        }
+        
 
         return doGoBack( request );
+    }
+
+    /**
+     * Send notification for user who subscribed to the product link with an
+     * offer.
+     * @param offer the offer create
+     * @param request The Http request
+     */
+    public void doNotifyCreateOffer( HttpServletRequest request, SeanceDTO offer )
+    {
+        //get all subscription for product
+        Product product = _serviceProduct.findById( offer.getProduct( ).getId( ) ).convert( );
+
+        SubscriptionProductFilter filter = new SubscriptionProductFilter( );
+        filter.setProduct( product );
+        List<SubscriptionProduct> subscriptionfindByFilter = _subscriptionProductService.findByFilter( filter );
+
+        //Generate mail content
+        Map<String, Object> model = new HashMap<String, Object>( );
+        model.put( MARK_OFFER, offer );
+        model.put( MARK_PRODUCT, product );
+        model.put( MARK_BASE_URL, AppPathService.getBaseUrl( request ) );
+
+        // Create mail object
+        HtmlTemplate template;
+        NotificationDTO notificationDTO;
+
+        for ( SubscriptionProduct subscription : subscriptionfindByFilter )
+        {
+            String userMail = subscription.getUserName( );
+
+            model.put( MARK_USER_NAME, subscription.getUserName( ) );
+            template = AppTemplateService.getTemplate( TEMPLATE_NOTIFICATION_CREATE_OFFER, request.getLocale( ), model );
+
+            notificationDTO = new NotificationDTO( );
+            notificationDTO.setRecipientsTo( userMail );
+            String[] args = new String[] { product.getName( ), };
+            notificationDTO.setSubject( I18nService.getLocalizedString( MESSAGE_NOTIFICATION_OFFER_PRODUCT, args,
+                    request.getLocale( ) ) );
+            notificationDTO.setMessage( template.getHtml( ) );
+
+            // Send it
+            _serviceNotification.send( notificationDTO );
+        }
+
     }
 
     /**
@@ -465,30 +584,21 @@ public class OfferJspBean  extends AbstractJspBean
         }
 
         Map<String, Object> urlParam = new HashMap<String, Object>( );
-        urlParam.put( PARAMETER_OFFER_ID, nIdOffer );
 
         String strJspBack = JSP_MANAGE_OFFERS;
 
-        PurchaseFilter filter = new PurchaseFilter( );
-        filter.setIdOffer( nIdOffer );
-        ResultList<ReservationDTO> bookingList = _servicePurchase.findByFilter( filter, null );
-        // // BO-E07-RGE02 : Only offer with date before current date or offer
-        // with statut "Cancel" can be delete
-        SeanceDTO seance = _serviceOffer.findSeanceById( nIdOffer );
+        ArrayList<Integer> offersIdToDelete = new ArrayList<Integer>( );
+        offersIdToDelete.add( nIdOffer );
 
-        if ( !bookingList.isEmpty( ) && !seance.getStatut( ).equals( TicketsConstants.OFFER_STATUT_CANCEL ) )
+        String error = errorWithDeleteOffer( request, urlParam, offersIdToDelete );
+        if ( error != null )
         {
-            if ( !DateUtils.getDate( seance.getDate( ), false ).before( DateUtils.getCurrentDate( ) ) )
-            {
-                return AdminMessageService.getMessageUrl( request, MESSAGE_OFFER_STATUT_ISNT_CANCEL,
-                        AdminMessage.TYPE_STOP );
-            }
+            return error;
         }
 
         return AdminMessageService.getMessageUrl( request, MESSAGE_CONFIRMATION_DELETE_OFFER, null,
                 MESSAGE_TITLE_CONFIRMATION_DELETE_OFFER, JSP_DO_DELETE_OFFER, BilletterieConstants.TARGET_SELF,
-                AdminMessage.TYPE_CONFIRMATION,
-                urlParam, strJspBack );
+                AdminMessage.TYPE_CONFIRMATION, urlParam, strJspBack );
     }
 
     /**
@@ -529,12 +639,11 @@ public class OfferJspBean  extends AbstractJspBean
     public String getMasseDeleteOffer( HttpServletRequest request )
     {
         ArrayList<Integer> offersIdToDelete = new ArrayList<Integer>( );
-        String[] parameterValues = request.getParameterValues( "offers_id" );
+        String[] parameterValues = request.getParameterValues( PARAMETER_OFFERS_ID );
         // if no case checked
         if ( parameterValues == null )
         {
-            return AdminMessageService
-.getMessageUrl( request, MESSAGE_DELETE_MASSE_OFFER_NO_OFFER_CHECK,
+            return AdminMessageService.getMessageUrl( request, MESSAGE_DELETE_MASSE_OFFER_NO_OFFER_CHECK,
                     AdminMessage.TYPE_STOP );
         }
 
@@ -553,38 +662,25 @@ public class OfferJspBean  extends AbstractJspBean
                     AdminMessage.TYPE_STOP );
         }
 
+        boolean masse = offersIdToDelete.size( ) > 1;
+
         String strJspBack = JSP_MANAGE_OFFERS;
-        PurchaseFilter filter = new PurchaseFilter( );
 
         Map<String, Object> urlParam = new HashMap<String, Object>( );
-        int i = 0;
-        for ( Integer nIdOffer : offersIdToDelete )
+        String error = errorWithDeleteOffer( request, urlParam, offersIdToDelete );
+        if ( error != null )
         {
-            urlParam.put( "offre" + i++, nIdOffer );
-            filter.setIdOffer( nIdOffer );
-            ResultList<ReservationDTO> bookingList = _servicePurchase.findByFilter( filter, null );
-            // // BO-E07-RGE02 : Only offer with date before current date or offer
-            // with statut "Cancel" can be delete
-            SeanceDTO seance = _serviceOffer.findSeanceById( nIdOffer );
-
-            if ( !bookingList.isEmpty( ) && !seance.getStatut( ).equals( TicketsConstants.OFFER_STATUT_CANCEL ) )
-            {
-                if ( !DateUtils.getDate( seance.getDate( ), false ).before( DateUtils.getCurrentDate( ) ) )
-                {
-                    return AdminMessageService.getMessageUrl( request, MESSAGE_OFFER_STATUT_ISNT_CANCEL,
-                            AdminMessage.TYPE_STOP );
-                }
-            }
+            return error;
         }
-        
-        return AdminMessageService.getMessageUrl( request, MESSAGE_CONFIRMATION_MASSE_DELETE_OFFER, null,
-                MESSAGE_TITLE_CONFIRMATION_MASSE_DELETE_OFFER, JSP_DO_MASSE_DELETE_OFFER,
-                BilletterieConstants.TARGET_SELF,
-                AdminMessage.TYPE_CONFIRMATION, urlParam, strJspBack );
+
+        return AdminMessageService.getMessageUrl( request, masse ? MESSAGE_CONFIRMATION_DELETE_OFFER
+                : MESSAGE_CONFIRMATION_MASSE_DELETE_OFFER, null, MESSAGE_TITLE_CONFIRMATION_MASSE_DELETE_OFFER,
+                masse ? JSP_DO_MASSE_DELETE_OFFER : JSP_DO_DELETE_OFFER,
+                BilletterieConstants.TARGET_SELF, AdminMessage.TYPE_CONFIRMATION, urlParam, strJspBack );
     }
 
     /**
-     * Delete offer on masse
+     * Delete offers on masse
      * 
      * @param request The Http request which contains the offer checked
      * @return the html code message
@@ -592,12 +688,15 @@ public class OfferJspBean  extends AbstractJspBean
     public String doMasseDeleteOffer( HttpServletRequest request )
     {
         ArrayList<Integer> listOffer = new ArrayList<Integer>( );
-
         try
         {
             for ( Object key : request.getParameterMap( ).keySet( ) )
             {
-                listOffer.add( Integer.parseInt( request.getParameter( (String) key ) ) );
+                //ensure the key parameter it rightly an offer, can be offer_id1, offer_id2, ... or "offer_id" with only one offer
+                if ( ( (String) key ).startsWith( PARAMETER_OFFER_ID ) )
+                {
+                    listOffer.add( Integer.parseInt( request.getParameter( (String) key ) ) );
+                }
             }
         }
         catch ( NumberFormatException e )
@@ -610,5 +709,74 @@ public class OfferJspBean  extends AbstractJspBean
         _serviceOffer.doMasseDeleteOffer( listOffer );
 
         return doGoBack( request );
+    }
+
+    /**
+     * Return a error message if it's not possible to delete the offer given,
+     * with deleteOffer or masseDeleteOffer
+     * @param request The Http request
+     * @param urlParam the url where the id offer to delete must be set
+     * @param offersIdToDelete the list which contains the offer to delete
+     * @return null if there aren't error, the message otherwise
+     */
+    private String errorWithDeleteOffer( HttpServletRequest request, Map<String, Object> urlParam,
+            ArrayList<Integer> offersIdToDelete )
+    {
+        boolean masse = offersIdToDelete.size( ) > 1;
+        PurchaseFilter filter = new PurchaseFilter( );
+        int i = 0;
+        for ( Integer nIdOffer : offersIdToDelete )
+        {
+            urlParam.put( masse ? PARAMETER_OFFER_ID + i++ : PARAMETER_OFFER_ID, nIdOffer );
+            filter.setIdOffer( nIdOffer );
+            ResultList<ReservationDTO> bookingList = _servicePurchase.findByFilter( filter, null );
+            // // BO-E07-RGE02 : Only offer with date before current date or offer
+            // with statut "Cancel" can be delete
+            SeanceDTO seance = _serviceOffer.findSeanceById( nIdOffer );
+
+            if ( !bookingList.isEmpty( ) && !seance.getStatut( ).equals( TicketsConstants.OFFER_STATUT_CANCEL ) )
+            {
+                if ( !DateUtils.getDate( seance.getDate( ), false ).before( DateUtils.getCurrentDate( ) ) )
+                {
+                    return AdminMessageService.getMessageUrl( request, masse ? MESSAGE_OFFER_STATUT_ISNT_MASSE_CANCEL
+                            : MESSAGE_OFFER_STATUT_ISNT_CANCEL,
+                            AdminMessage.TYPE_STOP );
+                }
+            }
+        }
+
+        return null;
+    }
+
+    public void doExportPurchase( HttpServletRequest request, HttpServletResponse response )
+    {
+        ResultList<ReservationDTO> reservationModel = new ResultList<ReservationDTO>( );
+        PurchaseFilter filter = new PurchaseFilter( );
+        String parameter = request.getParameter( PARAMETER_OFFER_ID );
+        int idOffer = Integer.valueOf( parameter );
+        filter.setIdOffer( idOffer );
+        reservationModel.addAll( _servicePurchase.findByFilter( filter ) );
+
+        try
+        {
+            //Génère le CSV
+            String strFormatExtension = AppPropertiesService.getProperty( TicketsConstants.PROPERTY_CSV_EXTENSION );
+            String strFileName = AppPropertiesService.getProperty( TicketsConstants.PROPERTY_CSV_PURCHASE_NAME ) + "."
+                    + strFormatExtension;
+            TicketsExportUtils.addHeaderResponse( request, response, strFileName, strFormatExtension );
+
+            OutputStream os = response.getOutputStream( );
+            //say how to decode the csv file, with utf8
+            byte[] bom = new byte[] { (byte) 0xEF, (byte) 0xBB, (byte) 0xBF }; // BOM values
+            os.write( bom ); // adds BOM 
+            CsvUtils.ecrireCsv( MARK_RESERVE, reservationModel, os );
+
+            os.flush( );
+            os.close( );
+        }
+        catch ( IOException e )
+        {
+            AppLogService.error( e );
+        }
     }
 }

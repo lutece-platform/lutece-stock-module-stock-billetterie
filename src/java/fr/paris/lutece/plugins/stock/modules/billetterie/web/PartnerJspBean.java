@@ -38,6 +38,7 @@ import fr.paris.lutece.plugins.stock.commons.ResultList;
 import fr.paris.lutece.plugins.stock.commons.exception.BusinessException;
 import fr.paris.lutece.plugins.stock.commons.exception.FunctionnalException;
 import fr.paris.lutece.plugins.stock.modules.billetterie.utils.constants.BilletterieConstants;
+import fr.paris.lutece.plugins.stock.modules.tickets.business.Contact;
 import fr.paris.lutece.plugins.stock.modules.tickets.business.PartnerDTO;
 import fr.paris.lutece.plugins.stock.modules.tickets.business.ShowDTO;
 import fr.paris.lutece.plugins.stock.modules.tickets.business.ShowFilter;
@@ -57,6 +58,7 @@ import fr.paris.lutece.util.html.HtmlTemplate;
 import fr.paris.lutece.util.url.UrlItem;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -74,11 +76,21 @@ public class PartnerJspBean extends AbstractJspBean
     public static final String PARAMETER_PARTNER_TYPE_LIST = "partner_type_list";
     public static final String PARAMETER_PARTNER_TYPE_LIST_DEFAULT = "partner_type_list_default";
     public static final String PARAMETER_PARTNER_ID = "partner_id";
+    public static final String PARAMETER_CONTACT_ID = "contact_id";
+    public static final String PARAMETER_ADD_CONTACT = "action_add_contact";
+    public static final String PARAMETER_DEL_CONTACT = "action_del_contact";
+    public static final String PARAMETER_NAME = "name";
+
     public static final String RIGHT_MANAGE_PARTNERS = "PARTNERS_MANAGEMENT";
+
+    public static final String MARK_PARTNER_NUMBER_CONTACT = "number_contact";
     public static final String MARK_PARTNER = "partner";
-    protected static final String MARK_NB_ITEMS_PER_PAGE = "nb_items_per_page";
-    protected static final String PROPERTY_DEFAULT_SESSION_PER_PAGE = "stock.itemsPerPage";
+    public static final String MARK_LIST_CONTACT = "list_contacts";
     private static final String MARK_LIST_PARTNERS = "list_partners";
+
+    protected static final String MARK_NB_ITEMS_PER_PAGE = "nb_items_per_page";
+
+    protected static final String PROPERTY_DEFAULT_SESSION_PER_PAGE = "stock.itemsPerPage";
 
     // BEANS
     private static final String BEAN_STOCK_TICKETS_SHOW_SERVICE = "stock-tickets.showService";
@@ -115,7 +127,7 @@ public class PartnerJspBean extends AbstractJspBean
      */
     public PartnerJspBean( )
     {
-        super(  );
+        super( );
         _providerFilter = new ProviderFilter( );
         _serviceProvider = SpringContextService.getContext( ).getBean( IProviderService.class );
         _serviceShow = (IShowService) SpringContextService.getBean( BEAN_STOCK_TICKETS_SHOW_SERVICE );
@@ -150,7 +162,7 @@ public class PartnerJspBean extends AbstractJspBean
 
         if ( strSortedAttributeName != null )
         {
-        	_providerFilter.getOrders( ).add( strSortedAttributeName );
+            _providerFilter.getOrders( ).add( strSortedAttributeName );
 
             String strAscSort = request.getParameter( Parameters.SORTED_ASC );
             boolean bIsAscSort = Boolean.parseBoolean( strAscSort );
@@ -161,10 +173,10 @@ public class PartnerJspBean extends AbstractJspBean
     }
 
     /**
-    * Generates a HTML form that displays all partners.
-    * @param request the Http request
-    * @return HTML
-    */
+     * Generates a HTML form that displays all partners.
+     * @param request the Http request
+     * @return HTML
+     */
     public String getManageProviders( HttpServletRequest request )
     {
         setPageTitleProperty( PAGE_TITLE_MANAGE_PARTNER );
@@ -175,24 +187,24 @@ public class PartnerJspBean extends AbstractJspBean
         filter.setOrders( orderList );
         filter.setOrderAsc( true );
 
-        ResultList<PartnerDTO> listAllPartner = _serviceProvider
-                .findByFilter( filter, getPaginationProperties( request ) );
+        ResultList<PartnerDTO> listAllPartner = _serviceProvider.findByFilter( filter,
+                getPaginationProperties( request ) );
 
         DelegatePaginator<PartnerDTO> paginator = getPaginator( request, listAllPartner );
 
         // Fill the model
-        Map<String, Object> model = new HashMap<String, Object>(  );
+        Map<String, Object> model = new HashMap<String, Object>( );
 
         // the paginator
         model.put( TicketsConstants.MARK_NB_ITEMS_PER_PAGE, String.valueOf( _nItemsPerPage ) );
         model.put( TicketsConstants.MARK_PAGINATOR, paginator );
-        model.put( MARK_LIST_PARTNERS, paginator.getPageItems(  ) );
+        model.put( MARK_LIST_PARTNERS, paginator.getPageItems( ) );
         // the filter
         model.put( TicketsConstants.MARK_FILTER, filter );
 
-        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_MANAGE_PARTNERS, getLocale(  ), model );
+        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_MANAGE_PARTNERS, getLocale( ), model );
 
-        return getAdminPage( template.getHtml(  ) );
+        return getAdminPage( template.getHtml( ) );
     }
 
     /**
@@ -216,44 +228,85 @@ public class PartnerJspBean extends AbstractJspBean
         {
             // No error, get provider if modify
             String strProviderId = request.getParameter( PARAMETER_PARTNER_ID );
-            if ( strProviderId != null )
+            if ( StringUtils.isNotBlank( strProviderId ) )
             {
                 setPageTitleProperty( PAGE_TITLE_MODIFY_PARTNER );
                 int nIdProvider = Integer.parseInt( strProviderId );
-                provider = _serviceProvider.findByIdWithProducts( nIdProvider );
+
+                // Origin of the user : ManagePartner.jsp, so no provider attributs in the request, 
+                //                      SavePartner, so attributs present in the request and MUSTN'T be load with DAO
+                provider = request.getParameter( PARAMETER_NAME ) == null ? _serviceProvider
+                        .findByIdWithProducts( nIdProvider ) : new PartnerDTO( );
             }
             else
             {
                 setPageTitleProperty( PAGE_TITLE_CREATE_PARTNER );
                 // Create new Partner
                 provider = new PartnerDTO( );
+                // now, provider are set with input take in request (case of add or delete contact)
+            }
+
+            //need to populate in case of add or remove contact
+            populate( provider, request );
+
+            //search if process must delete a contact
+            for ( Object requestParameter : request.getParameterMap( ).keySet( ) )
+            {
+                if ( ( (String) requestParameter ).startsWith( PARAMETER_DEL_CONTACT ) )
+                {
+                    String strIdContactToDelete = ( (String) requestParameter ).substring( PARAMETER_DEL_CONTACT
+                            .length( ) );
+                    int idContactToDelete = Integer.valueOf( strIdContactToDelete );
+                    provider.removeContact( idContactToDelete );
+                    break;
+                }
+            }
+
+            //add an empty contact
+            if ( request.getParameter( PartnerJspBean.PARAMETER_ADD_CONTACT ) != null )
+            {
+                provider.addEmptyContact( );
             }
 
         }
 
-
-
         // Add the JSP wich called this action
         model.put( StockConstants.MARK_JSP_BACK, request.getParameter( StockConstants.MARK_JSP_BACK ) );
-        model.put( MARK_PARTNER, provider );
 
+        String strNumberContact = request.getParameter( MARK_PARTNER_NUMBER_CONTACT );
+        int numberContact = strNumberContact == null ? 0 : Integer.valueOf( strNumberContact );
+        if ( request.getParameter( PARAMETER_ADD_CONTACT ) != null )
+        {
+            numberContact++;
+            populate( provider, request );
+        }
+        model.put( MARK_PARTNER, provider );
+        
+        ArrayList<Contact> listContactOrderById = (ArrayList<Contact>) provider.getContactList( );
+        Collections.sort( listContactOrderById, Contact.COMPARATOR_USING_ID );
+        model.put( MARK_LIST_CONTACT, listContactOrderById );
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_SAVE_PARTNER, getLocale( ), model );
 
         return getAdminPage( template.getHtml( ) );
     }
 
-
     /**
-     * Save a partner
+     * Save a partner, use to add contact
      * @param request The HTTP request
      * @return redirection url
      */
     public String doSavePartner( HttpServletRequest request )
     {
+        boolean addContact = request.getParameter( PARAMETER_ADD_CONTACT )!=null;
+        
         if ( StringUtils.isNotBlank( request.getParameter( StockConstants.PARAMETER_BUTTON_CANCEL ) ) )
         {
             return doGoBack( request );
+        }
+        else if ( addContact )
+        {
+            return getSavePartner( request );
         }
 
         PartnerDTO provider = new PartnerDTO( );
@@ -280,7 +333,7 @@ public class PartnerJspBean extends AbstractJspBean
 
     /**
      * Returns the confirmation message to delete a partner
-     *
+     * 
      * @param request The Http request
      * @return the html code message
      */
@@ -321,29 +374,23 @@ public class PartnerJspBean extends AbstractJspBean
         ResultList<ShowDTO> bookingList = this._serviceShow.findByFilter( filter, null );
 
         if ( bookingList != null && !bookingList.isEmpty( ) )
-		{
-        	return AdminMessageService.getMessageUrl( request, MESSAGE_DELETE_PARTNER_WITH_SHOW, AdminMessage.TYPE_STOP );
-		}
-        
+        {
+            return AdminMessageService
+                    .getMessageUrl( request, MESSAGE_DELETE_PARTNER_WITH_SHOW, AdminMessage.TYPE_STOP );
+        }
+
         return AdminMessageService.getMessageUrl( request, MESSAGE_CONFIRMATION_DELETE_PARTNER, url.getUrl( ),
                 AdminMessage.TYPE_CONFIRMATION, urlParam );
     }
 
     /**
      * Delete a partner
-     *
+     * 
      * @param request The Http request
      * @return the html code message
      */
     public String doDeletePartner( HttpServletRequest request )
     {
-
-        // if ( !GlobalProviderService.getInstance( ).isAuthorizedToDelete(
-        // getUser( ), strProviderClassName ) )
-        // {
-        // return getManageProviders( request );
-        // }
-
         String strProviderId = request.getParameter( PARAMETER_PARTNER_ID );
 
         int nIdProvider;

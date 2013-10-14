@@ -51,11 +51,12 @@
 			<tbody>
 			    <tr>
 			    	<th></th>
-			    	<th>#i18n{module.stock.billetterie.list_offres.masseDelete}</th>
+			    	<th></th>
 		        	<th>#i18n{module.stock.billetterie.list_offres.filter.name}</th>
 		        	<th>#i18n{module.stock.billetterie.list_offres.filter.product}</th>
 		        	<th>#i18n{module.stock.billetterie.list_offres.type}</th>
 		        	<th>#i18n{module.stock.billetterie.save_offer.date}</th>
+		        	<th>#i18n{module.stock.billetterie.save_offer.initialQuantity}</th>
 		        	<th>#i18n{module.stock.billetterie.save_offer.quantity}</th>
 		        	<th>#i18n{module.stock.billetterie.save_offer.sessions.actions}</th>
 		    	</tr>
@@ -69,6 +70,7 @@
 				        	<td><a href="jsp/admin/plugins/stock/modules/billetterie/SaveProduct.jsp?product_id=${offer.product.id!}">${offer.product.name!}</a></td>
 				        	<td>${offer.typeName!}</td>
 				        	<td>${offer.date!} - ${(offer.hour)!}</td>
+				        	<td>${offer.initialQuantity!}</td>
 				        	<td>${offer.quantity!}</td>
 				        	<td>
 				        		<a title="#i18n{module.stock.billetterie.list_offres.linkShowReservation}" href="jsp/admin/plugins/stock/modules/billetterie/ManagePurchase.jsp?offer_id=${offer.id!}"> 
@@ -98,6 +100,9 @@
 					        	</#if>
 				            	<a  title="#i18n{module.stock.billetterie.list_offres.linkDeleteOffer}" href="jsp/admin/plugins/stock/modules/billetterie/DeleteOffer.jsp?offer_id=${offer.id!}"> 
 				            		<img src="images/admin/skin/actions/delete.png" alt="#i18n{module.stock.billetterie.list_offres.linkDeleteOffer}" />
+				            	</a>
+				            	<a  title="#i18n{module.stock.billetterie.message.buttonExport}" href="jsp/admin/plugins/stock/modules/billetterie/DoExportPurchases.jsp?offer_id=${offer.id!}"> 
+				            		<img src="images/admin/skin/actions/export_purchase.png" alt="#i18n{module.stock.billetterie.list_offres.exportPurchases}" />
 				            	</a>
 				            </td>
 					    </tr>

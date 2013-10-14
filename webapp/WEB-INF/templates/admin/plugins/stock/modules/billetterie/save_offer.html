@@ -11,11 +11,19 @@
 				<div>
 					<label for="offer_name" >#i18n{module.stock.billetterie.save_offer.name} :</label>
 					<input type="text" id="offer_name" name="name" size="60" maxlength="100" value="${offer.name!}"/>
+					<input type="hidden" name="offer_id" value="${offer.id!}" />
 				</div>
 				<div>
 					<label>#i18n{module.stock.billetterie.save_offer.product} * :</label>
 		        	<@combo name="product.id" default_value="${(offer.product!).id!}" items=product_list! /> 
+		        	<input type="submit" name="refresh_contact" value="#i18n{module.stock.billetterie.message.search.contact}" class="button" />
 				</div>
+				<#if contact_list?has_content>
+					<div>
+			           <label>#i18n{module.stock.billetterie.save_offer.contact} :</label>
+			        	<@combo name="idContact" default_value="${offer.idContact!}" items=contact_list! />  
+			        </div>
+		        </#if>
 				<div>
 		           <label>#i18n{module.stock.billetterie.save_offer.offerType} * :</label>
 		        	<@combo name="idGenre" default_value="${offer.idGenre!}" items=offerGenre_list! />  
@@ -31,6 +39,10 @@
 				<div>
 					<label for="offer_quantity" >#i18n{module.stock.billetterie.save_offer.quantity} * :</label>
 					<input type="text" id="offer_quantity" name="quantity" size="5" maxlength="6"  value="${offer.quantity!}"/>
+					<#if offer.initialQuantity?exists >
+					<input type="hidden" id="offer_initialQuantity" name="initialQuantity" size="5" maxlength="6"  value="${offer.initialQuantity!}"/>
+					(${offer.initialQuantity!} #i18n{module.stock.billetterie.message.placesAvailableInitially})
+					</#if>
 				</div>
 		        <div>
 					<label for="offer_reductPrice" >#i18n{module.stock.billetterie.save_offer.reductPrice} :</label>

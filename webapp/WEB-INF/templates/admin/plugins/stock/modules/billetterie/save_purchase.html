@@ -4,6 +4,7 @@
 	    
 		${error!}
 	    <form method="post" action="jsp/admin/plugins/stock/modules/billetterie/DoSavePurchase.jsp">
+	    	<input type="hidden" id="purchase_id" name="purchase_id" value="${(purchase.id)!}" />
 	    	<input type="hidden" id="offer_id" name="offer.id" value="${(purchase.offer.id)!}" />
 	    	<input type="hidden" name="offer.product.name" value="${(purchase.offer.product.name)!}" />
 	    	<input type="hidden" name="offer.date" value="${(purchase.offer.date)!}" />
@@ -24,10 +25,17 @@
 					<label for="purchase_offerQuantity" >#i18n{module.stock.billetterie.save_purchase.offerQuantity} :</label>
 					${(purchase.offer.quantity)!}
 				</div><br />
-				<div>
-					<label for="purchase_quantity">#i18n{module.stock.billetterie.save_purchase.nbPurchase} * :</label>
-		        	<@combo name="quantity" default_value="${purchase.quantity!}" items=quantity_list! />
-				</div>
+					<#if purchase.id!?has_content && ((purchase.id)! > 0) >
+						<div>
+							<label for="purchase_quantity">#i18n{module.stock.billetterie.save_purchase.nbPurchased} :</label>
+							${purchase.quantity!}
+						</div><br />
+					<#else>
+						<div>
+							<label for="purchase_quantity">#i18n{module.stock.billetterie.save_purchase.nbPurchase} * :</label>
+				        	<@combo name="quantity" default_value="${purchase.quantity!}" items=quantity_list! />
+				        </div>
+					</#if>
 				<div>
 					<label for="purchase_userName">#i18n{module.stock.billetterie.save_purchase.userName} * :</label>
 		        	<input type="text" name="userName" id="purchase_userName" value="${purchase.userName!}" />

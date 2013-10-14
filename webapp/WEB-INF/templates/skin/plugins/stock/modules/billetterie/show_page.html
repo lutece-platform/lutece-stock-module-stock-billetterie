@@ -42,28 +42,53 @@
 						<#if show.website?has_content><p><strong>Site internet :</strong> <a title=${show.name}" href="${show.website!}">${show.website!}</a></p></#if>
 					</div>
 					
-					<fieldset id="bloc-reservation">
-						<legend>Réservation</legend>
-						<#if booking_opened = 0>
-							<#if seance_date_list?has_content>
-							<form action="jsp/site/Portal.jsp?page=billetterie&action=fiche-spectacle&product_id=${show.id}#bloc-reservation" method="post">
-								<select name="date_seance" onchange="this.form.submit()">
-									<#list seance_date_list as seance>
-									<option <#if seance == sSeanceDate! >selected="selected"</#if>>${seance}</option>
-									</#list>
-								</select>
-								<input type="submit" value="Voir les places disponibles" class="btn-action" />
-							</form>
-								${bloc_reservation}
+					
+					<#if user!?has_content>
+						<fieldset id="bloc-subscription">
+							<#if subscribe!?has_content>
+								<legend>Abonnement</legend>
+								<form action="jsp/site/Portal.jsp?page=billetterie&action=fiche-spectacle&product_id=${show.id}&subscribe=true#bloc-subscription" method="post">
+									<input type="submit" value="S'abonner" class="btn-action" />
+									<br /><br />
+									Recevoir une notification e-mail lors de l'ajout d'une nouvelle séance et vous permettre ainsi de réserver rapidement votre place.
+									<br />
+								</form>
 							<#else>
-								Aucune date programmée pour ce spectacle.
+								<legend>Désabonnement</legend>
+								Vous êtes actuellement abonné via l'adresse mail suivante : <i>${user_email!}</i>
+								<form action="jsp/site/Portal.jsp?page=billetterie&action=fiche-spectacle&product_id=${show.id}&subscribe=false#bloc-subscription" method="post">
+									<input type="submit" value="Se désabonner" class="btn-action" />
+									<br /><br />
+									Vous désabonner de ce spectacle et ne plus recevoir de notification.
+									<br />
+								</form>
 							</#if>
-						<#elseif booking_opened = -1>
-							<em>Les réservations pour ce spectacle sont terminées.</em>
-						<#else>
-							<em>Les réservations seront ouvertes à partir du ${show.startDate!}.</em>
-						</#if>
-					</fieldset>
+						</fieldset>
+					</#if>
+					
+					
+			
+						<fieldset id="bloc-reservation">
+							<legend>Réservation</legend>
+							<#if booking_opened = 0>
+								<#if seance_date_list?has_content>
+								<form action="jsp/site/Portal.jsp?page=billetterie&action=fiche-spectacle&product_id=${show.id}#bloc-reservation" method="post">
+									<select name="date_seance" onchange="this.form.submit()">
+										<#list seance_date_list as seance>
+										<option <#if seance == sSeanceDate! >selected="selected"</#if>>${seance}</option>
+										</#list>
+									</select>
+									<input type="submit" value="Voir les places disponibles" class="btn-action" />
+								</form>
+							${bloc_reservation} <#else> Aucune date programmée pour ce
+							spectacle. </#if> <#elseif booking_opened = -1> <em>Les réservations pour ce spectacle sont terminées.</em>
+							<#else>
+								<em>Les réservations seront ouvertes à partir du ${show.startDate!}.</em>
+							</#if>
+						</fieldset>
+				
+					
+					
 					
 				</div>
 			</div>
