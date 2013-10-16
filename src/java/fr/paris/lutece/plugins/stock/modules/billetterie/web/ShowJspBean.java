@@ -61,6 +61,7 @@ import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
+import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.portal.web.constants.Parameters;
@@ -169,7 +170,7 @@ public class ShowJspBean extends AbstractJspBean
     private static final String PAGE_TITLE_MANAGE_PRODUCT = "module.stock.billetterie.manage_product.title";
 
     /** The Constant PAGE_TITLE_CREATE_PRODUCT. */
-    private static final String PAGE_TITLE_CREATE_PRODUCT = "module.stock.billetterie.create_product.title";
+    private static final String PAGE_TITLE_CREATE_PRODUCT = "module.stock.billetterie.save_product.create.title";
 
     /** The Constant PAGE_TITLE_MODIFY_PRODUCT. */
     private static final String PAGE_TITLE_MODIFY_PRODUCT = "module.stock.billetterie.save_product.title";
@@ -395,6 +396,7 @@ public class ShowJspBean extends AbstractJspBean
         }
         else
         {
+        	AppLogService.error("test");
             model.put( MARK_TITLE, I18nService.getLocalizedString( PAGE_TITLE_CREATE_PRODUCT, Locale.getDefault( ) ) );
         }
 

@@ -1,78 +1,82 @@
-<div class="content-box" >
-	<h2>#i18n{module.stock.billetterie.choose_partner.pageTitle}</h2>
-	<div class="highlight-box">
-		<div style="visibility: visible; display: block;" id="filters">
-			<form action="jsp/admin/plugins/stock/modules/billetterie/ChoosePartner.jsp" method="post">
-				<input type="hidden" name="filter" value="filter" />
-				<input type="hidden" name="category_id" value="${category_id!-1}" />
-				<input type="hidden" name="jsp" value="${jsp!}" />
+<div class="row-fluid">
+	<div class="span12">
+		<fieldset>
+			<legend>#i18n{module.stock.billetterie.choose_partner.pageTitle}</legend>
+			<div class="highlight-box">
+				<div style="visibility: visible; display: block;" id="filters">
+					<form action="jsp/admin/plugins/stock/modules/billetterie/ChoosePartner.jsp" method="post">
+						<input type="hidden" name="filter" value="filter" />
+						<input type="hidden" name="category_id" value="${category_id!-1}" />
+						<input type="hidden" name="jsp" value="${jsp!}" />
+						<p>
+							<label for="filter_name">#i18n{stock.manage_provider.filter.name} : </label>
+							<input type="text" value="${filter.name!}" name="filter_name" id="filter_name" />
+						</p>
+						<p>
+							<label for="filter_contactName">#i18n{stock.manage_provider.filter.contactName} : </label>
+							<input type="text" value="${filter.contactName!}" name="filter_contactName" id="filter_contactName" />
+						</p>
+						<p>
+							<label for="filter_phoneNumber">#i18n{stock.manage_provider.filter.phoneNumber} : </label>
+							<input type="text" value="${filter.phoneNumber!}" name="filter_phoneNumber" id="filter_phoneNumber" />
+						</p>
+						<p>
+							<label for="filter_mail">#i18n{stock.manage_provider.filter.mail} : </label>
+							<input type="text" value="${filter.mail!}" name="filter_mail" id="filter_mail" />
+						</p>
+						<p>
+							<label for=""/>&nbsp;</label>
+							<input type="submit" class="button" value="#i18n{stock.manage_provider.buttonSearch}" />
+						</p>
+					</form>
+				</div>
+			</div>
+			<@paginationAdmin paginator=paginator combo=1 />
+			<table class="table table-striped table-condensed">
+				<tbody>
+				    <tr>
+				        <th>
+				        	#i18n{stock.manage_provider.name}
+				        	<@sort jsp_url="jsp/admin/plugins/stock/ManageProviders.jsp" attribute="name" />
+				        	</th>
+				        <th>
+				        	#i18n{stock.manage_provider.contact}
+				        	<@sort jsp_url="jsp/admin/plugins/stock/ManageProviders.jsp" attribute="contactName" />
+				        </th>
+				        <th>
+				        	#i18n{stock.manage_provider.phoneNumber}
+				        	<@sort jsp_url="jsp/admin/plugins/stock/ManageProviders.jsp" attribute="phoneNumber" />
+				        </th>
+				        <th>
+				       		#i18n{stock.manage_provider.mail}
+				       		<@sort jsp_url="jsp/admin/plugins/stock/ManageProviders.jsp" attribute="mail" />
+				        </th>
+				    </tr>
+				    <#list list_partners as partner>
+				    <tr>
+				        <td>
+				            <a alt="#i18n{stock.choose_partner.partner.link_action_label}" title="#i18n{stock.choose_partner.partner.link_action_label}" 
+				            	href="jsp/admin/plugins/stock/modules/billetterie/CreateOffer.jsp?category_id=${category_id!-1}&partner_id=${partner.idProvider}"> ${partner.name}</a>
+				        </td>
+				        <td>
+				            ${partner.contactName}
+				        </td>
+				        <td>
+				            ${partner.phoneNumber}
+				        </td>
+				        <td>
+				            ${partner.mail}
+				        </td>
+				    </tr>
+				    </#list>
+				</tbody>
+			</table>
+			<form method="post"  name="create_product" id="create_product" action="jsp/admin/plugins/stock/modules/billetterie/ManageOffers.jsp?">
+				<input type="hidden" id="category_id" name="category_id" value="${category_id!-1}"/>
 				<p>
-					<label for="filter_name">#i18n{stock.manage_provider.filter.name} : </label>
-					<input type="text" value="${filter.name!}" name="filter_name" id="filter_name" />
-				</p>
-				<p>
-					<label for="filter_contactName">#i18n{stock.manage_provider.filter.contactName} : </label>
-					<input type="text" value="${filter.contactName!}" name="filter_contactName" id="filter_contactName" />
-				</p>
-				<p>
-					<label for="filter_phoneNumber">#i18n{stock.manage_provider.filter.phoneNumber} : </label>
-					<input type="text" value="${filter.phoneNumber!}" name="filter_phoneNumber" id="filter_phoneNumber" />
-				</p>
-				<p>
-					<label for="filter_mail">#i18n{stock.manage_provider.filter.mail} : </label>
-					<input type="text" value="${filter.mail!}" name="filter_mail" id="filter_mail" />
-				</p>
-				<p>
-					<label for=""/>&nbsp;</label>
-					<input type="submit" class="button" value="#i18n{stock.manage_provider.buttonSearch}" />
+					<input class="button" type="submit" name="cancel" value="#i18n{portal.admin.message.buttonCancel}" />
 				</p>
 			</form>
-		</div>
+		</fieldset>
 	</div>
-	<@paginationAdmin paginator=paginator combo=1 />
-	<table>
-		<tbody>
-		    <tr>
-		        <th>
-		        	#i18n{stock.manage_provider.name}
-		        	<@sort jsp_url="jsp/admin/plugins/stock/ManageProviders.jsp" attribute="name" />
-		        	</th>
-		        <th>
-		        	#i18n{stock.manage_provider.contact}
-		        	<@sort jsp_url="jsp/admin/plugins/stock/ManageProviders.jsp" attribute="contactName" />
-		        </th>
-		        <th>
-		        	#i18n{stock.manage_provider.phoneNumber}
-		        	<@sort jsp_url="jsp/admin/plugins/stock/ManageProviders.jsp" attribute="phoneNumber" />
-		        </th>
-		        <th>
-		       		#i18n{stock.manage_provider.mail}
-		       		<@sort jsp_url="jsp/admin/plugins/stock/ManageProviders.jsp" attribute="mail" />
-		        </th>
-		    </tr>
-		    <#list list_partners as partner>
-		    <tr>
-		        <td>
-		            <a alt="#i18n{stock.choose_partner.partner.link_action_label}" title="#i18n{stock.choose_partner.partner.link_action_label}" 
-		            	href="jsp/admin/plugins/stock/modules/billetterie/CreateOffer.jsp?category_id=${category_id!-1}&partner_id=${partner.idProvider}"> ${partner.name}</a>
-		        </td>
-		        <td>
-		            ${partner.contactName}
-		        </td>
-		        <td>
-		            ${partner.phoneNumber}
-		        </td>
-		        <td>
-		            ${partner.mail}
-		        </td>
-		    </tr>
-		    </#list>
-		</tbody>
-	</table>
-	<form method="post"  name="create_product" id="create_product" action="jsp/admin/plugins/stock/modules/billetterie/ManageOffers.jsp?">
-		<input type="hidden" id="category_id" name="category_id" value="${category_id!-1}"/>
-		<p>
-			<input class="button" type="submit" name="cancel" value="#i18n{portal.admin.message.buttonCancel}" />
-		</p>
-	</form>
 </div>

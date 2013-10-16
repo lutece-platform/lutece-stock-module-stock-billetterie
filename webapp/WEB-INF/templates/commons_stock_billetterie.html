@@ -1,0 +1,69 @@
+<#macro getButtonCode link title aspect icon additionalParameters="" >
+	<a ${(additionalParameters)!} href="${link}"
+		title="${title}"
+		class="${aspect}">
+		<i class="${icon}" ></i>
+	</a>
+</#macro>
+
+<#-- macro permettant d'afficher les différents boutons de l'application-->
+<#macro showButton type href="" link="" title="" additionalParameters="" >
+	<#if type?? && link?? && title??>
+		<#-- standard aspect -->
+		<#assign aspect="btn btn-small btn-primary" />
+		
+		<#-- map of the icon & title -->
+		<#assign buttonGenerique = "btn btn-small" />
+		<#assign map = {
+				"delete":["module.stock.billetterie.transverse.delete","btn-danger","icon-trash icon-white"],
+				"edit":["module.stock.billetterie.transverse.edit","btn-primary","icon-edit icon-white"],
+				"send":["module.stock.billetterie.transverse.send","btn-primary","icon-envelope icon-white"],
+				"history":["module.stock.billetterie.transverse.history","btn-primary","icon-book icon-white"],
+				"export":["module.stock.billetterie.transverse.export","btn-primary","icon-download icon-white"],
+				"up":["module.stock.billetterie.transverse.up","btn-primary","icon-chevron-up icon-white"],
+				"down":["module.stock.billetterie.transverse.down","btn-primary","icon-chevron-down icon-white"],
+				"see":["module.stock.billetterie.transverse.see","btn-primary","icon-eye-open icon-white"],
+				"clone":["module.stock.billetterie.transverse.clone","btn-primary","icon-plus-sign icon-white"]
+			}>
+
+		<#if !(title?has_content) >
+			<#assign nouveauTitre="${(map[type][0])!}" />
+		</#if>
+		
+		<#-- controle pour supporter le parametre link et le href -->
+		<#if (href?length > 1) >
+			<#assign newHref = "${(href)!}" />
+		<#else>
+			<#assign newHref = "${(link)!}" />
+		</#if>
+		<@getButtonCode link="${(newHref)!}" title="#i18n{${(nouveauTitre)!}}" aspect="${(buttonGenerique)!} ${(map[type][1])!}" icon="${(map[type][2])!}" additionalParameters=additionalParameters />
+	</#if>
+</#macro>
+
+<#macro showUpdatePaginator title="Nombre par page" i18nNbrItems="Nombre d'elements" nbrItems="0">
+	<div class="row-fluid">
+		<div class="pull-right">
+			<div class="form-inline">
+				<span class="add-on">${title}</span>
+				<select id="items_per_page" class="input-mini" title="${title}" name="items_per_page">
+					<#list [ "5" , "10" , "20" , "50" ] as nb>
+						<option <#if nb_items_per_page = nb >selected="selected"</#if> value="${nb}">${nb}</option>
+					</#list>
+				</select>
+				<button class="btn btn-small" title="#i18n{module.stock.billetterie.transverse.edit}" type="submit">
+					<i class="icon-repeat"></i>
+				</button>
+				 - ${i18nNbrItems} ${nbrItems}
+			</div>
+		</div>
+	</div>
+</#macro>
+
+<#macro showSearchButton title="Rechercher">
+	<div class="form-actions">
+		<button class="btn btn-primary btn-small" type="submit" >
+			<i class="icon-search icon-white"></i>&nbsp;
+			<span class="hidden-phone">${title}</span>
+		</button>
+	</div>
+</#macro>

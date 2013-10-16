@@ -1,98 +1,97 @@
-<div class="content-box" >
-	<h2>#i18n{module.stock.billetterie.list_history.title}</h2>
-	<div class="highlight-box">
-		<div style="visibility: visible; display: block;" id="filters">
-			<form action="jsp/admin/plugins/stock/modules/billetterie/ManageHistory.jsp" method="post">
-				<input type="hidden" name="filter" value="filter" />
-				<p>
-					<label for="billetterie_id">#i18n{module.stock.billetterie.list_history.filter.billetterie} : </label>
-					<@combo name="billetterie_id" default_value="${billetterie_default!0}" items=billetteries_list />					
-				</p>
-				<p>
-					<label for="filter_date_begin_operation">#i18n{module.stock.billetterie.list_history.filter.dateOperation} : </label>
-					<input type="text" name="filter_date_begin_operation" id="filter_date_begin_operation" value="${(filter.dateBeginOperation?date)!}" />
-					#i18n{module.stock.billetterie.list_history.filter.dateEt}
-					<input type="text" name="filter_date_end_operation" id="filter_date_end_operation" value="${(filter.dateEndOperation?date)!}" />
-				</p>
-				<p>
-					<label for="filter_date_begin_session">#i18n{module.stock.billetterie.list_history.filter.dateSession} : </label>
-					<input type="text" name="filter_date_begin_session" id="filter_date_begin_session" value="${(filter.dateBeginSession?date)!}" />
-					#i18n{module.stock.billetterie.list_history.filter.dateEt}
-					<input type="text" name="filter_date_end_session" id="filter_date_end_session" value="${(filter.dateEndSession?date)!}" />
-				</p>
-				<p>
-					<label for="filter_partner_nickname">#i18n{module.stock.billetterie.list_history.filter.pseudoPartenaire} : </label>
-					<input type="text" name="filter_partner_nickname" id="filter_partner_nickname" value="${(filter.partnerNickname)!}" />
-				</p>
-				<p>
-					<label for="filter_partner_name">#i18n{module.stock.billetterie.list_history.filter.libellePartenaire} : </label>
-					<input type="text" name="filter_partner_name" id="filter_partner_name" value="${(filter.partnerName)!}" />
-				</p>
-				<p>
-					<label for="filter_id">#i18n{module.stock.billetterie.list_history.filter.identifiant} : </label>
-					<input type="text" name="filter_id" id="filter_id" value="${(filter.idOffer)!}" />
-				</p>
-				<p>
-					<label for="filter_offer_name">#i18n{module.stock.billetterie.list_history.filter.offerName} : </label>
-					<input type="text" name="filter_offer_name" id="filter_offer_name" value="${(filter.offerName)!}" />
-				</p>
-				
-				<p>
-					<label for=""/>&nbsp;</label>
-					<input type="submit" class="button" value="#i18n{module.stock.billetterie.list_history.buttonSearch}" />
-				</p>
+<div class="row-fluid">
+	<div class="span12">
+		<fieldset>
+			<legend>#i18n{module.stock.billetterie.list_history.title}</legend>
+			<div class="highlight-box">
+				<div style="visibility: visible; display: block;" id="filters">
+					<form action="jsp/admin/plugins/stock/modules/billetterie/ManageHistory.jsp" method="post">
+						<input type="hidden" name="filter" value="filter" />
+						<p>
+							<label for="billetterie_id">#i18n{module.stock.billetterie.list_history.filter.billetterie} : </label>
+							<@combo name="billetterie_id" default_value="${billetterie_default!0}" items=billetteries_list />					
+						</p>
+						<p>
+							<label for="filter_date_begin_operation">#i18n{module.stock.billetterie.list_history.filter.dateOperation} : </label>
+							<input type="text" name="filter_date_begin_operation" id="filter_date_begin_operation" value="${(filter.dateBeginOperation?date)!}" />
+							#i18n{module.stock.billetterie.list_history.filter.dateEt}
+							<input type="text" name="filter_date_end_operation" id="filter_date_end_operation" value="${(filter.dateEndOperation?date)!}" />
+						</p>
+						<p>
+							<label for="filter_date_begin_session">#i18n{module.stock.billetterie.list_history.filter.dateSession} : </label>
+							<input type="text" name="filter_date_begin_session" id="filter_date_begin_session" value="${(filter.dateBeginSession?date)!}" />
+							#i18n{module.stock.billetterie.list_history.filter.dateEt}
+							<input type="text" name="filter_date_end_session" id="filter_date_end_session" value="${(filter.dateEndSession?date)!}" />
+						</p>
+						<p>
+							<label for="filter_partner_nickname">#i18n{module.stock.billetterie.list_history.filter.pseudoPartenaire} : </label>
+							<input type="text" name="filter_partner_nickname" id="filter_partner_nickname" value="${(filter.partnerNickname)!}" />
+						</p>
+						<p>
+							<label for="filter_partner_name">#i18n{module.stock.billetterie.list_history.filter.libellePartenaire} : </label>
+							<input type="text" name="filter_partner_name" id="filter_partner_name" value="${(filter.partnerName)!}" />
+						</p>
+						<p>
+							<label for="filter_id">#i18n{module.stock.billetterie.list_history.filter.identifiant} : </label>
+							<input type="text" name="filter_id" id="filter_id" value="${(filter.idOffer)!}" />
+						</p>
+						<p>
+							<label for="filter_offer_name">#i18n{module.stock.billetterie.list_history.filter.offerName} : </label>
+							<input type="text" name="filter_offer_name" id="filter_offer_name" value="${(filter.offerName)!}" />
+						</p>
+						
+						<p>
+							<label for=""/>&nbsp;</label>
+							<input type="submit" class="button" value="#i18n{module.stock.billetterie.list_history.buttonSearch}" />
+						</p>
+					</form>
+				</div>
+			</div>
+			<@paginationAdmin paginator=paginator combo=1 />
+		
+			
+			<table class="table table-striped table-condensed">
+				<tr>
+					<th>#i18n{module.stock.billetterie.list_history.event}</th>
+					<th>#i18n{module.stock.billetterie.list_history.offerCategory}</th>
+					<th>#i18n{module.stock.billetterie.list_history.place}</th>
+					<th>#i18n{module.stock.billetterie.list_history.dateSession}</th>
+					<th>#i18n{module.stock.billetterie.list_history.hourSession}</th>
+					<th>#i18n{module.stock.billetterie.list_history.dateOperation}</th>
+					<th>#i18n{module.stock.billetterie.list_history.billetterieName}</th>
+					<th>#i18n{module.stock.billetterie.list_history.type}</th>
+					<th>#i18n{module.stock.billetterie.list_history.quantity}</th>
+					<th>#i18n{module.stock.billetterie.list_history.actions}</th>
+				</tr>
+				<#list list_history as history>		
+					<tr>
+						<td>${history.event}</td>
+						<td>
+							<#if history.offer?? && history.offer.genre??>
+								${history.offer.genre.name}
+							<#else>
+								&nbsp;
+							</#if>
+						</td>
+						<td>${history.partner}</td>
+						<td>${history.dateSession?date}</td>
+						<td>${history.hourSession?string("HH:mm")}</td>
+						<td>${history.dateOperation}</td>
+						<td>${history.billetterie}</td>
+						<td>#i18n{${history.typeI18n}}</td>
+						<td>${history.quantity}</td>
+						<td>		
+							<#if billetterie_name = history.billetterie || is_admin>			
+								<@showButton type="delete" href="jsp/admin/plugins/stock/modules/billetterie/DeleteHistory.jsp?id_history=${history.idHistory}" />
+							</#if>
+						</td>				
+					</tr>
+				</#list>
+			</table>
+			<form action="jsp/admin/plugins/stock/modules/billetterie/DoExportHistory.jsp" method="post">
+				<input class="button" type="submit" value="#i18n{module.stock.billetterie.list_history.button.exportCSV}" />
 			</form>
-		</div>
+		</fieldset>
 	</div>
-	<@paginationAdmin paginator=paginator combo=1 />
-
-	
-	<table style="border-collapse: collapse; ">
-		<tr>
-			<th>#i18n{module.stock.billetterie.list_history.event}</th>
-			<th>#i18n{module.stock.billetterie.list_history.offerCategory}</th>
-			<th>#i18n{module.stock.billetterie.list_history.place}</th>
-			<th>#i18n{module.stock.billetterie.list_history.dateSession}</th>
-			<th>#i18n{module.stock.billetterie.list_history.hourSession}</th>
-			<th>#i18n{module.stock.billetterie.list_history.dateOperation}</th>
-			<th>#i18n{module.stock.billetterie.list_history.billetterieName}</th>
-			<th>#i18n{module.stock.billetterie.list_history.type}</th>
-			<th>#i18n{module.stock.billetterie.list_history.quantity}</th>
-			<th>#i18n{module.stock.billetterie.list_history.actions}</th>
-		</tr>
-		<#list list_history as history>		
-			<tr>
-				<td>${history.event}</td>
-				<td>
-					<#if history.offer?? && history.offer.genre??>
-						${history.offer.genre.name}
-					<#else>
-						&nbsp;
-					</#if>
-				</td>
-				<td>${history.partner}</td>
-				<td>${history.dateSession?date}</td>
-				<td>${history.hourSession?string("HH:mm")}</td>
-				<td>${history.dateOperation}</td>
-				<td>${history.billetterie}</td>
-				<td>#i18n{${history.typeI18n}}</td>
-				<td>${history.quantity}</td>
-				<td>		
-					<#if billetterie_name = history.billetterie || is_admin>			
-						<a alt=""  
-								title="" 
-								href="jsp/admin/plugins/stock/modules/billetterie/DeleteHistory.jsp?id_history=${history.idHistory}"> 
-							<img src="images/admin/skin/actions/delete.png" alt="" /> 
-						</a>
-					</#if>
-				</td>				
-			</tr>
-		</#list>
-	</table>
-	<form action="jsp/admin/plugins/stock/modules/billetterie/DoExportHistory.jsp" method="post">
-		<input class="button" type="submit" value="#i18n{module.stock.billetterie.list_history.button.exportCSV}" />
-	</form>	
-	
 </div>
 <@getDatePickerRange idFieldFrom="filter_date_begin_operation" idFieldTo="filter_date_end_operation" language=locale />
 <@getDatePickerRange idFieldFrom="filter_date_begin_session" idFieldTo="filter_date_end_session" language=locale />
