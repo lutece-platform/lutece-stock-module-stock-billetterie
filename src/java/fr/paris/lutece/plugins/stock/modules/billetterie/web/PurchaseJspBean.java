@@ -548,7 +548,7 @@ public class PurchaseJspBean  extends AbstractJspBean
         try
         {
             // Controls mandatory fields
-            validate( purchase );
+        	validateBilletterie( purchase );
 
             if ( StringUtils.isBlank( strIdPurchase ) )
             {

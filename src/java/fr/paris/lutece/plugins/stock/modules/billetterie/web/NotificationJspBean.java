@@ -273,7 +273,7 @@ public class NotificationJspBean  extends AbstractJspBean
         try
         {
             // Controls mandatory fields
-            validate( notification );
+            validateBilletterie( notification );
             if ( notification.getIdOffer( ) != null && notification.getIdOffer( ) > 0 )
             {
                 SeanceDTO seance = this._serviceOffer.findSeanceById( notification.getIdOffer( ) );

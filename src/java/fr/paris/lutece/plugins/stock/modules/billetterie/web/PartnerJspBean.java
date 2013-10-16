@@ -203,7 +203,7 @@ public class PartnerJspBean extends AbstractJspBean
         model.put( TicketsConstants.MARK_FILTER, filter );
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_MANAGE_PARTNERS, getLocale( ), model );
-
+       
         return getAdminPage( template.getHtml( ) );
     }
 
@@ -315,7 +315,7 @@ public class PartnerJspBean extends AbstractJspBean
         try
         {
             // Controls mandatory fields
-            validate( provider );
+        	validateBilletterie( provider );
             _serviceProvider.doSaveProvider( provider );
 
             if ( !provider.isAccessible( ) && provider.getAccessibleComment( ) != StringUtils.EMPTY )

@@ -277,7 +277,7 @@ public class CategoryJspBean extends AbstractJspBean
         try
         {
             // Controls mandatory fields
-            validate( category );
+        	validateBilletterie( category );
             _serviceCategory.doSaveCategory( category );
         }
         catch ( FunctionnalException e )

@@ -136,7 +136,7 @@ public class AbstractJspBean extends PluginAdminPageJspBean
      * @throws ValidationException exception containing informations about
      *             errors and the bean
      */
-    protected <T> void validate( T bean ) throws ValidationException
+    protected <T> void validateBilletterie( T bean ) throws ValidationException
     {
         Set<ConstraintViolation<T>> constraintViolations = BeanValidationUtil.validate( bean );
         if ( constraintViolations.size( ) > 0 )

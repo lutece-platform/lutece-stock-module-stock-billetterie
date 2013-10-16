@@ -485,7 +485,7 @@ public class OfferJspBean  extends AbstractJspBean
         try
         {
             // Controls mandatory fields
-            validate( offer );
+        	validateBilletterie( offer );
             _serviceOffer.doSaveOffer( offer );
         }
         catch ( FunctionnalException e )

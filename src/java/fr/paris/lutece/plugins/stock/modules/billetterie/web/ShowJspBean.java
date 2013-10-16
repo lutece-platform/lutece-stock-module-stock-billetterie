@@ -430,7 +430,7 @@ public class ShowJspBean extends AbstractJspBean
             File[] filePosterArray = writePoster( request, product );
 
             // Controls mandatory fields
-            validate( product );
+            validateBilletterie( product );
 
             // Persist entity
             ShowDTO saveProduct = _serviceProduct.doSaveProduct( product, filePosterArray );
