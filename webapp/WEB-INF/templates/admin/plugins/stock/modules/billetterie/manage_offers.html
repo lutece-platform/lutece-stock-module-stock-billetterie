@@ -9,7 +9,7 @@
 				#i18n{module.stock.billetterie.list_offres.title}
 				<span class="pull-right spaced">
 				  	<a class="btn btn-primary btn-small" href="jsp/admin/plugins/stock/modules/billetterie/SaveOffer.jsp&productId=${(filter.productId)!}" >
-				      	<i class="icon-plus icon-white" ></i> #i18n{module.stock.billetterie.list_offres.button.createOffer}
+				      	<i class="icon-plus icon-white" ></i> <span class="hidden-phone">#i18n{module.stock.billetterie.list_offres.button.createOffer}</span>
 				  	</a>
 				</span>
 			</legend>
@@ -22,23 +22,23 @@
 						<input type="hidden" name="filter" value="${filter!}" />
 						<p>
 							<label for="filter_name">#i18n{module.stock.billetterie.list_offres.filter.name} : </label>
-							<input type="text" name="name" id="filter_name" value="${(filter.name)!}" />
+							<input class="span"  type="text" name="name" id="filter_name" value="${(filter.name)!}" />
 						</p>
 						<p>
 							<label for="filter_product">#i18n{module.stock.billetterie.list_offres.filter.product} : </label>
-							<input type="text" name="productName" id="filter_product" value="${(filter.productName)!}" />
+							<input class="span"  type="text" name="productName" id="filter_product" value="${(filter.productName)!}" />
 						</p>
 						<p>
 							<label>#i18n{module.stock.billetterie.list_offres.filter.typeOffre} : </label>
-				        	<@combo name="idGenre" default_value="${filter.idGenre!}" items=offerGenre_list! />
+				        	<@comboWithParams additionalParameters="class='span'" name="idGenre" default_value="${filter.idGenre!}" items=offerGenre_list! />
 						</p>
 						<p>
 							<label for="filter_date_begin">#i18n{module.stock.billetterie.list_offres.filter.date} : </label>
-							<input type="text" name="dateBegin" id="filter_date_begin" value="${(filter.dateBegin?date)!}" size="8" />
+							<input class="span5" type="text" name="dateBegin" id="filter_date_begin" value="${(filter.dateBegin?date)!}"/>
 							#i18n{module.stock.billetterie.list_offres.filter.dateEt}
-							<input type="text" name="dateEnd" id="filter_date_end" value="${(filter.dateEnd?date)!}" size="8"/>
+							<input class="span5" type="text" name="dateEnd" id="filter_date_end" value="${(filter.dateEnd?date)!}"/>
 							#i18n{module.stock.billetterie.list_offres.filter.dateOuLe}
-							<input type="text" name="dateOr" id="filter_date_or" value="${(filter.dateOr?date)!}" size="8"/>
+							<input class="span5" type="text" name="dateOr" id="filter_date_or" value="${(filter.dateOr?date)!}"/>
 						</p>
 						<@showSearchButton />
 					</form>
@@ -108,7 +108,7 @@
 							</tbody>
 						</table>
 						<#if list_offers?has_content>
-							<input class="button" type="submit" value="#i18n{module.stock.billetterie.list_offres.button.masseDelete}" />
+							<input class="btn btn-primary btn-small" type="submit" value="#i18n{module.stock.billetterie.list_offres.button.masseDelete}" />
 						</#if>
 					</form>
 				</div>

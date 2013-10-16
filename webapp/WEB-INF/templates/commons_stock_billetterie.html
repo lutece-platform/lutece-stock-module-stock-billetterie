@@ -67,3 +67,26 @@
 		</button>
 	</div>
 </#macro>
+
+<#macro showFilterInput id="" name="" value="" label="" >
+	<div class="control-group">
+		<label class="control-label" for="${id!}">
+			${label} :
+		</label>
+		<div class="controls">
+			<input class="span" value="${value!}" name="${name!}" id="${id!}" />
+		</div>
+	</div>
+</#macro>
+
+<#macro showFilterSelect list id="" name="" value="" label="">
+	<div class="control-group">
+		<label class="control-label" for="${id!}">
+			${label} :
+		</label>
+		<div class="controls">
+			<@comboWithParams additionalParameters="class='span'" name="${name!}" default_value="${value!}" items=list! />
+		</div>
+	</div>
+</#macro>
+

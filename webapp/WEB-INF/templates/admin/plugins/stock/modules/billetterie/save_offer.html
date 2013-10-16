@@ -16,7 +16,7 @@
 				<div>
 					<label>#i18n{module.stock.billetterie.save_offer.product} * :</label>
 		        	<@combo name="product.id" default_value="${(offer.product!).id!}" items=product_list! /> 
-		        	<input type="submit" name="refresh_contact" value="#i18n{module.stock.billetterie.message.search.contact}" class="button" />
+		        	<input type="submit" name="refresh_contact" value="#i18n{module.stock.billetterie.message.search.contact}" class="btn btn-primary btn-small" />
 				</div>
 				<#if contact_list?has_content>
 					<div>
@@ -51,8 +51,8 @@
 					<#setting locale=locale>
 				</div>
 			<p>
-				<input type="submit" value="#i18n{module.stock.billetterie.message.buttonSave}" class="button" tabindex="3" />
-				<input class="button" type="submit" name="cancel" value="#i18n{portal.admin.message.buttonCancel}" />
+				<input type="submit" value="#i18n{module.stock.billetterie.message.buttonSave}" class="btn btn-primary btn-small" tabindex="3" />
+				<input class="btn btn-primary btn-small" type="submit" name="cancel" value="#i18n{portal.admin.message.buttonCancel}" />
 			</p>
 	   </form>	    
 	</div>

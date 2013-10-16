@@ -5,7 +5,7 @@
 				#i18n{module.stock.billetterie.manage_category.title}
 				<span class="pull-right spaced">
 				  	<a class="btn btn-primary btn-small" href="jsp/admin/plugins/stock/modules/billetterie/SaveCategory.jsp">	    	
-			     		<i class="icon-plus icon-white" ></i> #i18n{module.stock.billetterie.manage_category.buttonCreateCategory}	    	
+			     		<i class="icon-plus icon-white" ></i> <span class="hidden-phone">#i18n{module.stock.billetterie.manage_category.buttonCreateCategory}</span>	
 				  	</a>
 				</span>
 			</legend>
@@ -15,7 +15,7 @@
 						<input type="hidden" name="filter" value="filter" />
 						<p>
 							<label for="filter_name">#i18n{module.stock.billetterie.manage_category.filter.name} : </label>
-							<input type="text" value="${filter.name!}" name="filter_name" id="filter_name" />
+							<input class="span"  type="text" value="${filter.name!}" name="filter_name" id="filter_name" />
 						</p>
 						<@showSearchButton />
 					</form>

@@ -54,7 +54,7 @@
 								<input type="text" id="provider_mail" name="contactForm[${contact_index}].mail" size="60" maxlength="50"  value="${contact.mail!}"/>
 								<br/>
 								<label>&nbsp;</label>
-								<input class="button" type="submit" name="action_del_contact${contact.id!}" value="#i18n{module.stock.billetterie.manage_partner.deleteContact}"/>
+								<input class="btn btn-primary btn-small" type="submit" name="action_del_contact${contact.id!}" value="#i18n{module.stock.billetterie.manage_partner.deleteContact}"/>
 							</div>
 							<input type="hidden" id="provider_contact_id" name="contactForm[${contact_index}].id" size="60" maxlength="60"  value="${contact.id!}"/>
 							<br/>
@@ -63,13 +63,13 @@
 					 </#if>
 					<div>
 						<label>&nbsp;</label>
-						<input class="button" type="submit" name="action_add_contact" value="#i18n{module.stock.billetterie.manage_partner.additionnalContact}" id="more_contact" />
+						<input class="btn btn-primary btn-small" type="submit" name="action_add_contact" value="#i18n{module.stock.billetterie.manage_partner.additionnalContact}" id="more_contact" />
 					</div>
 		       	</div>
 	       	</div>
 			<p>   
-				<input type="submit" name="save" value="#i18n{module.stock.billetterie.message.buttonSave}" class="button" tabindex="3" />
-				<input class="button" type="submit" name="cancel" value="#i18n{portal.admin.message.buttonCancel}" />
+				<input type="submit" name="save" value="#i18n{module.stock.billetterie.message.buttonSave}" class="btn btn-primary btn-small" tabindex="3" />
+				<input class="btn btn-primary btn-small" type="submit" name="cancel" value="#i18n{portal.admin.message.buttonCancel}" />
 			</p>
 	
 	   </form>

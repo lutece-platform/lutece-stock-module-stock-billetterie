@@ -4,7 +4,7 @@
 			<legend>
 				<span class="pull-right spaced">
 				  	<a  class="btn btn-primary btn-small" href="jsp/admin/plugins/stock/modules/billetterie/SavePartner.jsp">	    	
-			      		<i class="icon-plus icon-white" ></i> #i18n{module.stock.billetterie.manage_partner.buttonCreatePartner}	    	
+			      		<i class="icon-plus icon-white" ></i><span class="hidden-phone"> #i18n{module.stock.billetterie.manage_partner.buttonCreatePartner}</span>
 				  	</a>
 				</span>
 			</legend>
@@ -14,7 +14,7 @@
 						<input type="hidden" name="filter" value="filter" />
 						<p>
 							<label for="filter_name">#i18n{module.stock.billetterie.field.PartnerDTO.name} : </label>
-							<input type="text" value="${filter.name!}" name="name" id="filter_name" />
+							<input class="span"  type="text" value="${filter.name!}" name="name" id="filter_name" />
 						</p>
 						
 						<@showSearchButton />
