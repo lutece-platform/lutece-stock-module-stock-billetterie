@@ -6,3 +6,5 @@
 %>
 
 <%= offer.getSaveOffer( request ) %>
+
+<%@ include file="../../../../AdminFooter.jsp" %>

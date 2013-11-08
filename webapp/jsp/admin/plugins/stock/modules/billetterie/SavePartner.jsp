@@ -7,3 +7,4 @@
 %>
 
 <%= partner.getSavePartner( request ) %>
+<%@ include file="../../../../AdminFooter.jsp" %>

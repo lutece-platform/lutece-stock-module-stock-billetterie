@@ -6,3 +6,4 @@ category.init( request, CategoryJspBean.RIGHT_MANAGE_CATEGORIES);
 %>
 
 <%=category.getSaveCategory( request, fr.paris.lutece.plugins.stock.business.category.Category.class.getName(  ) )%>
+<%@ include file="../../../../AdminFooter.jsp" %>

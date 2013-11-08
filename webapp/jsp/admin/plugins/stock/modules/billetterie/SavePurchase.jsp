@@ -15,3 +15,4 @@ if (ret != null) {
 <%
 }
 %>
+<%@ include file="../../../../AdminFooter.jsp" %>
