@@ -132,8 +132,6 @@ public class CategoryJspBean extends AbstractJspBean
     /** The Constant MESSAGE_DELETE_CATEGORY_WITH_SHOW. */
     private static final String MESSAGE_DELETE_CATEGORY_WITH_SHOW = "module.stock.billetterie.message.deleteCategory.with.show";
 
-
-
     // MEMBERS VARIABLES
     /** The _service category. */
     // @Inject
@@ -186,8 +184,8 @@ public class CategoryJspBean extends AbstractJspBean
         filter.setOrders( orderList );
         filter.setOrderAsc( true );
 
-        ResultList<ShowCategoryDTO> listAllCATEGORY = _serviceCategory
-                .findByFilter( filter, getPaginationProperties( request ) );
+        ResultList<ShowCategoryDTO> listAllCATEGORY = _serviceCategory.findByFilter( filter,
+                getPaginationProperties( request ) );
 
         DelegatePaginator<ShowCategoryDTO> paginator = getPaginator( request, listAllCATEGORY );
 
@@ -266,7 +264,7 @@ public class CategoryJspBean extends AbstractJspBean
      */
     public String doSaveCategory( HttpServletRequest request )
     {
-        if ( StringUtils.isNotBlank( request.getParameter( StockConstants.PARAMETER_BUTTON_CANCEL ) ) )
+        if ( null != request.getParameter( StockConstants.PARAMETER_BUTTON_CANCEL ) )
         {
             return doGoBack( request );
         }
@@ -277,7 +275,7 @@ public class CategoryJspBean extends AbstractJspBean
         try
         {
             // Controls mandatory fields
-        	validateBilletterie( category );
+            validateBilletterie( category );
             _serviceCategory.doSaveCategory( category );
         }
         catch ( FunctionnalException e )

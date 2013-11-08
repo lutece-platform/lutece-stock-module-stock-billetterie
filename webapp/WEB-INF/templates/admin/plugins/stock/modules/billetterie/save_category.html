@@ -16,55 +16,69 @@
 	Colors[6] = "FF";
 	
 </script>
-<div class="content-box" >
-    <h2>${title!}</h2>
-    ${error!}
-    <form method="post"  name="save_category" id="save_category" action="jsp/admin/plugins/stock/modules/billetterie/DoSaveCategory.jsp">
-    	<input type="hidden" id="jsp_back" name="jsp_back" value="${jsp_back!}"/>
-        <p>
-			<div>
-				<label for="category_name" >#i18n{stock.create_category.name} * :</label>
-				<input type="text" id="name" name="name" size="60" maxlength="100" value="${category.name!}"/>
-			</div>
-			<div>
-				<label for="category_description" >#i18n{stock.create_category.description} :</label>
-				<input type="text" id="description" name="description" size="60" maxlength="100" value="${category.description!}"/>
-			</div>
-	       	<div>
-	            <label for="color" >#i18n{module.stock.billetterie.create_category.labelColor} :</label>
-	            <div>
-	            <input type="text" size="10" id="color" name="color" maxlength="7" value="${category.color!}" style="float:left"/>
-	        	<div style="width:15px;height:15px;background-color:${category.color!}; display:inline-block; margin:3px 0 0 2px" id="bloc_couleur"></div>
-	        	</div>
-	        </div>
-	        <div style="clear:left">
-	            <label for="color_picker" >#i18n{module.stock.billetterie.create_category.labelColorPicker} : </label>
-				<table id="color_picker" style='width: 10%;' border="0" align=center>
-	 				<tr>
-						<script language="JavaScript">
-	 						for(i=1 ; i <= 6 ; i++)
-	 	 					{
-	 							for(j=1 ; j <= 6 ; j++)
-	 	 						{
-	 								for(k=1 ; k <= 6 ; k++)
-	 	 							{
-										var thiscolor = Colors[i] + Colors[j] + Colors[k];
-										document.writeln("<td style='padding:0 0 0 0; border: none;' bgcolor = \"#" + thiscolor + "\" align = center><a ");
-										document.writeln("\'\' onClick = \"document.getElementById('color').value = \'#" + thiscolor + "\'\">" + '_' + "</a></td>");
-	
-	 								}
-	 							}
-	 							document.writeln("<TR>");
-	 						}
-	 					</script>
-	 				</tr>
-	 			</table>
-	        </div>
-       	</p>
-		<p>   
-			<input type="hidden" id="category_id" name="id" value="${category.id!}"/>
-			<input type="submit" value="#i18n{module.stock.billetterie.message.buttonSave}" class="btn btn-primary btn-small" tabindex="3" />
-			<input class="btn btn-primary btn-small" type="submit" name="cancel" value="#i18n{portal.admin.message.buttonCancel}" />
-		</p>
-   </form>
+<div class="row-fluid">
+	<div class="span12">
+		<fieldset>
+			<legend>${title!}</legend>
+		    ${error!}
+		    <form method="post"  name="save_category" id="save_category" action="jsp/admin/plugins/stock/modules/billetterie/DoSaveCategory.jsp">
+		    	<input type="hidden" id="jsp_back" name="jsp_back" value="${jsp_back!}"/>
+		        
+		        <div class="span5 well">
+			        <p>
+						<div>
+							<label for="category_name" >#i18n{stock.create_category.name} * :</label>
+							<input type="text" id="name" name="name" class="span" maxlength="100" value="${category.name!}"/>
+						</div>
+						<div>
+							<label for="category_description" >#i18n{stock.create_category.description} :</label>
+							<input type="text" id="description" name="description" class="span" maxlength="100" value="${category.description!}"/>
+						</div>
+				       	<div>
+				            <label for="color" >#i18n{module.stock.billetterie.create_category.labelColor} :</label>
+				            <div>
+				            <input type="text" class="span" id="color" name="color" maxlength="7" value="${category.color!}" style="float:left"/>
+				        	<div style="width:15px;height:15px;background-color:${category.color!}; display:inline-block; margin:3px 0 0 2px" id="bloc_couleur"></div>
+				        	</div>
+				        </div>
+				        <div  style="clear:left">
+				            <label for="color_picker" >#i18n{module.stock.billetterie.create_category.labelColorPicker} : </label>
+							<table id="color_picker" style='' border="0" align=center>
+				 				<tr>
+									<script language="JavaScript">
+				 						for(i=1 ; i <= 6 ; i++)
+				 	 					{
+				 							for(j=1 ; j <= 6 ; j++)
+				 	 						{
+				 								for(k=1 ; k <= 6 ; k++)
+				 	 							{
+													var thiscolor = Colors[i] + Colors[j] + Colors[k];
+													document.writeln("<td style='padding:0 0 0 0; border: none;' bgcolor = \"#" + thiscolor + "\" align = center><a ");
+													document.writeln("\'\' onClick = \"document.getElementById('color').value = \'#" + thiscolor + "\'\">" + '_' + "</a></td>");
+				
+				 								}
+				 							}
+				 							document.writeln("<TR>");
+				 						}
+				 					</script>
+				 				</tr>
+				 			</table>
+				        </div>
+			       	</p>
+					<div class="form-actions">   
+						<input type="hidden" id="category_id" name="id" value="${category.id!}"/>
+						
+						<button type="submit" name="save" class="btn btn-primary btn-small" tabindex="3" >
+							<i class="icon-ok icon-white"></i>&nbsp;
+							#i18n{module.stock.billetterie.message.buttonSave}
+						</button>
+						<button class="btn btn-small" type="submit" name="cancel">
+							<i class="icon-remove-circle"></i>&nbsp;
+							#i18n{portal.admin.message.buttonCancel}
+						</button>
+					</div>
+		        </div>
+		   </form>
+		</fieldset>
+	</div>
 </div>
