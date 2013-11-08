@@ -35,11 +35,9 @@
 							        	<a title="#i18n{module.stock.billetterie.manage_partner.linkModifyPartner}" href="jsp/admin/plugins/stock/modules/billetterie/SavePartner.jsp?partner_id=${partner.id}">${partner.name!}</a>
 							        </td>
 						        	<td>
-						           		<a title="#i18n{module.stock.billetterie.manage_partner.linkManageProducts}" href="jsp/admin/plugins/stock/modules/billetterie/ManageProducts.jsp?idProvider=${partner.id}"> 
-							            	<img width="24px" src="images/admin/skin/actions/show.png" alt="#i18n{module.stock.billetterie.manage_partner.linkManageProducts}" />
-							            </a>
-						        		<@showButton type="edit" title="#i18n{module.stock.billetterie.manage_partner.linkModifyPartner}" href="jsp/admin/plugins/stock/modules/billetterie/SavePartner.jsp?partner_id=${partner.id}" />
-						            	<@showButton type="delete" title="#i18n{module.stock.billetterie.manage_partner.linkDeletePartner}" href="jsp/admin/plugins/stock/modules/billetterie/DeletePartner.jsp?partner_id=${partner.id}" />
+						           		<@showButton type="see" title="module.stock.billetterie.manage_partner.linkManageProducts" href="jsp/admin/plugins/stock/modules/billetterie/ManageProducts.jsp?idProvider=${partner.id}"/> 
+						        		<@showButton type="edit" title="module.stock.billetterie.manage_partner.linkModifyPartner" href="jsp/admin/plugins/stock/modules/billetterie/SavePartner.jsp?partner_id=${partner.id}" />
+						            	<@showButton type="delete" title="module.stock.billetterie.manage_partner.linkDeletePartner" href="jsp/admin/plugins/stock/modules/billetterie/DeletePartner.jsp?partner_id=${partner.id}" />
 						            </td>
 							    </tr>
 						    </#list>

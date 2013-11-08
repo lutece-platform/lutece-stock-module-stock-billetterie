@@ -28,6 +28,8 @@
 
 		<#if !(title?has_content) >
 			<#assign nouveauTitre="${(map[type][0])!}" />
+		<#else>
+			<#assign nouveauTitre=title />
 		</#if>
 		
 		<#-- controle pour supporter le parametre link et le href -->

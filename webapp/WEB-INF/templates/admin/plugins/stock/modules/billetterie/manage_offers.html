@@ -86,15 +86,15 @@
 								        		<a title="#i18n{module.stock.billetterie.list_offres.linkSendNotification}" href="jsp/admin/plugins/stock/modules/billetterie/SendNotification.jsp?offer_id=${offer.id!}"> 
 								        			<img src="images/admin/skin/actions/send_reservation.png" alt="#i18n{module.stock.billetterie.list_offres.linkSendNotification}" /> 
 								        		</a>
-								        		<@showButton type="edit" title="#i18n{module.stock.billetterie.list_offres.linkModifyOffer}" href="jsp/admin/plugins/stock/modules/billetterie/SaveOffer.jsp?offer_id=${offer.id!}" />
-								        		<@showButton type="clone" title="#i18n{module.stock.billetterie.list_offres.linkDuplicateOffer}" href="jsp/admin/plugins/stock/modules/billetterie/SaveOffer.jsp?offer_id=${offer.id!}&duplicate=true" />
+								        		<@showButton type="edit" title="module.stock.billetterie.list_offres.linkModifyOffer" href="jsp/admin/plugins/stock/modules/billetterie/SaveOffer.jsp?offer_id=${offer.id!}" />
+								        		<@showButton type="clone" title="module.stock.billetterie.list_offres.linkDuplicateOffer" href="jsp/admin/plugins/stock/modules/billetterie/SaveOffer.jsp?offer_id=${offer.id!}&duplicate=true" />
 								        		<#if offer.statut != strStatutCancel && ( offer.date?date("dd/MM/yyyy") &gt;= currentDate?date("dd/MM/yyyy") )>
 									        		<a title="#i18n{module.stock.billetterie.list_offres.linkCanceloffer}" href="jsp/admin/plugins/stock/modules/billetterie/SendNotification.jsp?offer_id=${offer.id!}&cancel=true"> 
 									        			<img src="images/admin/skin/plugins/stock/modules/billetterie/disable.png" alt="#i18n{module.stock.billetterie.list_offres.linkCanceloffer}" /> 
 									        		</a>
 									        	</#if>
-								            	<@showButton type="delete" title="#i18n{module.stock.billetterie.list_offres.linkDeleteOffer}" href="jsp/admin/plugins/stock/modules/billetterie/DeleteOffer.jsp?offer_id=${offer.id!}" /> 
-								            	<@showButton type="export" title="#i18n{module.stock.billetterie.message.buttonExport}" href="jsp/admin/plugins/stock/modules/billetterie/DoExportPurchases.jsp?offer_id=${offer.id!}" />
+								            	<@showButton type="delete" title="module.stock.billetterie.list_offres.linkDeleteOffer" href="jsp/admin/plugins/stock/modules/billetterie/DeleteOffer.jsp?offer_id=${offer.id!}" /> 
+								            	<@showButton type="export" title="module.stock.billetterie.message.buttonExport" href="jsp/admin/plugins/stock/modules/billetterie/DoExportPurchases.jsp?offer_id=${offer.id!}" />
 								            </td>
 									    </tr>
 								    </#list>

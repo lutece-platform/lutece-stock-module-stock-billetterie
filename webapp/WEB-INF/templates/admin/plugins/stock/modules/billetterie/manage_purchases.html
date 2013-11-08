@@ -78,10 +78,10 @@
 								    		${purchase.quantity!}
 								    	</td>
 							        	<td>
-							        		<@showButton type="edit" title="#i18n{module.stock.billetterie.list_purchase.modifyPurchase}" href="jsp/admin/plugins/stock/modules/billetterie/SavePurchase.jsp?purchase_id=${purchase.id!}" />
-							        		<@showButton type="export" title="#i18n{module.stock.billetterie.list_purchase.linkPrintTicket}" href="servlet/plugins/jasper/downloadFile?report_id=contremarque&report_type=pdf&value1=${purchase.id!}&value2=${purchase.userName!}" />
-							        		<@showButton type="delete"  title="#i18n{module.stock.billetterie.list_purchase.linkCancelPurchase}" href="jsp/admin/plugins/stock/modules/billetterie/DeletePurchase.jsp?purchase_id=${purchase.id!}" />
-							        		<@showButton type="send" title="#i18n{module.stock.billetterie.list_purchase.linkNotifiyPurchase}" href="jsp/admin/plugins/stock/modules/billetterie/NotifyPurchase.jsp?purchase_id=${purchase.id!}" />
+							        		<@showButton type="edit" title="module.stock.billetterie.list_purchase.modifyPurchase" href="jsp/admin/plugins/stock/modules/billetterie/SavePurchase.jsp?purchase_id=${purchase.id!}" />
+							        		<@showButton type="export" title="module.stock.billetterie.list_purchase.linkPrintTicket" href="servlet/plugins/jasper/downloadFile?report_id=contremarque&report_type=pdf&value1=${purchase.id!}&value2=${purchase.userName!}" />
+							        		<@showButton type="delete"  title="module.stock.billetterie.list_purchase.linkCancelPurchase" href="jsp/admin/plugins/stock/modules/billetterie/DeletePurchase.jsp?purchase_id=${purchase.id!}" />
+							        		<@showButton type="send" title="module.stock.billetterie.list_purchase.linkNotifiyPurchase" href="jsp/admin/plugins/stock/modules/billetterie/NotifyPurchase.jsp?purchase_id=${purchase.id!}" />
 							            </td>
 								    </tr>
 							    </#list>
