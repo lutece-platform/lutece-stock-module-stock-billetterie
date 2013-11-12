@@ -8,9 +8,11 @@
        http://www.springframework.org/schema/context
        http://www.springframework.org/schema/context/spring-context-3.0.xsd
        http://www.springframework.org/schema/tx
-       http://www.springframework.org/schema/tx/spring-tx-3.0.xsd">
+       http://www.springframework.org/schema/tx/spring-tx-3.0.xsd"
+       >
+    <context:component-scan base-package="fr.paris.lutece.plugins.stock.modules.billetterie.service" />
     
     <tx:annotation-driven/>
-	<!--  Declaration des JspBean -->
 	<bean id="BilletteriePortletDAO"  class="fr.paris.lutece.plugins.stock.modules.billetterie.business.portlet.BilletteriePortletDAO" />  
+
 </beans>

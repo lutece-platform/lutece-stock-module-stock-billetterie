@@ -159,7 +159,6 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
     private final IPurchaseSessionManager _purchaseSessionManager = (IPurchaseSessionManager) SpringContextService
             .getContext( ).getBean( IPurchaseSessionManager.class );
 
-
     /**
      * Return page with action specified.
      * 
@@ -198,8 +197,7 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
     /**
      * Page for the show
      * 
-     * @param page
-     *            xpage
+     * @param page xpage
      * @param request
      *            http request
      * @param locale
@@ -277,7 +275,7 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
             {
                 isSubscribe = jspBean.isSubscribeToProduct( request, currentUser );
             }
-            
+
             if ( !isSubscribe )
             {
                 model.put( MARK_SUBSCRIBE, STRING_TRUE );
@@ -288,8 +286,7 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
             }
 
         }
-        
-        
+
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_DIR + TEMPLATE_SHOW_PAGE, locale, model );
 
         page.setContent( template.getHtml( ) );
@@ -309,7 +306,7 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
     {
         Date startDate = DateUtils.getDate( show.getStartDate( ), true );
         Date endDate = DateUtils.getDate( show.getEndDate( ), false );
-        Date today = new Date();
+        Date today = new Date( );
         int seanceOpened;
         if ( today.before( startDate ) )
         {
@@ -384,12 +381,10 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
         quantityList.add( refItem );
         model.put( MAX_RESERVATION_INVITATION, quantityList );
 
-        quantityList = getNumberList( AppPropertiesService.getPropertyInt(
-                PROPERTY_NB_PLACES_MAX_INVITATION_ENFANT, 2 ) );
+        quantityList = getNumberList( AppPropertiesService.getPropertyInt( PROPERTY_NB_PLACES_MAX_INVITATION_ENFANT, 2 ) );
         model.put( MAX_RESERVATION_INVITATION_ENFANT, quantityList );
 
-        quantityList = getNumberList( AppPropertiesService.getPropertyInt(
-                PROPERTY_NB_PLACES_MAX_TARIF_REDUIT, 2 ) );
+        quantityList = getNumberList( AppPropertiesService.getPropertyInt( PROPERTY_NB_PLACES_MAX_TARIF_REDUIT, 2 ) );
         model.put( MAX_RESERVATION_TARIF_REDUIT, quantityList );
 
         model.put( MARK_SEANCE_DATE, sDateSeance );

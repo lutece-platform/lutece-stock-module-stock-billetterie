@@ -1,11 +1,14 @@
 <#include "/admin/util/editor/editor.html" />
 
-${extendableResourceActionsHtml!}
-
 <div class="row-fluid">
 	<div class="span12">
 		<fieldset>
-			<legend>${title!}</legend>
+			<legend>
+				${title!}
+				<span class="pull-right">
+					${extendableResourceActionsHtml!}
+				</span>
+			</legend>
    			 ${error!}
 		    <form class="form" method="post" enctype="multipart/form-data" name="save_product" id="save_product" action="jsp/admin/plugins/stock/modules/billetterie/DoSaveProduct.jsp">
 		    	<input type="hidden" id="jsp_back" name="jsp_back" value="${jsp_back!}"/>

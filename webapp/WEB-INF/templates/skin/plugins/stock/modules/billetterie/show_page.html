@@ -3,7 +3,12 @@
 <#-- results -->
 <div id="two-zones-second" class="span-18 last" role="main">
 
-	@Extender[${show.id!},stock-product,hit,{show:true}]@
+	@Extender[${show.id!},stock-product,comment]@
+	<#-- @Extender[${show.id!},stock-product,hit,{show:true}]@ -->
+	<!-- 
+		REPLACE
+		Extender : ${show.id!},stock-product,hit,{show:true}
+	 -->
 	
 	<div class="span-18 last notitle">
 	    <div class="portlet">
@@ -94,5 +99,9 @@
 			</div>
 		</div>
 	</div>
-	@Extender[${show.id!},stock-product,comment]@
+		<#--@Extender[${show.id!},stock-product,comment]@ -->
+	<!-- 
+		REPLACE
+		Extender : ${show.id!},stock-product,comment
+	 -->
 </div>

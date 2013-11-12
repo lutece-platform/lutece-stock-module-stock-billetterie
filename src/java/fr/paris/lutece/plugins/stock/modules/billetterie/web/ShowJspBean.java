@@ -33,6 +33,23 @@
  */
 package fr.paris.lutece.plugins.stock.modules.billetterie.web;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.springframework.transaction.annotation.Transactional;
+
 import fr.paris.lutece.plugins.stock.business.category.CategoryFilter;
 import fr.paris.lutece.plugins.stock.business.product.Product;
 import fr.paris.lutece.plugins.stock.business.product.ProductFilter;
@@ -59,6 +76,7 @@ import fr.paris.lutece.plugins.stock.utils.constants.StockConstants;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
+import fr.paris.lutece.portal.service.resource.ExtendableResourceRemovalListenerService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppLogService;
@@ -70,23 +88,6 @@ import fr.paris.lutece.portal.web.upload.MultipartHttpServletRequest;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.html.DelegatePaginator;
 import fr.paris.lutece.util.html.HtmlTemplate;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-import org.springframework.transaction.annotation.Transactional;
 
 
 /**
@@ -356,8 +357,6 @@ public class ShowJspBean extends AbstractJspBean
                     product.setIdCategory( Integer.parseInt( strCategoryId ) );
                 }
             }
-
-            ExtendableResourcePluginActionManager.fillModel( request, getUser( ), model, strProductId, ShowDTO.PROPERTY_RESOURCE_TYPE );
         }
 
         // Combo
@@ -399,7 +398,9 @@ public class ShowJspBean extends AbstractJspBean
         	AppLogService.error("test");
             model.put( MARK_TITLE, I18nService.getLocalizedString( PAGE_TITLE_CREATE_PRODUCT, Locale.getDefault( ) ) );
         }
-
+        
+        ExtendableResourcePluginActionManager.fillModel( request, getUser( ), model, String.valueOf( product.getId( ) ), ShowDTO.PROPERTY_RESOURCE_TYPE );
+        
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_SAVE_PRODUCT, getLocale( ), model );
 
         return getAdminPage( template.getHtml( ) );
@@ -646,6 +647,9 @@ public class ShowJspBean extends AbstractJspBean
         _subscriptionProductService.doDeleteByFilter( filter );
 
         _serviceProduct.doDeleteProduct( nIdProduct );
+        
+        //on supprime toutes référence à ce spectacle dans le plugin extends
+        ExtendableResourceRemovalListenerService.doRemoveResourceExtentions( ShowDTO.PROPERTY_RESOURCE_TYPE, Integer.toString( nIdProduct ) );
 
         return doGoBack( request );
     }
