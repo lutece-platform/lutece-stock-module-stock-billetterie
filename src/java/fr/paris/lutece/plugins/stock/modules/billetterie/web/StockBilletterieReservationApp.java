@@ -35,7 +35,6 @@ package fr.paris.lutece.plugins.stock.modules.billetterie.web;
 
 import fr.paris.lutece.plugins.stock.business.purchase.PurchaseFilter;
 import fr.paris.lutece.plugins.stock.business.purchase.exception.PurchaseUnavailable;
-import fr.paris.lutece.plugins.stock.commons.ResultList;
 import fr.paris.lutece.plugins.stock.commons.exception.BusinessException;
 import fr.paris.lutece.plugins.stock.commons.exception.FunctionnalException;
 import fr.paris.lutece.plugins.stock.commons.exception.TechnicalException;
@@ -64,10 +63,12 @@ import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.portal.web.xpages.XPage;
 import fr.paris.lutece.portal.web.xpages.XPageApplication;
 import fr.paris.lutece.util.html.HtmlTemplate;
+import fr.paris.lutece.util.html.Paginator;
 import fr.paris.lutece.util.url.UrlItem;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -122,6 +123,7 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
     private static final String PARAMETER_AUTHENTIFIED_USER = "authentified_user";
     private static final String PARAMETER_DATE_SCEANCE = "date_sceance";
     private static final String PARAMETER_PAGE = "page";
+    private static final String PARAMETER_PAGE_INDEX = "page_index";
     // Actions
     private static final String ACTION_MY_BOOKINGS = "mes-reservations";
     private static final String ACTION_BOOK = "reserver";
@@ -131,6 +133,7 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
     private static final String MARK_BASE_URL = "base_url";
     private static final String MARK_USER = "user";
     private static final String MARK_PURCHASER = "purchaser";
+    private static final String MARK_PAGINATOR = "paginator";
     // Templates
     private static final String TEMPLATE_DIR = "skin/plugins/stock/modules/billetterie/";
     private static final String TEMPLATE_NOTIFICATION_BOOKING = "notification_booking.html";
@@ -261,7 +264,7 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
                                 booking.setNameAgent( user.getUserInfo( LuteceUser.NAME_FAMILY ) );
 
                                 bAuthentified = true;
-                                
+
                                 // Reserve tickets
                                 try
                                 {
@@ -488,27 +491,18 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
         }
 
         // Get user bookings
+        Date today = new Date( );
         PurchaseFilter purchaseFilter = new PurchaseFilter( );
         purchaseFilter.setUserName( user.getName( ) );
-        ResultList<ReservationDTO> bookingList = _purchaseService.findByFilter( purchaseFilter, null );
+        purchaseFilter.setDateBeginOffer( new Timestamp( today.getTime( ) ) );
 
         // Dispatch booking list into two differents lists (old and to come)
-        List<ReservationDTO> toComeBookingList = new ArrayList<ReservationDTO>( );
-        List<ReservationDTO> oldBookingList = new ArrayList<ReservationDTO>( );
-        Date seanceDate;
-        Date today = new Date( );
-        for ( ReservationDTO booking : bookingList )
-        {
-            seanceDate = booking.getOffer( ).getDateHour( );
-            if ( today.before( seanceDate ) )
-            {
-                toComeBookingList.add( booking );
-            }
-            else
-            {
-                oldBookingList.add( booking );
-            }
-        }
+        List<ReservationDTO> toComeBookingList = _purchaseService.findByFilter( purchaseFilter, null );
+
+        purchaseFilter.setDateBeginOffer( null );
+        purchaseFilter.setDateEndOffer( new Timestamp( today.getTime( ) ) );
+        List<ReservationDTO> oldBookingList = _purchaseService.findByFilter( purchaseFilter,
+                getPaginationProperties( request ) );
 
         // Generates template
         Map<String, Object> model = new HashMap<String, Object>( );
@@ -516,6 +510,21 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
         model.put( PARAMETER_PAST_BOOKING_LIST, oldBookingList );
 
         model.put( MARK_USER, getUser( request ) );
+
+        String strNbItemPerPage = request.getParameter( PARAMETER_NB_ITEMS_PER_PAGE );
+        String strDefaultNbItemPerPage = DEFAULT_RESULTS_PER_PAGE;
+        strNbItemPerPage = ( strNbItemPerPage != null ) ? strNbItemPerPage : strDefaultNbItemPerPage;
+
+        int nNbItemsPerPage = Integer.parseInt( strNbItemPerPage );
+        String strCurrentPageIndex = request.getParameter( PARAMETER_PAGE_INDEX );
+        strCurrentPageIndex = ( strCurrentPageIndex != null ) ? strCurrentPageIndex : DEFAULT_PAGE_INDEX;
+
+        UrlItem url = new UrlItem( "jsp/site/Portal.jsp?page=reservation&action=mes-reservations" );
+
+        Paginator<ReservationDTO> paginator = new Paginator<ReservationDTO>( oldBookingList, nNbItemsPerPage,
+                url.getUrl( ), PARAMETER_PAGE_INDEX, strCurrentPageIndex );
+
+        model.put( MARK_PAGINATOR, paginator );
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_DIR + TEMPLATE_MY_BOOKINGS, locale, model );
 

@@ -33,18 +33,22 @@
  */
 package fr.paris.lutece.plugins.stock.modules.billetterie.web;
 
+import fr.paris.lutece.plugins.mylutece.authentication.MultiLuteceAuthentication;
+import fr.paris.lutece.plugins.stock.commons.dao.PaginationProperties;
+import fr.paris.lutece.plugins.stock.commons.dao.PaginationPropertiesImpl;
 import fr.paris.lutece.plugins.stock.commons.exception.BusinessException;
 import fr.paris.lutece.plugins.stock.commons.exception.FunctionnalException;
 import fr.paris.lutece.plugins.stock.commons.exception.TechnicalException;
 import fr.paris.lutece.plugins.stock.commons.exception.ValidationException;
 import fr.paris.lutece.plugins.stock.modules.tickets.utils.constants.TicketsConstants;
 import fr.paris.lutece.portal.service.i18n.I18nService;
+import fr.paris.lutece.portal.service.security.BasicLuteceUser;
 import fr.paris.lutece.portal.service.security.LuteceUser;
-import fr.paris.lutece.portal.service.security.SecurityService;
-import fr.paris.lutece.portal.service.security.UserNotSignedException;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
+import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.util.beanvalidation.BeanValidationUtil;
 import fr.paris.lutece.util.html.HtmlTemplate;
+import fr.paris.lutece.util.html.Paginator;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -57,8 +61,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolation;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-
 
 
 /**
@@ -67,6 +71,10 @@ import org.apache.log4j.Logger;
  */
 public abstract class AbstractXPageApp
 {
+    public static final String PARAMETER_NB_ITEMS_PER_PAGE = "items_per_page";
+    public static final String DEFAULT_RESULTS_PER_PAGE = "10";
+    public static final String DEFAULT_PAGE_INDEX = "1";
+    public static final String PROPERTY_RESULTS_PER_PAGE = "search.nb.docs.per.page";
 
     private static final String AUTHENTIFICATION_ERROR_MESSAGE = "Impossible de détecter une authentification.";
     private static final String POPULATE_ERROR_MESSAGE = "Erreur lors de la recuperation des donnees du formulaire.";
@@ -250,4 +258,28 @@ public abstract class AbstractXPageApp
         return fe;
     }
 
+    /**
+     * Return a bean for pagination in service/dao using parameter in http
+     * request
+     * @param request http request
+     * @return paginator the populate paginator
+     */
+    protected PaginationProperties getPaginationProperties( HttpServletRequest request )
+    {
+        String strPageIndex = Paginator.getPageIndex( request, Paginator.PARAMETER_PAGE_INDEX, "1" );
+        int nCurrentPageIndex = 1;
+        if ( StringUtils.isNotEmpty( strPageIndex ) )
+        {
+            nCurrentPageIndex = Integer.valueOf( strPageIndex );
+        }
+
+        String strNbItemPerPage = request.getParameter( PARAMETER_NB_ITEMS_PER_PAGE );
+        String strDefaultNbItemPerPage = AppPropertiesService.getProperty( PROPERTY_RESULTS_PER_PAGE,
+                DEFAULT_RESULTS_PER_PAGE );
+        strNbItemPerPage = ( strNbItemPerPage != null ) ? strNbItemPerPage : strDefaultNbItemPerPage;
+
+        int nItemsPerPage = Integer.valueOf( strNbItemPerPage );
+
+        return new PaginationPropertiesImpl( ( nCurrentPageIndex - 1 ) * nItemsPerPage, nItemsPerPage );
+    }
 }
