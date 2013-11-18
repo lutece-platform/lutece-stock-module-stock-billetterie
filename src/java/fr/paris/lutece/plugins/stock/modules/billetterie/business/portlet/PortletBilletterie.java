@@ -39,6 +39,7 @@ import fr.paris.lutece.plugins.stock.modules.tickets.business.ShowDTO;
 import fr.paris.lutece.plugins.stock.modules.tickets.business.ShowFilter;
 import fr.paris.lutece.plugins.stock.modules.tickets.service.IShowService;
 import fr.paris.lutece.plugins.stock.modules.tickets.service.ShowService;
+import fr.paris.lutece.plugins.stock.utils.DateUtils;
 import fr.paris.lutece.portal.business.portlet.Portlet;
 import fr.paris.lutece.portal.service.message.SiteMessageException;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
@@ -47,6 +48,8 @@ import fr.paris.lutece.util.url.UrlItem;
 import fr.paris.lutece.util.xml.XmlUtil;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -155,19 +158,22 @@ public class PortletBilletterie extends Portlet
         {
             paginator = null;
         }
+        List<String> orders = new ArrayList<String>( );
         if ( strContentPortlet.equals( "a-laffiche" ) )
         {
+            Calendar calendar = new GregorianCalendar( );
+            String today = DateUtils.getDate( calendar.getTime( ), DateUtils.DATE_FR );
+            
             ShowFilter filter = new ShowFilter( );
             filter.setAlaffiche( true );
-            List<String> orders = new ArrayList<String>( );
             orders.add( "dateEnd" );
             filter.setOrders( orders );
             filter.setOrderAsc( true );
+            //filter.setDateTo( today );
             listShow = _showService.findByFilter( filter, paginator );
         }
         else
         {
-            List<String> orders = new ArrayList<String>( );
             orders.add( "dateStart" );
             listShow = _showService.getComeProduct( orders, paginator );
 
