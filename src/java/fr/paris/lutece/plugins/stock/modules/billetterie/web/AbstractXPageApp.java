@@ -33,23 +33,6 @@
  */
 package fr.paris.lutece.plugins.stock.modules.billetterie.web;
 
-import fr.paris.lutece.plugins.mylutece.authentication.MultiLuteceAuthentication;
-import fr.paris.lutece.plugins.stock.commons.dao.PaginationProperties;
-import fr.paris.lutece.plugins.stock.commons.dao.PaginationPropertiesImpl;
-import fr.paris.lutece.plugins.stock.commons.exception.BusinessException;
-import fr.paris.lutece.plugins.stock.commons.exception.FunctionnalException;
-import fr.paris.lutece.plugins.stock.commons.exception.TechnicalException;
-import fr.paris.lutece.plugins.stock.commons.exception.ValidationException;
-import fr.paris.lutece.plugins.stock.modules.tickets.utils.constants.TicketsConstants;
-import fr.paris.lutece.portal.service.i18n.I18nService;
-import fr.paris.lutece.portal.service.security.BasicLuteceUser;
-import fr.paris.lutece.portal.service.security.LuteceUser;
-import fr.paris.lutece.portal.service.template.AppTemplateService;
-import fr.paris.lutece.portal.service.util.AppPropertiesService;
-import fr.paris.lutece.util.beanvalidation.BeanValidationUtil;
-import fr.paris.lutece.util.html.HtmlTemplate;
-import fr.paris.lutece.util.html.Paginator;
-
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -63,6 +46,23 @@ import javax.validation.ConstraintViolation;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+
+import fr.paris.lutece.plugins.stock.commons.dao.PaginationProperties;
+import fr.paris.lutece.plugins.stock.commons.dao.PaginationPropertiesImpl;
+import fr.paris.lutece.plugins.stock.commons.exception.BusinessException;
+import fr.paris.lutece.plugins.stock.commons.exception.FunctionnalException;
+import fr.paris.lutece.plugins.stock.commons.exception.TechnicalException;
+import fr.paris.lutece.plugins.stock.commons.exception.ValidationException;
+import fr.paris.lutece.plugins.stock.modules.tickets.utils.constants.TicketsConstants;
+import fr.paris.lutece.portal.service.i18n.I18nService;
+import fr.paris.lutece.portal.service.security.LuteceUser;
+import fr.paris.lutece.portal.service.security.SecurityService;
+import fr.paris.lutece.portal.service.security.UserNotSignedException;
+import fr.paris.lutece.portal.service.template.AppTemplateService;
+import fr.paris.lutece.portal.service.util.AppPropertiesService;
+import fr.paris.lutece.util.beanvalidation.BeanValidationUtil;
+import fr.paris.lutece.util.html.HtmlTemplate;
+import fr.paris.lutece.util.html.Paginator;
 
 
 /**
