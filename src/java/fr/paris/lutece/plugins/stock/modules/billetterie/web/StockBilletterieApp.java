@@ -33,6 +33,20 @@
  */
 package fr.paris.lutece.plugins.stock.modules.billetterie.web;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang.StringUtils;
+
 import fr.paris.lutece.plugins.stock.commons.exception.FunctionnalException;
 import fr.paris.lutece.plugins.stock.commons.exception.TechnicalException;
 import fr.paris.lutece.plugins.stock.modules.tickets.business.SeanceDTO;
@@ -57,20 +71,6 @@ import fr.paris.lutece.portal.web.xpages.XPageApplication;
 import fr.paris.lutece.util.ReferenceItem;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.html.HtmlTemplate;
-
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.lang.StringUtils;
 
 
 /**
