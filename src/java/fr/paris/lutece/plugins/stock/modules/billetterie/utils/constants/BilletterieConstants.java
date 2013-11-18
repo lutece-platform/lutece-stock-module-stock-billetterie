@@ -51,6 +51,8 @@ public final class BilletterieConstants
 
     /** The Constant ERROR. */
     public static final String ERROR = "error";
+    
+    public static final String CONSTANTE_PATTERN_DATE = "dd/MM/yyyy";
 
     /**
      * Prevent instantiation as it is only a constant class
