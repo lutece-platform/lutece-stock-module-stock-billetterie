@@ -33,6 +33,18 @@
  */
 package fr.paris.lutece.plugins.stock.modules.billetterie.web;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.ConstraintViolation;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+
 import fr.paris.lutece.plugins.stock.commons.ResultList;
 import fr.paris.lutece.plugins.stock.commons.dao.PaginationProperties;
 import fr.paris.lutece.plugins.stock.commons.dao.PaginationPropertiesImpl;
@@ -46,21 +58,10 @@ import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.portal.web.admin.PluginAdminPageJspBean;
 import fr.paris.lutece.portal.web.util.LocalizedDelegatePaginator;
 import fr.paris.lutece.util.beanvalidation.BeanValidationUtil;
+import fr.paris.lutece.util.datatable.DataTableManager;
 import fr.paris.lutece.util.html.DelegatePaginator;
 import fr.paris.lutece.util.html.HtmlTemplate;
 import fr.paris.lutece.util.html.Paginator;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.ConstraintViolation;
-
-import org.apache.commons.lang.StringUtils;
-
 
 
 /**
@@ -69,6 +70,7 @@ import org.apache.commons.lang.StringUtils;
  */
 public class AbstractJspBean extends PluginAdminPageJspBean
 {
+    private static final Logger LOGGER = Logger.getLogger( AbstractJspBean.class );
 
     public static final int N_DEFAULT_ITEMS_PER_PAGE = AppPropertiesService.getPropertyInt(
             TicketsConstants.PROPERTY_DEFAULT_ITEM_PER_PAGE, 50 );
@@ -76,11 +78,55 @@ public class AbstractJspBean extends PluginAdminPageJspBean
     protected static final String ERROR_TEMPLATE = "admin/plugins/stock/modules/billetterie/error.html";
     protected static final String FIELD_MESSAGE_PREFIX = "module.stock.billetterie.field.";
     protected static final String MARK_FILTER = "filter";
+    protected static final String MARK_DATA_TABLE_MANAGER = "dataTableManager";
     protected static final String MARK_MESSAGE_LIST = "messageList";
     protected static final String MARK_NB_ITEMS_PER_PAGE = "nb_items_per_page";
     protected static final String MARK_PAGINATOR = "paginator";
     private String _strCurrentPageIndex = StringUtils.EMPTY;
     protected int _nItemsPerPage;
+
+    /**
+     * 
+     * Get the datatable save in the session
+     * @param request the http request
+     * @param key the key for the data table
+     * @return the DataTableManager keep in session
+     */
+    @SuppressWarnings( "unchecked" )
+    protected <T> DataTableManager<T> loadDataTableFromSession( HttpServletRequest request, String key )
+    {
+        DataTableManager<T> dataTable = null;
+
+        Object object = request.getSession( ).getAttribute(
+                StringUtils.isNotBlank( key ) ? key : MARK_DATA_TABLE_MANAGER );
+
+        if ( object != null && object instanceof DataTableManager<?> )
+        {
+            try
+            {
+                dataTable = (DataTableManager<T>) object;
+            }
+            catch ( Exception e )
+            {
+                LOGGER.error( "Error during cast :" + e );
+            }
+        }
+
+        return dataTable;
+    }
+
+    /**
+     * Save a Data table manager into the http session with key. Can save
+     * various data table.
+     * @param request the http request with the user session
+     * @param dataTable the datatable
+     * @param key the datatable key
+     * @param <T> Type of data
+     */
+    protected <T> void saveDataTableInSession( HttpServletRequest request, DataTableManager<T> dataTable, String key )
+    {
+        request.getSession( ).setAttribute( StringUtils.isNotBlank( key ) ? key : MARK_DATA_TABLE_MANAGER, dataTable );
+    }
 
     /**
      * Return a paginator for the view using parameter in http request.
@@ -115,8 +161,7 @@ public class AbstractJspBean extends PluginAdminPageJspBean
      */
     protected PaginationProperties getPaginationProperties( HttpServletRequest request )
     {
-        String strPageIndex = Paginator.getPageIndex( request, Paginator.PARAMETER_PAGE_INDEX,
-                _strCurrentPageIndex );
+        String strPageIndex = Paginator.getPageIndex( request, Paginator.PARAMETER_PAGE_INDEX, _strCurrentPageIndex );
         int nCurrentPageIndex = 1;
         if ( StringUtils.isNotEmpty( strPageIndex ) )
         {
@@ -127,7 +172,7 @@ public class AbstractJspBean extends PluginAdminPageJspBean
 
         return new PaginationPropertiesImpl( ( nCurrentPageIndex - 1 ) * nItemsPerPage, nItemsPerPage );
     }
-    
+
     /**
      * Validate a bean using jsr 303 specs.
      * 
@@ -186,7 +231,7 @@ public class AbstractJspBean extends PluginAdminPageJspBean
         }
         return fe;
     }
-    
+
     /**
      * Return html code for error message
      * @param e functionnal exception
@@ -222,11 +267,10 @@ public class AbstractJspBean extends PluginAdminPageJspBean
         {
             messageList.add( getMessage( be.getCode( ), be.getArguments( ) ) );
         }
-        
+
         model.put( MARK_MESSAGE_LIST, messageList );
 
-        HtmlTemplate template = AppTemplateService.getTemplate( ERROR_TEMPLATE,
-                getLocale( ), model );
+        HtmlTemplate template = AppTemplateService.getTemplate( ERROR_TEMPLATE, getLocale( ), model );
         return template.getHtml( );
     }
 

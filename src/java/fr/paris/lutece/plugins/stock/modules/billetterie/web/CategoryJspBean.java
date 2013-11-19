@@ -35,6 +35,8 @@ package fr.paris.lutece.plugins.stock.modules.billetterie.web;
 
 import fr.paris.lutece.plugins.stock.business.category.CategoryFilter;
 import fr.paris.lutece.plugins.stock.commons.ResultList;
+import fr.paris.lutece.plugins.stock.commons.dao.PaginationProperties;
+import fr.paris.lutece.plugins.stock.commons.dao.PaginationPropertiesAdapterDataTable;
 import fr.paris.lutece.plugins.stock.commons.exception.FunctionnalException;
 import fr.paris.lutece.plugins.stock.modules.billetterie.utils.constants.BilletterieConstants;
 import fr.paris.lutece.plugins.stock.modules.tickets.business.ShowCategoryDTO;
@@ -52,6 +54,9 @@ import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.web.constants.Parameters;
+import fr.paris.lutece.util.datatable.DataTableManager;
+import fr.paris.lutece.util.datatable.DataTablePaginationProperties;
+import fr.paris.lutece.util.datatable.DataTableSort;
 import fr.paris.lutece.util.html.DelegatePaginator;
 import fr.paris.lutece.util.html.HtmlTemplate;
 
@@ -79,6 +84,9 @@ public class CategoryJspBean extends AbstractJspBean
 
     /** The Constant MARK_CATEGORY. */
     public static final String MARK_CATEGORY = "category";
+
+    public static final String MARK_DATA_TABLE_CATEGORY = "dataTableCategory";
+    public static final String MACRO_COLUMN_ACTIONS_CATEGORY = "columnActionsCategory";
 
     /** The Constant MARK_TITLE. */
     public static final String MARK_TITLE = "title";
@@ -183,22 +191,48 @@ public class CategoryJspBean extends AbstractJspBean
         orderList.add( BilletterieConstants.NAME );
         filter.setOrders( orderList );
         filter.setOrderAsc( true );
-
-        ResultList<ShowCategoryDTO> listAllCATEGORY = _serviceCategory.findByFilter( filter,
-                getPaginationProperties( request ) );
-
-        DelegatePaginator<ShowCategoryDTO> paginator = getPaginator( request, listAllCATEGORY );
-
+        
         // Fill the model
         Map<String, Object> model = new HashMap<String, Object>( );
 
+        DataTableManager<ShowCategoryDTO> dataTableFromSession = loadDataTableFromSession( request,
+                MARK_DATA_TABLE_CATEGORY );
+        
+        //todo : methode generique pour réutiliser ce system sur els différents référentiels
+        CategoryFilter filterFromSession = (CategoryFilter) request.getSession( ).getAttribute( "filter" );
+
+        //get the data table object from session if exist
+        DataTableManager<ShowCategoryDTO> dataTableCategory = dataTableFromSession != null ? dataTableFromSession
+                : new DataTableManager<ShowCategoryDTO>( JSP_MANAGE_CATEGORYS, "", 10, true );
+        //si pas d'objet en session, il faut ajouter les colonnes
+        if ( dataTableFromSession == null )
+        {
+            dataTableCategory.addColumn( "module.stock.billetterie.manage_category.filter.name", "name", false );
+            dataTableCategory.addFreeColumn( "module.stock.billetterie.manage_category.actionsLabel",
+                    MACRO_COLUMN_ACTIONS_CATEGORY );
+        }
+
+        CategoryFilter updateFilter = dataTableCategory.getAndUpdateFilter( request, filter );
+        DataTablePaginationProperties updatePaginator = dataTableCategory.getAndUpdatePaginator( request );
+
+        ResultList<ShowCategoryDTO> listAllCATEGORY = _serviceCategory.findByFilter( updateFilter,
+                new PaginationPropertiesAdapterDataTable( updatePaginator ) );
+
+        dataTableCategory.setItems( listAllCATEGORY, listAllCATEGORY.getTotalResult( ) );
+
+
+        model.put( MARK_DATA_TABLE_CATEGORY, dataTableCategory );
+
         model.put( TicketsConstants.MARK_NB_ITEMS_PER_PAGE, String.valueOf( _nItemsPerPage ) );
-        model.put( TicketsConstants.MARK_PAGINATOR, paginator );
-        model.put( MARK_LIST_CATEGORIES, paginator.getPageItems( ) );
+        //        model.put( TicketsConstants.MARK_PAGINATOR, paginator );
+        //        model.put( MARK_LIST_CATEGORIES, paginator.getPageItems( ) );
         // the filter
         model.put( TicketsConstants.MARK_FILTER, filter );
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_MANAGE_CATEGORIES, getLocale( ), model );
+        dataTableCategory.clearItems( );
+        saveDataTableInSession( request, dataTableCategory, MARK_DATA_TABLE_CATEGORY );
+        request.getSession( ).setAttribute( "filter" ,updateFilter);
 
         return getAdminPage( template.getHtml( ) );
     }
