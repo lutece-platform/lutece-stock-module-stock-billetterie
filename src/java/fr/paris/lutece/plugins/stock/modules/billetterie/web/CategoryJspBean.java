@@ -33,9 +33,18 @@
  */
 package fr.paris.lutece.plugins.stock.modules.billetterie.web;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang.StringUtils;
+
 import fr.paris.lutece.plugins.stock.business.category.CategoryFilter;
 import fr.paris.lutece.plugins.stock.commons.ResultList;
-import fr.paris.lutece.plugins.stock.commons.dao.PaginationProperties;
 import fr.paris.lutece.plugins.stock.commons.dao.PaginationPropertiesAdapterDataTable;
 import fr.paris.lutece.plugins.stock.commons.exception.FunctionnalException;
 import fr.paris.lutece.plugins.stock.modules.billetterie.utils.constants.BilletterieConstants;
@@ -56,19 +65,7 @@ import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.web.constants.Parameters;
 import fr.paris.lutece.util.datatable.DataTableManager;
 import fr.paris.lutece.util.datatable.DataTablePaginationProperties;
-import fr.paris.lutece.util.datatable.DataTableSort;
-import fr.paris.lutece.util.html.DelegatePaginator;
 import fr.paris.lutece.util.html.HtmlTemplate;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.lang.StringUtils;
 
 
 /**
@@ -96,9 +93,6 @@ public class CategoryJspBean extends AbstractJspBean
 
     /** The Constant PARAMETER_CATEGORY_TYPE_LIST_DEFAULT. */
     public static final String PARAMETER_CATEGORY_TYPE_LIST_DEFAULT = "category_type_list_default";
-
-    /** The Constant MARK_LIST_CATEGORIES. */
-    private static final String MARK_LIST_CATEGORIES = "list_categories";
 
     /** The Constant PARAMETER_FILTER_NAME. */
     private static final String PARAMETER_FILTER_NAME = "filter_name";
@@ -178,8 +172,7 @@ public class CategoryJspBean extends AbstractJspBean
     /**
      * Generates a HTML form that displays all categorys.
      * 
-     * @param request
-     *            the Http request
+     * @param request the Http request
      * @return HTML
      */
     public String getManageCategories( HttpServletRequest request )
@@ -191,20 +184,24 @@ public class CategoryJspBean extends AbstractJspBean
         orderList.add( BilletterieConstants.NAME );
         filter.setOrders( orderList );
         filter.setOrderAsc( true );
-        
+
         // Fill the model
         Map<String, Object> model = new HashMap<String, Object>( );
 
+        //Obtention des objets sauvegardés en session
         DataTableManager<ShowCategoryDTO> dataTableFromSession = loadDataTableFromSession( request,
                 MARK_DATA_TABLE_CATEGORY );
-        
-        //todo : methode generique pour réutiliser ce system sur els différents référentiels
         CategoryFilter filterFromSession = (CategoryFilter) request.getSession( ).getAttribute( "filter" );
 
-        //get the data table object from session if exist
+        //si un objet est déjà présent en session, on l'utilise
         DataTableManager<ShowCategoryDTO> dataTableCategory = dataTableFromSession != null ? dataTableFromSession
                 : new DataTableManager<ShowCategoryDTO>( JSP_MANAGE_CATEGORYS, "", 10, true );
-        //si pas d'objet en session, il faut ajouter les colonnes
+        
+        //determination de l'utilisation d'un nouveau filtre (recherche) ou de celui présent en session (changement de page)
+        CategoryFilter updateFilter = request.getParameter( TicketsConstants.MARK_FILTER ) != null || filterFromSession==null ? dataTableCategory.getAndUpdateFilter(
+                request, filter ) : filterFromSession;
+
+        //si pas d'objet en session, il faut ajouter les colonnes à afficher
         if ( dataTableFromSession == null )
         {
             dataTableCategory.addColumn( "module.stock.billetterie.manage_category.filter.name", "name", false );
@@ -212,27 +209,27 @@ public class CategoryJspBean extends AbstractJspBean
                     MACRO_COLUMN_ACTIONS_CATEGORY );
         }
 
-        CategoryFilter updateFilter = dataTableCategory.getAndUpdateFilter( request, filter );
+        //mise à jour de la pagination dans le data table pour l'afficahge de la page courante et du nombre d'items
         DataTablePaginationProperties updatePaginator = dataTableCategory.getAndUpdatePaginator( request );
 
+        //obtention manuel des beans à afficher
         ResultList<ShowCategoryDTO> listAllCATEGORY = _serviceCategory.findByFilter( updateFilter,
                 new PaginationPropertiesAdapterDataTable( updatePaginator ) );
-
         dataTableCategory.setItems( listAllCATEGORY, listAllCATEGORY.getTotalResult( ) );
-
 
         model.put( MARK_DATA_TABLE_CATEGORY, dataTableCategory );
 
         model.put( TicketsConstants.MARK_NB_ITEMS_PER_PAGE, String.valueOf( _nItemsPerPage ) );
-        //        model.put( TicketsConstants.MARK_PAGINATOR, paginator );
-        //        model.put( MARK_LIST_CATEGORIES, paginator.getPageItems( ) );
-        // the filter
-        model.put( TicketsConstants.MARK_FILTER, filter );
+        model.put( TicketsConstants.MARK_FILTER, updateFilter );
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_MANAGE_CATEGORIES, getLocale( ), model );
+        
+        //opération nécessaire pour eviter les fuites de mémoires
         dataTableCategory.clearItems( );
+        
+        //sauvegarde des elements en sessions
         saveDataTableInSession( request, dataTableCategory, MARK_DATA_TABLE_CATEGORY );
-        request.getSession( ).setAttribute( "filter" ,updateFilter);
+        request.getSession( ).setAttribute( "filter", updateFilter );
 
         return getAdminPage( template.getHtml( ) );
     }
