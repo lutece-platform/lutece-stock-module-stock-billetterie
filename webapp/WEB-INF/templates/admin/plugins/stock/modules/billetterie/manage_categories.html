@@ -3,6 +3,12 @@
     <@showButton type="delete" title="module.stock.billetterie.manage_category.linkDeleteCategory" href="jsp/admin/plugins/stock/modules/billetterie/DeleteCategory.jsp?category_id=${item.id}" />
 </#macro>
 
+<#macro columnNameCategory item >
+	<a title="#i18n{module.stock.billetterie.manage_category.linkModifyCategory}" href="jsp/admin/plugins/stock/modules/billetterie/SaveCategory.jsp?category_id=${item.id}">
+		${item.name!}
+	</a>
+</#macro>
+
 <div class="row-fluid">
 	<div class="span12">
 		<fieldset>

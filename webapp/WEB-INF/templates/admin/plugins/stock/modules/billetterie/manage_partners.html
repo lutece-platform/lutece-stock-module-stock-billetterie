@@ -1,3 +1,15 @@
+<#macro columnActionsPartner item >
+	<@showButton type="see" title="module.stock.billetterie.manage_partner.linkManageProducts" href="jsp/admin/plugins/stock/modules/billetterie/ManageProducts.jsp?idProvider=${item.id}"/> 
+	<@showButton type="edit" title="module.stock.billetterie.manage_partner.linkModifyPartner" href="jsp/admin/plugins/stock/modules/billetterie/SavePartner.jsp?partner_id=${item.id}" />
+   	<@showButton type="delete" title="module.stock.billetterie.manage_partner.linkDeletePartner" href="jsp/admin/plugins/stock/modules/billetterie/DeletePartner.jsp?partner_id=${item.id}" />
+</#macro>
+
+<#macro columnNamePartner item >
+	<a title="#i18n{module.stock.billetterie.manage_partner.linkModifyPartner}" href="jsp/admin/plugins/stock/modules/billetterie/SavePartner.jsp?partner_id=${item.id}">
+		${item.name!}
+	</a>
+</#macro>
+
 <div class="row-fluid">
 	<div class="span12">
 		<fieldset>
@@ -22,35 +34,7 @@
 					</form>
 				</div>
 				<div class="span9">
-					<@paginationAdmin paginator=paginator combo=1 />
-					<table class="table table-striped table-condensed">
-						<tbody>
-						    <tr>
-						        <th>#i18n{module.stock.billetterie.field.PartnerDTO.name}</th>
-						        <th>#i18n{module.stock.billetterie.manage_partner_type.actionsLabel}</th>
-						    </tr>
-						   <#if list_partners?has_content>
-						    <#list list_partners as partner>
-							    <tr>
-							        <td>
-							        	<a title="#i18n{module.stock.billetterie.manage_partner.linkModifyPartner}" href="jsp/admin/plugins/stock/modules/billetterie/SavePartner.jsp?partner_id=${partner.id}">${partner.name!}</a>
-							        </td>
-						        	<td>
-						           		<@showButton type="see" title="module.stock.billetterie.manage_partner.linkManageProducts" href="jsp/admin/plugins/stock/modules/billetterie/ManageProducts.jsp?idProvider=${partner.id}"/> 
-						        		<@showButton type="edit" title="module.stock.billetterie.manage_partner.linkModifyPartner" href="jsp/admin/plugins/stock/modules/billetterie/SavePartner.jsp?partner_id=${partner.id}" />
-						            	<@showButton type="delete" title="module.stock.billetterie.manage_partner.linkDeletePartner" href="jsp/admin/plugins/stock/modules/billetterie/DeletePartner.jsp?partner_id=${partner.id}" />
-						            </td>
-							    </tr>
-						    </#list>
-						    <#else>
-								<tr>
-									<td colspan="6">
-										Aucun résultat trouvé. Veuillez élargir votre recherche ou créer une salle.
-									</td>
-								</tr>
-							</#if>
-						</tbody>
-					</table>
+					<@dataTable dataTableManager=dataTablePartner />
 				</div>
 			</div>
 		</fieldset>

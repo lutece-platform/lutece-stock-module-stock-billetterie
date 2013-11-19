@@ -33,13 +33,16 @@
  */
 package fr.paris.lutece.plugins.stock.modules.billetterie.web;
 
+import fr.paris.lutece.plugins.stock.business.category.CategoryFilter;
 import fr.paris.lutece.plugins.stock.business.provider.ProviderFilter;
 import fr.paris.lutece.plugins.stock.commons.ResultList;
+import fr.paris.lutece.plugins.stock.commons.dao.PaginationPropertiesAdapterDataTable;
 import fr.paris.lutece.plugins.stock.commons.exception.BusinessException;
 import fr.paris.lutece.plugins.stock.commons.exception.FunctionnalException;
 import fr.paris.lutece.plugins.stock.modules.billetterie.utils.constants.BilletterieConstants;
 import fr.paris.lutece.plugins.stock.modules.tickets.business.Contact;
 import fr.paris.lutece.plugins.stock.modules.tickets.business.PartnerDTO;
+import fr.paris.lutece.plugins.stock.modules.tickets.business.ShowCategoryDTO;
 import fr.paris.lutece.plugins.stock.modules.tickets.business.ShowDTO;
 import fr.paris.lutece.plugins.stock.modules.tickets.business.ShowFilter;
 import fr.paris.lutece.plugins.stock.modules.tickets.service.IProviderService;
@@ -53,6 +56,8 @@ import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.web.constants.Parameters;
+import fr.paris.lutece.util.datatable.DataTableManager;
+import fr.paris.lutece.util.datatable.DataTablePaginationProperties;
 import fr.paris.lutece.util.html.DelegatePaginator;
 import fr.paris.lutece.util.html.HtmlTemplate;
 import fr.paris.lutece.util.url.UrlItem;
@@ -86,7 +91,11 @@ public class PartnerJspBean extends AbstractJspBean
     public static final String MARK_PARTNER_NUMBER_CONTACT = "number_contact";
     public static final String MARK_PARTNER = "partner";
     public static final String MARK_LIST_CONTACT = "list_contacts";
-    private static final String MARK_LIST_PARTNERS = "list_partners";
+    public static final String MARK_LIST_PARTNERS = "list_partners";
+    /** The constants for DataTableManager */
+    public static final String MARK_DATA_TABLE_PARTNER = "dataTablePartner";
+    public static final String MACRO_COLUMN_ACTIONS_PARTNER = "columnActionsPartner";
+    public static final String MACRO_COLUMN_NAME_PARTNER = "columnNamePartner";
 
     protected static final String MARK_NB_ITEMS_PER_PAGE = "nb_items_per_page";
 
@@ -186,23 +195,58 @@ public class PartnerJspBean extends AbstractJspBean
         orderList.add( BilletterieConstants.NAME );
         filter.setOrders( orderList );
         filter.setOrderAsc( true );
-
-        ResultList<PartnerDTO> listAllPartner = _serviceProvider.findByFilter( filter,
-                getPaginationProperties( request ) );
-
-        DelegatePaginator<PartnerDTO> paginator = getPaginator( request, listAllPartner );
-
+        
+        //DEBUT CC
+        
         // Fill the model
         Map<String, Object> model = new HashMap<String, Object>( );
 
+        //Obtention des objets sauvegardés en session
+        DataTableManager<PartnerDTO> dataTableFromSession = loadDataTableFromSession( request,
+                MARK_DATA_TABLE_PARTNER );
+        ProviderFilter filterFromSession = (ProviderFilter) request.getSession( ).getAttribute( TicketsConstants.MARK_FILTER );
+
+        //si un objet est déjà présent en session, on l'utilise
+        DataTableManager<PartnerDTO> dataTablePartner = dataTableFromSession != null ? dataTableFromSession
+                : new DataTableManager<PartnerDTO>( JSP_MANAGE_PARTNERS, "", 10, true );
+        
+        //determination de l'utilisation d'un nouveau filtre (recherche) ou de celui présent en session (changement de page)
+        ProviderFilter updateFilter = request.getParameter( TicketsConstants.MARK_FILTER ) != null || filterFromSession==null ? dataTablePartner.getAndUpdateFilter(
+                request, filter ) : filterFromSession;
+
+        //si pas d'objet en session, il faut ajouter les colonnes à afficher
+        if ( dataTableFromSession == null )
+        {
+            dataTablePartner.addFreeColumn( "module.stock.billetterie.manage_category.filter.name", MACRO_COLUMN_NAME_PARTNER);
+            dataTablePartner.addFreeColumn( "module.stock.billetterie.manage_category.actionsLabel",
+                    MACRO_COLUMN_ACTIONS_PARTNER);
+        }
+
+        //mise à jour de la pagination dans le data table pour l'afficahge de la page courante et du nombre d'items
+        DataTablePaginationProperties updatePaginator = dataTablePartner.getAndUpdatePaginator( request );
+
+        //obtention manuel des beans à afficher
+        ResultList<PartnerDTO> listAllPartner = _serviceProvider.findByFilter( updateFilter,
+                new PaginationPropertiesAdapterDataTable( updatePaginator ) );
+        dataTablePartner.setItems( listAllPartner, listAllPartner.getTotalResult( ) );
+
+        model.put( MARK_DATA_TABLE_PARTNER, dataTablePartner );
+        
+        //FIN CC
+
         // the paginator
         model.put( TicketsConstants.MARK_NB_ITEMS_PER_PAGE, String.valueOf( _nItemsPerPage ) );
-        model.put( TicketsConstants.MARK_PAGINATOR, paginator );
-        model.put( MARK_LIST_PARTNERS, paginator.getPageItems( ) );
         // the filter
-        model.put( TicketsConstants.MARK_FILTER, filter );
+        model.put( TicketsConstants.MARK_FILTER, updateFilter );
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_MANAGE_PARTNERS, getLocale( ), model );
+        
+        //opération nécessaire pour eviter les fuites de mémoires
+        dataTablePartner.clearItems( );
+        
+        //sauvegarde des elements en sessions
+        saveDataTableInSession( request, dataTablePartner, MARK_DATA_TABLE_PARTNER);
+        request.getSession( ).setAttribute( TicketsConstants.MARK_FILTER, updateFilter );
        
         return getAdminPage( template.getHtml( ) );
     }
