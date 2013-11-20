@@ -49,8 +49,9 @@
 							<input class="span5" type="text" name="dateTo" id="date_to" maxlength="10" value="${filter.dateTo!}"/>
 						</p>
 						<p>
-							<label for="show_aLaffiche"/>#i18n{module.stock.billetterie.manage_product.filter.alaffiche} :</label>
-							<input class="span"  type="checkbox" id="show_aLaffiche" name="aLaffiche" value="on" <#if filter.alaffiche?has_content && filter.alaffiche>checked="checked"</#if>/>
+							<label for="show_aLaffiche"/>#i18n{module.stock.billetterie.manage_product.filter.alaffiche} :
+								<input type="checkbox" id="show_aLaffiche" name="aLaffiche" value="on" <#if filter.alaffiche?has_content && filter.alaffiche>checked="checked"</#if>/>
+							</label>
 						</p>
 						<@showSearchButton />
 					</form>

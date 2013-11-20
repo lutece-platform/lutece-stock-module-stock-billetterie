@@ -52,15 +52,24 @@
 						<div class="span3 well"> 
 					    	<div>
 								<label for="provider_contact_name" >#i18n{stock.create_provider.contact} :</label>
-								<input type="text" id="provider_contact_name" name="contactForm[${contact_index}].name" class="span" maxlength="60"  value="${contact.name!}"/>
+								<div class="input-prepend">
+									<span class="add-on"><i class="icon-user"></i></span>
+									<input type="text" id="provider_contact_name" name="contactForm[${contact_index}].name" class="span10" maxlength="60"  value="${contact.name!}"/>
+								</div>
 							</div>
 							<div>
 								<label for="provider_phone_number" >#i18n{stock.create_provider.phoneNumber} :</label>
-								<input type="text" id="provider_phone_number" name="contactForm[${contact_index}].phoneNumber" class="span" maxlength="10"  value="${contact.phoneNumber!}"/>
+								<div class="input-prepend">
+									<span class="add-on"><i class="icon-book"></i></span>
+									<input type="text" id="provider_phone_number" name="contactForm[${contact_index}].phoneNumber" class="span10" maxlength="10"  value="${contact.phoneNumber!}"/>
+								</div>
 							</div>
 					        <div>
 								<label for="provider_mail" >#i18n{stock.create_provider.mail} :</label>
-								<input type="text" id="provider_mail" name="contactForm[${contact_index}].mail" class="span" maxlength="50"  value="${contact.mail!}"/>
+								<div class="input-prepend">
+									<span class="add-on"><i class="icon-envelope"></i></span>
+									<input type="text" id="provider_mail" name="contactForm[${contact_index}].mail" maxlength="50" class="span10" value="${contact.mail!}"/>
+								</div>
 								<span class="pull-right">
 									<button class="btn btn-danger btn-small" type="submit" name="action_del_contact${contact.id!}">
 										<i class="icon-trash icon-white">&nbsp;</i>

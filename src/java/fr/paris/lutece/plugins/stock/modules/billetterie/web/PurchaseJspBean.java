@@ -557,7 +557,7 @@ public class PurchaseJspBean extends AbstractJspBean
         ReservationDTO purchase = new ReservationDTO( );
         String strIdPurchase = request.getParameter( PARAMETER_PURCHASE_ID );
 
-        if ( StringUtils.isNotBlank( request.getParameter( StockConstants.PARAMETER_BUTTON_CANCEL ) ) )
+        if ( null != request.getParameter( StockConstants.PARAMETER_BUTTON_CANCEL ) )
         {
             if ( strIdPurchase != null )
             {

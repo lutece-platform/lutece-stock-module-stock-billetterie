@@ -345,7 +345,7 @@ public class PartnerJspBean extends AbstractJspBean
     {
         boolean addContact = request.getParameter( PARAMETER_ADD_CONTACT ) != null;
 
-        if ( StringUtils.isNotBlank( request.getParameter( StockConstants.PARAMETER_BUTTON_CANCEL ) ) )
+        if ( null != request.getParameter( StockConstants.PARAMETER_BUTTON_CANCEL ) )
         {
             return doGoBack( request );
         }
