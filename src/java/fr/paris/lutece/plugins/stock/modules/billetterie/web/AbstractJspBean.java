@@ -33,6 +33,8 @@
  */
 package fr.paris.lutece.plugins.stock.modules.billetterie.web;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -44,13 +46,17 @@ import javax.validation.ConstraintViolation;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.beans.BeanUtils;
 
+import fr.paris.lutece.plugins.stock.business.product.ProductFilter;
 import fr.paris.lutece.plugins.stock.commons.ResultList;
 import fr.paris.lutece.plugins.stock.commons.dao.PaginationProperties;
+import fr.paris.lutece.plugins.stock.commons.dao.PaginationPropertiesAdapterDataTable;
 import fr.paris.lutece.plugins.stock.commons.dao.PaginationPropertiesImpl;
 import fr.paris.lutece.plugins.stock.commons.exception.BusinessException;
 import fr.paris.lutece.plugins.stock.commons.exception.FunctionnalException;
 import fr.paris.lutece.plugins.stock.commons.exception.ValidationException;
+import fr.paris.lutece.plugins.stock.modules.tickets.business.ShowDTO;
 import fr.paris.lutece.plugins.stock.modules.tickets.utils.constants.TicketsConstants;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
@@ -59,6 +65,7 @@ import fr.paris.lutece.portal.web.admin.PluginAdminPageJspBean;
 import fr.paris.lutece.portal.web.util.LocalizedDelegatePaginator;
 import fr.paris.lutece.util.beanvalidation.BeanValidationUtil;
 import fr.paris.lutece.util.datatable.DataTableManager;
+import fr.paris.lutece.util.datatable.DataTablePaginationProperties;
 import fr.paris.lutece.util.html.DelegatePaginator;
 import fr.paris.lutece.util.html.HtmlTemplate;
 import fr.paris.lutece.util.html.Paginator;
@@ -82,6 +89,7 @@ public class AbstractJspBean extends PluginAdminPageJspBean
     protected static final String MARK_MESSAGE_LIST = "messageList";
     protected static final String MARK_NB_ITEMS_PER_PAGE = "nb_items_per_page";
     protected static final String MARK_PAGINATOR = "paginator";
+    protected static final String PARAMETER_FIND_BY_FILTER_NAME_METHOD = "findByFilter";
     private String _strCurrentPageIndex = StringUtils.EMPTY;
     protected int _nItemsPerPage;
 
@@ -287,6 +295,85 @@ public class AbstractJspBean extends PluginAdminPageJspBean
 
         request.getSession( ).setAttribute( TicketsConstants.PARAMETER_ERROR, e );
         return targetUrl;
+    }
+
+    /**
+     * Get the correct filter to use with data table manager
+     * @param request the http request
+     * @param filter the bean filter get with request
+     * @param markFilter the key of the filter
+     * @param dataTable the datatable to use
+     * @param <T> the bean filter type
+     * @return the filter to use
+     */
+    protected <T> T getFilterToUse( HttpServletRequest request, T filter, String markFilter,
+            DataTableManager<?> dataTable )
+    {
+
+        @SuppressWarnings( "unchecked" )
+        T filterFromSession = (T) request.getSession( ).getAttribute( markFilter );
+        T filterToUse = request.getParameter( TicketsConstants.MARK_FILTER ) != null || filterFromSession == null ? dataTable
+                .getAndUpdateFilter( request, filter ) : filterFromSession;
+        return filterToUse;
+    }
+
+    /**
+     * Get the correct data table manager
+     * @param request the http request
+     * @param markFilter the key of the filter
+     * @param jspManage the jsp file to manage the beans
+     * @param <T> the bean filter type
+     * @return the DataTableManager
+     */
+    protected <T> DataTableManager<T> getDataTableToUse( HttpServletRequest request, String markFilter, String jspManage )
+    {
+        DataTableManager<T> dataTableFromSession = loadDataTableFromSession( request, markFilter );
+        DataTableManager<T> dataTablePartner = dataTableFromSession != null ? dataTableFromSession
+                : new DataTableManager<T>( jspManage, StringUtils.EMPTY, 10, true );
+
+        return dataTablePartner;
+    }
+
+    @SuppressWarnings( "unchecked" )
+    protected<T> DataTableManager<T> getAbstractDataTableManager( HttpServletRequest request, Object filter,
+            String keyDataTable, String keyFilter, String jspManage, Object service, Method findByFilter )
+    {
+
+        //si un objet est déjà présent en session, on l'utilise
+        DataTableManager<T> dataTableToUse = getDataTableToUse( request, keyDataTable, jspManage );
+
+        //determination de l'utilisation d'un nouveau filtre (recherche) ou de celui présent en session (changement de page)
+        Object filterToUse = getFilterToUse( request, filter, keyFilter, dataTableToUse );
+        BeanUtils.copyProperties( filterToUse, filter );
+
+        //mise à jour de la pagination dans le data table pour l'afficahge de la page courante et du nombre d'items
+        DataTablePaginationProperties updatePaginator = dataTableToUse.getAndUpdatePaginator( request );
+
+        //obtention manuel des beans à afficher
+        PaginationPropertiesAdapterDataTable paginationProperties = new PaginationPropertiesAdapterDataTable(
+                updatePaginator );
+
+        ResultList<T> listAllProduct = null;
+        try
+        {
+            listAllProduct = (ResultList<T>) findByFilter.invoke( service, filterToUse, paginationProperties );
+        }
+        catch ( IllegalArgumentException e )
+        {
+            e.printStackTrace( );
+        }
+        catch ( IllegalAccessException e )
+        {
+            e.printStackTrace( );
+        }
+        catch ( InvocationTargetException e )
+        {
+            e.printStackTrace( );
+        }
+        request.getSession( ).setAttribute( keyFilter, filterToUse );
+        dataTableToUse.setItems( listAllProduct, listAllProduct.getTotalResult( ) );
+
+        return dataTableToUse;
     }
 
 }

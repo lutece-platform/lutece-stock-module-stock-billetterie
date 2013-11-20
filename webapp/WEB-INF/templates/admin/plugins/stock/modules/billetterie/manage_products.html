@@ -1,4 +1,20 @@
 <#setting url_escaping_charset='UTF-8'>
+<#macro columnActionsProduct item >
+  	<@showButton type="see" title="module.stock.billetterie.manage_product.linkSeance" href="jsp/admin/plugins/stock/modules/billetterie/ManageOffers.jsp?productId=${item.id!}" />
+	<@showButton type="edit" title="module.stock.billetterie.manage_product.linkModifyProduct" href="jsp/admin/plugins/stock/modules/billetterie/SaveProduct.jsp?product_id=${item.id}" />
+  	<@showButton type="delete"  title="module.stock.billetterie.manage_product.linkDeleteProduct" href="jsp/admin/plugins/stock/modules/billetterie/DeleteProduct.jsp?product_id=${item.id}" />
+</#macro>
+
+<#macro columnNameProduct item >
+	<a title="#i18n{module.stock.billetterie.manage_product.linkModifyProduct}" href="jsp/admin/plugins/stock/modules/billetterie/SaveProduct.jsp?product_id=${item.id}">
+		${item.name!}
+	</a>
+</#macro>
+
+<#macro columnDatesProduct item >
+	Du ${item.startDate!} au ${item.endDate!}
+</#macro>
+
 <div class="row-fluid">
 	<div class="span12">
 		<fieldset>
@@ -40,39 +56,7 @@
 					</form>
 				</div>
 				<div class="span9">
-					<@paginationAdmin paginator=paginator combo=1 />
-					<table class="table table-striped table-condensed">
-						<tbody>
-						    <tr>
-					        	<th>#i18n{module.stock.billetterie.manage_product.filter.name}</th>
-					        	<th>#i18n{module.stock.billetterie.manage_product.filter.provider}</th>
-					        	<th>#i18n{module.stock.billetterie.manage_product.filter.category}</th>
-					        	<th>#i18n{module.stock.billetterie.manage_product.dates}</th>
-					        	<th>#i18n{module.stock.billetterie.manage_product.actionsLabel}</th>
-					    	</tr>
-					    	<#if list_products?has_content>
-						    <#list list_products as product>
-							    <tr>
-						        	<td><a title="#i18n{module.stock.billetterie.manage_product.linkModifyProduct}" href="jsp/admin/plugins/stock/modules/billetterie/SaveProduct.jsp?product_id=${product.id}"> ${product.name!}</a></td>
-						        	<td>${product.providerName!}</td>
-						        	<td>${product.categoryName!}</td>
-						        	<td>Du ${product.startDate!} au ${product.endDate!}</td>
-						        	<td>
-						            	<@showButton type="see" title="module.stock.billetterie.manage_product.linkSeance" href="jsp/admin/plugins/stock/modules/billetterie/ManageOffers.jsp?productId=${product.id!}" />
-						        		<@showButton type="edit" title="module.stock.billetterie.manage_product.linkModifyProduct" href="jsp/admin/plugins/stock/modules/billetterie/SaveProduct.jsp?product_id=${product.id}" />
-						            	<@showButton type="delete"  title="module.stock.billetterie.manage_product.linkDeleteProduct" href="jsp/admin/plugins/stock/modules/billetterie/DeleteProduct.jsp?product_id=${product.id}" />
-						            </td>
-							    </tr>
-						    </#list>
-						    <#else>
-								<tr>
-									<td colspan="7">
-										Aucun résultat trouvé. Veuillez élargir votre recherche ou créer un spectacle.
-									</td>
-								</tr>
-							</#if>
-						</tbody>
-					</table>
+					<@dataTable dataTableManager=dataTableProduct />
 				</div>
 			</div>
 		</fieldset>

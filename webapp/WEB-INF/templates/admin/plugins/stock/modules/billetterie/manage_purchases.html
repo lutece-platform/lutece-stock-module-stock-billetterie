@@ -1,3 +1,31 @@
+<#macro columnActionsPurchase item >
+	<@showButton type="edit" title="module.stock.billetterie.list_purchase.modifyPurchase" href="jsp/admin/plugins/stock/modules/billetterie/SavePurchase.jsp?purchase_id=${item.id!}" />
+	<@showButton type="export" title="module.stock.billetterie.list_purchase.linkPrintTicket" href="servlet/plugins/jasper/downloadFile?report_id=contremarque&report_type=pdf&value1=${item.id!}&value2=${item.userName!}" />
+	<@showButton type="delete"  title="module.stock.billetterie.list_purchase.linkCancelPurchase" href="jsp/admin/plugins/stock/modules/billetterie/DeletePurchase.jsp?purchase_id=${item.id!}" />
+	<@showButton type="send" title="module.stock.billetterie.list_purchase.linkNotifiyPurchase" href="jsp/admin/plugins/stock/modules/billetterie/NotifyPurchase.jsp?purchase_id=${item.id!}" />
+</#macro>
+
+<#macro columnNamePurchase item >
+	<#if (item.offer.statut) == strStatutCancel!>
+		<b style="color: red;">Annulé</b> - 
+	</#if>
+	${(item.offer.product.name)!}
+</#macro>
+
+<#macro columnDatePurchase item >
+	<a href="jsp/admin/plugins/stock/modules/billetterie/ManageOffers.jsp">
+		${(item.offer.date)!} - ${(item.offer.hour)!}
+	</a>
+</#macro>
+
+<#macro columnOfferTypePurchase item >
+	${(item.offer.typeName)!}
+</#macro>
+
+<#macro columnAgentPurchase item >
+	${item.firstNameAgent!} ${item.nameAgent!} <#if item.emailAgent??>&lt;${item.emailAgent}&gt;</#if>
+</#macro>
+
 <div class="row-fluid">
 	<div class="span12">
 		<fieldset>
@@ -39,61 +67,7 @@
 					</form>
 				</div>
 				<div class="span9">
-					<@paginationAdmin paginator=paginator combo=1 />	
-					<table class="table table-striped table-condensed">
-						<tbody>
-						    <tr>
-					        	<th>#i18n{module.stock.billetterie.list_purchase.table.product}</th>
-					        	<th>#i18n{module.stock.billetterie.list_purchase.table.dateOffer}</th>
-					        	<th>#i18n{module.stock.billetterie.list_purchase.table.datePurchase}</th>
-					        	<th>#i18n{module.stock.billetterie.list_purchase.table.typeOffer}</th>
-					        	<th>#i18n{module.stock.billetterie.list_purchase.table.userName}</th>
-					        	<th>#i18n{module.stock.billetterie.list_purchase.table.quantity}</th>
-					        	<th>#i18n{module.stock.billetterie.list_purchase.table.actions}</th>
-					    	</tr>
-					    	<#if list_purchases?has_content>
-							    <#list list_purchases as purchase>
-								    <tr>
-								    	<td>
-								    		<#if (purchase.offer.statut) == strStatutCancel!>
-								    			<b style="color: red;">Annulé</b> - 
-								    		</#if>
-								    		${(purchase.offer.product.name)!}
-								    	</td>
-								    	<td>
-								    		<a href="jsp/admin/plugins/stock/modules/billetterie/ManageOffers.jsp">
-								    			${(purchase.offer.date)!} - ${(purchase.offer.hour)!}
-								    		</a>
-								    	</td>
-								    	<td>
-								    		${purchase.date!}
-								    	</td>
-								    	<td>
-								    		${(purchase.offer.typeName)!}
-								    	</td>
-								    	<td>
-								    		${purchase.firstNameAgent!} ${purchase.nameAgent!} <#if purchase.emailAgent??>&lt;${purchase.emailAgent}&gt;</#if>
-								    	</td>
-								    	<td>
-								    		${purchase.quantity!}
-								    	</td>
-							        	<td>
-							        		<@showButton type="edit" title="module.stock.billetterie.list_purchase.modifyPurchase" href="jsp/admin/plugins/stock/modules/billetterie/SavePurchase.jsp?purchase_id=${purchase.id!}" />
-							        		<@showButton type="export" title="module.stock.billetterie.list_purchase.linkPrintTicket" href="servlet/plugins/jasper/downloadFile?report_id=contremarque&report_type=pdf&value1=${purchase.id!}&value2=${purchase.userName!}" />
-							        		<@showButton type="delete"  title="module.stock.billetterie.list_purchase.linkCancelPurchase" href="jsp/admin/plugins/stock/modules/billetterie/DeletePurchase.jsp?purchase_id=${purchase.id!}" />
-							        		<@showButton type="send" title="module.stock.billetterie.list_purchase.linkNotifiyPurchase" href="jsp/admin/plugins/stock/modules/billetterie/NotifyPurchase.jsp?purchase_id=${purchase.id!}" />
-							            </td>
-								    </tr>
-							    </#list>
-							<#else>
-								<tr>
-									<td colspan="7">
-										#i18n{module.stock.billetterie.list_purchase.message.noResult}
-									</td>
-								</tr>
-							</#if>
-						</tbody>
-					</table>
+					<@dataTable dataTableManager=dataTablePurchase />					
 				</div>
 			</div>
 		</fieldset>

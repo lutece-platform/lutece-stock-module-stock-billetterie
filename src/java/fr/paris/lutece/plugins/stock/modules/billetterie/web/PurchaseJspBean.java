@@ -33,8 +33,25 @@
  */
 package fr.paris.lutece.plugins.stock.modules.billetterie.web;
 
+import java.io.IOException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+
+import fr.paris.lutece.plugins.stock.business.category.CategoryFilter;
+import fr.paris.lutece.plugins.stock.business.purchase.PurchaseFilter;
 import fr.paris.lutece.plugins.stock.business.purchase.exception.PurchaseUnavailable;
 import fr.paris.lutece.plugins.stock.commons.ResultList;
+import fr.paris.lutece.plugins.stock.commons.dao.PaginationProperties;
 import fr.paris.lutece.plugins.stock.commons.exception.BusinessException;
 import fr.paris.lutece.plugins.stock.commons.exception.FunctionnalException;
 import fr.paris.lutece.plugins.stock.modules.billetterie.utils.constants.BilletterieConstants;
@@ -42,6 +59,7 @@ import fr.paris.lutece.plugins.stock.modules.tickets.business.NotificationDTO;
 import fr.paris.lutece.plugins.stock.modules.tickets.business.ReservationDTO;
 import fr.paris.lutece.plugins.stock.modules.tickets.business.ReservationFilter;
 import fr.paris.lutece.plugins.stock.modules.tickets.business.SeanceDTO;
+import fr.paris.lutece.plugins.stock.modules.tickets.business.ShowCategoryDTO;
 import fr.paris.lutece.plugins.stock.modules.tickets.service.INotificationService;
 import fr.paris.lutece.plugins.stock.modules.tickets.service.IPurchaseService;
 import fr.paris.lutece.plugins.stock.modules.tickets.service.ISeanceService;
@@ -62,34 +80,21 @@ import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.portal.web.constants.Parameters;
 import fr.paris.lutece.util.ReferenceItem;
 import fr.paris.lutece.util.ReferenceList;
+import fr.paris.lutece.util.datatable.DataTableManager;
 import fr.paris.lutece.util.html.DelegatePaginator;
 import fr.paris.lutece.util.html.HtmlTemplate;
-import fr.paris.lutece.util.html.Paginator;
 import fr.paris.lutece.util.url.UrlItem;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 
 
 /**
  * This class provides the user interface to manage form features ( manage,
  * create, modify, remove)
  */
-public class PurchaseJspBean  extends AbstractJspBean
+public class PurchaseJspBean extends AbstractJspBean
 {
     /** The logger for this jspBean */
     public static final Logger LOGGER = Logger.getLogger( PurchaseJspBean.class );
-    
+
     /** The constant String RESOURCE_TYPE */
     public static final String RESOURCE_TYPE = "STOCK";
     /** The constant String RIGHT_MANAGE_PURCHASES */
@@ -137,6 +142,16 @@ public class PurchaseJspBean  extends AbstractJspBean
     /** The constant String PARAMETER_FILTER */
     public static final String PARAMETER_FILTER = "filter";
     // MARKS
+
+    /** The constants for DataTableManager */
+    public static final String MARK_DATA_TABLE_PURCHASE = "dataTablePurchase";
+    public static final String MARK_FILTER_PURCHASE = "filterPurchase";
+    public static final String MACRO_COLUMN_ACTIONS_PURCHASE = "columnActionsPurchase";
+    public static final String MACRO_COLUMN_NAME_PURCHASE = "columnNamePurchase";
+    public static final String MACRO_COLUMN_DATE_PURCHASE = "columnDatePurchase";
+    public static final String MACRO_COLUMN_OFFER_TYPE_PURCHASE = "columnOfferTypePurchase";
+    public static final String MACRO_COLUMN_AGENT_PURCHASE = "columnAgentPurchase";
+
     /** The constant String MARK_PURCHASE */
     public static final String MARK_PURCHASE = "purchase";
     /** The constant String MARK_TITLE */
@@ -180,19 +195,17 @@ public class PurchaseJspBean  extends AbstractJspBean
     private static final String JSP_MANAGE_OFFERS = "jsp/admin/plugins/stock/modules/billetterie/ManageOffers.jsp";
     private static final String JSP_SAVE_PURCHASE = "SavePurchase.jsp";
     private static final String JSP_DO_NOTIFY_PURCHASE = "jsp/admin/plugins/stock/modules/billetterie/DoNotifyPurchase.jsp";
-    
+
     // TEMPLATES
     private static final String TEMPLATE_MANAGE_PURCHASES = "admin/plugins/stock/modules/billetterie/manage_purchases.html";
     private static final String TEMPLATE_SAVE_PURCHASE = "admin/plugins/stock/modules/billetterie/save_purchase.html";
     private static final String TEMPLATE_NOTIFICATION_BOOKING = "admin/plugins/stock/modules/billetterie/notification_booking.html";
 
-
     // PAGE TITLES
     private static final String PROPERTY_PAGE_TITLE_MANAGE_PURCHASE = "module.stock.billetterie.list_purchase.title";
     private static final String PROPERTY_PAGE_TITLE_CREATE_PURCHASE = "module.stock.billetterie.create_purchase.title";
     private static final String PROPERTY_PAGE_TITLE_MODIFY_PURCHASE = "module.stock.billetterie.modify_purchase.title";
-    
-    
+
     // MESSAGES
     private static final String MESSAGE_CONFIRMATION_DELETE_PURCHASE = "module.stock.billetterie.message.deletePurchase.confirmation";
     private static final String MESSAGE_INSUFFICIENT_PLACE_REMAINING = "module.stock.billetterie.message.error.insufficient_place_remaining";
@@ -202,7 +215,7 @@ public class PurchaseJspBean  extends AbstractJspBean
     private static final String MESSAGE_NOTIFICATION_BOOKING_SUBJECT = "module.stock.billetterie.notification.booking.subject";
     private static final String MESSAGE_NOTIFY_PURCHASE_CONFIRMATION = "module.stock.billetterie.message.notifyPurchase.confirmation";
     private static final String MESSAGE_TITLE_NOTIFY_PURCHASE_CONFIRMATION = "module.stock.billetterie.message.title.notifyPurchase.confirmation";
-    
+
     // ORDER FILTERS
     private static final String ORDER_FILTER_DATE = "date";
     private static final String ORDER_FILTER_OFFER_TYPE_NAME = "offer.type.name";
@@ -228,9 +241,9 @@ public class PurchaseJspBean  extends AbstractJspBean
     /**
      * Instantiates a new purchase jsp bean.
      */
-    public PurchaseJspBean(  )
+    public PurchaseJspBean( )
     {
-        super(  );
+        super( );
 
         _purchaseFilter = new ReservationFilter( );
         _servicePurchase = SpringContextService.getContext( ).getBean( IPurchaseService.class );
@@ -249,7 +262,7 @@ public class PurchaseJspBean  extends AbstractJspBean
     {
         populate( filter, request );
     }
-    
+
     /**
      * Gets the purchase filter.
      * 
@@ -280,27 +293,20 @@ public class PurchaseJspBean  extends AbstractJspBean
 
         return _purchaseFilter;
     }
-    
+
     /**
      * Get the manage purchases page
-     *
-     * @param request
-     *            the request
+     * 
+     * @param request the request
      * @return the page with purchases list
      */
     public String getManagePurchases( HttpServletRequest request )
     {
         setPageTitleProperty( PROPERTY_PAGE_TITLE_MANAGE_PURCHASE );
 
-        _strCurrentPageIndex = Paginator.getPageIndex( request, Paginator.PARAMETER_PAGE_INDEX, _strCurrentPageIndex );
-        _nDefaultItemsPerPage = AppPropertiesService.getPropertyInt( TicketsConstants.PROPERTY_DEFAULT_ITEM_PER_PAGE,
-                50 );
-        _nItemsPerPage = Paginator.getItemsPerPage( request, Paginator.PARAMETER_ITEMS_PER_PAGE, _nItemsPerPage,
-                _nDefaultItemsPerPage );
-
         Map<String, Object> model = new HashMap<String, Object>( );
         ReservationFilter filter = getPurchaseFilter( request );
-        
+
         // if date begin is after date end, add error
         List<String> error = new ArrayList<String>( );
         if ( filter.getDateBeginOffer( ) != null && filter.getDateEndOffer( ) != null
@@ -323,7 +329,7 @@ public class PurchaseJspBean  extends AbstractJspBean
         orderList.add( ORDER_FILTER_OFFER_TYPE_NAME );
         filter.setOrders( orderList );
         filter.setOrderAsc( true );
-        
+
         String strOfferId = request.getParameter( MARK_OFFER_ID );
         String purchaseId = request.getParameter( MARK_PURCHASSE_ID );
         if ( strOfferId != null )
@@ -341,31 +347,70 @@ public class PurchaseJspBean  extends AbstractJspBean
             filter.setDateEndOffer( DateUtils.getDate( seance.getDate( ), false ) );
         }
 
-        ResultList<ReservationDTO> listAllPurchase = _servicePurchase
-                .findByFilter( filter, getPaginationProperties( request ) );
-
-        DelegatePaginator<ReservationDTO> paginator = getPaginator( request, listAllPurchase );
+        //Obtention des objets sauvegardés en session
+        DataTableManager<ReservationDTO> dataTableToUse = getDataTable( request, filter );
+        model.put( MARK_DATA_TABLE_PURCHASE, dataTableToUse );
 
         // Fill the model
         model.put( MARK_LOCALE, getLocale( ) );
 
-        // the paginator
-        model.put( TicketsConstants.MARK_NB_ITEMS_PER_PAGE, String.valueOf( _nItemsPerPage ) );
-        model.put( TicketsConstants.MARK_PAGINATOR, paginator );
-        model.put( MARK_LIST_PURCHASES, paginator.getPageItems(  ) );
         // Combo
         ReferenceList offerGenreComboList = ListUtils.toReferenceList( _serviceOffer.findAllGenre( ),
-                BilletterieConstants.ID, BilletterieConstants.NAME,
-                StockConstants.EMPTY_STRING );
+                BilletterieConstants.ID, BilletterieConstants.NAME, StockConstants.EMPTY_STRING );
         model.put( MARK_LIST_OFFER_GENRE, offerGenreComboList );
         // offer statut cancel
         model.put( MARK_PURCHASE_STATUT_CANCEL, TicketsConstants.OFFER_STATUT_CANCEL );
         // the filter
         model.put( TicketsConstants.MARK_FILTER, filter );
 
-        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_MANAGE_PURCHASES, getLocale(  ), model );
+        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_MANAGE_PURCHASES, getLocale( ), model );
+        //opération nécessaire pour eviter les fuites de mémoires
+        dataTableToUse.clearItems( );
 
-        return getAdminPage( template.getHtml(  ) );
+        return getAdminPage( template.getHtml( ) );
+    }
+
+    /**
+     * Get the DataTableManager object for the ReservationDTO bean
+     * @param request the http request
+     * @param filter the filter
+     * @param <T> the type of the bean
+     * @return the data table to use
+     */
+    private <T> DataTableManager<T> getDataTable( HttpServletRequest request, PurchaseFilter filter )
+    {
+        //si un objet est déjà présent en session, on l'utilise
+        Method findMethod = null;
+        try
+        {
+            findMethod = _servicePurchase.getClass( ).getMethod( PARAMETER_FIND_BY_FILTER_NAME_METHOD,
+                    PurchaseFilter.class, PaginationProperties.class );
+        }
+        catch ( Exception e )
+        {
+            LOGGER.error( "Erreur lors de l'obtention du data table : ", e );
+        }
+        DataTableManager<T> dataTableToUse = getAbstractDataTableManager( request, filter, MARK_DATA_TABLE_PURCHASE,
+                MARK_FILTER_PURCHASE, JSP_MANAGE_PURCHASES, _servicePurchase, findMethod );
+
+        //si pas d'objet en session, il faut ajouter les colonnes à afficher
+        if ( dataTableToUse.getListColumn( ).isEmpty( ) )
+        {
+            dataTableToUse.addFreeColumn( "module.stock.billetterie.list_purchase.table.product",
+                    MACRO_COLUMN_NAME_PURCHASE );
+            dataTableToUse.addFreeColumn( "module.stock.billetterie.list_purchase.table.dateOffer",
+                    MACRO_COLUMN_DATE_PURCHASE);
+            dataTableToUse.addColumn( "module.stock.billetterie.list_purchase.table.datePurchase", "date", false );
+            dataTableToUse.addFreeColumn( "module.stock.billetterie.list_purchase.table.typeOffer",
+                    MACRO_COLUMN_OFFER_TYPE_PURCHASE );
+            dataTableToUse.addFreeColumn( "module.stock.billetterie.list_purchase.table.userName",
+                    MACRO_COLUMN_AGENT_PURCHASE );
+            dataTableToUse.addColumn( "module.stock.billetterie.list_purchase.table.quantity", "quantity", false );
+            dataTableToUse.addFreeColumn( "module.stock.billetterie.list_purchase.table.actions",
+                    MACRO_COLUMN_ACTIONS_PURCHASE);
+        }
+        saveDataTableInSession( request, dataTableToUse, MARK_DATA_TABLE_PURCHASE );
+        return dataTableToUse;
     }
 
     /**
@@ -381,7 +426,7 @@ public class PurchaseJspBean  extends AbstractJspBean
 
         String strIdOffer;
         String strIdPurchase = request.getParameter( MARK_PURCHASSE_ID );
-        
+
         // Manage validation errors
         FunctionnalException ve = getErrorOnce( request );
         if ( ve != null )
@@ -397,7 +442,7 @@ public class PurchaseJspBean  extends AbstractJspBean
             // Create new Purchase
             purchase = new ReservationDTO( );
         }
-        
+
         // modification page only
         if ( strIdPurchase != null )
         {
@@ -417,7 +462,7 @@ public class PurchaseJspBean  extends AbstractJspBean
             Integer idOffer = Integer.parseInt( strIdOffer );
             SeanceDTO seance = this._serviceOffer.findSeanceById( idOffer );
             purchase.setOffer( seance );
-            
+
             Integer quantity;
             if ( seance.getTypeName( ).equals( TicketsConstants.OFFER_TYPE_INVITATION ) )
             {
@@ -502,7 +547,6 @@ public class PurchaseJspBean  extends AbstractJspBean
         return getAdminPage( template.getHtml( ) );
     }
 
-
     /**
      * Save a purchase
      * @param request The HTTP request
@@ -512,7 +556,6 @@ public class PurchaseJspBean  extends AbstractJspBean
     {
         ReservationDTO purchase = new ReservationDTO( );
         String strIdPurchase = request.getParameter( PARAMETER_PURCHASE_ID );
-
 
         if ( StringUtils.isNotBlank( request.getParameter( StockConstants.PARAMETER_BUTTON_CANCEL ) ) )
         {
@@ -536,7 +579,6 @@ public class PurchaseJspBean  extends AbstractJspBean
             purchase = _servicePurchase.findById( nIdPurchase );
             populate( purchase, request );
 
-
             _servicePurchase.update( purchase );
         }
         else
@@ -548,20 +590,20 @@ public class PurchaseJspBean  extends AbstractJspBean
         try
         {
             // Controls mandatory fields
-        	validateBilletterie( purchase );
+            validateBilletterie( purchase );
 
             if ( StringUtils.isBlank( strIdPurchase ) )
             {
                 try
                 {
-                    
+
                     // Reserve tickets
                     // Libère la réservation prévue sur la page de réservation
                     _purchaseSessionManager.release( request.getSession( ).getId( ), purchase );
-    
+
                     // Réserve avec les nouvelles valeurs saisies par l'utilisateur
                     _purchaseSessionManager.reserve( request.getSession( ).getId( ), purchase );
-    
+
                 }
                 catch ( PurchaseUnavailable e )
                 {
@@ -576,7 +618,6 @@ public class PurchaseJspBean  extends AbstractJspBean
         {
             return manageFunctionnalException( request, e, JSP_SAVE_PURCHASE );
         }
-
 
         UrlItem redirection = new UrlItem( AppPathService.getBaseUrl( request ) + JSP_MANAGE_PURCHASES );
         redirection.addParameter( MARK_OFFER_ID, purchase.getOffer( ).getId( ) );
@@ -636,7 +677,8 @@ public class PurchaseJspBean  extends AbstractJspBean
         {
             LOGGER.debug( e );
 
-            return AdminMessageService.getMessageUrl( request, StockConstants.MESSAGE_ERROR_OCCUR, AdminMessage.TYPE_STOP );
+            return AdminMessageService.getMessageUrl( request, StockConstants.MESSAGE_ERROR_OCCUR,
+                    AdminMessage.TYPE_STOP );
         }
 
         Map<String, Object> urlParam = new HashMap<String, Object>( );
@@ -677,7 +719,7 @@ public class PurchaseJspBean  extends AbstractJspBean
 
         return doGoBack( request );
     }
-    
+
     /**
      * Returns the confirmation message to notify purchaser
      * 
@@ -699,7 +741,8 @@ public class PurchaseJspBean  extends AbstractJspBean
         {
             LOGGER.debug( e );
 
-            return AdminMessageService.getMessageUrl( request, StockConstants.MESSAGE_ERROR_OCCUR, AdminMessage.TYPE_STOP );
+            return AdminMessageService.getMessageUrl( request, StockConstants.MESSAGE_ERROR_OCCUR,
+                    AdminMessage.TYPE_STOP );
         }
         ReservationDTO purchase = _servicePurchase.findById( nIdPurchase );
 
@@ -716,7 +759,7 @@ public class PurchaseJspBean  extends AbstractJspBean
                 MESSAGE_TITLE_NOTIFY_PURCHASE_CONFIRMATION, JSP_DO_NOTIFY_PURCHASE, BilletterieConstants.TARGET_SELF,
                 AdminMessage.TYPE_CONFIRMATION, urlParam, strJspBack );
     }
-    
+
     /**
      * Send booking notification.
      * 
@@ -737,17 +780,18 @@ public class PurchaseJspBean  extends AbstractJspBean
         {
             LOGGER.debug( e );
 
-            return AdminMessageService.getMessageUrl( request, StockConstants.MESSAGE_ERROR_OCCUR, AdminMessage.TYPE_STOP );
+            return AdminMessageService.getMessageUrl( request, StockConstants.MESSAGE_ERROR_OCCUR,
+                    AdminMessage.TYPE_STOP );
         }
-        
+
         ReservationDTO purchase = _servicePurchase.findById( nIdPurchase );
-        
+
         //Generate mail content
         Map<String, Object> model = new HashMap<String, Object>( );
         model.put( MARK_PURCHASE, purchase );
         model.put( MARK_BASE_URL, AppPathService.getBaseUrl( request ) );
-        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_NOTIFICATION_BOOKING,
-                request.getLocale( ), model );
+        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_NOTIFICATION_BOOKING, request.getLocale( ),
+                model );
 
         // Create mail object
         NotificationDTO notificationDTO = new NotificationDTO( );

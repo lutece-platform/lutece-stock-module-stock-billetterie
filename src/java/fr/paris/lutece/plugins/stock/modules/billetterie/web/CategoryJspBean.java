@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.stock.modules.billetterie.web;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -42,10 +43,11 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 
 import fr.paris.lutece.plugins.stock.business.category.CategoryFilter;
 import fr.paris.lutece.plugins.stock.commons.ResultList;
-import fr.paris.lutece.plugins.stock.commons.dao.PaginationPropertiesAdapterDataTable;
+import fr.paris.lutece.plugins.stock.commons.dao.PaginationProperties;
 import fr.paris.lutece.plugins.stock.commons.exception.FunctionnalException;
 import fr.paris.lutece.plugins.stock.modules.billetterie.utils.constants.BilletterieConstants;
 import fr.paris.lutece.plugins.stock.modules.tickets.business.ShowCategoryDTO;
@@ -64,7 +66,6 @@ import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.web.constants.Parameters;
 import fr.paris.lutece.util.datatable.DataTableManager;
-import fr.paris.lutece.util.datatable.DataTablePaginationProperties;
 import fr.paris.lutece.util.html.HtmlTemplate;
 
 
@@ -73,6 +74,8 @@ import fr.paris.lutece.util.html.HtmlTemplate;
  */
 public class CategoryJspBean extends AbstractJspBean
 {
+    public static final Logger LOGGER = Logger.getLogger( CategoryJspBean.class );
+
     /** The Constant PARAMETER_CATEGORY_ID. */
     public static final String PARAMETER_CATEGORY_ID = "category_id";
 
@@ -192,49 +195,52 @@ public class CategoryJspBean extends AbstractJspBean
         Map<String, Object> model = new HashMap<String, Object>( );
 
         //Obtention des objets sauvegardés en session
-        DataTableManager<ShowCategoryDTO> dataTableFromSession = loadDataTableFromSession( request,
-                MARK_DATA_TABLE_CATEGORY );
-        CategoryFilter filterFromSession = (CategoryFilter) request.getSession( ).getAttribute( MARK_FILTER_CATEGORY);
-
-        //si un objet est déjà présent en session, on l'utilise
-        DataTableManager<ShowCategoryDTO> dataTableCategory = dataTableFromSession != null ? dataTableFromSession
-                : new DataTableManager<ShowCategoryDTO>( JSP_MANAGE_CATEGORYS, "", 10, true );
-        
-        //determination de l'utilisation d'un nouveau filtre (recherche) ou de celui présent en session (changement de page)
-        CategoryFilter updateFilter = request.getParameter( MARK_FILTER_CATEGORY ) != null || filterFromSession==null ? dataTableCategory.getAndUpdateFilter(
-                request, filter ) : filterFromSession;
-
-        //si pas d'objet en session, il faut ajouter les colonnes à afficher
-        if ( dataTableFromSession == null )
-        {
-            dataTableCategory.addFreeColumn( "module.stock.billetterie.manage_category.filter.name", MACRO_COLUMN_NAME_CATEGORY);
-            dataTableCategory.addFreeColumn( "module.stock.billetterie.manage_category.actionsLabel",
-                    MACRO_COLUMN_ACTIONS_CATEGORY );
-        }
-
-        //mise à jour de la pagination dans le data table pour l'afficahge de la page courante et du nombre d'items
-        DataTablePaginationProperties updatePaginator = dataTableCategory.getAndUpdatePaginator( request );
-
-        //obtention manuel des beans à afficher
-        ResultList<ShowCategoryDTO> listAllCATEGORY = _serviceCategory.findByFilter( updateFilter,
-                new PaginationPropertiesAdapterDataTable( updatePaginator ) );
-        dataTableCategory.setItems( listAllCATEGORY, listAllCATEGORY.getTotalResult( ) );
-
-        model.put( MARK_DATA_TABLE_CATEGORY, dataTableCategory );
+        DataTableManager<ShowCategoryDTO> dataTableToUse = getDataTable( request, filter );
+        model.put( MARK_DATA_TABLE_CATEGORY, dataTableToUse );
 
         model.put( TicketsConstants.MARK_NB_ITEMS_PER_PAGE, String.valueOf( _nItemsPerPage ) );
-        model.put( TicketsConstants.MARK_FILTER, updateFilter );
+        model.put( TicketsConstants.MARK_FILTER, filter );
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_MANAGE_CATEGORIES, getLocale( ), model );
-        
+
         //opération nécessaire pour eviter les fuites de mémoires
-        dataTableCategory.clearItems( );
-        
-        //sauvegarde des elements en sessions
-        saveDataTableInSession( request, dataTableCategory, MARK_DATA_TABLE_CATEGORY );
-        request.getSession( ).setAttribute( MARK_FILTER_CATEGORY, updateFilter );
+        dataTableToUse.clearItems( );
 
         return getAdminPage( template.getHtml( ) );
+    }
+
+    /**
+     * Get the DataTableManager object for the ShowDTO bean
+     * @param request the http request
+     * @param filter the filter
+     * @return the data table to use
+     */
+    private DataTableManager<ShowCategoryDTO> getDataTable( HttpServletRequest request, CategoryFilter filter )
+    {
+        //si un objet est déjà présent en session, on l'utilise
+        Method findMethod = null;
+        try
+        {
+            findMethod = _serviceCategory.getClass( ).getMethod( PARAMETER_FIND_BY_FILTER_NAME_METHOD,
+                    CategoryFilter.class, PaginationProperties.class );
+        }
+        catch ( Exception e )
+        {
+            LOGGER.error( "Erreur lors de l'obtention du data table : ", e );
+        }
+        DataTableManager<ShowCategoryDTO> dataTableToUse = getAbstractDataTableManager( request, filter,
+                MARK_DATA_TABLE_CATEGORY, MARK_FILTER_CATEGORY, JSP_MANAGE_CATEGORYS, _serviceCategory, findMethod );
+
+        //si pas d'objet en session, il faut ajouter les colonnes à afficher
+        if ( dataTableToUse.getListColumn( ).isEmpty( ) )
+        {
+            dataTableToUse.addFreeColumn( "module.stock.billetterie.manage_category.filter.name",
+                    MACRO_COLUMN_NAME_CATEGORY );
+            dataTableToUse.addFreeColumn( "module.stock.billetterie.manage_category.actionsLabel",
+                    MACRO_COLUMN_ACTIONS_CATEGORY );
+        }
+        saveDataTableInSession( request, dataTableToUse, MARK_DATA_TABLE_CATEGORY);
+        return dataTableToUse;
     }
 
     /**

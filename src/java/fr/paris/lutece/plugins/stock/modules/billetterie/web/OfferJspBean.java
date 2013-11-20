@@ -40,6 +40,7 @@ import fr.paris.lutece.plugins.stock.business.purchase.PurchaseFilter;
 import fr.paris.lutece.plugins.stock.business.subscription.SubscriptionProduct;
 import fr.paris.lutece.plugins.stock.business.subscription.SubscriptionProductFilter;
 import fr.paris.lutece.plugins.stock.commons.ResultList;
+import fr.paris.lutece.plugins.stock.commons.dao.PaginationProperties;
 import fr.paris.lutece.plugins.stock.commons.exception.FunctionnalException;
 import fr.paris.lutece.plugins.stock.modules.billetterie.utils.constants.BilletterieConstants;
 import fr.paris.lutece.plugins.stock.modules.tickets.business.NotificationDTO;
@@ -71,11 +72,14 @@ import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.portal.web.constants.Parameters;
 import fr.paris.lutece.util.ReferenceList;
+import fr.paris.lutece.util.datatable.DataTableColumn;
+import fr.paris.lutece.util.datatable.DataTableManager;
 import fr.paris.lutece.util.html.DelegatePaginator;
 import fr.paris.lutece.util.html.HtmlTemplate;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -143,6 +147,15 @@ public class OfferJspBean  extends AbstractJspBean
     public static final String MARK_BASE_URL = "base_url";
     public static final String MARK_USER_NAME = "userName";
     private static final String MARK_RESERVE = "RESERVATIONS";
+    /** The constants for DataTableManager */
+    public static final String MARK_DATA_TABLE_OFFER= "dataTableOffer";
+    public static final String MARK_FILTER_OFFER = "filterOffer";
+    public static final String MACRO_COLUMN_CHECKBOX_DELETE_OFFER = "columnCheckboxDeleteOffer";
+    public static final String MACRO_COLUMN_PRODUCT_OFFER = "columnProductOffer";
+    public static final String MACRO_COLUMN_STATUT_OFFER = "columnStatutOffer";
+    public static final String MACRO_COLUMN_ACTIONS_OFFER = "columnActionsOffer";
+    public static final String MACRO_COLUMN_NAME_OFFER = "columnNameOffer";
+    public static final String MACRO_COLUMN_DATES_OFFER = "columnDatesOffer";
 
     // JSP
     private static final String JSP_MANAGE_OFFERS = "jsp/admin/plugins/stock/modules/billetterie/ManageOffers.jsp";
@@ -307,25 +320,19 @@ public class OfferJspBean  extends AbstractJspBean
         orderList.add( ORDER_FILTER_TYPE_NAME );
         filter.setOrders( orderList );
         filter.setOrderAsc( true );
+        
+        DataTableManager<SeanceDTO> dataTableToUse = getDataTable( request, filter );
 
-        ResultList<SeanceDTO> listAllOffer = _serviceOffer
-                .findByFilter( filter, getPaginationProperties( request ) );
-
-        for ( SeanceDTO seance : listAllOffer )
+        for ( SeanceDTO seance : dataTableToUse.getItems( ) )
         {
             // Update quantity with quantity in session for this offer
             seance.setQuantity( _purchaseSessionManager.updateQuantityWithSession( seance.getQuantity( ),
                     seance.getId( ) ) );
         }
-
-        DelegatePaginator<SeanceDTO> paginator = getPaginator( request, listAllOffer );
-
-
+        model.put( MARK_DATA_TABLE_OFFER, dataTableToUse );
 
         // the paginator
         model.put( TicketsConstants.MARK_NB_ITEMS_PER_PAGE, String.valueOf( _nItemsPerPage ) );
-        model.put( TicketsConstants.MARK_PAGINATOR, paginator );
-        model.put( MARK_LIST_OFFERS, paginator.getPageItems(  ) );
         // the filter
         model.put( TicketsConstants.MARK_FILTER, filter );
         // Combo
@@ -341,7 +348,54 @@ public class OfferJspBean  extends AbstractJspBean
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_MANAGE_OFFERS, getLocale(  ), model );
 
+        //opération nécessaire pour eviter les fuites de mémoires
+        dataTableToUse.clearItems( );
+        
         return getAdminPage( template.getHtml(  ) );
+    }
+    
+    /**
+     * Get the DataTableManager object for the ShowDTO bean
+     * @param request the http request
+     * @param filter the filter
+     * @return the data table to use
+     */
+    private <T> DataTableManager<T> getDataTable( HttpServletRequest request, SeanceFilter filter )
+    {
+        //si un objet est déjà présent en session, on l'utilise
+        Method findMethod = null;
+        try
+        {
+            findMethod = _serviceOffer.getClass( ).getMethod( PARAMETER_FIND_BY_FILTER_NAME_METHOD, OfferFilter.class,
+                    PaginationProperties.class );
+        }
+        catch ( Exception e )
+        {
+            LOGGER.error( "Erreur lors de l'obtention du data table : ", e );
+        }
+        DataTableManager<T> dataTableToUse = getAbstractDataTableManager( request, filter,
+                MARK_DATA_TABLE_OFFER, MARK_FILTER_OFFER, JSP_MANAGE_OFFERS, _serviceOffer, findMethod );
+
+        //si pas d'objet en session, il faut ajouter les colonnes à afficher
+        if (true || dataTableToUse.getListColumn( ).isEmpty( ) )
+        {
+            dataTableToUse.setListColumn( new ArrayList<DataTableColumn>( ) );
+            dataTableToUse.addFreeColumn( StringUtils.EMPTY,MACRO_COLUMN_STATUT_OFFER );
+            dataTableToUse.addFreeColumn( StringUtils.EMPTY,MACRO_COLUMN_CHECKBOX_DELETE_OFFER );
+                        dataTableToUse.addFreeColumn( "module.stock.billetterie.list_offres.filter.name", MACRO_COLUMN_NAME_OFFER);
+            dataTableToUse.addFreeColumn( "module.stock.billetterie.list_offres.filter.product",
+                    MACRO_COLUMN_PRODUCT_OFFER );
+            dataTableToUse.addColumn( "module.stock.billetterie.list_offres.type", "typeName",false);
+            dataTableToUse.addFreeColumn( "module.stock.billetterie.save_offer.date",
+                    MACRO_COLUMN_DATES_OFFER);
+            dataTableToUse.addFreeColumn( "module.stock.billetterie.save_offer.initialQuantity", "columnInitialQuantityOffer");
+            dataTableToUse.addColumn( "module.stock.billetterie.save_offer.quantity", "quantity",false);
+            dataTableToUse.addFreeColumn( "module.stock.billetterie.save_offer.sessions.actions",
+                    MACRO_COLUMN_ACTIONS_OFFER);
+            
+        }
+        saveDataTableInSession( request, dataTableToUse, MARK_DATA_TABLE_OFFER );
+        return dataTableToUse;
     }
 
     /**
@@ -473,7 +527,7 @@ public class OfferJspBean  extends AbstractJspBean
      */
     public String doSaveOffer( HttpServletRequest request )
     {
-        if ( StringUtils.isNotBlank( request.getParameter( StockConstants.PARAMETER_BUTTON_CANCEL ) ) )
+        if ( request.getParameter( StockConstants.PARAMETER_BUTTON_CANCEL ) !=null )
         {
             return doGoBack( request );
         }

@@ -33,16 +33,26 @@
  */
 package fr.paris.lutece.plugins.stock.modules.billetterie.web;
 
-import fr.paris.lutece.plugins.stock.business.category.CategoryFilter;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+
 import fr.paris.lutece.plugins.stock.business.provider.ProviderFilter;
 import fr.paris.lutece.plugins.stock.commons.ResultList;
-import fr.paris.lutece.plugins.stock.commons.dao.PaginationPropertiesAdapterDataTable;
+import fr.paris.lutece.plugins.stock.commons.dao.PaginationProperties;
 import fr.paris.lutece.plugins.stock.commons.exception.BusinessException;
 import fr.paris.lutece.plugins.stock.commons.exception.FunctionnalException;
 import fr.paris.lutece.plugins.stock.modules.billetterie.utils.constants.BilletterieConstants;
 import fr.paris.lutece.plugins.stock.modules.tickets.business.Contact;
 import fr.paris.lutece.plugins.stock.modules.tickets.business.PartnerDTO;
-import fr.paris.lutece.plugins.stock.modules.tickets.business.ShowCategoryDTO;
 import fr.paris.lutece.plugins.stock.modules.tickets.business.ShowDTO;
 import fr.paris.lutece.plugins.stock.modules.tickets.business.ShowFilter;
 import fr.paris.lutece.plugins.stock.modules.tickets.service.IProviderService;
@@ -57,27 +67,17 @@ import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.web.constants.Parameters;
 import fr.paris.lutece.util.datatable.DataTableManager;
-import fr.paris.lutece.util.datatable.DataTablePaginationProperties;
-import fr.paris.lutece.util.html.DelegatePaginator;
 import fr.paris.lutece.util.html.HtmlTemplate;
 import fr.paris.lutece.util.url.UrlItem;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.lang.StringUtils;
 
 
 /**
  * The Class PartnerJspBean.
  */
-public class PartnerJspBean extends AbstractJspBean
+public class PartnerJspBean extends AbstractJspBean 
 {
+    public static final Logger LOGGER = Logger.getLogger( PartnerJspBean.class );
+    
     public static final String PARAMETER_PARTNER_TYPE_LIST = "partner_type_list";
     public static final String PARAMETER_PARTNER_TYPE_LIST_DEFAULT = "partner_type_list_default";
     public static final String PARAMETER_PARTNER_ID = "partner_id";
@@ -92,6 +92,7 @@ public class PartnerJspBean extends AbstractJspBean
     public static final String MARK_PARTNER = "partner";
     public static final String MARK_LIST_CONTACT = "list_contacts";
     public static final String MARK_LIST_PARTNERS = "list_partners";
+    
     /** The constants for DataTableManager */
     public static final String MARK_DATA_TABLE_PARTNER = "dataTablePartner";
     public static final String MARK_FILTER_PARTNER = "filterPartner";
@@ -197,58 +198,58 @@ public class PartnerJspBean extends AbstractJspBean
         filter.setOrders( orderList );
         filter.setOrderAsc( true );
 
-        //DEBUT CC
+        //si un objet est déjà présent en session, on l'utilise
+        DataTableManager<PartnerDTO> dataTableToUse = getDataTable( request, filter );
 
         // Fill the model
         Map<String, Object> model = new HashMap<String, Object>( );
 
-        //Obtention des objets sauvegardés en session
-        DataTableManager<PartnerDTO> dataTableFromSession = loadDataTableFromSession( request, MARK_DATA_TABLE_PARTNER );
-        ProviderFilter filterFromSession = (ProviderFilter) request.getSession( ).getAttribute( MARK_FILTER_PARTNER );
-
-        //si un objet est déjà présent en session, on l'utilise
-        DataTableManager<PartnerDTO> dataTablePartner = dataTableFromSession != null ? dataTableFromSession
-                : new DataTableManager<PartnerDTO>( JSP_MANAGE_PARTNERS, "", 10, true );
-
-        //determination de l'utilisation d'un nouveau filtre (recherche) ou de celui présent en session (changement de page)
-        ProviderFilter updateFilter = request.getParameter( TicketsConstants.MARK_FILTER ) != null || filterFromSession == null ? dataTablePartner
-                .getAndUpdateFilter( request, filter ) : dataTablePartner.getAndUpdateFilter( request,
-                filterFromSession );
-
-        //si pas d'objet en session, il faut ajouter les colonnes à afficher
-        if ( dataTableFromSession == null )
-        {
-            dataTablePartner.addFreeColumn( "module.stock.billetterie.manage_category.filter.name",
-                    MACRO_COLUMN_NAME_PARTNER );
-            dataTablePartner.addFreeColumn( "module.stock.billetterie.manage_category.actionsLabel",
-                    MACRO_COLUMN_ACTIONS_PARTNER );
-        }
-
-        //mise à jour de la pagination dans le data table pour l'afficahge de la page courante et du nombre d'items
-        DataTablePaginationProperties updatePaginator = dataTablePartner.getAndUpdatePaginator( request );
-
-        //obtention manuel des beans à afficher
-        ResultList<PartnerDTO> listAllPartner = _serviceProvider.findByFilter( updateFilter,
-                new PaginationPropertiesAdapterDataTable( updatePaginator ) );
-        dataTablePartner.setItems( listAllPartner, listAllPartner.getTotalResult( ) );
-
-        model.put( MARK_DATA_TABLE_PARTNER, dataTablePartner );
-
-        //FIN CC
+        model.put( MARK_DATA_TABLE_PARTNER, dataTableToUse );
 
         // the filter
-        model.put( TicketsConstants.MARK_FILTER, updateFilter );
+        model.put( TicketsConstants.MARK_FILTER, filter );
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_MANAGE_PARTNERS, getLocale( ), model );
 
         //opération nécessaire pour eviter les fuites de mémoires
-        dataTablePartner.clearItems( );
-
-        //sauvegarde des elements en sessions
-        saveDataTableInSession( request, dataTablePartner, MARK_DATA_TABLE_PARTNER );
-        request.getSession( ).setAttribute( MARK_FILTER_PARTNER, updateFilter );
+        dataTableToUse.clearItems( );
+        
 
         return getAdminPage( template.getHtml( ) );
+    }
+    
+    /**
+     * Get the DataTableManager object for the PartnerDTO bean
+     * @param request the http request
+     * @param filter the filter
+     * @param <T> the bean type of the data table manager
+     * @return the data table to use
+     */
+    private <T> DataTableManager<T> getDataTable( HttpServletRequest request, ProviderFilter filter )
+    {
+        //si un objet est déjà présent en session, on l'utilise
+        Method findMethod = null;
+        try
+        {
+            findMethod = _serviceProvider.getClass( ).getMethod( PARAMETER_FIND_BY_FILTER_NAME_METHOD, ProviderFilter.class,PaginationProperties.class );
+        }
+        catch ( Exception e )
+        {
+            LOGGER.error( "Erreur lors de l'obtention du data table : ",e );
+        }
+        DataTableManager<T> dataTableToUse = getAbstractDataTableManager( request, filter,
+                MARK_DATA_TABLE_PARTNER, MARK_FILTER_PARTNER, JSP_MANAGE_PARTNERS, _serviceProvider,findMethod );
+
+        //si pas d'objet en session, il faut ajouter les colonnes à afficher
+        if ( request.getSession( ).getAttribute( MARK_DATA_TABLE_PARTNER) == null )
+        {
+            dataTableToUse.addFreeColumn( "module.stock.billetterie.manage_category.filter.name",
+                    MACRO_COLUMN_NAME_PARTNER );
+            dataTableToUse.addFreeColumn( "module.stock.billetterie.manage_category.actionsLabel",
+                    MACRO_COLUMN_ACTIONS_PARTNER );
+        }
+        saveDataTableInSession( request, dataTableToUse, MARK_DATA_TABLE_PARTNER );
+        return dataTableToUse;
     }
 
     /**
