@@ -94,6 +94,7 @@ public class PartnerJspBean extends AbstractJspBean
     public static final String MARK_LIST_PARTNERS = "list_partners";
     /** The constants for DataTableManager */
     public static final String MARK_DATA_TABLE_PARTNER = "dataTablePartner";
+    public static final String MARK_FILTER_PARTNER = "filterPartner";
     public static final String MACRO_COLUMN_ACTIONS_PARTNER = "columnActionsPartner";
     public static final String MACRO_COLUMN_NAME_PARTNER = "columnNamePartner";
 
@@ -195,31 +196,32 @@ public class PartnerJspBean extends AbstractJspBean
         orderList.add( BilletterieConstants.NAME );
         filter.setOrders( orderList );
         filter.setOrderAsc( true );
-        
+
         //DEBUT CC
-        
+
         // Fill the model
         Map<String, Object> model = new HashMap<String, Object>( );
 
         //Obtention des objets sauvegardés en session
-        DataTableManager<PartnerDTO> dataTableFromSession = loadDataTableFromSession( request,
-                MARK_DATA_TABLE_PARTNER );
-        ProviderFilter filterFromSession = (ProviderFilter) request.getSession( ).getAttribute( TicketsConstants.MARK_FILTER );
+        DataTableManager<PartnerDTO> dataTableFromSession = loadDataTableFromSession( request, MARK_DATA_TABLE_PARTNER );
+        ProviderFilter filterFromSession = (ProviderFilter) request.getSession( ).getAttribute( MARK_FILTER_PARTNER );
 
         //si un objet est déjà présent en session, on l'utilise
         DataTableManager<PartnerDTO> dataTablePartner = dataTableFromSession != null ? dataTableFromSession
                 : new DataTableManager<PartnerDTO>( JSP_MANAGE_PARTNERS, "", 10, true );
-        
+
         //determination de l'utilisation d'un nouveau filtre (recherche) ou de celui présent en session (changement de page)
-        ProviderFilter updateFilter = request.getParameter( TicketsConstants.MARK_FILTER ) != null || filterFromSession==null ? dataTablePartner.getAndUpdateFilter(
-                request, filter ) : filterFromSession;
+        ProviderFilter updateFilter = request.getParameter( TicketsConstants.MARK_FILTER ) != null || filterFromSession == null ? dataTablePartner
+                .getAndUpdateFilter( request, filter ) : dataTablePartner.getAndUpdateFilter( request,
+                filterFromSession );
 
         //si pas d'objet en session, il faut ajouter les colonnes à afficher
         if ( dataTableFromSession == null )
         {
-            dataTablePartner.addFreeColumn( "module.stock.billetterie.manage_category.filter.name", MACRO_COLUMN_NAME_PARTNER);
+            dataTablePartner.addFreeColumn( "module.stock.billetterie.manage_category.filter.name",
+                    MACRO_COLUMN_NAME_PARTNER );
             dataTablePartner.addFreeColumn( "module.stock.billetterie.manage_category.actionsLabel",
-                    MACRO_COLUMN_ACTIONS_PARTNER);
+                    MACRO_COLUMN_ACTIONS_PARTNER );
         }
 
         //mise à jour de la pagination dans le data table pour l'afficahge de la page courante et du nombre d'items
@@ -231,23 +233,21 @@ public class PartnerJspBean extends AbstractJspBean
         dataTablePartner.setItems( listAllPartner, listAllPartner.getTotalResult( ) );
 
         model.put( MARK_DATA_TABLE_PARTNER, dataTablePartner );
-        
+
         //FIN CC
 
-        // the paginator
-        model.put( TicketsConstants.MARK_NB_ITEMS_PER_PAGE, String.valueOf( _nItemsPerPage ) );
         // the filter
         model.put( TicketsConstants.MARK_FILTER, updateFilter );
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_MANAGE_PARTNERS, getLocale( ), model );
-        
+
         //opération nécessaire pour eviter les fuites de mémoires
         dataTablePartner.clearItems( );
-        
+
         //sauvegarde des elements en sessions
-        saveDataTableInSession( request, dataTablePartner, MARK_DATA_TABLE_PARTNER);
-        request.getSession( ).setAttribute( TicketsConstants.MARK_FILTER, updateFilter );
-       
+        saveDataTableInSession( request, dataTablePartner, MARK_DATA_TABLE_PARTNER );
+        request.getSession( ).setAttribute( MARK_FILTER_PARTNER, updateFilter );
+
         return getAdminPage( template.getHtml( ) );
     }
 
@@ -325,7 +325,7 @@ public class PartnerJspBean extends AbstractJspBean
             populate( provider, request );
         }
         model.put( MARK_PARTNER, provider );
-        
+
         ArrayList<Contact> listContactOrderById = (ArrayList<Contact>) provider.getContactList( );
         Collections.sort( listContactOrderById, Contact.COMPARATOR_USING_ID );
         model.put( MARK_LIST_CONTACT, listContactOrderById );
@@ -342,8 +342,8 @@ public class PartnerJspBean extends AbstractJspBean
      */
     public String doSavePartner( HttpServletRequest request )
     {
-        boolean addContact = request.getParameter( PARAMETER_ADD_CONTACT )!=null;
-        
+        boolean addContact = request.getParameter( PARAMETER_ADD_CONTACT ) != null;
+
         if ( StringUtils.isNotBlank( request.getParameter( StockConstants.PARAMETER_BUTTON_CANCEL ) ) )
         {
             return doGoBack( request );
@@ -359,7 +359,7 @@ public class PartnerJspBean extends AbstractJspBean
         try
         {
             // Controls mandatory fields
-        	validateBilletterie( provider );
+            validateBilletterie( provider );
             _serviceProvider.doSaveProvider( provider );
 
             if ( !provider.isAccessible( ) && provider.getAccessibleComment( ) != StringUtils.EMPTY )

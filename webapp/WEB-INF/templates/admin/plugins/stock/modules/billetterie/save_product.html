@@ -2,19 +2,21 @@
 
 <div class="row-fluid">
 	<div class="span12">
-		<fieldset>
-			<legend>
-				${title!}
-				<span class="pull-right">
-					${extendableResourceActionsHtml!}
-				</span>
-			</legend>
-   			 ${error!}
-		    <form class="form" method="post" enctype="multipart/form-data" name="save_product" id="save_product" action="jsp/admin/plugins/stock/modules/billetterie/DoSaveProduct.jsp">
-		    	<input type="hidden" id="jsp_back" name="jsp_back" value="${jsp_back!}"/>
+	    <form class="form" method="post" enctype="multipart/form-data" name="save_product" id="save_product" action="jsp/admin/plugins/stock/modules/billetterie/DoSaveProduct.jsp">
+	    	<input type="hidden" id="jsp_back" name="jsp_back" value="${jsp_back!}"/>
+			
+			<fieldset>
+				<legend>
+					${title!}
+					<span class="pull-right">
+						${extendableResourceActionsHtml!}
+					</span>
+				</legend>
+			</fieldset>
+			<fieldset>
+   				 ${error!}
 		    	
-		    	<div class="span3 well">
-		    	
+		    	<div class="span3">
 					<div>
 						<label for="poster" >#i18n{module.stock.billetterie.save_product.poster} * :</label>
 						<#if product.id?? && product.posterName?has_content>
@@ -26,11 +28,13 @@
 					</div>
 					<div style="clear:left">
 						<label for="product_name" >#i18n{module.stock.billetterie.save_product.name} * :</label>
-						<input type="text" id="name" name="name" size="60" maxlength="100" value="${product.name!}"/>
+						<input type="text" id="name" name="name" class="span" maxlength="100" value="${product.name!}"/>
 					</div>
 			        <div>
-						<label for="show_aLaffiche" >#i18n{module.stock.billetterie.save_product.aLaffiche} :</label>
-						<input type="checkbox" id="show_aLaffiche" name="aLaffiche" value="on" <#if product.alaffiche?has_content && product.alaffiche>checked="checked"</#if>/>
+						<label for="show_aLaffiche" >
+							#i18n{module.stock.billetterie.save_product.aLaffiche} :
+							<input type="checkbox" id="show_aLaffiche" name="aLaffiche" value="on" <#if product.alaffiche?has_content && product.alaffiche>checked="checked"</#if>/>
+						</label>
 					</div>
 					<div>
 						<label>#i18n{module.stock.billetterie.save_product.category} * :</label>
@@ -40,19 +44,8 @@
 						<label>#i18n{module.stock.billetterie.save_product.provider} * :</label>
 				        <@combo name="idProvider" default_value="${(product.idProvider!)}" items=provider_list! />           
 					</div>
-					<div class="form-actions">
-						<input type="hidden" id="product_id" name="id" value="${product.id!}"/>
-						<button type="submit" name="save" class="btn btn-primary btn-small" tabindex="3" >
-							<i class="icon-ok icon-white"></i>&nbsp;
-							#i18n{module.stock.billetterie.message.buttonSave}
-						</button>
-						<button class="btn btn-small" type="submit" name="cancel">
-							<i class="icon-remove-circle"></i>&nbsp;
-							#i18n{portal.admin.message.buttonCancel}
-						</button>
-					</div>
 				</div>
-				<div class="well span7">
+				<div class="span7">
 					<div>
 						<label>#i18n{module.stock.billetterie.save_product.with} :</label>
 						<textarea name="with" cols="60" rows="5" maxlength="500">${product.with!}</textarea>
@@ -86,12 +79,27 @@
 						<input type="text" name="website" size="60" maxlength="100" value="${product.website!}"/>
 					</div>
 					<div>
-						<label>#i18n{module.stock.billetterie.save_product.subscriptionPossible} ? :</label>
-						<input type="checkbox" id="subscribable" name="subscribable" <#if product.subscribable?has_content && product.subscribable>checked="checked"</#if>/>
+						<label for="subscribable">#i18n{module.stock.billetterie.save_product.subscriptionPossible} ? :
+							<input type="checkbox" id="subscribable" name="subscribable" <#if product.subscribable?has_content && product.subscribable>checked="checked"</#if>/>
+						</label>
 					</div>
 				</div>
-		   </form>
-		</fieldset>
+			</fieldset>
+			
+			<fieldset>
+				<div class="form-actions pagination-centered">
+					<input type="hidden" id="product_id" name="id" value="${product.id!}"/>
+					<button type="submit" name="save" class="btn btn-primary btn-small" tabindex="3" >
+						<i class="icon-ok icon-white"></i>&nbsp;
+						#i18n{module.stock.billetterie.message.buttonSave}
+					</button>
+					<button class="btn btn-small" type="submit" name="cancel">
+						<i class="icon-remove-circle"></i>&nbsp;
+						#i18n{portal.admin.message.buttonCancel}
+					</button>
+				</div>
+			</fieldset>
+	   </form>
 	</div>
 </div>
 <@initEditor />

@@ -1,10 +1,11 @@
 <div class="row-fluid">
 	<div class="span12">
-		<fieldset>
-		    <legend>${title!}</legend>
-	    
-			${error!}
-		    <form class="form" method="post" action="jsp/admin/plugins/stock/modules/billetterie/DoSavePurchase.jsp">
+	    <form class="form" method="post" action="jsp/admin/plugins/stock/modules/billetterie/DoSavePurchase.jsp">
+			<fieldset>
+			    <legend>${title!}</legend>
+	    	</fieldset>
+	    	<fieldset>
+				${error!}
 		    	<input type="hidden" id="purchase_id" name="purchase_id" value="${(purchase.id)!}" />
 		    	<input type="hidden" id="offer_id" name="offer.id" value="${(purchase.offer.id)!}" />
 		    	<input type="hidden" name="offer.product.name" value="${(purchase.offer.product.name)!}" />
@@ -14,57 +15,57 @@
 		    	<input type="hidden" name="offer.quantity" value="${(purchase.offer.quantity)!}" />
 		    	<input type="hidden" id="jsp_back" name="jsp_back" value="${jsp_back!}"/>
 		    	<div class="row-fluid">
-			    	<div class="span3 well">
-						<div class="control-group">
-							<label for="purchase_offer" >#i18n{module.stock.billetterie.save_purchase.offerName} :</label>
-							${(purchase.offer.product.name)!} - ${(purchase.offer.date)!} - ${(purchase.offer.hour)!}
-						</div><br />
-						<div class="control-group">
-							<label for="purchase_offerType" >#i18n{module.stock.billetterie.save_purchase.offerType} :</label>
-							${(purchase.offer.typeName)!}
-						</div>
-						<div class="control-group">
-							<label for="purchase_offerQuantity" >#i18n{module.stock.billetterie.save_purchase.offerQuantity} :</label>
-							${(purchase.offer.quantity)!}
-						</div>
-						<div class="control-group">
-							<#if purchase.id!?has_content && ((purchase.id)! > 0) >
-									<label for="purchase_quantity">#i18n{module.stock.billetterie.save_purchase.nbPurchased} :</label>
-									${purchase.quantity!}
-							<#else>
-									<label for="purchase_quantity">#i18n{module.stock.billetterie.save_purchase.nbPurchase} * :</label>
-						        	<@combo name="quantity" default_value="${purchase.quantity!}" items=quantity_list! />
-							</#if>
-						</div>
-						<div class="control-group">
-							<label for="purchase_userName">#i18n{module.stock.billetterie.save_purchase.userName} * :</label>
-				        	<input type="text" name="userName" id="purchase_userName" value="${purchase.userName!}" />
-						</div>
-						<div class="control-group">
-							<label for="purchase_emailAgent">#i18n{module.stock.billetterie.save_purchase.emailAgent} * :</label>
-				        	<input type="text" name="emailAgent" id="purchase_emailAgent" value="${purchase.emailAgent!}" />
-						</div>
-						<div class="control-group">
-							<label for="purchase_nameAgent">#i18n{module.stock.billetterie.save_purchase.nameAgent} * :</label>
-				        	<input type="text" name="nameAgent" id="purchase_nameAgent" value="${purchase.nameAgent!}" />
-						</div>
-						<div class="control-group">
-							<label for="purchase_firstNameAgent">#i18n{module.stock.billetterie.save_purchase.firstNameAgent} * :</label>
-				        	<input type="text" name="firstNameAgent" id="purchase_firstNameAgent" value="${purchase.firstNameAgent!}" />
-						</div>
-						<div class="form-actions">
-							<button type="submit" class="btn btn-primary btn-small" tabindex="3" >
-								<i class="icon-ok icon-white"></i>&nbsp;
-								#i18n{module.stock.billetterie.message.buttonSave}
-							</button>
-							<button class="btn btn-small" type="submit" name="cancel">
-								<i class="icon-remove-circle"></i>&nbsp;
-								#i18n{portal.admin.message.buttonCancel}
-							</button>
-						</div>
-			    	</div>
-		    	</div>
-		   </form>
-	   </fieldset> 
+					<div class="control-group">
+						<label for="purchase_offer" >#i18n{module.stock.billetterie.save_purchase.offerName} :</label>
+						${(purchase.offer.product.name)!} - ${(purchase.offer.date)!} - ${(purchase.offer.hour)!}
+					</div>
+					<div class="control-group">
+						<label for="purchase_offerType" >#i18n{module.stock.billetterie.save_purchase.offerType} :</label>
+						${(purchase.offer.typeName)!}
+					</div>
+					<div class="control-group">
+						<label for="purchase_offerQuantity" >#i18n{module.stock.billetterie.save_purchase.offerQuantity} :</label>
+						${(purchase.offer.quantity)!}
+					</div>
+					<div class="control-group">
+						<#if purchase.id!?has_content && ((purchase.id)! > 0) >
+								<label for="purchase_quantity">#i18n{module.stock.billetterie.save_purchase.nbPurchased} :</label>
+								${purchase.quantity!}
+						<#else>
+								<label for="purchase_quantity">#i18n{module.stock.billetterie.save_purchase.nbPurchase} * :</label>
+					        	<@combo name="quantity" default_value="${purchase.quantity!}" items=quantity_list! />
+						</#if>
+					</div>
+					<div class="control-group">
+						<label for="purchase_userName">#i18n{module.stock.billetterie.save_purchase.userName} * :</label>
+			        	<input type="text" name="userName" id="purchase_userName" value="${purchase.userName!}" />
+					</div>
+					<div class="control-group">
+						<label for="purchase_emailAgent">#i18n{module.stock.billetterie.save_purchase.emailAgent} * :</label>
+			        	<input type="text" name="emailAgent" id="purchase_emailAgent" value="${purchase.emailAgent!}" />
+					</div>
+					<div class="control-group">
+						<label for="purchase_nameAgent">#i18n{module.stock.billetterie.save_purchase.nameAgent} * :</label>
+			        	<input type="text" name="nameAgent" id="purchase_nameAgent" value="${purchase.nameAgent!}" />
+					</div>
+					<div class="control-group">
+						<label for="purchase_firstNameAgent">#i18n{module.stock.billetterie.save_purchase.firstNameAgent} * :</label>
+			        	<input type="text" name="firstNameAgent" id="purchase_firstNameAgent" value="${purchase.firstNameAgent!}" />
+					</div>
+				</div>
+	    	</fieldset>
+	    	<fieldset>
+				<div class="form-actions pagination-centered">
+					<button type="submit" class="btn btn-primary btn-small" tabindex="3" >
+						<i class="icon-ok icon-white"></i>&nbsp;
+						#i18n{module.stock.billetterie.message.buttonSave}
+					</button>
+					<button class="btn btn-small" type="submit" name="cancel">
+						<i class="icon-remove-circle"></i>&nbsp;
+						#i18n{portal.admin.message.buttonCancel}
+					</button>
+				</div>
+	    	</fieldset>
+	   </form>
 	</div>
 </div>

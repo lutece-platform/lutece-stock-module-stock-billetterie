@@ -1,7 +1,7 @@
-<div class="row-fluid">
-	<div class="span12">
-		<fieldset>
-		    <form method="post" action="jsp/admin/plugins/stock/modules/billetterie/DoSavePartner.jsp?partner_id=${partner.id!}">
+<form method="post" action="jsp/admin/plugins/stock/modules/billetterie/DoSavePartner.jsp?partner_id=${partner.id!}">
+	<div class="row-fluid">
+		<div >
+			<fieldset>
 				<legend>
 					#i18n{module.stock.billetterie.modify_partner.title}
 					<span class="pull-right">
@@ -11,74 +11,81 @@
 						</button>
 					</span>
 				</legend>
-		    
-			    ${error!}
-		    	<input type="hidden" id="partner_id" name="id" value="${partner.id!}"/>
-		    	<input type="hidden" id="jsp_back" name="jsp_back" value="${jsp_back!}"/>
-		        <div class="row-fluid">
-					<div class="span3 well"> 
-						<div>
-							<label for="provider_name" >#i18n{module.stock.billetterie.field.PartnerDTO.name} * :</label>
-							<input type="text" id="provider_name" name="name" class="span" maxlength="100" value="${partner.name!}"/>
-						</div>
-						<div>
-							<label for="provider_address" >#i18n{stock.create_provider.address} :</label>
-							<textarea name="address" cols="60" rows="5" maxlength="250">${partner.address!}</textarea> 
-						</div>
-						<div>
-							<label for="provider_comment" >#i18n{stock.create_provider.comment} :</label>
-							<input type="text" id="provider_comment" name="comment" class="span" maxlength="250"  value="${partner.comment!}"/>
-						</div>
-						<br />
-						<div>
-							<label for="provider_accessibility" >#i18n{module.stock.billetterie.create_provider.isAccessible} ? :</label>
-							<input type="checkbox" id="provider_accessibility" name="accessible" class="span" maxlength="250"  <#if partner.accessible! == true> checked </#if> />
-						</div>
-						<div>
-							<label for="provider_accessibility_comment" >#i18n{module.stock.billetterie.create_provider.accessibilityComment} :</label>
-							<textarea name="accessibleComment" cols="60" rows="5" maxlength="250">${partner.accessibleComment!}</textarea> 
-						</div>
-						<br />
-						<div>
-							<label for="provider_metro_comment" >#i18n{module.stock.billetterie.create_provider.metroComment} :</label>
-							<input type="text" id="provider_metro_comment" name="metroComment" class="span" maxlength="250"  value="${partner.metroComment!}"/>
-						</div>
-						<div class="form-actions">
-							<button type="submit" name="save" class="btn btn-primary btn-small" tabindex="3" >
-								<i class="icon-ok icon-white"></i>&nbsp;
-								#i18n{module.stock.billetterie.message.buttonSave}
-							</button>
-							<button class="btn btn-small" type="submit" name="cancel">
-								<i class="icon-remove-circle"></i>&nbsp;
-								#i18n{portal.admin.message.buttonCancel}
-							</button>
-						</div>
+			</fieldset>
+		</div>
+		<div >
+			<fieldset>
+				<div class="span3">
+				    ${error!}
+			    	<input type="hidden" id="partner_id" name="id" value="${partner.id!}"/>
+			    	<input type="hidden" id="jsp_back" name="jsp_back" value="${jsp_back!}"/>
+					<div>
+						<label for="provider_name" >#i18n{module.stock.billetterie.field.PartnerDTO.name} * :</label>
+						<input type="text" id="provider_name" name="name" class="span" maxlength="100" value="${partner.name!}"/>
 					</div>
-						<#if list_contacts?has_content>
-						    <#list list_contacts as contact>
-								<div class="span3 well"> 
-							    	<div>
-										<label for="provider_contact_name" >#i18n{stock.create_provider.contact} :</label>
-										<input type="text" id="provider_contact_name" name="contactForm[${contact_index}].name" class="span" maxlength="60"  value="${contact.name!}"/>
-									</div>
-									<div>
-										<label for="provider_phone_number" >#i18n{stock.create_provider.phoneNumber} :</label>
-										<input type="text" id="provider_phone_number" name="contactForm[${contact_index}].phoneNumber" class="span" maxlength="10"  value="${contact.phoneNumber!}"/>
-									</div>
-							        <div>
-										<label for="provider_mail" >#i18n{stock.create_provider.mail} :</label>
-										<input type="text" id="provider_mail" name="contactForm[${contact_index}].mail" class="span" maxlength="50"  value="${contact.mail!}"/>
-										<br/>
-										<label>&nbsp;</label>
-										<input class="btn btn-primary btn-small" type="submit" name="action_del_contact${contact.id!}" value="#i18n{module.stock.billetterie.manage_partner.deleteContact}"/>
-									</div>
-									<input type="hidden" id="provider_contact_id" name="contactForm[${contact_index}].id" class="span" maxlength="60"  value="${contact.id!}"/>
-						       	</div>
-						    </#list>
-						 </#if>
-		       	</div>
-		
-		   </form>
-		</fieldset>
+					<div>
+						<label for="provider_address" >#i18n{stock.create_provider.address} :</label>
+						<textarea name="address" cols="60" rows="5" maxlength="250">${partner.address!}</textarea> 
+					</div>
+					<div>
+						<label for="provider_comment" >#i18n{stock.create_provider.comment} :</label>
+						<input type="text" id="provider_comment" name="comment" class="span" maxlength="250"  value="${partner.comment!}"/>
+					</div>
+					<div>
+						<label for="provider_accessibility" >
+							#i18n{module.stock.billetterie.create_provider.isAccessible} ? :
+							<input type="checkbox" id="provider_accessibility" name="accessible" maxlength="250"  <#if partner.accessible! == true> checked </#if> />
+						</label>
+					</div>
+					<div>
+						<label for="provider_accessibility_comment" >#i18n{module.stock.billetterie.create_provider.accessibilityComment} :</label>
+						<textarea name="accessibleComment" cols="60" rows="5" maxlength="250">${partner.accessibleComment!}</textarea> 
+					</div>
+					<br />
+					<div>
+						<label for="provider_metro_comment" >#i18n{module.stock.billetterie.create_provider.metroComment} :</label>
+						<input type="text" id="provider_metro_comment" name="metroComment" class="span" maxlength="250"  value="${partner.metroComment!}"/>
+					</div>
+				</div>
+				<#if list_contacts?has_content>
+				    <#list list_contacts as contact>
+						<div class="span3 well"> 
+					    	<div>
+								<label for="provider_contact_name" >#i18n{stock.create_provider.contact} :</label>
+								<input type="text" id="provider_contact_name" name="contactForm[${contact_index}].name" class="span" maxlength="60"  value="${contact.name!}"/>
+							</div>
+							<div>
+								<label for="provider_phone_number" >#i18n{stock.create_provider.phoneNumber} :</label>
+								<input type="text" id="provider_phone_number" name="contactForm[${contact_index}].phoneNumber" class="span" maxlength="10"  value="${contact.phoneNumber!}"/>
+							</div>
+					        <div>
+								<label for="provider_mail" >#i18n{stock.create_provider.mail} :</label>
+								<input type="text" id="provider_mail" name="contactForm[${contact_index}].mail" class="span" maxlength="50"  value="${contact.mail!}"/>
+								<span class="pull-right">
+									<button class="btn btn-danger btn-small" type="submit" name="action_del_contact${contact.id!}">
+										<i class="icon-trash icon-white">&nbsp;</i>
+									</button>
+								</span>
+							</div>
+							<input type="hidden" id="provider_contact_id" name="contactForm[${contact_index}].id" class="span" maxlength="60"  value="${contact.id!}"/>
+				       	</div>
+				    </#list>
+				 </#if>
+		    </fieldset>
+		</div>
+		<div>
+			<fieldset>
+				<div class="pagination-centered form-actions">
+					<button type="submit" name="save" class="btn btn-primary btn-small" tabindex="3" >
+						<i class="icon-ok icon-white"></i>&nbsp;
+						#i18n{module.stock.billetterie.message.buttonSave}
+					</button>
+					<button class="btn btn-small" type="submit" name="cancel">
+						<i class="icon-remove-circle"></i>&nbsp;
+						#i18n{portal.admin.message.buttonCancel}
+					</button>
+				</div>
+			</fieldset>
+		</div>
 	</div>
-</div>
+</form>

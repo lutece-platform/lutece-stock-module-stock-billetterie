@@ -1,11 +1,12 @@
 <div class="row-fluid">
 	<div class="span12">
-		<fieldset>
-			<legend>${title!}</legend>
-			${error!}
-		    <form method="post" action="jsp/admin/plugins/stock/modules/billetterie/DoSaveOffer.jsp">
-		    
-			    <div class="span5 well">
+	    <form method="post" action="jsp/admin/plugins/stock/modules/billetterie/DoSaveOffer.jsp">
+			<fieldset>
+				<legend>${title!}</legend>
+			</fieldset>
+			<fieldset>
+				${error!}
+			    <div>
 			    	<input type="hidden" id="offer_id" name="id" value="${offer.id!}"/>
 			    	<input type="hidden" id="offer_statut" name="statut" value="${offer.statut!}"/>
 			    	<input type="hidden" id="jsp_back" name="jsp_back" value="${jsp_back!}"/>
@@ -52,19 +53,21 @@
 						<input type="text" id="offer_reductPrice" name="reductPrice" size="10" maxlength="50"  value="${(offer.reductPrice?string.number)!}"/>
 						<#setting locale=locale>
 					</div>
-					<div class="form-actions">
-						<button type="submit" name="save" class="btn btn-primary btn-small" tabindex="3" >
-							<i class="icon-ok icon-white"></i>&nbsp;
-							#i18n{module.stock.billetterie.message.buttonSave}
-						</button>
-						<button class="btn btn-small" type="submit" name="cancel">
-							<i class="icon-remove-circle"></i>&nbsp;
-							#i18n{portal.admin.message.buttonCancel}
-						</button>
-					</div>
-			    </div>
-		   </form>
-	   </fieldset>
+				</div>
+			</fieldset>
+			<fieldset>
+				<div class="form-actions pagination-centered">
+					<button type="submit" name="save" class="btn btn-primary btn-small" tabindex="3" >
+						<i class="icon-ok icon-white"></i>&nbsp;
+						#i18n{module.stock.billetterie.message.buttonSave}
+					</button>
+					<button class="btn btn-small" type="submit" name="cancel">
+						<i class="icon-remove-circle"></i>&nbsp;
+						#i18n{portal.admin.message.buttonCancel}
+					</button>
+				</div>
+			</fieldset>
+	   </form>
 	</div>
 </div>
 <@getDatePicker idField="offer_date" language="${locale!}" />

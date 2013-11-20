@@ -84,6 +84,7 @@ public class CategoryJspBean extends AbstractJspBean
 
     /** The constants for DataTableManager */
     public static final String MARK_DATA_TABLE_CATEGORY = "dataTableCategory";
+    public static final String MARK_FILTER_CATEGORY = "filterCategory";
     public static final String MACRO_COLUMN_ACTIONS_CATEGORY = "columnActionsCategory";
     public static final String MACRO_COLUMN_NAME_CATEGORY = "columnNameCategory";
 
@@ -193,14 +194,14 @@ public class CategoryJspBean extends AbstractJspBean
         //Obtention des objets sauvegardés en session
         DataTableManager<ShowCategoryDTO> dataTableFromSession = loadDataTableFromSession( request,
                 MARK_DATA_TABLE_CATEGORY );
-        CategoryFilter filterFromSession = (CategoryFilter) request.getSession( ).getAttribute( TicketsConstants.MARK_FILTER );
+        CategoryFilter filterFromSession = (CategoryFilter) request.getSession( ).getAttribute( MARK_FILTER_CATEGORY);
 
         //si un objet est déjà présent en session, on l'utilise
         DataTableManager<ShowCategoryDTO> dataTableCategory = dataTableFromSession != null ? dataTableFromSession
                 : new DataTableManager<ShowCategoryDTO>( JSP_MANAGE_CATEGORYS, "", 10, true );
         
         //determination de l'utilisation d'un nouveau filtre (recherche) ou de celui présent en session (changement de page)
-        CategoryFilter updateFilter = request.getParameter( TicketsConstants.MARK_FILTER ) != null || filterFromSession==null ? dataTableCategory.getAndUpdateFilter(
+        CategoryFilter updateFilter = request.getParameter( MARK_FILTER_CATEGORY ) != null || filterFromSession==null ? dataTableCategory.getAndUpdateFilter(
                 request, filter ) : filterFromSession;
 
         //si pas d'objet en session, il faut ajouter les colonnes à afficher
@@ -231,7 +232,7 @@ public class CategoryJspBean extends AbstractJspBean
         
         //sauvegarde des elements en sessions
         saveDataTableInSession( request, dataTableCategory, MARK_DATA_TABLE_CATEGORY );
-        request.getSession( ).setAttribute( TicketsConstants.MARK_FILTER, updateFilter );
+        request.getSession( ).setAttribute( MARK_FILTER_CATEGORY, updateFilter );
 
         return getAdminPage( template.getHtml( ) );
     }
