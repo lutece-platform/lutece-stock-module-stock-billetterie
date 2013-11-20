@@ -1,11 +1,18 @@
 <%@ page errorPage="../../../../ErrorPage.jsp" %>
-<jsp:include page="../../../../AdminHeader.jsp" />
 
 <%@page import="fr.paris.lutece.plugins.stock.modules.billetterie.web.OfferJspBean"%>
 <jsp:useBean id="offer" scope="session" class="fr.paris.lutece.plugins.stock.modules.billetterie.web.OfferJspBean" />
 <% 
 offer.init( request, OfferJspBean.RIGHT_MANAGE_OFFERS);
-%>
-<%= offer.getManageOffers( request ) %>
+if(request.getParameter( "masseDelete" )!=null){
+    response.sendRedirect( offer.getMasseDeleteOffer( request ) );
+}
+else{
+	%>
+		<jsp:include page="../../../../AdminHeader.jsp" />
+	    <%= offer.getManageOffers( request ) %>
+		<%@ include file="../../../../AdminFooter.jsp" %>
+	<%  
+}
 
-<%@ include file="../../../../AdminFooter.jsp" %>
+%>

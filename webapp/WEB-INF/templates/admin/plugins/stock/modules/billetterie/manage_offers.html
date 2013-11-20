@@ -96,7 +96,7 @@
 					<div class="span9">
 						<@dataTable dataTableManager=dataTableOffer />
 						<#if dataTableOffer?? && dataTableOffer.items?has_content>
-							<button class="btn btn-danger btn-small" type="submit">
+							<button class="btn btn-danger btn-small" type="submit" name="masseDelete">
 								<i class="icon-trash icon-white"></i>&nbsp;
 								#i18n{module.stock.billetterie.list_offres.button.masseDelete}
 							</button>
