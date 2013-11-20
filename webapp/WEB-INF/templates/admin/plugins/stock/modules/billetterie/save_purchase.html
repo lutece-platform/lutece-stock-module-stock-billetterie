@@ -6,6 +6,8 @@
 	    	</fieldset>
 	    	<fieldset>
 				${error!}
+			</fieldset>
+			<fieldset>
 		    	<input type="hidden" id="purchase_id" name="purchase_id" value="${(purchase.id)!}" />
 		    	<input type="hidden" id="offer_id" name="offer.id" value="${(purchase.offer.id)!}" />
 		    	<input type="hidden" name="offer.product.name" value="${(purchase.offer.product.name)!}" />
@@ -14,43 +16,55 @@
 		    	<input type="hidden" name="offer.typeName" value="${(purchase.offer.typeName)!}" />
 		    	<input type="hidden" name="offer.quantity" value="${(purchase.offer.quantity)!}" />
 		    	<input type="hidden" id="jsp_back" name="jsp_back" value="${jsp_back!}"/>
-		    	<div class="row-fluid">
+		    	<div class="span5 pagination-centered">
+		    		<legend>#i18n{module.stock.billetterie.save_purchase.title.representation}</legend>
 					<div class="control-group">
-						<label for="purchase_offer" >#i18n{module.stock.billetterie.save_purchase.offerName} :</label>
-						${(purchase.offer.product.name)!} - ${(purchase.offer.date)!} - ${(purchase.offer.hour)!}
+						<label for="purchase_offer" >#i18n{module.stock.billetterie.save_purchase.offerName} :
+							${(purchase.offer.product.name)!} - ${(purchase.offer.date)!} - ${(purchase.offer.hour)!}
+						</label>
 					</div>
 					<div class="control-group">
-						<label for="purchase_offerType" >#i18n{module.stock.billetterie.save_purchase.offerType} :</label>
-						${(purchase.offer.typeName)!}
+						<label for="purchase_offerType" >#i18n{module.stock.billetterie.save_purchase.offerType} :
+							${(purchase.offer.typeName)!}
+						</label>
 					</div>
 					<div class="control-group">
-						<label for="purchase_offerQuantity" >#i18n{module.stock.billetterie.save_purchase.offerQuantity} :</label>
-						${(purchase.offer.quantity)!}
+						<label for="purchase_offerQuantity" >#i18n{module.stock.billetterie.save_purchase.offerQuantity} :
+							${(purchase.offer.quantity)!}
+						</label>
 					</div>
 					<div class="control-group">
-						<#if purchase.id!?has_content && ((purchase.id)! > 0) >
-								<label for="purchase_quantity">#i18n{module.stock.billetterie.save_purchase.nbPurchased} :</label>
+						<label for="purchase_quantity">
+							#i18n{module.stock.billetterie.save_purchase.nbPurchased} :
+							<#if purchase.id!?has_content && ((purchase.id)! > 0) >
 								${purchase.quantity!}
-						<#else>
-								<label for="purchase_quantity">#i18n{module.stock.billetterie.save_purchase.nbPurchase} * :</label>
+							<#else>
 					        	<@combo name="quantity" default_value="${purchase.quantity!}" items=quantity_list! />
-						</#if>
+							</#if>
+						</label>
+					</div>
+				</div>
+				<div class="span5 pagination-centered">
+					<legend>#i18n{module.stock.billetterie.save_purchase.title.agent}</legend>
+					<div class="control-group">
+						<label for="purchase_userName">#i18n{module.stock.billetterie.save_purchase.userName} * :
+			        		<input type="text" name="userName" id="purchase_userName" value="${purchase.userName!}" />
+			        	</label>
 					</div>
 					<div class="control-group">
-						<label for="purchase_userName">#i18n{module.stock.billetterie.save_purchase.userName} * :</label>
-			        	<input type="text" name="userName" id="purchase_userName" value="${purchase.userName!}" />
+						<label for="purchase_emailAgent">#i18n{module.stock.billetterie.save_purchase.emailAgent} * :
+			        		<input type="text" name="emailAgent" id="purchase_emailAgent" value="${purchase.emailAgent!}" />
+			        	</label>
 					</div>
 					<div class="control-group">
-						<label for="purchase_emailAgent">#i18n{module.stock.billetterie.save_purchase.emailAgent} * :</label>
-			        	<input type="text" name="emailAgent" id="purchase_emailAgent" value="${purchase.emailAgent!}" />
+						<label for="purchase_nameAgent">#i18n{module.stock.billetterie.save_purchase.nameAgent} * :
+			        		<input type="text" name="nameAgent" id="purchase_nameAgent" value="${purchase.nameAgent!}" />
+			        	</label>
 					</div>
 					<div class="control-group">
-						<label for="purchase_nameAgent">#i18n{module.stock.billetterie.save_purchase.nameAgent} * :</label>
-			        	<input type="text" name="nameAgent" id="purchase_nameAgent" value="${purchase.nameAgent!}" />
-					</div>
-					<div class="control-group">
-						<label for="purchase_firstNameAgent">#i18n{module.stock.billetterie.save_purchase.firstNameAgent} * :</label>
-			        	<input type="text" name="firstNameAgent" id="purchase_firstNameAgent" value="${purchase.firstNameAgent!}" />
+						<label for="purchase_firstNameAgent">#i18n{module.stock.billetterie.save_purchase.firstNameAgent} * :
+			        		<input type="text" name="firstNameAgent" id="purchase_firstNameAgent" value="${purchase.firstNameAgent!}" />
+			        	</label>
 					</div>
 				</div>
 	    	</fieldset>
