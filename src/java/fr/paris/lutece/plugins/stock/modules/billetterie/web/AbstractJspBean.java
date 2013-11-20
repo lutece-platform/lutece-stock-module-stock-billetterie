@@ -33,22 +33,23 @@
  */
 package fr.paris.lutece.plugins.stock.modules.billetterie.web;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolation;
+import javax.validation.Path;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
-import fr.paris.lutece.plugins.stock.business.product.ProductFilter;
 import fr.paris.lutece.plugins.stock.commons.ResultList;
 import fr.paris.lutece.plugins.stock.commons.dao.PaginationProperties;
 import fr.paris.lutece.plugins.stock.commons.dao.PaginationPropertiesAdapterDataTable;
@@ -56,7 +57,6 @@ import fr.paris.lutece.plugins.stock.commons.dao.PaginationPropertiesImpl;
 import fr.paris.lutece.plugins.stock.commons.exception.BusinessException;
 import fr.paris.lutece.plugins.stock.commons.exception.FunctionnalException;
 import fr.paris.lutece.plugins.stock.commons.exception.ValidationException;
-import fr.paris.lutece.plugins.stock.modules.tickets.business.ShowDTO;
 import fr.paris.lutece.plugins.stock.modules.tickets.utils.constants.TicketsConstants;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
@@ -264,7 +264,7 @@ public class AbstractJspBean extends PluginAdminPageJspBean
             for ( ConstraintViolation<?> constraintViolation : ve.getConstraintViolationList( ) )
             {
                 String fieldName = getMessage( FIELD_MESSAGE_PREFIX + typeName + "."
-                        + constraintViolation.getPropertyPath( ) );
+                        + correctPath( constraintViolation.getPropertyPath( ) ) );
                 messageList.add( getMessage( ERROR_MESSAGE_KEY,
                         String.valueOf( constraintViolation.getInvalidValue( ) ), fieldName,
                         constraintViolation.getMessage( ) ) );
@@ -280,6 +280,26 @@ public class AbstractJspBean extends PluginAdminPageJspBean
 
         HtmlTemplate template = AppTemplateService.getTemplate( ERROR_TEMPLATE, getLocale( ), model );
         return template.getHtml( );
+    }
+
+    /**
+     * Ensure path given which use indexing value like [%d] is cleaning
+     * @param propertyPath the property path to clean
+     * @return the right i18n key
+     */
+    private String correctPath( Path propertyPath )
+    {
+        String path = propertyPath.toString( );
+
+        Pattern pattern = Pattern.compile( "\\[\\d*\\]" );
+        Matcher matcher = pattern.matcher( path );
+        if ( matcher.find( ) )
+        {
+            path = path.substring( 0, matcher.start( ) )
+                    + path.substring( matcher.start( ) + matcher.group( ).length( ), path.length( ) );
+        }
+
+        return path;
     }
 
     /**
@@ -312,7 +332,9 @@ public class AbstractJspBean extends PluginAdminPageJspBean
 
         @SuppressWarnings( "unchecked" )
         T filterFromSession = (T) request.getSession( ).getAttribute( markFilter );
-        T filterToUse = request.getParameter( TicketsConstants.MARK_FILTER ) != null || filterFromSession == null ? dataTable
+        //1) est-ce qu'une recherche vient d'être faite ? 2) est-ce qu'un filtre existe en session ? 3) est-ce que le filtre en session est d'un type héritant du fitre fournit en parametre ?
+        T filterToUse = request.getParameter( TicketsConstants.MARK_FILTER ) != null || filterFromSession == null
+                || !filterFromSession.getClass( ).isAssignableFrom( filter.getClass( ) ) ? dataTable
                 .getAndUpdateFilter( request, filter ) : filterFromSession;
         return filterToUse;
     }
@@ -335,15 +357,15 @@ public class AbstractJspBean extends PluginAdminPageJspBean
     }
 
     @SuppressWarnings( "unchecked" )
-    protected<T> DataTableManager<T> getAbstractDataTableManager( HttpServletRequest request, Object filter,
-            String keyDataTable, String keyFilter, String jspManage, Object service, Method findByFilter )
+    protected <T> DataTableManager<T> getAbstractDataTableManager( HttpServletRequest request, Object filter,
+            String keyDataTable, String jspManage, Object service, Method findByFilter )
     {
 
         //si un objet est déjà présent en session, on l'utilise
         DataTableManager<T> dataTableToUse = getDataTableToUse( request, keyDataTable, jspManage );
 
         //determination de l'utilisation d'un nouveau filtre (recherche) ou de celui présent en session (changement de page)
-        Object filterToUse = getFilterToUse( request, filter, keyFilter, dataTableToUse );
+        Object filterToUse = getFilterToUse( request, filter, MARK_FILTER, dataTableToUse );
         BeanUtils.copyProperties( filterToUse, filter );
 
         //mise à jour de la pagination dans le data table pour l'afficahge de la page courante et du nombre d'items
@@ -353,25 +375,17 @@ public class AbstractJspBean extends PluginAdminPageJspBean
         PaginationPropertiesAdapterDataTable paginationProperties = new PaginationPropertiesAdapterDataTable(
                 updatePaginator );
 
-        ResultList<T> listAllProduct = null;
+        ResultList<T> listAllBean = null;
         try
         {
-            listAllProduct = (ResultList<T>) findByFilter.invoke( service, filterToUse, paginationProperties );
+            listAllBean = (ResultList<T>) findByFilter.invoke( service, filterToUse, paginationProperties );
         }
-        catch ( IllegalArgumentException e )
+        catch ( Exception e )
         {
-            e.printStackTrace( );
+            LOGGER.error( "Erreur lors de l'obtention de la liste des beans : " + e );
         }
-        catch ( IllegalAccessException e )
-        {
-            e.printStackTrace( );
-        }
-        catch ( InvocationTargetException e )
-        {
-            e.printStackTrace( );
-        }
-        request.getSession( ).setAttribute( keyFilter, filterToUse );
-        dataTableToUse.setItems( listAllProduct, listAllProduct.getTotalResult( ) );
+        request.getSession( ).setAttribute( MARK_FILTER, filterToUse );
+        dataTableToUse.setItems( listAllBean, listAllBean.getTotalResult( ) );
 
         return dataTableToUse;
     }

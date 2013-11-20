@@ -373,7 +373,7 @@ public class OfferJspBean extends AbstractJspBean
             LOGGER.error( "Erreur lors de l'obtention du data table : ", e );
         }
         DataTableManager<T> dataTableToUse = getAbstractDataTableManager( request, filter, MARK_DATA_TABLE_OFFER,
-                MARK_FILTER_OFFER, JSP_MANAGE_OFFERS, _serviceOffer, findMethod );
+                JSP_MANAGE_OFFERS, _serviceOffer, findMethod );
 
         //si pas d'objet en session, il faut ajouter les colonnes à afficher
         if ( true || dataTableToUse.getListColumn( ).isEmpty( ) )

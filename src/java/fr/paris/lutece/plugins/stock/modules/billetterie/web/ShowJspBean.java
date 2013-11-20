@@ -333,7 +333,7 @@ public class ShowJspBean extends AbstractJspBean
             LOGGER.error( "Erreur lors de l'obtention du data table : ", e );
         }
         DataTableManager<ShowDTO> dataTableToUse = getAbstractDataTableManager( request, filter,
-                MARK_DATA_TABLE_PRODUCT, MARK_FILTER_PRODUCT, JSP_MANAGE_PRODUCTS, _serviceProduct, findMethod );
+                MARK_DATA_TABLE_PRODUCT, JSP_MANAGE_PRODUCTS, _serviceProduct, findMethod );
 
         //si pas d'objet en session, il faut ajouter les colonnes à afficher
         if ( dataTableToUse.getListColumn( ).isEmpty( ) )

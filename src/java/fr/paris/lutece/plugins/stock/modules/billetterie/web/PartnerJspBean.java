@@ -39,8 +39,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.ConstraintViolation;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -65,7 +67,9 @@ import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPathService;
+import fr.paris.lutece.portal.web.constants.Messages;
 import fr.paris.lutece.portal.web.constants.Parameters;
+import fr.paris.lutece.util.beanvalidation.ValidationError;
 import fr.paris.lutece.util.datatable.DataTableManager;
 import fr.paris.lutece.util.html.HtmlTemplate;
 import fr.paris.lutece.util.url.UrlItem;
@@ -238,7 +242,7 @@ public class PartnerJspBean extends AbstractJspBean
             LOGGER.error( "Erreur lors de l'obtention du data table : ",e );
         }
         DataTableManager<T> dataTableToUse = getAbstractDataTableManager( request, filter,
-                MARK_DATA_TABLE_PARTNER, MARK_FILTER_PARTNER, JSP_MANAGE_PARTNERS, _serviceProvider,findMethod );
+                MARK_DATA_TABLE_PARTNER, JSP_MANAGE_PARTNERS, _serviceProvider,findMethod );
 
         //si pas d'objet en session, il faut ajouter les colonnes à afficher
         if ( request.getSession( ).getAttribute( MARK_DATA_TABLE_PARTNER) == null )
@@ -361,6 +365,12 @@ public class PartnerJspBean extends AbstractJspBean
         {
             // Controls mandatory fields
             validateBilletterie( provider );
+            List<ValidationError> errors = validate( provider , "" );
+            if (errors.size() > 0)
+            {
+                return AdminMessageService.getMessageUrl( request, Messages.MESSAGE_INVALID_ENTRY, errors );
+            }
+            
             _serviceProvider.doSaveProvider( provider );
 
             if ( !provider.isAccessible( ) && provider.getAccessibleComment( ) != StringUtils.EMPTY )

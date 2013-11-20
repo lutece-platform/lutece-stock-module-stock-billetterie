@@ -391,7 +391,7 @@ public class PurchaseJspBean extends AbstractJspBean
             LOGGER.error( "Erreur lors de l'obtention du data table : ", e );
         }
         DataTableManager<T> dataTableToUse = getAbstractDataTableManager( request, filter, MARK_DATA_TABLE_PURCHASE,
-                MARK_FILTER_PURCHASE, JSP_MANAGE_PURCHASES, _servicePurchase, findMethod );
+                JSP_MANAGE_PURCHASES, _servicePurchase, findMethod );
 
         //si pas d'objet en session, il faut ajouter les colonnes à afficher
         if ( dataTableToUse.getListColumn( ).isEmpty( ) )

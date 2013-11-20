@@ -229,7 +229,7 @@ public class CategoryJspBean extends AbstractJspBean
             LOGGER.error( "Erreur lors de l'obtention du data table : ", e );
         }
         DataTableManager<ShowCategoryDTO> dataTableToUse = getAbstractDataTableManager( request, filter,
-                MARK_DATA_TABLE_CATEGORY, MARK_FILTER_CATEGORY, JSP_MANAGE_CATEGORYS, _serviceCategory, findMethod );
+                MARK_DATA_TABLE_CATEGORY, JSP_MANAGE_CATEGORYS, _serviceCategory, findMethod );
 
         //si pas d'objet en session, il faut ajouter les colonnes à afficher
         if ( dataTableToUse.getListColumn( ).isEmpty( ) )
@@ -239,7 +239,7 @@ public class CategoryJspBean extends AbstractJspBean
             dataTableToUse.addFreeColumn( "module.stock.billetterie.manage_category.actionsLabel",
                     MACRO_COLUMN_ACTIONS_CATEGORY );
         }
-        saveDataTableInSession( request, dataTableToUse, MARK_DATA_TABLE_CATEGORY);
+        saveDataTableInSession( request, dataTableToUse, MARK_DATA_TABLE_CATEGORY );
         return dataTableToUse;
     }
 
