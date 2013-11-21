@@ -376,9 +376,8 @@ public class OfferJspBean extends AbstractJspBean
                 JSP_MANAGE_OFFERS, _serviceOffer, findMethod );
 
         //si pas d'objet en session, il faut ajouter les colonnes à afficher
-        if ( true || dataTableToUse.getListColumn( ).isEmpty( ) )
+        if ( dataTableToUse.getListColumn( ).isEmpty( ) )
         {
-            dataTableToUse.setListColumn( new ArrayList<DataTableColumn>( ) );
             dataTableToUse.addFreeColumn( StringUtils.EMPTY, MACRO_COLUMN_STATUT_OFFER );
             dataTableToUse.addFreeColumn( StringUtils.EMPTY, MACRO_COLUMN_CHECKBOX_DELETE_OFFER );
             dataTableToUse.addFreeColumn( "module.stock.billetterie.list_offres.filter.name", MACRO_COLUMN_NAME_OFFER );

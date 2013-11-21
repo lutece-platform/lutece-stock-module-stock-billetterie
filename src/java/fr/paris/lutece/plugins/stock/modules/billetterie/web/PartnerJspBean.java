@@ -245,7 +245,7 @@ public class PartnerJspBean extends AbstractJspBean
                 MARK_DATA_TABLE_PARTNER, JSP_MANAGE_PARTNERS, _serviceProvider,findMethod );
 
         //si pas d'objet en session, il faut ajouter les colonnes à afficher
-        if ( request.getSession( ).getAttribute( MARK_DATA_TABLE_PARTNER) == null )
+        if ( dataTableToUse.getListColumn( ).isEmpty( ) )
         {
             dataTableToUse.addFreeColumn( "module.stock.billetterie.manage_category.filter.name",
                     MACRO_COLUMN_NAME_PARTNER );

@@ -256,6 +256,7 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
                             booking.getOffer( ).setTypeName( seanceTypeNameList[i] );
                             booking.setQuantity( nbPlaces );
                             booking.setDate( DateUtils.getCurrentDateString( ) );
+                            booking.setHeure( DateUtils.getHourFr( DateUtils.getCurrentDate( ) ) );
                             if ( user != null )
                             {
                                 booking.setUserName( user.getName( ) );

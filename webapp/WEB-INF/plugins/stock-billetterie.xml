@@ -213,5 +213,12 @@
 		</portlet>
 	</portlets>
 
-
+    <daemons>
+        <daemon>
+            <daemon-id>purchaseClear</daemon-id>
+            <daemon-name>module.stock.billetterie.daemon.purchase.clear.name</daemon-name>
+            <daemon-description>module.stock.billetterie.daemon.purchase.clear.description</daemon-description>
+            <daemon-class>fr.paris.lutece.plugins.stock.modules.billetterie.service.PurchaseClearDaemon</daemon-class>
+        </daemon>
+     </daemons>
 </plug-in>

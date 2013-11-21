@@ -15,21 +15,21 @@
 		</div>
 		<div >
 			<fieldset>
-				<div class="span3">
+				<div class="span6">
 				    ${error!}
 			    	<input type="hidden" id="partner_id" name="id" value="${partner.id!}"/>
 			    	<input type="hidden" id="jsp_back" name="jsp_back" value="${jsp_back!}"/>
 					<div>
 						<label for="provider_name" >#i18n{module.stock.billetterie.field.PartnerDTO.name} * :</label>
-						<input type="text" id="provider_name" name="name" class="span" maxlength="100" value="${partner.name!}"/>
+						<input type="text" id="provider_name" name="name" class="input-large" maxlength="100" value="${partner.name!}"/>
 					</div>
 					<div>
 						<label for="provider_address" >#i18n{stock.create_provider.address} :</label>
-						<textarea name="address" cols="60" rows="5" maxlength="250">${partner.address!}</textarea> 
+						<textarea name="address" cols="30" rows="5" maxlength="250">${partner.address!}</textarea> 
 					</div>
 					<div>
 						<label for="provider_comment" >#i18n{stock.create_provider.comment} :</label>
-						<input type="text" id="provider_comment" name="comment" class="span" maxlength="250"  value="${partner.comment!}"/>
+						<input type="text" id="provider_comment" name="comment" class="input-large" maxlength="250"  value="${partner.comment!}"/>
 					</div>
 					<div>
 						<label for="provider_accessibility" >
@@ -44,7 +44,7 @@
 					<br />
 					<div>
 						<label for="provider_metro_comment" >#i18n{module.stock.billetterie.create_provider.metroComment} :</label>
-						<input type="text" id="provider_metro_comment" name="metroComment" class="span" maxlength="250"  value="${partner.metroComment!}"/>
+						<input type="text" id="provider_metro_comment" name="metroComment" class="input-large" maxlength="250"  value="${partner.metroComment!}"/>
 					</div>
 				</div>
 				<#if list_contacts?has_content>

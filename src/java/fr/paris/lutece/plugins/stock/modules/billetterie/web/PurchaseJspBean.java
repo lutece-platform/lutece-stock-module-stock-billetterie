@@ -47,10 +47,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
-import fr.paris.lutece.plugins.stock.business.category.CategoryFilter;
 import fr.paris.lutece.plugins.stock.business.purchase.PurchaseFilter;
 import fr.paris.lutece.plugins.stock.business.purchase.exception.PurchaseUnavailable;
-import fr.paris.lutece.plugins.stock.commons.ResultList;
 import fr.paris.lutece.plugins.stock.commons.dao.PaginationProperties;
 import fr.paris.lutece.plugins.stock.commons.exception.BusinessException;
 import fr.paris.lutece.plugins.stock.commons.exception.FunctionnalException;
@@ -59,7 +57,6 @@ import fr.paris.lutece.plugins.stock.modules.tickets.business.NotificationDTO;
 import fr.paris.lutece.plugins.stock.modules.tickets.business.ReservationDTO;
 import fr.paris.lutece.plugins.stock.modules.tickets.business.ReservationFilter;
 import fr.paris.lutece.plugins.stock.modules.tickets.business.SeanceDTO;
-import fr.paris.lutece.plugins.stock.modules.tickets.business.ShowCategoryDTO;
 import fr.paris.lutece.plugins.stock.modules.tickets.service.INotificationService;
 import fr.paris.lutece.plugins.stock.modules.tickets.service.IPurchaseService;
 import fr.paris.lutece.plugins.stock.modules.tickets.service.ISeanceService;
@@ -81,7 +78,6 @@ import fr.paris.lutece.portal.web.constants.Parameters;
 import fr.paris.lutece.util.ReferenceItem;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.datatable.DataTableManager;
-import fr.paris.lutece.util.html.DelegatePaginator;
 import fr.paris.lutece.util.html.HtmlTemplate;
 import fr.paris.lutece.util.url.UrlItem;
 
@@ -188,7 +184,6 @@ public class PurchaseJspBean extends AbstractJspBean
     // BEANS
     private static final String BEAN_STOCK_TICKETS_SEANCE_SERVICE = "stock-tickets.seanceService";
 
-    private static final String MARK_LIST_PURCHASES = "list_purchases";
     // JSP
     private static final String JSP_MANAGE_PURCHASES = "jsp/admin/plugins/stock/modules/billetterie/ManagePurchase.jsp";
     private static final String JSP_DO_DELETE_PURCHASE = "jsp/admin/plugins/stock/modules/billetterie/DoDeletePurchase.jsp";
@@ -223,9 +218,6 @@ public class PurchaseJspBean extends AbstractJspBean
     private static final String ORDER_FILTER_OFFER_PRODUCT_NAME = "offer.product.name";
 
     // MEMBERS VARIABLES
-    // Paginator
-    private int _nDefaultItemsPerPage;
-    private String _strCurrentPageIndex;
     // @Inject
     private IPurchaseService _servicePurchase;
     // @Inject
