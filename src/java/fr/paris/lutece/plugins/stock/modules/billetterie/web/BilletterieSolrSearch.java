@@ -51,15 +51,21 @@ import org.apache.log4j.Logger;
 
 /**
  * Used for special solr queries
- *
+ * 
  * @author abataille
  */
-public class BilletterieSolrSearch extends HttpServlet {
+public class BilletterieSolrSearch extends HttpServlet
+{
 
     /**  
      *
      */
     private static final long serialVersionUID = -806886865678792151L;
+
+    private static final String MARK_QUOI = "quoi";
+    private static final String MARK_OU = "ou";
+    private static final String MARK_QUAND = "quand";
+    private static final String MARK_QUERY = "query";
 
     private static final Logger LOGGER = Logger.getLogger( BilletterieSolrSearch.class );
 
@@ -74,19 +80,45 @@ public class BilletterieSolrSearch extends HttpServlet {
     protected void doGet( HttpServletRequest request, HttpServletResponse response ) throws ServletException,
             IOException
     {
-        StringBuilder sbReq = new StringBuilder( 100 );
-        sbReq.append( AppPathService.getBaseUrl( request ) ).append( "jsp/site/Portal.jsp?page=search-solr&" )
-                .append( request.getQueryString( ) );
+        StringBuilder sbReq = new StringBuilder( "" );
+        sbReq.append( AppPathService.getBaseUrl( request ) ).append( "jsp/site/Portal.jsp?page=search-solr" );
+
+        StringBuilder sbFilter = new StringBuilder( "" );
+        StringBuilder sbSort = new StringBuilder( "&sort_name=end_date&sort_order=desc" );
 
         SimpleDateFormat sdfXml = new SimpleDateFormat( DateUtils.XML_DATE_FORMAT );
         String sShowDateStart = request.getParameter( "show_date_start" );
         String sShowDateEnd = request.getParameter( "show_date_end" );
+
+        String sQuoi = request.getParameter( MARK_QUOI );
+        String sOu = request.getParameter( MARK_OU );
+        String sQuand = request.getParameter( MARK_QUAND );
+
+        String sQuery = request.getParameter( MARK_QUERY );
+
+        if ( StringUtils.isNotEmpty( sQuery ) )
+        {
+            sbReq.append( "&query=" + sQuery );
+        }
+
+        if ( StringUtils.isNotEmpty( sQuoi ) )
+        {
+            sbFilter.append( sQuoi );
+        }
+        if ( StringUtils.isNotEmpty( sOu ) )
+        {
+            sbFilter.append( sOu );
+        }
+        if ( StringUtils.isNotEmpty( sQuand ) )
+        {
+            sbFilter.append( sQuand );
+        }
+
         if ( StringUtils.isNotEmpty( sShowDateStart ) )
         {
-
             Timestamp showDateStart = DateUtils.getDate( sShowDateStart, true );
             String sXmlShowDateStart = sdfXml.format( showDateStart );
-            sbReq.append( "&fq=end_date:[" ).append( sXmlShowDateStart ).append( " TO *]" );
+            sbFilter.append( "&fq=end_date:[" ).append( sXmlShowDateStart ).append( " TO *]" );
         }
         if ( StringUtils.isNotEmpty( sShowDateEnd ) )
         {
@@ -94,12 +126,23 @@ public class BilletterieSolrSearch extends HttpServlet {
             Timestamp showDateEnd = DateUtils.getDate( sShowDateEnd, true );
             String sXmlShowDateEnd = sdfXml.format( showDateEnd );
 
-            sbReq.append( "&fq=start_date:[* TO " ).append( sXmlShowDateEnd ).append( "]" );
+            sbFilter.append( "&fq=start_date:[* TO " ).append( sXmlShowDateEnd ).append( "]" );
         }
+
+        if ( sbFilter.toString( ).isEmpty( ) && StringUtils.isEmpty( sQuery ) )
+        {
+            // Create default filter
+            sbReq.append( "&fq=full_string:false&fq=end_date:[NOW TO *]" );
+        }
+        else
+        {
+            sbReq.append( sbFilter.toString( ) );
+        }
+
+        sbReq.append( sbSort.toString( ) );
 
         LOGGER.debug( "Requête SOLR de date, redirection vers " + sbReq.toString( ) );
         response.sendRedirect( sbReq.toString( ) );
 
     }
-
 }
