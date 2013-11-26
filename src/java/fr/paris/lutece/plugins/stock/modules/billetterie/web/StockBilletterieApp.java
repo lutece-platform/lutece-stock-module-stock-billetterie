@@ -33,20 +33,6 @@
  */
 package fr.paris.lutece.plugins.stock.modules.billetterie.web;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.lang.StringUtils;
-
 import fr.paris.lutece.plugins.stock.commons.exception.FunctionnalException;
 import fr.paris.lutece.plugins.stock.commons.exception.TechnicalException;
 import fr.paris.lutece.plugins.stock.modules.tickets.business.SeanceDTO;
@@ -57,7 +43,6 @@ import fr.paris.lutece.plugins.stock.modules.tickets.service.ISeanceService;
 import fr.paris.lutece.plugins.stock.modules.tickets.service.IShowService;
 import fr.paris.lutece.plugins.stock.modules.tickets.utils.constants.TicketsConstants;
 import fr.paris.lutece.plugins.stock.service.IPurchaseSessionManager;
-import fr.paris.lutece.plugins.stock.service.ISubscriptionProductService;
 import fr.paris.lutece.plugins.stock.utils.DateUtils;
 import fr.paris.lutece.portal.service.message.SiteMessageException;
 import fr.paris.lutece.portal.service.plugin.Plugin;
@@ -71,6 +56,20 @@ import fr.paris.lutece.portal.web.xpages.XPageApplication;
 import fr.paris.lutece.util.ReferenceItem;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.html.HtmlTemplate;
+
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang.StringUtils;
 
 
 /**
@@ -139,7 +138,6 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
     private static final String MAX_RESERVATION_INVITATION_ENFANT = "nb_max_invitation_enfant";
     private static final String MAX_RESERVATION_TARIF_REDUIT = "nb_max_tarif_reduit";
     private static final String STRING_TRUE = "true";
-    private static final String STRING_FALSE = "false";
 
     private static final int BOOKING_OPENED = 0;
     private static final int BOOKING_TO_COME = 1;
@@ -150,14 +148,13 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
 
     private IShowService _showService = (IShowService) SpringContextService.getContext( ).getBean(
             BEAN_STOCK_TICKETS_SHOW_SERVICE );
-    private IProviderService _providerService = (IProviderService) SpringContextService.getContext( ).getBean(
-            IProviderService.class );
-    private ISubscriptionProductService _subscriptionProductService = (ISubscriptionProductService) SpringContextService
-            .getContext( ).getBean( ISubscriptionProductService.class );
+    private IProviderService _providerService = SpringContextService.getContext( ).getBean( IProviderService.class );
+    //    private ISubscriptionProductService _subscriptionProductService = SpringContextService.getContext( ).getBean(
+    //            ISubscriptionProductService.class );
     private ISeanceService _offerService = (ISeanceService) SpringContextService.getContext( ).getBean(
             BEAN_STOCK_TICKETS_SEANCE_SERVICE );
-    private final IPurchaseSessionManager _purchaseSessionManager = (IPurchaseSessionManager) SpringContextService
-            .getContext( ).getBean( IPurchaseSessionManager.class );
+    private final IPurchaseSessionManager _purchaseSessionManager = SpringContextService.getContext( ).getBean(
+            IPurchaseSessionManager.class );
 
     /**
      * Return page with action specified.

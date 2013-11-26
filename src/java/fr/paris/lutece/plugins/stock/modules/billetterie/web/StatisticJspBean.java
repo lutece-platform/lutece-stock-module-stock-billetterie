@@ -467,18 +467,34 @@ public class StatisticJspBean extends AbstractJspBean
                     +
                 strFormatExtension;
             TicketsExportUtils.addHeaderResponse( request, response, strFileName, strFormatExtension );
-            response.setContentLength( (int) byteFileOutPut.length );
+            response.setContentLength( byteFileOutPut.length );
 
             OutputStream os = response.getOutputStream(  );
             os.write( byteFileOutPut );
-            os.close(  );
-
-            csvWriter.close(  );
-            strWriter.close(  );
+            // We do not close the output stream to allow HTTP keep alive
         }
         catch ( IOException e )
         {
-            AppLogService.error( e );
+            AppLogService.error( e.getMessage( ), e );
+        }
+        finally
+        {
+            try
+            {
+                csvWriter.close( );
+            }
+            catch ( IOException e )
+            {
+                AppLogService.error( e.getMessage( ), e );
+            }
+            try
+            {
+                strWriter.close( );
+            }
+            catch ( IOException e )
+            {
+                AppLogService.error( e.getMessage( ), e );
+            }
         }
 
         UrlItem url = new UrlItem( getManageProducts( request ) );

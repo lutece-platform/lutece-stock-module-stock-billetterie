@@ -33,20 +33,6 @@
  */
 package fr.paris.lutece.plugins.stock.modules.billetterie.web;
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.ConstraintViolation;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-
 import fr.paris.lutece.plugins.stock.business.provider.ProviderFilter;
 import fr.paris.lutece.plugins.stock.commons.ResultList;
 import fr.paris.lutece.plugins.stock.commons.dao.PaginationProperties;
@@ -73,6 +59,18 @@ import fr.paris.lutece.util.beanvalidation.ValidationError;
 import fr.paris.lutece.util.datatable.DataTableManager;
 import fr.paris.lutece.util.html.HtmlTemplate;
 import fr.paris.lutece.util.url.UrlItem;
+
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 
 
 /**
@@ -319,14 +317,14 @@ public class PartnerJspBean extends AbstractJspBean
 
         }
 
-        // Add the JSP wich called this action
+        // Add the JSP which called this action
         model.put( StockConstants.MARK_JSP_BACK, request.getParameter( StockConstants.MARK_JSP_BACK ) );
 
-        String strNumberContact = request.getParameter( MARK_PARTNER_NUMBER_CONTACT );
-        int numberContact = strNumberContact == null ? 0 : Integer.valueOf( strNumberContact );
+        //        String strNumberContact = request.getParameter( MARK_PARTNER_NUMBER_CONTACT );
+        //        int numberContact = strNumberContact == null ? 0 : Integer.valueOf( strNumberContact );
         if ( request.getParameter( PARAMETER_ADD_CONTACT ) != null )
         {
-            numberContact++;
+            //            numberContact++;
             populate( provider, request );
         }
         model.put( MARK_PARTNER, provider );

@@ -34,18 +34,13 @@
 package fr.paris.lutece.plugins.stock.modules.billetterie.web;
 
 import fr.paris.lutece.plugins.stock.business.product.Product;
-import fr.paris.lutece.plugins.stock.business.subscription.SubscriptionProduct;
-import fr.paris.lutece.plugins.stock.business.subscription.SubscriptionProductFilter;
-import fr.paris.lutece.plugins.stock.commons.exception.FunctionnalException;
-import fr.paris.lutece.plugins.stock.modules.tickets.service.IShowService;
 import fr.paris.lutece.plugins.stock.service.ISubscriptionProductService;
 import fr.paris.lutece.portal.service.security.LuteceUser;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 
-import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 
@@ -54,12 +49,14 @@ import org.apache.log4j.Logger;
  * create, modify, remove)
  * @author jchaline
  */
-public class SubscriptionProductJspBean  extends AbstractJspBean
+public class SubscriptionProductJspBean extends AbstractJspBean
 {
     public static final Logger LOGGER = Logger.getLogger( SubscriptionProductJspBean.class );
-    
+
     // PARAMETERS
     public static final String PARAMETER_PRODUCT_ID = "product_id";
+
+    private static final long serialVersionUID = -4663062407048172927L;
 
     /** The Constant JSP_SAVE_PRODUCT. */
     private static final String JSP_PORTAL = "Portal.jsp";
@@ -68,43 +65,31 @@ public class SubscriptionProductJspBean  extends AbstractJspBean
     private static final String BEAN_STOCK_TICKETS_SHOW_SERVICE = "stock-tickets.showService";
 
     // SERVICE
-    private IShowService _serviceProduct;
     private ISubscriptionProductService _subscriptionProductService;
 
     /**
      * Instantiates a new offer jsp bean.
      */
-    public SubscriptionProductJspBean(  )
+    public SubscriptionProductJspBean( )
     {
-        super(  );
+        super( );
 
-        _serviceProduct = (IShowService) SpringContextService.getBean( BEAN_STOCK_TICKETS_SHOW_SERVICE );
-        _subscriptionProductService = (ISubscriptionProductService) SpringContextService.getContext( ).getBean(
-                ISubscriptionProductService.class );
+        _subscriptionProductService = SpringContextService.getContext( ).getBean( ISubscriptionProductService.class );
     }
 
     /**
      * Create the subscription for the user
-     * @param request the http request
+     * @param request the HTTP request
      * @param currentUser the user who subscribe
      * @return an error if occur, null otherwise
      */
     public String doSubscribeToProduct( HttpServletRequest request, LuteceUser currentUser )
     {
         String strIdProduct = request.getParameter( PARAMETER_PRODUCT_ID );
-        int idProduct = Integer.valueOf( strIdProduct );
-
-        Product productToSubscribe = _serviceProduct.findById( idProduct ).convert( );
-        SubscriptionProduct subscriptionProduct = new SubscriptionProduct( );
-        subscriptionProduct.setProduct( productToSubscribe );
-        subscriptionProduct.setUserName( currentUser.getUserInfo( LuteceUser.HOME_INFO_ONLINE_EMAIL ) );
-        try
+        if ( StringUtils.isNotEmpty( strIdProduct ) && StringUtils.isNumeric( strIdProduct ) )
         {
-            _subscriptionProductService.doSaveSubscriptionProduct( subscriptionProduct );
-        }
-        catch ( FunctionnalException e )
-        {
-            return manageFunctionnalException( request, e, JSP_PORTAL );
+            _subscriptionProductService.doSaveSubscriptionProduct(
+                    currentUser.getUserInfo( LuteceUser.HOME_INFO_ONLINE_EMAIL ), strIdProduct );
         }
 
         return null;
@@ -112,74 +97,53 @@ public class SubscriptionProductJspBean  extends AbstractJspBean
 
     /**
      * Create the subscription for the user
-     * @param request the http request
+     * @param request the HTTP request
      * @param currentUser the user who subscribe
      * @return an error if occur, null otherwise
      */
     public String doUnsubscribeToProduct( HttpServletRequest request, LuteceUser currentUser )
     {
         String strIdProduct = request.getParameter( PARAMETER_PRODUCT_ID );
-        int idProduct = Integer.valueOf( strIdProduct );
-
-        Product productSubscribe = _serviceProduct.findById( idProduct ).convert( );
-        String nameUser = currentUser.getUserInfo( LuteceUser.HOME_INFO_ONLINE_EMAIL );
-        SubscriptionProductFilter filter = new SubscriptionProductFilter( );
-        filter.setNameUser( nameUser );
-        filter.setProduct( productSubscribe );
-        List<SubscriptionProduct> subscriptionfindByFilter = _subscriptionProductService.findByFilter( filter );
-        if ( subscriptionfindByFilter.size( ) == 1 )
+        if ( StringUtils.isNotEmpty( strIdProduct ) && StringUtils.isNumeric( strIdProduct ) )
         {
-            Integer idSubscription = subscriptionfindByFilter.get( 0 ).getId( );
-            try
-            {
-                _subscriptionProductService.doDeleteSubscriptionProduct( idSubscription );
-            }
-            catch ( FunctionnalException e )
-            {
-                return manageFunctionnalException( request, e, JSP_PORTAL );
-            }
+            _subscriptionProductService.doDeleteSubscriptionProduct(
+                    currentUser.getUserInfo( LuteceUser.HOME_INFO_ONLINE_EMAIL ), strIdProduct );
         }
-
         return null;
     }
 
     /**
      * Say if an user is subscribe to a product
-     * @param request the http request
+     * @param request the HTTP request
      * @param currentUser the user
      * @return true if the user subscribe to the product
      */
     public boolean isSubscribeToProduct( HttpServletRequest request, LuteceUser currentUser )
     {
         String strIdProduct = request.getParameter( PARAMETER_PRODUCT_ID );
-        int idProduct = Integer.valueOf( strIdProduct );
-        String nameUser = currentUser.getUserInfo( LuteceUser.HOME_INFO_ONLINE_EMAIL );
-        Product productSubscribe = _serviceProduct.findById( idProduct ).convert( );
-
-        SubscriptionProductFilter filter = new SubscriptionProductFilter( );
-        filter.setNameUser( nameUser );
-        filter.setProduct( productSubscribe );
-
-        return _subscriptionProductService.findByFilter( filter ).size( ) > 0;
+        return _subscriptionProductService.hasUserSubscribedToProduct(
+                currentUser.getUserInfo( LuteceUser.HOME_INFO_ONLINE_EMAIL ), strIdProduct );
     }
 
     /**
      * Get all subscription to products for an user
-     * @param request the http request
+     * @param request the HTTP request
      * @param currentUser the user
      * @return a page
      */
     public String getSubscriptionToProduct( HttpServletRequest request, LuteceUser currentUser )
     {
-        String page = "";
-        String userName = currentUser.getName( );
-        SubscriptionProductFilter filterSubscription = new SubscriptionProductFilter( );
-        filterSubscription.setNameUser( userName );
-        for ( SubscriptionProduct subscription : _subscriptionProductService.findByFilter( filterSubscription ) )
+        StringBuilder page = new StringBuilder( );
+        String strEmail = currentUser.getUserInfo( LuteceUser.HOME_INFO_ONLINE_EMAIL );
+        for ( Product product : _subscriptionProductService.getProductsByUserSubscription( currentUser
+                .getUserInfo( LuteceUser.HOME_INFO_ONLINE_EMAIL ) ) )
         {
-            page += subscription.getUserName( ) + ":" + subscription.getProduct( ) + "\n";
+            page.append( strEmail );
+            page.append( ":" );
+            page.append( product );
+            page.append( "\n" );
         }
 
-        return page;
+        return page.toString( );
     }
 }

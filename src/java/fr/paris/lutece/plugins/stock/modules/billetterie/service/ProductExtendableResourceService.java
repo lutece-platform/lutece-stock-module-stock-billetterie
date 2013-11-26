@@ -33,6 +33,11 @@
  */
 package fr.paris.lutece.plugins.stock.modules.billetterie.service;
 
+import fr.paris.lutece.plugins.stock.modules.tickets.business.ShowDTO;
+import fr.paris.lutece.plugins.stock.modules.tickets.service.IShowService;
+import fr.paris.lutece.portal.service.resource.IExtendableResource;
+import fr.paris.lutece.portal.service.resource.IExtendableResourceService;
+
 import java.util.Locale;
 
 import javax.inject.Inject;
@@ -41,11 +46,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
-
-import fr.paris.lutece.plugins.stock.modules.tickets.business.ShowDTO;
-import fr.paris.lutece.plugins.stock.modules.tickets.service.IShowService;
-import fr.paris.lutece.portal.service.resource.IExtendableResource;
-import fr.paris.lutece.portal.service.resource.IExtendableResourceService;
 
 /**
  * 
@@ -104,18 +104,18 @@ public class ProductExtendableResourceService implements IExtendableResourceServ
      */
     public String getResourceTypeDescription( HttpServletRequest request )
     {
-        return "";
+        return StringUtils.EMPTY;
     }
 
     @Override
     public String getResourceTypeDescription( Locale locale )
     {
-        return "";
+        return StringUtils.EMPTY;
     }
 
     @Override
-    public String getResourceUrl( String arg0, String arg1 )
+    public String getResourceUrl( String strIdResource, String strResourceType )
     {
-        return "";
+        return StringUtils.EMPTY;
     }
 }

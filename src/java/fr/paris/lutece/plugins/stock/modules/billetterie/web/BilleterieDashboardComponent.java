@@ -68,9 +68,7 @@ public class BilleterieDashboardComponent extends DashboardComponent
     public String getDashboardData( AdminUser user, HttpServletRequest request )
     {
         HtmlTemplate template;
-        IStatisticService statisticService = (IStatisticService) SpringContextService
-.getContext( ).getBean(
-                IStatisticService.class );
+        IStatisticService statisticService = SpringContextService.getContext( ).getBean( IStatisticService.class );
 
         Integer nProductCountALAffiche = statisticService.getCountProductALAffiche( );
         Integer nProductCountAVenir = statisticService.getCountProductAVenir( );

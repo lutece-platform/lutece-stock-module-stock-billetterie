@@ -33,29 +33,9 @@
  */
 package fr.paris.lutece.plugins.stock.modules.billetterie.web;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-import org.springframework.transaction.annotation.Transactional;
-
 import fr.paris.lutece.plugins.stock.business.category.CategoryFilter;
-import fr.paris.lutece.plugins.stock.business.product.Product;
 import fr.paris.lutece.plugins.stock.business.product.ProductFilter;
 import fr.paris.lutece.plugins.stock.business.provider.ProviderFilter;
-import fr.paris.lutece.plugins.stock.business.subscription.SubscriptionProductFilter;
 import fr.paris.lutece.plugins.stock.commons.ResultList;
 import fr.paris.lutece.plugins.stock.commons.dao.PaginationProperties;
 import fr.paris.lutece.plugins.stock.commons.exception.BusinessException;
@@ -90,6 +70,24 @@ import fr.paris.lutece.portal.web.upload.MultipartHttpServletRequest;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.datatable.DataTableManager;
 import fr.paris.lutece.util.html.HtmlTemplate;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.springframework.transaction.annotation.Transactional;
 
 
 /**
@@ -136,9 +134,6 @@ public class ShowJspBean extends AbstractJspBean
 
     /** The Constant BEAN_STOCK_TICKETS_SHOW_SERVICE. */
     private static final String BEAN_STOCK_TICKETS_SHOW_SERVICE = "stock-tickets.showService";
-
-    /** The Constant MARK_LIST_PRODUCTS. */
-    private static final String MARK_LIST_PRODUCTS = "list_products";
 
     /** The Constant MARK_LIST_CATEGORIES. */
     private static final String MARK_LIST_CATEGORIES = "category_list";
@@ -257,8 +252,7 @@ public class ShowJspBean extends AbstractJspBean
         _serviceProvider = SpringContextService.getContext( ).getBean( IProviderService.class );
         _serviceCategory = SpringContextService.getContext( ).getBean( ICategoryService.class );
         _serviceStatistic = SpringContextService.getContext( ).getBean( IStatisticService.class );
-        _subscriptionProductService = (ISubscriptionProductService) SpringContextService.getContext( ).getBean(
-                ISubscriptionProductService.class );
+        _subscriptionProductService = SpringContextService.getContext( ).getBean( ISubscriptionProductService.class );
     }
 
     /**
@@ -325,8 +319,8 @@ public class ShowJspBean extends AbstractJspBean
         Method findMethod = null;
         try
         {
-            findMethod = _serviceProduct.getClass( ).getMethod( PARAMETER_FIND_BY_FILTER_NAME_METHOD, ProductFilter.class,
-                    PaginationProperties.class );
+            findMethod = _serviceProduct.getClass( ).getMethod( PARAMETER_FIND_BY_FILTER_NAME_METHOD,
+                    ProductFilter.class, PaginationProperties.class );
         }
         catch ( Exception e )
         {
@@ -675,11 +669,7 @@ public class ShowJspBean extends AbstractJspBean
         _serviceStatistic.doRemoveProductStatisticByIdProduct( nIdProduct );
 
         //delete the subscription link to the product
-        Product product = new Product( );
-        product.setId( nIdProduct );
-        SubscriptionProductFilter filter = new SubscriptionProductFilter( );
-        filter.setProduct( product );
-        _subscriptionProductService.doDeleteByFilter( filter );
+        _subscriptionProductService.doDeleteByIdProduct( strProductId );
 
         _serviceProduct.doDeleteProduct( nIdProduct );
 

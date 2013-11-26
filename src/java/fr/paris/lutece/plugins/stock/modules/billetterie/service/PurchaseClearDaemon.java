@@ -52,8 +52,7 @@ public class PurchaseClearDaemon extends Daemon
 
     private IPurchaseSessionManager _purchaseSessionManager = SpringContextService.getContext( ).getBean(
             IPurchaseSessionManager.class );
-    private static final String PARAMETER_TIME_MAX = AppPropertiesService
-            .getProperty( "daemon.lock.session.time.expiration" );
+    private static final String PARAMETER_TIME_MAX = AppPropertiesService.getProperty( "daemon.lock.session.time.expiration" );
 
     @Override
     public synchronized void run( )

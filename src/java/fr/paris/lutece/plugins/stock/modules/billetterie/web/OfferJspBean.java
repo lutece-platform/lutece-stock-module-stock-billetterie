@@ -37,8 +37,6 @@ import fr.paris.lutece.plugins.stock.business.offer.OfferFilter;
 import fr.paris.lutece.plugins.stock.business.product.Product;
 import fr.paris.lutece.plugins.stock.business.product.ProductFilter;
 import fr.paris.lutece.plugins.stock.business.purchase.PurchaseFilter;
-import fr.paris.lutece.plugins.stock.business.subscription.SubscriptionProduct;
-import fr.paris.lutece.plugins.stock.business.subscription.SubscriptionProductFilter;
 import fr.paris.lutece.plugins.stock.commons.ResultList;
 import fr.paris.lutece.plugins.stock.commons.dao.PaginationProperties;
 import fr.paris.lutece.plugins.stock.commons.exception.FunctionnalException;
@@ -72,9 +70,7 @@ import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.portal.web.constants.Parameters;
 import fr.paris.lutece.util.ReferenceList;
-import fr.paris.lutece.util.datatable.DataTableColumn;
 import fr.paris.lutece.util.datatable.DataTableManager;
-import fr.paris.lutece.util.html.DelegatePaginator;
 import fr.paris.lutece.util.html.HtmlTemplate;
 
 import java.io.IOException;
@@ -140,13 +136,11 @@ public class OfferJspBean extends AbstractJspBean
     public static final String MARK_CURRENT_DATE = "currentDate";
     public static final String MARK_ERRORS = "errors";
     public static final String MARK_CONTACT_LIST = "contact_list";
-    private static final String MARK_LIST_OFFERS = "list_offers";
-    private static final String MARK_LIST_PRODUCT = "product_list";
-    private static final String MARK_LIST_OFFER_GENRE = "offerGenre_list";
+
     public static final String MARK_PURCHASE = "purchase";
     public static final String MARK_BASE_URL = "base_url";
     public static final String MARK_USER_NAME = "userName";
-    private static final String MARK_RESERVE = "RESERVATIONS";
+
     /** The constants for DataTableManager */
     public static final String MARK_DATA_TABLE_OFFER = "dataTableOffer";
     public static final String MARK_FILTER_OFFER = "filterOffer";
@@ -156,6 +150,10 @@ public class OfferJspBean extends AbstractJspBean
     public static final String MACRO_COLUMN_ACTIONS_OFFER = "columnActionsOffer";
     public static final String MACRO_COLUMN_NAME_OFFER = "columnNameOffer";
     public static final String MACRO_COLUMN_DATES_OFFER = "columnDatesOffer";
+
+    private static final String MARK_LIST_PRODUCT = "product_list";
+    private static final String MARK_LIST_OFFER_GENRE = "offerGenre_list";
+    private static final String MARK_RESERVE = "RESERVATIONS";
 
     // JSP
     private static final String JSP_MANAGE_OFFERS = "jsp/admin/plugins/stock/modules/billetterie/ManageOffers.jsp";
@@ -194,10 +192,6 @@ public class OfferJspBean extends AbstractJspBean
     private static final String ORDER_FILTER_PRODUCT_NAME = "product.name";
     private static final String ORDER_FILTER_TYPE_NAME = "type.name";
 
-    //PROPERTIES
-    private static final String PROPERTY_ENCODING = "stock-billetterie.csv.encoding";
-    private static final String PROPERTY_PURCHASE_STAT_EXPORT_FILE_NAME = "stock-billetterie.csv.purchase.file.name";
-
     // MEMBERS VARIABLES
     // @Inject
     // @Named( "stock-tickets.seanceService" )
@@ -226,8 +220,7 @@ public class OfferJspBean extends AbstractJspBean
         _purchaseSessionManager = SpringContextService.getContext( ).getBean( IPurchaseSessionManager.class );
         _servicePurchase = SpringContextService.getContext( ).getBean( IPurchaseService.class );
         _serviceNotification = SpringContextService.getContext( ).getBean( INotificationService.class );
-        _subscriptionProductService = (ISubscriptionProductService) SpringContextService.getContext( ).getBean(
-                ISubscriptionProductService.class );
+        _subscriptionProductService = SpringContextService.getContext( ).getBean( ISubscriptionProductService.class );
     }
 
     /**
@@ -563,9 +556,8 @@ public class OfferJspBean extends AbstractJspBean
         //get all subscription for product
         Product product = _serviceProduct.findById( offer.getProduct( ).getId( ) ).convert( );
 
-        SubscriptionProductFilter filter = new SubscriptionProductFilter( );
-        filter.setProduct( product );
-        List<SubscriptionProduct> subscriptionfindByFilter = _subscriptionProductService.findByFilter( filter );
+        List<String> listUserEmail = _subscriptionProductService.getListEmailSubscriber( Integer.toString( offer.getProduct( )
+                .getId( ) ) );
 
         //Generate mail content
         Map<String, Object> model = new HashMap<String, Object>( );
@@ -577,15 +569,13 @@ public class OfferJspBean extends AbstractJspBean
         HtmlTemplate template;
         NotificationDTO notificationDTO;
 
-        for ( SubscriptionProduct subscription : subscriptionfindByFilter )
+        for ( String strUserEmail : listUserEmail )
         {
-            String userMail = subscription.getUserName( );
-
-            model.put( MARK_USER_NAME, subscription.getUserName( ) );
+            model.put( MARK_USER_NAME, strUserEmail );
             template = AppTemplateService.getTemplate( TEMPLATE_NOTIFICATION_CREATE_OFFER, request.getLocale( ), model );
 
             notificationDTO = new NotificationDTO( );
-            notificationDTO.setRecipientsTo( userMail );
+            notificationDTO.setRecipientsTo( strUserEmail );
             String[] args = new String[] { product.getName( ), };
             notificationDTO.setSubject( I18nService.getLocalizedString( MESSAGE_NOTIFICATION_OFFER_PRODUCT, args,
                     request.getLocale( ) ) );

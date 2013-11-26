@@ -33,23 +33,6 @@
  */
 package fr.paris.lutece.plugins.stock.modules.billetterie.web;
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.ConstraintViolation;
-import javax.validation.Path;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-import org.springframework.beans.BeanUtils;
-
 import fr.paris.lutece.plugins.stock.commons.ResultList;
 import fr.paris.lutece.plugins.stock.commons.dao.PaginationProperties;
 import fr.paris.lutece.plugins.stock.commons.dao.PaginationPropertiesAdapterDataTable;
@@ -70,6 +53,23 @@ import fr.paris.lutece.util.html.DelegatePaginator;
 import fr.paris.lutece.util.html.HtmlTemplate;
 import fr.paris.lutece.util.html.Paginator;
 
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.ConstraintViolation;
+import javax.validation.Path;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.springframework.beans.BeanUtils;
+
 
 /**
  * Abstract class for jsp bean
@@ -77,10 +77,9 @@ import fr.paris.lutece.util.html.Paginator;
  */
 public class AbstractJspBean extends PluginAdminPageJspBean
 {
-    private static final Logger LOGGER = Logger.getLogger( AbstractJspBean.class );
-
     public static final int N_DEFAULT_ITEMS_PER_PAGE = AppPropertiesService.getPropertyInt(
             TicketsConstants.PROPERTY_DEFAULT_ITEM_PER_PAGE, 50 );
+
     protected static final String ERROR_MESSAGE_KEY = "module.stock.billetterie.validation.error";
     protected static final String ERROR_TEMPLATE = "admin/plugins/stock/modules/billetterie/error.html";
     protected static final String FIELD_MESSAGE_PREFIX = "module.stock.billetterie.field.";
@@ -90,6 +89,10 @@ public class AbstractJspBean extends PluginAdminPageJspBean
     protected static final String MARK_NB_ITEMS_PER_PAGE = "nb_items_per_page";
     protected static final String MARK_PAGINATOR = "paginator";
     protected static final String PARAMETER_FIND_BY_FILTER_NAME_METHOD = "findByFilter";
+
+    private static final long serialVersionUID = 5259767254583048437L;
+    private static final Logger LOGGER = Logger.getLogger( AbstractJspBean.class );
+
     private String _strCurrentPageIndex = StringUtils.EMPTY;
     protected int _nItemsPerPage;
 

@@ -46,8 +46,7 @@ public class BilletteriePortletHome extends PortletHome
 {
 
     // Static variable pointed at the DAO instance
-    private static IBilletterieDAO _dao = (IBilletterieDAO) SpringContextService.getPluginBean( "billetterie",
-            "BilletteriePortletDAO" );
+    private static IBilletterieDAO _dao = SpringContextService.getBean( "stock-billetterie.billetteriePortletDAO" );
 
     /* This class implements the Singleton design pattern. */
     private static BilletteriePortletHome _singleton = null;
@@ -63,13 +62,10 @@ public class BilletteriePortletHome extends PortletHome
         // }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * fr.paris.lutece.portal.business.portlet.PortletHomeInterface#getPortletTypeId
-     * ()
+    /**
+     * {@inheritDoc}
      */
+    @Override
     public String getPortletTypeId( )
     {
 
@@ -79,12 +75,10 @@ public class BilletteriePortletHome extends PortletHome
         return strPortletTypeId;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * fr.paris.lutece.portal.business.portlet.PortletHomeInterface#getDAO()
+    /**
+     * {@inheritDoc}
      */
+    @Override
     public IPortletInterfaceDAO getDAO( )
     {
         return _dao;

@@ -43,38 +43,28 @@ import fr.paris.lutece.portal.business.portlet.Portlet;
 public interface IBilletterieDAO extends IPortletInterfaceDAO
 {
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * fr.paris.lutece.portal.business.portlet.IPortletInterfaceDAO#insert(fr
-     * .paris.lutece.portal.business.portlet.Portlet)
+    /**
+     * {@inheritDoc}
      */
+    @Override
     public void insert( Portlet portlet );
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * fr.paris.lutece.portal.business.portlet.IPortletInterfaceDAO#delete(int)
+    /**
+     * {@inheritDoc}
      */
+    @Override
     public void delete( int nPortletId );
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * fr.paris.lutece.portal.business.portlet.IPortletInterfaceDAO#load(int)
+    /**
+     * {@inheritDoc}
      */
+    @Override
     public Portlet load( int nPortletId );
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * fr.paris.lutece.portal.business.portlet.IPortletInterfaceDAO#store(fr
-     * .paris.lutece.portal.business.portlet.Portlet)
+    /**
+     * {@inheritDoc}
      */
+    @Override
     public void store( Portlet portlet );
 
 }

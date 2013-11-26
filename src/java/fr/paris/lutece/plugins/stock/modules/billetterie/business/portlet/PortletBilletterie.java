@@ -39,7 +39,6 @@ import fr.paris.lutece.plugins.stock.modules.tickets.business.ShowDTO;
 import fr.paris.lutece.plugins.stock.modules.tickets.business.ShowFilter;
 import fr.paris.lutece.plugins.stock.modules.tickets.service.IShowService;
 import fr.paris.lutece.plugins.stock.modules.tickets.service.ShowService;
-import fr.paris.lutece.plugins.stock.utils.DateUtils;
 import fr.paris.lutece.portal.business.portlet.Portlet;
 import fr.paris.lutece.portal.service.message.SiteMessageException;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
@@ -48,8 +47,6 @@ import fr.paris.lutece.util.url.UrlItem;
 import fr.paris.lutece.util.xml.XmlUtil;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -73,7 +70,7 @@ public class PortletBilletterie extends Portlet
     private static final String TAG_SHOW_START_DATE = "date_debut";
     private static final String TAG_SHOW_END_DATE = "date_fin";
     private static final String TAG_SHOW_POSTER_URL = "posterUrl";
-    private static final String TAG_SHOW_DESCRIPTION = "description";
+    //    private static final String TAG_SHOW_DESCRIPTION = "description";
     private static final String TAG_SHOW_TYPE_PORTLET = "typePortlet";
     private static final String TAG_SHOW = "show";
     private static final String TAG_SHOW_URL = "url";
@@ -85,8 +82,7 @@ public class PortletBilletterie extends Portlet
     private String _typeContentPortlet;
 
     /** The _show service. */
-    private IShowService _showService = (IShowService) SpringContextService.getContext( ).getBean(
-            ShowService.ID_SPRING_DEFAULT );
+    private IShowService _showService = (IShowService) SpringContextService.getBean( ShowService.ID_SPRING_DEFAULT );
 
     /**
      * Instantiates a new portlet billetterie.
@@ -161,8 +157,8 @@ public class PortletBilletterie extends Portlet
         List<String> orders = new ArrayList<String>( );
         if ( strContentPortlet.equals( "a-laffiche" ) )
         {
-            Calendar calendar = new GregorianCalendar( );
-            String today = DateUtils.getDate( calendar.getTime( ), DateUtils.DATE_FR );
+            //            Calendar calendar = new GregorianCalendar( );
+            //            String today = DateUtils.getDate( calendar.getTime( ), DateUtils.DATE_FR );
             
             ShowFilter filter = new ShowFilter( );
             filter.setAlaffiche( true );
