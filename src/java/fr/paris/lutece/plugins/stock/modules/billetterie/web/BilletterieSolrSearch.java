@@ -45,6 +45,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.web.util.UriUtils;
@@ -70,6 +71,7 @@ public class BilletterieSolrSearch extends HttpServlet
     private static final String MARK_INVITATION = "invitation";
     private static final String MARK_INVITATION_ENFANT = "invitation_enfant";
     private static final String MARK_FULL_SHOW = "full_show";
+    private static final String MARK_CATEGORY = "categorie";
 
     private static final String MARK_QUERY = "query";
     private static final String MARK_SORT = "sort";
@@ -105,8 +107,6 @@ public class BilletterieSolrSearch extends HttpServlet
         StringBuilder sbSort = null;
         String sQuery = request.getParameter( MARK_QUERY );
 
-        // TODO property default sort
-
         if ( StringUtils.isNotEmpty( sTypeSort ) && MARK_SORT_ALPHABETIQUE.equals( sTypeSort ) )
         {
             // sort by title
@@ -126,6 +126,11 @@ public class BilletterieSolrSearch extends HttpServlet
             String sQuoi = request.getParameter( MARK_QUOI );
             String sOu = request.getParameter( MARK_OU );
             String sQuand = request.getParameter( MARK_QUAND );
+
+            if ( StringUtils.isNotEmpty( sQuery ) )
+            {
+                sbReq.append( "&query=" + sQuery );
+            }
 
             if ( StringUtils.isNotEmpty( sQuoi ) )
             {
@@ -147,6 +152,7 @@ public class BilletterieSolrSearch extends HttpServlet
             String sInvitation = request.getParameter( MARK_INVITATION );
             String sInvitationEnfant = request.getParameter( MARK_INVITATION_ENFANT );
             String sFullShow = request.getParameter( MARK_FULL_SHOW );
+            String[] categories = request.getParameterValues( MARK_CATEGORY );
 
             String sShowDateStart = request.getParameter( "show_date_start" );
             String sShowDateEnd = request.getParameter( "show_date_end" );
@@ -171,6 +177,49 @@ public class BilletterieSolrSearch extends HttpServlet
                 sbFilter.append( "&fq=full_string:false" );
             }
 
+            if ( StringUtils.isNotEmpty( sQuery ) && ArrayUtils.isEmpty( categories ) )
+            {
+                sbReq.append( "&query=" + sQuery );
+            }
+            else if ( StringUtils.isNotEmpty( sQuery ) && !ArrayUtils.isEmpty( categories ) )
+            {
+                sbReq.append( "&query=(" + sQuery );
+
+                sbFilter.append( " AND categorie:(" );
+                int i = 1;
+                for ( String categorie : categories )
+                {
+                    if ( i < categories.length )
+                    {
+                        sbFilter.append( categorie.replace( " ", "*" ) ).append( " OR " );
+                    }
+                    else
+                    {
+                        sbFilter.append( categorie.replace( " ", "*" ) );
+                    }
+                    i++;
+                }
+                sbFilter.append( "))" );
+            }
+            else if ( !ArrayUtils.isEmpty( categories ) )
+            {
+                sbFilter.append( "&query=categorie:(" );
+                int i = 1;
+                for ( String categorie : categories )
+                {
+                    if ( i < categories.length )
+                    {
+                        sbFilter.append( categorie.replace( " ", "*" ) ).append( " OR " );
+                    }
+                    else
+                    {
+                        sbFilter.append( categorie.replace( " ", "*" ) );
+                    }
+                    i++;
+                }
+                sbFilter.append( ")" );
+            }
+
             if ( StringUtils.isNotEmpty( sShowDateStart ) )
             {
                 Timestamp showDateStart = DateUtils.getDate( sShowDateStart, true );
@@ -189,11 +238,6 @@ public class BilletterieSolrSearch extends HttpServlet
         }
 
         StringBuilder sbType = new StringBuilder( "&type_search=" + sTypeSearch );
-
-        if ( StringUtils.isNotEmpty( sQuery ) )
-        {
-            sbReq.append( "&query=" + sQuery );
-        }
 
         if ( sbFilter.toString( ).isEmpty( ) && StringUtils.isEmpty( sQuery ) )
         {
