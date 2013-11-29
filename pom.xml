@@ -25,6 +25,12 @@
 	<dependencies>
 		<dependency>
 			<groupId>fr.paris.lutece.plugins</groupId>
+			<artifactId>plugin-userban</artifactId>
+			<version>1.0.0-SNAPSHOT</version>
+			<type>lutece-plugin</type>
+		</dependency>
+		<dependency>
+			<groupId>fr.paris.lutece.plugins</groupId>
 			<artifactId>module-stock-tickets</artifactId>
 			<version>1.0.7-SNAPSHOT</version>
 			<type>lutece-plugin</type>
