@@ -33,30 +33,6 @@
  */
 package fr.paris.lutece.plugins.stock.modules.billetterie.web;
 
-import fr.paris.lutece.plugins.stock.commons.exception.FunctionnalException;
-import fr.paris.lutece.plugins.stock.commons.exception.TechnicalException;
-import fr.paris.lutece.plugins.stock.modules.tickets.business.SeanceDTO;
-import fr.paris.lutece.plugins.stock.modules.tickets.business.SeanceFilter;
-import fr.paris.lutece.plugins.stock.modules.tickets.business.ShowDTO;
-import fr.paris.lutece.plugins.stock.modules.tickets.service.IProviderService;
-import fr.paris.lutece.plugins.stock.modules.tickets.service.ISeanceService;
-import fr.paris.lutece.plugins.stock.modules.tickets.service.IShowService;
-import fr.paris.lutece.plugins.stock.modules.tickets.utils.constants.TicketsConstants;
-import fr.paris.lutece.plugins.stock.service.IPurchaseSessionManager;
-import fr.paris.lutece.plugins.stock.utils.DateUtils;
-import fr.paris.lutece.portal.service.message.SiteMessageException;
-import fr.paris.lutece.portal.service.plugin.Plugin;
-import fr.paris.lutece.portal.service.security.LuteceUser;
-import fr.paris.lutece.portal.service.security.UserNotSignedException;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
-import fr.paris.lutece.portal.service.template.AppTemplateService;
-import fr.paris.lutece.portal.service.util.AppPropertiesService;
-import fr.paris.lutece.portal.web.xpages.XPage;
-import fr.paris.lutece.portal.web.xpages.XPageApplication;
-import fr.paris.lutece.util.ReferenceItem;
-import fr.paris.lutece.util.ReferenceList;
-import fr.paris.lutece.util.html.HtmlTemplate;
-
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -71,6 +47,32 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 
+import fr.paris.lutece.plugins.stock.commons.exception.FunctionnalException;
+import fr.paris.lutece.plugins.stock.commons.exception.TechnicalException;
+import fr.paris.lutece.plugins.stock.modules.tickets.business.SeanceDTO;
+import fr.paris.lutece.plugins.stock.modules.tickets.business.SeanceFilter;
+import fr.paris.lutece.plugins.stock.modules.tickets.business.ShowDTO;
+import fr.paris.lutece.plugins.stock.modules.tickets.service.IProviderService;
+import fr.paris.lutece.plugins.stock.modules.tickets.service.ISeanceService;
+import fr.paris.lutece.plugins.stock.modules.tickets.service.IShowService;
+import fr.paris.lutece.plugins.stock.modules.tickets.utils.constants.TicketsConstants;
+import fr.paris.lutece.plugins.stock.service.IPurchaseSessionManager;
+import fr.paris.lutece.plugins.stock.utils.DateUtils;
+import fr.paris.lutece.plugins.userban.bean.user.User;
+import fr.paris.lutece.plugins.userban.service.user.IUserService;
+import fr.paris.lutece.portal.service.message.SiteMessageException;
+import fr.paris.lutece.portal.service.plugin.Plugin;
+import fr.paris.lutece.portal.service.security.LuteceUser;
+import fr.paris.lutece.portal.service.security.UserNotSignedException;
+import fr.paris.lutece.portal.service.spring.SpringContextService;
+import fr.paris.lutece.portal.service.template.AppTemplateService;
+import fr.paris.lutece.portal.service.util.AppPropertiesService;
+import fr.paris.lutece.portal.web.xpages.XPage;
+import fr.paris.lutece.portal.web.xpages.XPageApplication;
+import fr.paris.lutece.util.ReferenceItem;
+import fr.paris.lutece.util.ReferenceList;
+import fr.paris.lutece.util.html.HtmlTemplate;
+
 
 /**
  * Pages for billetterie front
@@ -82,6 +84,7 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
     // Beans
     private static final String BEAN_STOCK_TICKETS_SEANCE_SERVICE = "stock-tickets.seanceService";
     private static final String BEAN_STOCK_TICKETS_SHOW_SERVICE = "stock-tickets.showService";
+    private static final String BEAN_USER_SERVICE = "userban.userService";
 
     // Templates
     private static final String TEMPLATE_DIR = "skin/plugins/stock/modules/billetterie/";
@@ -156,6 +159,8 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
     private final IPurchaseSessionManager _purchaseSessionManager = SpringContextService.getContext( ).getBean(
             IPurchaseSessionManager.class );
 
+    private final IUserService _serviceUser = (IUserService) SpringContextService.getBean( BEAN_USER_SERVICE );
+
     /**
      * Return page with action specified.
      * 
@@ -195,10 +200,8 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
      * Page for the show
      * 
      * @param page xpage
-     * @param request
-     *            http request
-     * @param locale
-     *            locale
+     * @param request http request
+     * @param locale locale
      * @return xpage
      */
     public XPage getShowPage( XPage page, HttpServletRequest request, Locale locale )
@@ -242,6 +245,13 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
 
         //Get the user
         LuteceUser currentUser = getUser( request );
+
+        //check if the user is not ban
+        User userBan = _serviceUser.findByPrimaryKey( currentUser.getUserInfo( "GUID" ) );
+        if ( userBan != null )
+        {
+
+        }
 
         // If user authenticated, display booking bloc
         model.put( MARK_USER, currentUser );
