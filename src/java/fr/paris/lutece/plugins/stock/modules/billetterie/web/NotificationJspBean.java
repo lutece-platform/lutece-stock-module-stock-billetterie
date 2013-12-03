@@ -36,10 +36,14 @@ package fr.paris.lutece.plugins.stock.modules.billetterie.web;
 import fr.paris.lutece.plugins.stock.business.purchase.PurchaseFilter;
 import fr.paris.lutece.plugins.stock.commons.exception.FunctionnalException;
 import fr.paris.lutece.plugins.stock.modules.billetterie.utils.constants.BilletterieConstants;
+import fr.paris.lutece.plugins.stock.modules.tickets.business.Contact;
 import fr.paris.lutece.plugins.stock.modules.tickets.business.NotificationDTO;
+import fr.paris.lutece.plugins.stock.modules.tickets.business.PartnerDTO;
 import fr.paris.lutece.plugins.stock.modules.tickets.business.ReservationDTO;
 import fr.paris.lutece.plugins.stock.modules.tickets.business.SeanceDTO;
+import fr.paris.lutece.plugins.stock.modules.tickets.business.ShowDTO;
 import fr.paris.lutece.plugins.stock.modules.tickets.service.INotificationService;
+import fr.paris.lutece.plugins.stock.modules.tickets.service.IProviderService;
 import fr.paris.lutece.plugins.stock.modules.tickets.service.IPurchaseService;
 import fr.paris.lutece.plugins.stock.modules.tickets.service.ISeanceService;
 import fr.paris.lutece.plugins.stock.modules.tickets.utils.constants.TicketsConstants;
@@ -85,6 +89,7 @@ public class NotificationJspBean extends AbstractJspBean
     public static final String MARK_LIST_RESERVATION = "liste_reservations";
     public static final String MARK_TARIF_REDUIT_ID = "idTarifReduit";
     public static final String MARK_BASE_URL = "base_url";
+    public static final String MARK_PARTNER_CONTACT_MAIL = "partner_contact_mail";
 
     // BEAN
     private static final String BEAN_STOCK_TICKETS_SEANCE_SERVICE = "stock-tickets.seanceService";
@@ -111,13 +116,10 @@ public class NotificationJspBean extends AbstractJspBean
     // ORDER FILTER
     private static final String ORDER_FILTER_USER_NAME = "userName";
 
-    // @Inject
-    // @Named( "stock-tickets.seanceService" )
     private ISeanceService _serviceOffer;
-    // @Inject
     private IPurchaseService _servicePurchase;
-    // @Inject
     private INotificationService _serviceNotification;
+    private IProviderService _serviceProvider;
 
     /**
      * Instantiates a new notification jsp bean.
@@ -128,6 +130,7 @@ public class NotificationJspBean extends AbstractJspBean
         _serviceOffer = (ISeanceService) SpringContextService.getBean( BEAN_STOCK_TICKETS_SEANCE_SERVICE );
         _servicePurchase = SpringContextService.getContext( ).getBean( IPurchaseService.class );
         _serviceNotification = SpringContextService.getContext( ).getBean( INotificationService.class );
+        _serviceProvider = SpringContextService.getContext( ).getBean( IProviderService.class );
     }
 
     /**
@@ -202,9 +205,22 @@ public class NotificationJspBean extends AbstractJspBean
                     || ( notification.getNotificationAction( ) != null && notification.getNotificationAction( ).equals(
                             TicketsConstants.OFFER_STATUT_LOCK ) ) )
             {
+                String contactMail = null;
+                ShowDTO product = seance.getProduct( );
+                if ( product != null )
+                {
+                    Integer idSalle = product.getIdProvider( );
+                    if ( idSalle != null )
+                    {
+                        Integer idContact = seance.getIdContact( );
+                        PartnerDTO partner = _serviceProvider.findById( idSalle );
+                        contactMail = partner.getContactMail(idContact );
+                        notification.setRecipientsTo( contactMail );
+                    }
+                }
+
                 notification.setNotificationAction( TicketsConstants.OFFER_STATUT_LOCK );
                 // Set the default recipientsTo
-                notification.setRecipientsTo( seance.getProduct( ).getProviderMail( ) );
                 // Set the default subject
                 notification.setSubject( getMessage( MESSAGE_NOTIFICATION_BOOKING_LIST_SUBJECT, seance.getProduct( )
                         .getName( ) + " " + seance.getDate( ) + " - " + seance.getHour( ) ) );
