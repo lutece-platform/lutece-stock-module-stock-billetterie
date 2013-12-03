@@ -60,6 +60,7 @@ import fr.paris.lutece.plugins.stock.service.IPurchaseSessionManager;
 import fr.paris.lutece.plugins.stock.utils.DateUtils;
 import fr.paris.lutece.plugins.userban.bean.user.User;
 import fr.paris.lutece.plugins.userban.service.user.IUserService;
+import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.message.SiteMessageException;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.security.LuteceUser;
@@ -113,6 +114,7 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
     private static final String MARK_SHOW = "show";
     private static final String MARK_SUBSCRIBE = "subscribe";
     private static final String MARK_USER_EMAIL = "user_email";
+    private static final String MARK_MESSAGE_USER_BAN = "messageUserBan";
 
     // Actions
     private static final String ACTION_SHOW_PAGE = "fiche-spectacle";
@@ -121,6 +123,7 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
 
     // Messages
     private static final String MESSAGE_ERROR_PARSING_SHOW_DATE = "Erreur lors du parsing de la date de séance";
+    private static final String MESSAGE_MESSAGE_USER_BAN = "module.stock.billetterie.message.user.ban.libelle";
 
     // Properties
     private static final String PROPERTY_POSTER_PATH = "stock-billetterie.poster.path";
@@ -247,10 +250,11 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
         LuteceUser currentUser = getUser( request );
 
         //check if the user is not ban
-        User userBan = _serviceUser.findByPrimaryKey( currentUser.getUserInfo( "GUID" ) );
+        User userBan = _serviceUser.findByPrimaryKey( currentUser.getUserInfo( LuteceUser.BUSINESS_INFO_ONLINE_EMAIL ) );
         if ( userBan != null )
         {
-
+            String banMessage = I18nService.getLocalizedString( MESSAGE_MESSAGE_USER_BAN, new String[] { userBan.getMotif( ) }, locale );
+            model.put( MARK_MESSAGE_USER_BAN, banMessage );
         }
 
         // If user authenticated, display booking bloc
