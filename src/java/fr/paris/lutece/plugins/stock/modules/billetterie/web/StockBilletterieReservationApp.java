@@ -66,6 +66,7 @@ import fr.paris.lutece.plugins.stock.modules.tickets.service.PurchaseService;
 import fr.paris.lutece.plugins.stock.modules.tickets.utils.constants.TicketsConstants;
 import fr.paris.lutece.plugins.stock.service.IPurchaseSessionManager;
 import fr.paris.lutece.plugins.stock.utils.DateUtils;
+import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.message.SiteMessage;
 import fr.paris.lutece.portal.service.message.SiteMessageException;
 import fr.paris.lutece.portal.service.message.SiteMessageService;
@@ -105,6 +106,7 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
     private static final String MESSAGE_CONFIRM_DELETE_PURCHASE = "module.stock.billetterie.message.confirm.delete.purchase";
     private static final String MESSAGE_NOTIFICATION_BOOKING_SUBJECT = "module.stock.billetterie.notification.booking.subject";
     private static final String MESSAGE_NOTIFICATION_REQUEST_SUBJECT = "module.stock.billetterie.notification.request.subject";
+    private static final String MESSAGE_CAUTION_TIME_PURCHASE = "module.stock.billetterie.message.caution.time.max";
     // Parameters
     private static final String PARAMETER_SEANCE_DATE = "seance_date";
     private static final String PARAMETER_SHOW_NAME = "show_name";
@@ -124,6 +126,9 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
     private static final String PARAMETER_DATE_SCEANCE = "date_sceance";
     private static final String PARAMETER_PAGE = "page";
     private static final String PARAMETER_PAGE_INDEX = "page_index";
+    private static final String PARAMETER_TIME_MAX = AppPropertiesService
+            .getProperty( "daemon.lock.session.time.expiration" );
+
     // Actions
     private static final String ACTION_MY_BOOKINGS = "mes-reservations";
     private static final String ACTION_BOOK = "reserver";
@@ -134,6 +139,7 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
     private static final String MARK_USER = "user";
     private static final String MARK_PURCHASER = "purchaser";
     private static final String MARK_PAGINATOR = "paginator";
+    private static final String MARK_CAUTION_TIME_PURCHASE = "cautionTimePurchase";
     // Templates
     private static final String TEMPLATE_DIR = "skin/plugins/stock/modules/billetterie/";
     private static final String TEMPLATE_NOTIFICATION_BOOKING = "notification_booking.html";
@@ -327,6 +333,9 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
         model.put( PARAMETER_SHOW_NAME, showName );
         model.put( PARAMETER_BOOKING_CHECK, bookingCheck );
         model.put( PARAMETER_AUTHENTIFIED_USER, bAuthentified );
+        String localizedString = I18nService.getLocalizedString( MESSAGE_CAUTION_TIME_PURCHASE,
+                new String[] { PARAMETER_TIME_MAX }, locale );
+        model.put( MARK_CAUTION_TIME_PURCHASE, localizedString );
 
         // Add DTO when unauthentified
         if ( !bAuthentified )
