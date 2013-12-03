@@ -85,11 +85,26 @@
 						</p>
 						<p>
 							<label for="filter_date_begin">#i18n{module.stock.billetterie.list_offres.filter.date} : </label>
-							<input class="span5" type="text" name="dateBegin" id="filter_date_begin" value="${(filter.dateBegin?date)!}"/>
+							<div class="input-prepend">
+								<span class="add-on">
+									<i class="icon-calendar"></i>
+								</span>
+								<input class="input-small" type="text" name="dateBegin" id="filter_date_begin" value="${(filter.dateBegin?date)!}"/>
+							</div>
 							#i18n{module.stock.billetterie.list_offres.filter.dateEt}
-							<input class="span5" type="text" name="dateEnd" id="filter_date_end" value="${(filter.dateEnd?date)!}"/>
+							<div class="input-prepend">
+								<span class="add-on">
+									<i class="icon-calendar"></i>
+								</span>
+								<input class="input-small" type="text" name="dateEnd" id="filter_date_end" value="${(filter.dateEnd?date)!}"/>
+							</div>
 							#i18n{module.stock.billetterie.list_offres.filter.dateOuLe}
-							<input class="span5" type="text" name="dateOr" id="filter_date_or" value="${(filter.dateOr?date)!}"/>
+							<div class="input-prepend">
+								<span class="add-on">
+									<i class="icon-calendar"></i>
+								</span>
+								<input class="input-small" type="text" name="dateOr" id="filter_date_or" value="${(filter.dateOr?date)!}"/>
+							</div>
 						</p>
 						<@showSearchButton />
 					</div>

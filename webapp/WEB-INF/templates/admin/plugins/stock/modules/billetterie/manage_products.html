@@ -42,17 +42,27 @@
 
 						<@showFilterSelect list=category_list id="filter_category" name="idCategory" value="${filter.idCategory!}" label="#i18n{module.stock.billetterie.manage_product.filter.category}" />
 
-						<p>
+						<div class="control-group">
 							<label for="date_from">#i18n{module.stock.billetterie.manage_product.filter.date_from} : </label>
-							<input class="span5" type="text" name="dateFrom" id="date_from" maxlength="10" value="${filter.dateFrom!}"/>
+							<div class="input-prepend">
+								<span class="add-on">
+									<i class="icon-calendar"></i>
+								</span>
+								<input class="input-small" type="text" name="dateFrom" id="date_from" maxlength="10" value="${filter.dateFrom!}"/>
+							</div>
 								#i18n{module.stock.billetterie.manage_product.filter.date_to} : 
-							<input class="span5" type="text" name="dateTo" id="date_to" maxlength="10" value="${filter.dateTo!}"/>
-						</p>
-						<p>
+							<div class="input-prepend">
+								<span class="add-on">
+									<i class="icon-calendar"></i>
+								</span>
+								<input class="input-small" type="text" name="dateTo" id="date_to" maxlength="10" value="${filter.dateTo!}"/>
+							</div>
+						</div>
+						<div class="control-group">
 							<label for="show_aLaffiche"/>#i18n{module.stock.billetterie.manage_product.filter.alaffiche} :
 								<input type="checkbox" id="show_aLaffiche" name="aLaffiche" value="on" <#if filter.alaffiche?has_content && filter.alaffiche>checked="checked"</#if>/>
 							</label>
-						</p>
+						</div>
 						<@showSearchButton />
 					</form>
 				</div>

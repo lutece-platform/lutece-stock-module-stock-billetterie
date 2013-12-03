@@ -33,24 +33,29 @@
 			        </div>
 		        	<div>  
 		           		<label for="offer_date" >#i18n{module.stock.billetterie.save_offer.date} * :</label>
-		           		<input type="text" id="offer_date" name="date" size="6" maxlength="50" value="${offer.date!}"/>
+						<div class="input-prepend">
+							<span class="add-on">
+								<i class="icon-calendar"></i>
+							</span>
+			           		<input type="text" id="offer_date" name="date" class="input-small" maxlength="50" value="${offer.date!}"/>
+						</div>
 		           	</div>
 					<div>
 						<label for="offer_hour" >#i18n{module.stock.billetterie.save_offer.hour} * :</label>
-						<input type="text" id="offer_hour" name="hour" size="5" maxlength="5"  value="${offer.hour!}"/>
+						<input type="text" id="offer_hour" name="hour" class="input-small" maxlength="5"  value="${offer.hour!}"/>
 					</div>
 					<div>
 						<label for="offer_quantity" >#i18n{module.stock.billetterie.save_offer.quantity} * :</label>
-						<input type="text" id="offer_quantity" name="quantity" size="5" maxlength="6"  value="${offer.quantity!}"/>
+						<input type="text" id="offer_quantity" name="quantity" class="input-small" maxlength="6"  value="${offer.quantity!}"/>
 						<#if offer.initialQuantity?exists >
-						<input type="hidden" id="offer_initialQuantity" name="initialQuantity" size="5" maxlength="6"  value="${offer.initialQuantity!}"/>
+							<input type="hidden" id="offer_initialQuantity" name="initialQuantity" class="input-small" maxlength="6"  value="${offer.initialQuantity!}"/>
 						(${offer.initialQuantity!} #i18n{module.stock.billetterie.message.placesAvailableInitially})
 						</#if>
 					</div>
 			        <div>
 						<label for="offer_reductPrice" >#i18n{module.stock.billetterie.save_offer.reductPrice} :</label>
 						<#setting locale="en_US">
-						<input type="text" id="offer_reductPrice" name="reductPrice" size="10" maxlength="50"  value="${(offer.reductPrice?string.number)!}"/>
+						<input type="text" id="offer_reductPrice" name="reductPrice" class="input-small" maxlength="50"  value="${(offer.reductPrice?string.number)!}"/>
 						<#setting locale=locale>
 					</div>
 				</div>
