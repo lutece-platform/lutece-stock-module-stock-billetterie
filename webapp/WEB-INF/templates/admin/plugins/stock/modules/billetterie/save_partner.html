@@ -28,6 +28,15 @@
 						<textarea name="address" cols="30" rows="5" maxlength="250">${partner.address!}</textarea> 
 					</div>
 					<div>
+						<label for="provider_district" >#i18n{module.stock.billetterie.create_provider.district} :</label>
+						<select id="provider_district" name="district" class="input-medium">
+							<option value="-1"></option>
+							<#list list_district as district>
+								<option value="${(district.id)!}" <#if partner.district?? && partner.district==district.id>selected="selected"</#if>>${(district.libelle)!}</option>
+							</#list>
+						</select>
+					</div>
+					<div>
 						<label for="provider_comment" >#i18n{stock.create_provider.comment} :</label>
 						<input type="text" id="provider_comment" name="comment" class="input-large" maxlength="250"  value="${partner.comment!}"/>
 					</div>
@@ -41,7 +50,6 @@
 						<label for="provider_accessibility_comment" >#i18n{module.stock.billetterie.create_provider.accessibilityComment} :</label>
 						<textarea name="accessibleComment" cols="60" rows="5" maxlength="250">${partner.accessibleComment!}</textarea> 
 					</div>
-					<br />
 					<div>
 						<label for="provider_metro_comment" >#i18n{module.stock.billetterie.create_provider.metroComment} :</label>
 						<input type="text" id="provider_metro_comment" name="metroComment" class="input-large" maxlength="250"  value="${partner.metroComment!}"/>

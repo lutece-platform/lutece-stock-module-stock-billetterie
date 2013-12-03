@@ -33,11 +33,25 @@
  */
 package fr.paris.lutece.plugins.stock.modules.billetterie.web;
 
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+
 import fr.paris.lutece.plugins.stock.business.provider.ProviderFilter;
 import fr.paris.lutece.plugins.stock.commons.ResultList;
 import fr.paris.lutece.plugins.stock.commons.dao.PaginationProperties;
 import fr.paris.lutece.plugins.stock.commons.exception.BusinessException;
 import fr.paris.lutece.plugins.stock.commons.exception.FunctionnalException;
+import fr.paris.lutece.plugins.stock.modules.billetterie.business.district.District;
+import fr.paris.lutece.plugins.stock.modules.billetterie.service.district.DistrictService;
 import fr.paris.lutece.plugins.stock.modules.billetterie.utils.constants.BilletterieConstants;
 import fr.paris.lutece.plugins.stock.modules.tickets.business.Contact;
 import fr.paris.lutece.plugins.stock.modules.tickets.business.PartnerDTO;
@@ -59,18 +73,6 @@ import fr.paris.lutece.util.beanvalidation.ValidationError;
 import fr.paris.lutece.util.datatable.DataTableManager;
 import fr.paris.lutece.util.html.HtmlTemplate;
 import fr.paris.lutece.util.url.UrlItem;
-
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 
 
 /**
@@ -94,6 +96,7 @@ public class PartnerJspBean extends AbstractJspBean
     public static final String MARK_PARTNER = "partner";
     public static final String MARK_LIST_CONTACT = "list_contacts";
     public static final String MARK_LIST_PARTNERS = "list_partners";
+    public static final String MARK_LIST_DISTRICT = "list_district";
     
     /** The constants for DataTableManager */
     public static final String MARK_DATA_TABLE_PARTNER = "dataTablePartner";
@@ -127,13 +130,12 @@ public class PartnerJspBean extends AbstractJspBean
     private static final String MESSAGE_DELETE_PARTNER_WITH_SHOW = "module.stock.billetterie.message.deletePartner.with.show";
     private static final String MESSAGE_ERROR_NO_COMMENT_IF_NOT_ACCESSIBLE = "module.stock.billetterie.message.noCommentIfNotAccessible";
 
+
     // MEMBERS VARIABLES
-    // @Inject
     private IProviderService _serviceProvider;
     private ProviderFilter _providerFilter;
-    // @Inject
-    // @Named( "stock-tickets.showService" )
     private IShowService _serviceShow;
+    private DistrictService _serviceDistrict;
 
     /**
      * Instantiates a new partner jsp bean.
@@ -144,6 +146,7 @@ public class PartnerJspBean extends AbstractJspBean
         _providerFilter = new ProviderFilter( );
         _serviceProvider = SpringContextService.getContext( ).getBean( IProviderService.class );
         _serviceShow = (IShowService) SpringContextService.getBean( BEAN_STOCK_TICKETS_SHOW_SERVICE );
+        _serviceDistrict = SpringContextService.getContext( ).getBean( DistrictService.class );
     }
 
     /**
@@ -332,7 +335,10 @@ public class PartnerJspBean extends AbstractJspBean
         ArrayList<Contact> listContactOrderById = (ArrayList<Contact>) provider.getContactList( );
         Collections.sort( listContactOrderById, Contact.COMPARATOR_USING_ID );
         model.put( MARK_LIST_CONTACT, listContactOrderById );
-
+        
+        List<District> listDistrict = _serviceDistrict.findAll( );
+        model.put( MARK_LIST_DISTRICT, listDistrict);
+        
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_SAVE_PARTNER, getLocale( ), model );
 
         return getAdminPage( template.getHtml( ) );
@@ -355,7 +361,7 @@ public class PartnerJspBean extends AbstractJspBean
         {
             return getSavePartner( request );
         }
-
+ 
         PartnerDTO provider = new PartnerDTO( );
         populate( provider, request );
 
