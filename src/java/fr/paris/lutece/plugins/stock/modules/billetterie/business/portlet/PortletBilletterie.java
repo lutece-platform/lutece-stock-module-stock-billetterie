@@ -33,23 +33,26 @@
  */
 package fr.paris.lutece.plugins.stock.modules.billetterie.business.portlet;
 
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+
 import fr.paris.lutece.plugins.stock.commons.dao.PaginationProperties;
 import fr.paris.lutece.plugins.stock.commons.dao.PaginationPropertiesImpl;
 import fr.paris.lutece.plugins.stock.modules.tickets.business.ShowDTO;
 import fr.paris.lutece.plugins.stock.modules.tickets.business.ShowFilter;
 import fr.paris.lutece.plugins.stock.modules.tickets.service.IShowService;
 import fr.paris.lutece.plugins.stock.modules.tickets.service.ShowService;
+import fr.paris.lutece.plugins.stock.utils.DateUtils;
 import fr.paris.lutece.portal.business.portlet.Portlet;
 import fr.paris.lutece.portal.service.message.SiteMessageException;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.util.url.UrlItem;
 import fr.paris.lutece.util.xml.XmlUtil;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
 
 
 /**
@@ -157,15 +160,15 @@ public class PortletBilletterie extends Portlet
         List<String> orders = new ArrayList<String>( );
         if ( strContentPortlet.equals( "a-laffiche" ) )
         {
-            //            Calendar calendar = new GregorianCalendar( );
-            //            String today = DateUtils.getDate( calendar.getTime( ), DateUtils.DATE_FR );
-            
+            Calendar calendar = new GregorianCalendar( );
+            String today = DateUtils.getDate( calendar.getTime( ), DateUtils.DATE_FR );
+
             ShowFilter filter = new ShowFilter( );
             filter.setAlaffiche( true );
             orders.add( "dateEnd" );
             filter.setOrders( orders );
             filter.setOrderAsc( true );
-            //filter.setDateTo( today );
+            filter.setDateFrom( today );
             listShow = _showService.findByFilter( filter, paginator );
         }
         else
@@ -180,7 +183,8 @@ public class PortletBilletterie extends Portlet
 
         for ( ShowDTO showDTO : listShow )
         {
-            if ( strContentPortlet.equals( "a-venir" ) || ( !strContentPortlet.equals( "a-venir" ) && showDTO.getAlaffiche( ) ) )
+            if ( strContentPortlet.equals( "a-venir" )
+                    || ( !strContentPortlet.equals( "a-venir" ) && showDTO.getAlaffiche( ) ) )
             {
                 XmlUtil.beginElement( strXml, TAG_SHOW );
                 XmlUtil.addElement( strXml, TAG_SHOW_ID, showDTO.getId( ) );
