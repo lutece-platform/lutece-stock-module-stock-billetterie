@@ -373,6 +373,8 @@ public class ShowJspBean extends AbstractJspBean
                 setPageTitleProperty( PAGE_TITLE_MODIFY_PRODUCT );
                 int nIdProduct = Integer.parseInt( strProductId );
                 product = _serviceProduct.findById( nIdProduct );
+                
+                _serviceProduct.correctProduct(product);
             }
             else
             {
