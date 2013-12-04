@@ -507,7 +507,7 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
         purchaseFilter.setDateBeginOffer( new Timestamp( today.getTime( ) ) );
 
         // Dispatch booking list into two differents lists (old and to come)
-        List<ReservationDTO> toComeBookingList = _purchaseService.findByFilter( purchaseFilter, null );
+        List<ReservationDTO> toComeBookingList = _purchaseService.findByFilter( purchaseFilter );
 
         purchaseFilter.setDateBeginOffer( null );
         purchaseFilter.setDateEndOffer( new Timestamp( today.getTime( ) ) );
