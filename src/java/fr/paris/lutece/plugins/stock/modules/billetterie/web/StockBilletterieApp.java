@@ -249,12 +249,17 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
         //Get the user
         LuteceUser currentUser = getUser( request );
 
-        //check if the user is not ban
-        User userBan = _serviceUser.findByPrimaryKey( currentUser.getUserInfo( LuteceUser.BUSINESS_INFO_ONLINE_EMAIL ) );
-        if ( userBan != null )
+        //check if the user is not ban, don't check for unregistred user
+        if ( currentUser != null )
         {
-            String banMessage = I18nService.getLocalizedString( MESSAGE_MESSAGE_USER_BAN, new String[] { userBan.getMotif( ) }, locale );
-            model.put( MARK_MESSAGE_USER_BAN, banMessage );
+            User userBan = _serviceUser.findByPrimaryKey( currentUser
+                    .getUserInfo( LuteceUser.BUSINESS_INFO_ONLINE_EMAIL ) );
+            if ( userBan != null )
+            {
+                String banMessage = I18nService.getLocalizedString( MESSAGE_MESSAGE_USER_BAN,
+                        new String[] { userBan.getMotif( ) }, locale );
+                model.put( MARK_MESSAGE_USER_BAN, banMessage );
+            }
         }
 
         // If user authenticated, display booking bloc
