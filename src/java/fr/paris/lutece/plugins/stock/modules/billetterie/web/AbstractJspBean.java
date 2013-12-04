@@ -77,6 +77,7 @@ import org.springframework.beans.BeanUtils;
  */
 public class AbstractJspBean extends PluginAdminPageJspBean
 {
+
     public static final int N_DEFAULT_ITEMS_PER_PAGE = AppPropertiesService.getPropertyInt(
             TicketsConstants.PROPERTY_DEFAULT_ITEM_PER_PAGE, 50 );
 
@@ -88,6 +89,8 @@ public class AbstractJspBean extends PluginAdminPageJspBean
     protected static final String MARK_MESSAGE_LIST = "messageList";
     protected static final String MARK_NB_ITEMS_PER_PAGE = "nb_items_per_page";
     protected static final String MARK_PAGINATOR = "paginator";
+    protected static final String MARK_PLUGIN_NAME = "plugin_name";
+
     protected static final String PARAMETER_FIND_BY_FILTER_NAME_METHOD = "findByFilter";
 
     private static final long serialVersionUID = 5259767254583048437L;
@@ -137,51 +140,6 @@ public class AbstractJspBean extends PluginAdminPageJspBean
     protected <T> void saveDataTableInSession( HttpServletRequest request, DataTableManager<T> dataTable, String key )
     {
         request.getSession( ).setAttribute( StringUtils.isNotBlank( key ) ? key : MARK_DATA_TABLE_MANAGER, dataTable );
-    }
-
-    /**
-     * Return a paginator for the view using parameter in http request.
-     * 
-     * @param <T> the generic type
-     * @param request http request
-     * @param list bean list to paginate
-     * @return paginator
-     */
-    protected <T> DelegatePaginator<T> getPaginator( HttpServletRequest request, ResultList<T> list )
-    {
-
-        _strCurrentPageIndex = Paginator.getPageIndex( request, Paginator.PARAMETER_PAGE_INDEX, _strCurrentPageIndex );
-        _nItemsPerPage = Paginator.getItemsPerPage( request, Paginator.PARAMETER_ITEMS_PER_PAGE, _nItemsPerPage,
-                N_DEFAULT_ITEMS_PER_PAGE );
-        String strBaseUrl = request.getRequestURL( )/*
-                                                     * .append( "?" ).append(
-                                                     * request.getQueryString( )
-                                                     * )
-                                                     */.toString( );
-        LocalizedDelegatePaginator<T> paginator = new LocalizedDelegatePaginator<T>( list, _nItemsPerPage, strBaseUrl,
-                Paginator.PARAMETER_PAGE_INDEX, _strCurrentPageIndex, list.getTotalResult( ), getLocale( ) );
-
-        return paginator;
-    }
-
-    /**
-     * Return a bean for pagination in service/dao using parameter in http
-     * request
-     * @param request http request
-     * @return paginator
-     */
-    protected PaginationProperties getPaginationProperties( HttpServletRequest request )
-    {
-        String strPageIndex = Paginator.getPageIndex( request, Paginator.PARAMETER_PAGE_INDEX, _strCurrentPageIndex );
-        int nCurrentPageIndex = 1;
-        if ( StringUtils.isNotEmpty( strPageIndex ) )
-        {
-            nCurrentPageIndex = Integer.valueOf( strPageIndex );
-        }
-        int nItemsPerPage = Paginator.getItemsPerPage( request, Paginator.PARAMETER_ITEMS_PER_PAGE, _nItemsPerPage,
-                N_DEFAULT_ITEMS_PER_PAGE );
-
-        return new PaginationPropertiesImpl( ( nCurrentPageIndex - 1 ) * nItemsPerPage, nItemsPerPage );
     }
 
     /**
@@ -334,7 +292,8 @@ public class AbstractJspBean extends PluginAdminPageJspBean
     {
 
         @SuppressWarnings( "unchecked" )
-        T filterFromSession = (T) request.getSession( ).getAttribute( markFilter );
+        T filterFromSession = request.getParameter( MARK_PLUGIN_NAME ) != null ? null : (T) request.getSession( )
+                .getAttribute( markFilter );
         //1) est-ce qu'une recherche vient d'être faite ? 2) est-ce qu'un filtre existe en session ? 3) est-ce que le filtre en session est d'un type héritant du fitre fournit en parametre ?
         T filterToUse = request.getParameter( TicketsConstants.MARK_FILTER ) != null || filterFromSession == null
                 || !filterFromSession.getClass( ).isAssignableFrom( filter.getClass( ) ) ? dataTable
