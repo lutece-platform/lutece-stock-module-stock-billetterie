@@ -317,7 +317,17 @@ public class AbstractJspBean extends PluginAdminPageJspBean
 
         return dataTablePartner;
     }
-
+    
+    /**
+     * 
+     * @param request the http request
+     * @param filter the filter
+     * @param keyDataTable the key to store data table manager
+     * @param jspManage the url to the manage page
+     * @param service the bean service
+     * @param findByFilter the method which give the method to find beans
+     * @return the data table to use
+     */
     @SuppressWarnings( "unchecked" )
     protected <T> DataTableManager<T> getAbstractDataTableManager( HttpServletRequest request, Object filter,
             String keyDataTable, String jspManage, Object service, Method findByFilter )
