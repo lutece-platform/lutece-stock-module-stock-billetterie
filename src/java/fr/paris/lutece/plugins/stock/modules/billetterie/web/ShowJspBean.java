@@ -95,6 +95,7 @@ import org.springframework.transaction.annotation.Transactional;
  */
 public class ShowJspBean extends AbstractJspBean
 {
+
     /** The Constant LOGGER. */
     public static final Logger LOGGER = Logger.getLogger( ShowJspBean.class );
 
@@ -153,10 +154,15 @@ public class ShowJspBean extends AbstractJspBean
     private static final String PARAMETER_A_LAFFICHE = "aLaffiche";
 
     /** The Constant PROPERTY_POSTER_WIDTH. */
-    private static final String PROPERTY_POSTER_WIDTH = "stock-billetterie.poster.width";
+    private static final String PROPERTY_POSTER_THUMB_WIDTH = "stock-billetterie.poster.width";
 
     /** The Constant PROPERTY_POSTER_HEIGHT. */
-    private static final String PROPERTY_POSTER_HEIGHT = "stock-billetterie.poster.height";
+    private static final String PROPERTY_POSTER_THUMB_HEIGHT = "stock-billetterie.poster.height";
+
+    private static final String PROPERTY_POSTER_MAX_HEIGHT = "stock-billetterie.poster.max-height";
+    private static final String PROPERTY_POSTER_MAX_WIDTH = "stock-billetterie.poster.max-width";
+    private static final int PROPERTY_POSTER_MAX_HEIGHT_DEFAULT = 400;
+    private static final int PROPERTY_POSTER_MAX_WIDTH_DEFAULT = 400;
 
     private static final String PROPERTY_POSTER_PATH = "stock-billetterie.poster.path";
 
@@ -373,8 +379,8 @@ public class ShowJspBean extends AbstractJspBean
                 setPageTitleProperty( PAGE_TITLE_MODIFY_PRODUCT );
                 int nIdProduct = Integer.parseInt( strProductId );
                 product = _serviceProduct.findById( nIdProduct );
-                
-                _serviceProduct.correctProduct(product);
+
+                _serviceProduct.correctProduct( product );
             }
             else
             {
@@ -514,16 +520,20 @@ public class ShowJspBean extends AbstractJspBean
                     // Store poster picture
                     fr.paris.lutece.plugins.stock.utils.FileUtils.writeInputStreamToFile( fisPoster, fPoster );
 
+                    File fPosterResize = ImageUtils.resizeImage( fPoster, AppPropertiesService.getPropertyInt(
+                            PROPERTY_POSTER_MAX_WIDTH, PROPERTY_POSTER_MAX_WIDTH_DEFAULT ), AppPropertiesService
+                            .getPropertyInt( PROPERTY_POSTER_MAX_HEIGHT, PROPERTY_POSTER_MAX_HEIGHT_DEFAULT ), null );
+
                     // Create a thumbnail image
                     File fTbPoster = ImageUtils.createThumbnail( fPoster,
-                            AppPropertiesService.getPropertyInt( PROPERTY_POSTER_WIDTH, 120 ),
-                            AppPropertiesService.getPropertyInt( PROPERTY_POSTER_HEIGHT, 200 ) );
+                            AppPropertiesService.getPropertyInt( PROPERTY_POSTER_THUMB_WIDTH, 120 ),
+                            AppPropertiesService.getPropertyInt( PROPERTY_POSTER_THUMB_HEIGHT, 200 ) );
 
                     // Save file name into entity
                     product.setPosterName( fPoster.getName( ) );
                     fileGotten = true;
 
-                    filePosterArray = new File[] { fTbPoster, fPoster };
+                    filePosterArray = new File[] { fTbPoster, fPosterResize };
 
                 }
                 catch ( IOException e )
