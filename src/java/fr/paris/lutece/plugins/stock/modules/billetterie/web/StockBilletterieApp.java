@@ -49,6 +49,9 @@ import org.apache.commons.lang.StringUtils;
 
 import fr.paris.lutece.plugins.stock.commons.exception.FunctionnalException;
 import fr.paris.lutece.plugins.stock.commons.exception.TechnicalException;
+import fr.paris.lutece.plugins.stock.modules.billetterie.business.district.District;
+import fr.paris.lutece.plugins.stock.modules.billetterie.service.district.DistrictService;
+import fr.paris.lutece.plugins.stock.modules.tickets.business.PartnerDTO;
 import fr.paris.lutece.plugins.stock.modules.tickets.business.SeanceDTO;
 import fr.paris.lutece.plugins.stock.modules.tickets.business.SeanceFilter;
 import fr.paris.lutece.plugins.stock.modules.tickets.business.ShowDTO;
@@ -114,6 +117,7 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
     private static final String MARK_SHOW = "show";
     private static final String MARK_SUBSCRIBE = "subscribe";
     private static final String MARK_USER_EMAIL = "user_email";
+    private static final String MARK_DISTRICT = "district";
     private static final String MARK_MESSAGE_USER_BAN = "messageUserBan";
 
     // Actions
@@ -161,6 +165,9 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
             BEAN_STOCK_TICKETS_SEANCE_SERVICE );
     private final IPurchaseSessionManager _purchaseSessionManager = SpringContextService.getContext( ).getBean(
             IPurchaseSessionManager.class );
+
+    private DistrictService _districtService = (DistrictService) SpringContextService.getContext( ).getBean(
+            DistrictService.class );
 
     private final IUserService _serviceUser = (IUserService) SpringContextService.getBean( BEAN_USER_SERVICE );
 
@@ -232,7 +239,14 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
         }
 
         model.put( MARK_SHOW, show );
-        model.put( MARK_PARTNER, _providerService.findByIdWithProducts( show.getIdProvider( ) ) );
+        PartnerDTO partner = _providerService.findByIdWithProducts( show.getIdProvider( ) );
+
+        if ( partner != null && partner.getDistrict( ) != null )
+        {
+            District district = _districtService.findById( partner.getDistrict( ) );
+            model.put( MARK_DISTRICT, district );
+        }
+        model.put( MARK_PARTNER, partner );
         model.put( MARK_URL_POSTER, AppPropertiesService.getProperty( PROPERTY_POSTER_PATH ) );
 
         // Calculate if show is open to book
@@ -252,8 +266,7 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
         //check if the user is not ban, don't check for unregistred user
         if ( currentUser != null )
         {
-            User userBan = _serviceUser.findByPrimaryKey( currentUser
-                    .getUserInfo( LuteceUser.BUSINESS_INFO_ONLINE_EMAIL ) );
+            User userBan = _serviceUser.findByPrimaryKey( currentUser.getUserInfo( LuteceUser.HOME_INFO_ONLINE_EMAIL ) );
             if ( userBan != null )
             {
                 String banMessage = I18nService.getLocalizedString( MESSAGE_MESSAGE_USER_BAN,

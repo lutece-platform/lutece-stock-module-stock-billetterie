@@ -13,7 +13,7 @@
 	<div class="span-18 last notitle">
 	    <div class="portlet">
 	    	<div class="portlet-content">
-		${error!}
+			${error!}
 				<div id="show_page">
 					<div id="bloc-entete">
 						<img src="${url_poster}${show.id}" class="poster" alt="Affiche ${show.name}"/>
@@ -30,6 +30,9 @@
 							${partner.name!}
 							<br />
 							${partner.address!}
+							<br/>
+							<strong>Quartier :</strong>
+							${(district.libelle)!}
 						</p>
 						<p><strong>Dates :</strong> du ${show.startDate!} au ${show.endDate!}</p>
 						<#if partner.accessible! && (partner.accessibleComment!) != "" >
