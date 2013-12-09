@@ -40,7 +40,9 @@ import javax.inject.Inject;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import fr.paris.lutece.plugins.stock.commons.dao.PaginationProperties;
 import fr.paris.lutece.plugins.stock.modules.billetterie.business.district.District;
+import fr.paris.lutece.plugins.stock.modules.billetterie.business.district.DistrictFilter;
 import fr.paris.lutece.plugins.stock.modules.billetterie.dao.quartier.DistrictDAO;
 
 @Service
@@ -65,5 +67,15 @@ public class DistrictService
      */
     public List<District> findAll(){
         return _daoQuartier.findAll( );
+    }
+    
+    /**
+     * Get district by filter
+     * @param filter the district filter
+     * @param pagination the pagination properties
+     * @return the list of the district
+     */
+    public List<District> findByFilter(DistrictFilter filter, PaginationProperties pagination){
+        return _daoQuartier.findByFilter( filter, pagination );
     }
 }

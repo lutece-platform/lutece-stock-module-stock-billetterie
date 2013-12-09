@@ -38,7 +38,7 @@ import java.util.List;
 
 
 /**
- * The Class QuartierFilter.
+ * The Class DistrictFilter.
  */
 public class DistrictFilter
 {
@@ -54,7 +54,7 @@ public class DistrictFilter
     private List<String> _orders = new ArrayList<String>( );
 
     /** The _order asc. */
-    private boolean _orderAsc;
+    private boolean _orderAsc = true;
 
     /**
      * @return the id

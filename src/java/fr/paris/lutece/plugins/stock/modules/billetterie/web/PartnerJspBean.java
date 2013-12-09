@@ -51,6 +51,7 @@ import fr.paris.lutece.plugins.stock.commons.dao.PaginationProperties;
 import fr.paris.lutece.plugins.stock.commons.exception.BusinessException;
 import fr.paris.lutece.plugins.stock.commons.exception.FunctionnalException;
 import fr.paris.lutece.plugins.stock.modules.billetterie.business.district.District;
+import fr.paris.lutece.plugins.stock.modules.billetterie.business.district.DistrictFilter;
 import fr.paris.lutece.plugins.stock.modules.billetterie.service.district.DistrictService;
 import fr.paris.lutece.plugins.stock.modules.billetterie.utils.constants.BilletterieConstants;
 import fr.paris.lutece.plugins.stock.modules.tickets.business.Contact;
@@ -334,8 +335,13 @@ public class PartnerJspBean extends AbstractJspBean
         ArrayList<Contact> listContactOrderById = (ArrayList<Contact>) provider.getContactList( );
         Collections.sort( listContactOrderById, Contact.COMPARATOR_USING_ID );
         model.put( MARK_LIST_CONTACT, listContactOrderById );
+        
+        DistrictFilter districtFilter = new DistrictFilter();
+        List<String> order = new ArrayList<String>();
+        order.add( "_libelle" );
+        districtFilter.setOrders( order );
 
-        List<District> listDistrict = _serviceDistrict.findAll( );
+        List<District> listDistrict = _serviceDistrict.findByFilter( districtFilter, null );
         model.put( MARK_LIST_DISTRICT, listDistrict );
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_SAVE_PARTNER, getLocale( ), model );

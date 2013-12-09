@@ -33,19 +33,32 @@
  */
 package fr.paris.lutece.plugins.stock.modules.billetterie.dao.quartier;
 
+import java.util.LinkedList;
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Order;
+import javax.persistence.criteria.Root;
+
 import org.springframework.stereotype.Repository;
 
+import fr.paris.lutece.plugins.stock.commons.ResultList;
 import fr.paris.lutece.plugins.stock.commons.dao.AbstractStockDAO;
+import fr.paris.lutece.plugins.stock.commons.dao.PaginationProperties;
 import fr.paris.lutece.plugins.stock.modules.billetterie.business.district.District;
+import fr.paris.lutece.plugins.stock.modules.billetterie.business.district.DistrictFilter;
 import fr.paris.lutece.plugins.stock.service.StockPlugin;
+
 
 /**
  * 
  * @author jchaline
- *
+ * 
  */
 @Repository
-public class DistrictDAO  extends AbstractStockDAO<Integer, District>
+public class DistrictDAO extends AbstractStockDAO<Integer, District>
 {
 
     @Override
@@ -54,4 +67,71 @@ public class DistrictDAO  extends AbstractStockDAO<Integer, District>
         return StockPlugin.PLUGIN_NAME;
     }
 
+    /**
+     * Find purchases by filter.
+     * 
+     * @param filter the filter
+     * @param paginationProperties the pagination properties
+     * @return list of purchases
+     */
+    public ResultList<District> findByFilter( DistrictFilter filter, PaginationProperties paginationProperties )
+    {
+        EntityManager em = getEM( );
+        CriteriaBuilder cb = em.getCriteriaBuilder( );
+
+        CriteriaQuery<District> cq = cb.createQuery( District.class );
+
+        Root<District> root = cq.from( District.class );
+        buildCriteriaQuery( filter, root, cq, cb );
+        buildSortQuery( filter, root, cq, cb );
+        cq.distinct( true );
+
+        return createPagedQuery( cq, paginationProperties ).getResultList( );
+    }
+
+    /**
+     * Add the order by parameter to the query.
+     * 
+     * @param filter the filter
+     * @param root the entity root
+     * @param query the criteria query
+     * @param builder the criteria builder
+     */
+    protected void buildSortQuery( DistrictFilter filter, Root<District> root, CriteriaQuery<District> query,
+            CriteriaBuilder builder )
+    {
+        if ( ( filter.getOrders( ) != null ) && !filter.getOrders( ).isEmpty( ) )
+        {
+            List<Order> orderList = new LinkedList<Order>( );
+
+            // get asc order
+            for ( String order : filter.getOrders( ) )
+            {
+                if ( filter.isOrderAsc( ) )
+                {
+                    orderList.add( builder.asc( root.get( order ) ) );
+                }
+                else
+                {
+                    orderList.add( builder.desc( root.get( order ) ) );
+                }
+            }
+
+            query.orderBy( orderList );
+        }
+    }
+
+    /**
+     * Build the criteria query used when entity are searched by filter.
+     * 
+     * @param filter the filter
+     * @param root the entity root
+     * @param query the criteria query
+     * @param builder the criteria builder
+     */
+    protected void buildCriteriaQuery( Object filter, Root<District> root, CriteriaQuery<District> query,
+            CriteriaBuilder builder )
+    {
+
+    }
 }
