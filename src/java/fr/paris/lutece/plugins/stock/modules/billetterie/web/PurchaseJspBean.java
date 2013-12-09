@@ -137,6 +137,8 @@ public class PurchaseJspBean extends AbstractJspBean
     public static final String PARAMETER_ORDER_DESC = "order_desc";
     /** The constant String PARAMETER_FILTER */
     public static final String PARAMETER_FILTER = "filter";
+    private static final String PARAMETER_PURCHASES_ID = "purchases_id";
+
     // MARKS
 
     /** The constants for DataTableManager */
@@ -146,6 +148,7 @@ public class PurchaseJspBean extends AbstractJspBean
     public static final String MACRO_COLUMN_NAME_PURCHASE = "columnNamePurchase";
     public static final String MACRO_COLUMN_DATE_PURCHASE = "columnDatePurchase";
     public static final String MACRO_COLUMN_OFFER_TYPE_PURCHASE = "columnOfferTypePurchase";
+    public static final String MACRO_COLUMN_CHECKBOX_DELETE_PURCHASE = "columnCheckboxDeletePurchase";
     public static final String MACRO_COLUMN_AGENT_PURCHASE = "columnAgentPurchase";
 
     /** The constant String MARK_PURCHASE */
@@ -203,6 +206,7 @@ public class PurchaseJspBean extends AbstractJspBean
 
     // MESSAGES
     private static final String MESSAGE_CONFIRMATION_DELETE_PURCHASE = "module.stock.billetterie.message.deletePurchase.confirmation";
+    private static final String MESSAGE_CONFIRMATION_MASSE_DELETE_PURCHASE = "module.stock.billetterie.message.deletePurchase.masseConfirmation";
     private static final String MESSAGE_INSUFFICIENT_PLACE_REMAINING = "module.stock.billetterie.message.error.insufficient_place_remaining";
     private static final String MESSAGE_TITLE_CONFIRMATION_DELETE_PURCHASE = "module.stock.billetterie.message.title.deletePurchase.confirmation";
     private static final String MESSAGE_SEARCH_OFFER_DATE = "module.stock.billetterie.message.search.offer.date";
@@ -210,6 +214,7 @@ public class PurchaseJspBean extends AbstractJspBean
     private static final String MESSAGE_NOTIFICATION_BOOKING_SUBJECT = "module.stock.billetterie.notification.booking.subject";
     private static final String MESSAGE_NOTIFY_PURCHASE_CONFIRMATION = "module.stock.billetterie.message.notifyPurchase.confirmation";
     private static final String MESSAGE_TITLE_NOTIFY_PURCHASE_CONFIRMATION = "module.stock.billetterie.message.title.notifyPurchase.confirmation";
+    private static final String MESSAGE_DELETE_MASSE_PURCHASE_NO_CHECK = "module.stock.billetterie.message.deleteMassePurchase.noCaseCheck";
 
     // ORDER FILTERS
     private static final String ORDER_FILTER_DATE = "date";
@@ -388,10 +393,11 @@ public class PurchaseJspBean extends AbstractJspBean
         //si pas d'objet en session, il faut ajouter les colonnes à afficher
         if ( dataTableToUse.getListColumn( ).isEmpty( ) )
         {
+            dataTableToUse.addFreeColumn( StringUtils.EMPTY, MACRO_COLUMN_CHECKBOX_DELETE_PURCHASE );
             dataTableToUse.addFreeColumn( "module.stock.billetterie.list_purchase.table.product",
                     MACRO_COLUMN_NAME_PURCHASE );
             dataTableToUse.addFreeColumn( "module.stock.billetterie.list_purchase.table.dateOffer",
-                    MACRO_COLUMN_DATE_PURCHASE);
+                    MACRO_COLUMN_DATE_PURCHASE );
             dataTableToUse.addColumn( "module.stock.billetterie.list_purchase.table.datePurchase", "date", false );
             dataTableToUse.addFreeColumn( "module.stock.billetterie.list_purchase.table.typeOffer",
                     MACRO_COLUMN_OFFER_TYPE_PURCHASE );
@@ -399,7 +405,7 @@ public class PurchaseJspBean extends AbstractJspBean
                     MACRO_COLUMN_AGENT_PURCHASE );
             dataTableToUse.addColumn( "module.stock.billetterie.list_purchase.table.quantity", "quantity", false );
             dataTableToUse.addFreeColumn( "module.stock.billetterie.list_purchase.table.actions",
-                    MACRO_COLUMN_ACTIONS_PURCHASE);
+                    MACRO_COLUMN_ACTIONS_PURCHASE );
         }
         saveDataTableInSession( request, dataTableToUse, MARK_DATA_TABLE_PURCHASE );
         return dataTableToUse;
@@ -693,22 +699,48 @@ public class PurchaseJspBean extends AbstractJspBean
     public String doDeletePurchase( HttpServletRequest request )
     {
         String strPurchaseId = request.getParameter( PARAMETER_PURCHASE_ID );
+        Integer nIdPurchase;
 
-        int nIdPurchase;
-
-        try
+        if ( strPurchaseId != null )
         {
-            nIdPurchase = Integer.parseInt( strPurchaseId );
+
+            try
+            {
+                nIdPurchase = Integer.parseInt( strPurchaseId );
+            }
+            catch ( NumberFormatException e )
+            {
+                LOGGER.debug( e );
+
+                return AdminMessageService.getMessageUrl( request, StockConstants.MESSAGE_ERROR_OCCUR,
+                        AdminMessage.TYPE_STOP );
+            }
+            _servicePurchase.doDeletePurchase( nIdPurchase );
         }
-        catch ( NumberFormatException e )
+        else
         {
-            LOGGER.debug( e );
+            for ( Object parameter : request.getParameterMap( ).keySet( ) )
+            {
+                if ( parameter instanceof String )
+                {
+                    if ( ( (String) parameter ).startsWith( MARK_PURCHASSE_ID ) )
+                    {
+                        try
+                        {
+                            nIdPurchase = Integer.parseInt( request.getParameter( (String) parameter ) );
+                        }
+                        catch ( NumberFormatException e )
+                        {
+                            LOGGER.debug( e );
 
-            return AdminMessageService.getMessageUrl( request, StockConstants.MESSAGE_ERROR_OCCUR,
-                    AdminMessage.TYPE_STOP );
+                            return AdminMessageService.getMessageUrl( request, StockConstants.MESSAGE_ERROR_OCCUR,
+                                    AdminMessage.TYPE_STOP );
+                        }
+                        _servicePurchase.doDeletePurchase( nIdPurchase );
+                    }
+                }
+            }
         }
-
-        _servicePurchase.doDeletePurchase( nIdPurchase );
 
         return doGoBack( request );
     }
@@ -798,5 +830,48 @@ public class PurchaseJspBean extends AbstractJspBean
         _serviceNotification.send( notificationDTO );
 
         return doGoBack( request );
+    }
+
+    /**
+     * Returns the confirmation message to delete purchases
+     * 
+     * @param request The Http request
+     * @return the html code message
+     */
+    public String getMasseDeletePurchase( HttpServletRequest request )
+    {
+        String[] parameterValues = request.getParameterValues( PARAMETER_PURCHASES_ID );
+
+        // if no case checked
+        if ( parameterValues == null )
+        {
+            return AdminMessageService.getMessageUrl( request, MESSAGE_DELETE_MASSE_PURCHASE_NO_CHECK,
+                    AdminMessage.TYPE_STOP );
+        }
+
+        Map<String, Object> urlParam = new HashMap<String, Object>( );
+        try
+        {
+            for ( String id : parameterValues )
+            {
+                urlParam.put( MARK_PURCHASSE_ID + Integer.parseInt( id ), Integer.parseInt( id ) );
+            }
+        }
+        catch ( NumberFormatException e )
+        {
+            LOGGER.debug( e );
+
+            return AdminMessageService.getMessageUrl( request, StockConstants.MESSAGE_ERROR_OCCUR,
+                    AdminMessage.TYPE_STOP );
+        }
+
+        boolean masse = urlParam.size( ) > 1;
+
+        String strJspBack = JSP_MANAGE_OFFERS;
+
+        return AdminMessageService.getMessageUrl( request, masse ? MESSAGE_CONFIRMATION_MASSE_DELETE_PURCHASE
+                : MESSAGE_CONFIRMATION_DELETE_PURCHASE, null, MESSAGE_TITLE_CONFIRMATION_DELETE_PURCHASE,
+                JSP_DO_DELETE_PURCHASE, BilletterieConstants.TARGET_SELF, AdminMessage.TYPE_CONFIRMATION, urlParam,
+                strJspBack );
     }
 }

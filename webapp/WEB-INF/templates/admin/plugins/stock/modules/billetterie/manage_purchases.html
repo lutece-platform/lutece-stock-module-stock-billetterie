@@ -26,18 +26,22 @@
 	${item.firstNameAgent!} ${item.nameAgent!} <#if item.emailAgent??>&lt;${item.emailAgent}&gt;</#if>
 </#macro>
 
+<#macro columnCheckboxDeletePurchase item >
+	<input type="checkbox" name="purchases_id" value="${item.id!}" />
+</#macro>
+
 <div class="row-fluid">
 	<div class="span12">
-		<fieldset>
-			<legend>
-				#i18n{module.stock.billetterie.list_purchase.title}
-			</legend>
-			<#list errors as error>
-				${error!}
-			</#list>
-			<div class="row-fluid">
-				<div class="span3 well">
-					<form action="jsp/admin/plugins/stock/modules/billetterie/ManagePurchase.jsp" method="post">
+		<form action="jsp/admin/plugins/stock/modules/billetterie/ManagePurchase.jsp" method="post">
+			<fieldset>
+				<legend>
+					#i18n{module.stock.billetterie.list_purchase.title}
+				</legend>
+				<#list errors as error>
+					${error!}
+				</#list>
+				<div class="row-fluid">
+					<div class="span3 well">
 						<input type="hidden" name="filter" value="${filter!}" />
 						<p>
 							<label for="filter_product">#i18n{module.stock.billetterie.list_offres.filter.product} : </label>
@@ -84,15 +88,23 @@
 							<input class="span"  type="text" name="agentName" id="filter_userName" value="${(filter.agentName)!}" />
 						</p>
 						<@showSearchButton />
-					</form>
+					</div>
+					<div class="span9">
+						<@dataTable dataTableManager=dataTablePurchase />
+						<#if dataTablePurchase?? && dataTablePurchase.items?has_content>
+							<button class="btn btn-danger btn-small" type="submit" name="masseDelete">
+								<i class="icon-trash icon-white"></i>&nbsp;
+								#i18n{module.stock.billetterie.list_purchase.button.masseDelete}
+							</button>
+						</#if>
+					</div>
 				</div>
-				<div class="span9">
-					<@dataTable dataTableManager=dataTablePurchase />					
-				</div>
-			</div>
-		</fieldset>
+			</fieldset>
+		</form>
 	</div>
 </div>
+<br/>
+<br/>
 <@getDatePickerRange idFieldFrom="filter_date_beginOffer" idFieldTo="filter_date_endOffer" language="${locale!}" />
 <@getDatePickerRange idFieldFrom="filter_date_begin" idFieldTo="filter_date_end" language="${locale!}" />
 <script src="js/jquery/plugins/ui/ui.datepicker-fr.js"></script>
