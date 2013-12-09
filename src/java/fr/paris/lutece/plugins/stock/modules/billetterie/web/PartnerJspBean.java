@@ -78,10 +78,10 @@ import fr.paris.lutece.util.url.UrlItem;
 /**
  * The Class PartnerJspBean.
  */
-public class PartnerJspBean extends AbstractJspBean 
+public class PartnerJspBean extends AbstractJspBean
 {
     public static final Logger LOGGER = Logger.getLogger( PartnerJspBean.class );
-    
+
     public static final String PARAMETER_PARTNER_TYPE_LIST = "partner_type_list";
     public static final String PARAMETER_PARTNER_TYPE_LIST_DEFAULT = "partner_type_list_default";
     public static final String PARAMETER_PARTNER_ID = "partner_id";
@@ -97,7 +97,7 @@ public class PartnerJspBean extends AbstractJspBean
     public static final String MARK_LIST_CONTACT = "list_contacts";
     public static final String MARK_LIST_PARTNERS = "list_partners";
     public static final String MARK_LIST_DISTRICT = "list_district";
-    
+
     /** The constants for DataTableManager */
     public static final String MARK_DATA_TABLE_PARTNER = "dataTablePartner";
     public static final String MARK_FILTER_PARTNER = "filterPartner";
@@ -129,7 +129,6 @@ public class PartnerJspBean extends AbstractJspBean
     private static final String MESSAGE_CONFIRMATION_DELETE_PARTNER = "module.stock.billetterie.message.deletePartner.confirmation";
     private static final String MESSAGE_DELETE_PARTNER_WITH_SHOW = "module.stock.billetterie.message.deletePartner.with.show";
     private static final String MESSAGE_ERROR_NO_COMMENT_IF_NOT_ACCESSIBLE = "module.stock.billetterie.message.noCommentIfNotAccessible";
-
 
     // MEMBERS VARIABLES
     private IProviderService _serviceProvider;
@@ -218,11 +217,10 @@ public class PartnerJspBean extends AbstractJspBean
 
         //opération nécessaire pour eviter les fuites de mémoires
         dataTableToUse.clearItems( );
-        
 
         return getAdminPage( template.getHtml( ) );
     }
-    
+
     /**
      * Get the DataTableManager object for the PartnerDTO bean
      * @param request the http request
@@ -236,14 +234,15 @@ public class PartnerJspBean extends AbstractJspBean
         Method findMethod = null;
         try
         {
-            findMethod = _serviceProvider.getClass( ).getMethod( PARAMETER_FIND_BY_FILTER_NAME_METHOD, ProviderFilter.class,PaginationProperties.class );
+            findMethod = _serviceProvider.getClass( ).getMethod( PARAMETER_FIND_BY_FILTER_NAME_METHOD,
+                    ProviderFilter.class, PaginationProperties.class );
         }
         catch ( Exception e )
         {
-            LOGGER.error( "Erreur lors de l'obtention du data table : ",e );
+            LOGGER.error( "Erreur lors de l'obtention du data table : ", e );
         }
-        DataTableManager<T> dataTableToUse = getAbstractDataTableManager( request, filter,
-                MARK_DATA_TABLE_PARTNER, JSP_MANAGE_PARTNERS, _serviceProvider,findMethod );
+        DataTableManager<T> dataTableToUse = getAbstractDataTableManager( request, filter, MARK_DATA_TABLE_PARTNER,
+                JSP_MANAGE_PARTNERS, _serviceProvider, findMethod );
 
         //si pas d'objet en session, il faut ajouter les colonnes à afficher
         if ( dataTableToUse.getListColumn( ).isEmpty( ) )
@@ -335,10 +334,10 @@ public class PartnerJspBean extends AbstractJspBean
         ArrayList<Contact> listContactOrderById = (ArrayList<Contact>) provider.getContactList( );
         Collections.sort( listContactOrderById, Contact.COMPARATOR_USING_ID );
         model.put( MARK_LIST_CONTACT, listContactOrderById );
-        
+
         List<District> listDistrict = _serviceDistrict.findAll( );
-        model.put( MARK_LIST_DISTRICT, listDistrict);
-        
+        model.put( MARK_LIST_DISTRICT, listDistrict );
+
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_SAVE_PARTNER, getLocale( ), model );
 
         return getAdminPage( template.getHtml( ) );
@@ -351,17 +350,11 @@ public class PartnerJspBean extends AbstractJspBean
      */
     public String doSavePartner( HttpServletRequest request )
     {
-        boolean addContact = request.getParameter( PARAMETER_ADD_CONTACT ) != null;
-
         if ( null != request.getParameter( StockConstants.PARAMETER_BUTTON_CANCEL ) )
         {
             return doGoBack( request );
         }
-        else if ( addContact )
-        {
-            return getSavePartner( request );
-        }
- 
+
         PartnerDTO provider = new PartnerDTO( );
         populate( provider, request );
 
@@ -369,12 +362,12 @@ public class PartnerJspBean extends AbstractJspBean
         {
             // Controls mandatory fields
             validateBilletterie( provider );
-            List<ValidationError> errors = validate( provider , "" );
-            if (errors.size() > 0)
+            List<ValidationError> errors = validate( provider, "" );
+            if ( errors.size( ) > 0 )
             {
                 return AdminMessageService.getMessageUrl( request, Messages.MESSAGE_INVALID_ENTRY, errors );
             }
-            
+
             _serviceProvider.doSaveProvider( provider );
 
             if ( !provider.isAccessible( ) && provider.getAccessibleComment( ) != StringUtils.EMPTY )

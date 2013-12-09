@@ -7,7 +7,7 @@
 	if(request.getParameter( "save" ) == null && request.getParameter( "cancel" ) == null){%>
 	    <%@ include file="billetterie_header.inc.jsp" %>
 	    <%= partner.getSavePartner( request ) %>
-	   
+	   	<%@ include file="../../../../AdminFooter.jsp" %>
 	 <%}
 	else{
 	    response.sendRedirect( partner.doSavePartner( request ) ); 
