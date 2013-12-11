@@ -287,13 +287,19 @@ public class AbstractJspBean extends PluginAdminPageJspBean
      * @param <T> the bean filter type
      * @return the filter to use
      */
+    @SuppressWarnings( "unchecked" )
     protected <T> T getFilterToUse( HttpServletRequest request, T filter, String markFilter,
             DataTableManager<?> dataTable )
     {
-
-        @SuppressWarnings( "unchecked" )
-        T filterFromSession = request.getParameter( MARK_PLUGIN_NAME ) != null ? null : (T) request.getSession( )
-                .getAttribute( markFilter );
+        T filterFromSession = null;
+        if ( request.getParameter( MARK_PLUGIN_NAME ) != null )
+        {
+            request.getSession( ).setAttribute( markFilter, null );
+        }
+        else{
+            filterFromSession = request.getParameter( MARK_PLUGIN_NAME ) != null ? null : (T) request.getSession( )
+                    .getAttribute( markFilter );
+        }
         //1) est-ce qu'une recherche vient d'être faite ? 2) est-ce qu'un filtre existe en session ? 3) est-ce que le filtre en session est d'un type héritant du fitre fournit en parametre ?
         T filterToUse = request.getParameter( TicketsConstants.MARK_FILTER ) != null || filterFromSession == null
                 || !filterFromSession.getClass( ).isAssignableFrom( filter.getClass( ) ) ? dataTable
@@ -317,7 +323,7 @@ public class AbstractJspBean extends PluginAdminPageJspBean
 
         return dataTablePartner;
     }
-    
+
     /**
      * 
      * @param request the http request

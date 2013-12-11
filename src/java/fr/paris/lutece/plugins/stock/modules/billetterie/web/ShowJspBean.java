@@ -434,7 +434,6 @@ public class ShowJspBean extends AbstractJspBean
         }
         else
         {
-            AppLogService.error( "test" );
             model.put( MARK_TITLE, I18nService.getLocalizedString( PAGE_TITLE_CREATE_PRODUCT, Locale.getDefault( ) ) );
         }
 
