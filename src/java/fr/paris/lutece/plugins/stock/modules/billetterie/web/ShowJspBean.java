@@ -340,6 +340,8 @@ public class ShowJspBean extends AbstractJspBean
         {
             dataTableToUse.addFreeColumn( "module.stock.billetterie.manage_product.filter.name",
                     MACRO_COLUMN_NAME_PRODUCT );
+            dataTableToUse.addColumn( "module.stock.billetterie.manage_product.filter.provider", "providerName", false );
+            dataTableToUse.addColumn( "module.stock.billetterie.manage_product.filter.category", "categoryName", false );
             dataTableToUse.addFreeColumn( "module.stock.billetterie.manage_product.dates", MACRO_COLUMN_DATES_PRODUCT );
             dataTableToUse.addFreeColumn( "module.stock.billetterie.manage_product.actionsLabel",
                     MACRO_COLUMN_ACTIONS_PRODUCT );
@@ -452,7 +454,7 @@ public class ShowJspBean extends AbstractJspBean
      */
     public String doSaveProduct( HttpServletRequest request )
     {
-        if ( StringUtils.isNotBlank( request.getParameter( StockConstants.PARAMETER_BUTTON_CANCEL ) ) )
+        if ( null != request.getParameter( StockConstants.PARAMETER_BUTTON_CANCEL ) )
         {
             return doGoBack( request );
         }

@@ -35,7 +35,7 @@
 					</div>
 					<div class="control-group">
 						<label for="purchase_quantity">
-							#i18n{module.stock.billetterie.save_purchase.nbPurchased} :
+							#i18n{module.stock.billetterie.save_purchase.nbPurchased} * :
 							<#if purchase.id!?has_content && ((purchase.id)! > 0) >
 								${purchase.quantity!}
 							<#else>

@@ -226,6 +226,8 @@ public class StatisticJspBean extends AbstractJspBean
                 tLastResponseDateFilter.getTime( ) ) );
         model.put( MARK_TIMES_UNIT, strTimesUnit );
         //        model.put( MARK_EXPORT_FORMAT_REF_LIST, ExportFormatHome.getListExport( plugin ) );
+        
+        model.put("beanName","product");
         setPageTitleProperty( PAGE_TITLE_MANAGE_PRODUCTS );
         template = AppTemplateService.getTemplate( TEMPLATE_MANAGE_PRODUCTS_STATISTICS, locale, model );
 

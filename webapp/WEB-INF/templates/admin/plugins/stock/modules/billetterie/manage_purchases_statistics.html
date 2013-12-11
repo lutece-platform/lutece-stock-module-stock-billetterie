@@ -8,7 +8,7 @@
 					<p>
 						<label class="text-label" for="fist_response_date_filter">#i18n{module.stock.billetterie.manage_purchases_statistics.labelValidationDate}</label>
 						<input type="text" name="fist_response_date_filter" id="fist_response_date_filter" size="10" value="<#if fist_response_date_filter?has_content>${fist_response_date_filter?date}</#if>" />
-						#i18n{form.result.labelAnd}
+						#i18n{module.stock.billetterie.manage_products_statistics.labelAnd}
 						<input type="text" name="last_response_date_filter" id="last_response_date_filter" size="10" value="<#if last_response_date_filter?has_content>${last_response_date_filter?if_exists?date}</#if>" />
 						<button type="submit" class="btn btn-primary btn-small" value="" >
 							<i class="icon-search icon-white"></i>&nbsp;
@@ -54,7 +54,9 @@
 			    	 	<p>
 							<button class="btn btn-primary btn-small" type="submit">
 								<i class="icon-download icon-white"></i>&nbsp;
-								<span class="hidden-phone">#i18n{module.stock.billetterie.manage_statistics.labelExportResult}</span>
+								<span class="hidden-phone">
+									#i18n{module.stock.billetterie.manage_statistics.labelExportResult}
+								</span>
 							</button>
 			          	</p>
 			    	</#if>	
