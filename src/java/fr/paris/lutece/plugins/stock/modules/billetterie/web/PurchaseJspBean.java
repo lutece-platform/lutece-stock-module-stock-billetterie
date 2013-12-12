@@ -33,8 +33,23 @@
  */
 package fr.paris.lutece.plugins.stock.modules.billetterie.web;
 
+import java.io.IOException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+
 import fr.paris.lutece.plugins.stock.business.purchase.PurchaseFilter;
 import fr.paris.lutece.plugins.stock.business.purchase.exception.PurchaseUnavailable;
+import fr.paris.lutece.plugins.stock.commons.ResultList;
 import fr.paris.lutece.plugins.stock.commons.dao.PaginationProperties;
 import fr.paris.lutece.plugins.stock.commons.exception.BusinessException;
 import fr.paris.lutece.plugins.stock.commons.exception.FunctionnalException;
@@ -43,6 +58,7 @@ import fr.paris.lutece.plugins.stock.modules.tickets.business.NotificationDTO;
 import fr.paris.lutece.plugins.stock.modules.tickets.business.ReservationDTO;
 import fr.paris.lutece.plugins.stock.modules.tickets.business.ReservationFilter;
 import fr.paris.lutece.plugins.stock.modules.tickets.business.SeanceDTO;
+import fr.paris.lutece.plugins.stock.modules.tickets.business.SeanceFilter;
 import fr.paris.lutece.plugins.stock.modules.tickets.service.INotificationService;
 import fr.paris.lutece.plugins.stock.modules.tickets.service.IPurchaseService;
 import fr.paris.lutece.plugins.stock.modules.tickets.service.ISeanceService;
@@ -67,20 +83,6 @@ import fr.paris.lutece.util.datatable.DataTableManager;
 import fr.paris.lutece.util.html.HtmlTemplate;
 import fr.paris.lutece.util.url.UrlItem;
 
-import java.io.IOException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-
 
 /**
  * This class provides the user interface to manage form features ( manage,
@@ -88,6 +90,7 @@ import org.apache.log4j.Logger;
  */
 public class PurchaseJspBean extends AbstractJspBean
 {
+
     /** The logger for this jspBean */
     public static final Logger LOGGER = Logger.getLogger( PurchaseJspBean.class );
 
@@ -173,6 +176,9 @@ public class PurchaseJspBean extends AbstractJspBean
     public static final String MARK_ERRORS = "errors";
     /** The constant String MARK_BASE_URL */
     public static final String MARK_BASE_URL = "base_url";
+    public static final String MARK_OFFERS_AVAILABLES = "offers_availables";
+    public static final String MARK_NEW_ID_OFFER = "newIdOffer";
+
     // PROPERTIES
     /** The constant Integer NB_PLACES_MAX_INVITATION */
     public static final Integer NB_PLACES_MAX_INVITATION = AppPropertiesService.getPropertyInt(
@@ -335,7 +341,7 @@ public class PurchaseJspBean extends AbstractJspBean
             if ( StringUtils.isNotEmpty( purchaseId ) && NumberUtils.validateInt( purchaseId ) )
             {
                 ReservationDTO reservation = this._servicePurchase.findById( Integer.parseInt( purchaseId ) );
-                filter.setUserName( reservation.getNameAgent( ) );
+                filter.setUserName( reservation.getUserName( ) );
             }
             filter.setIdOffer( seance.getId( ) );
             filter.setProductName( seance.getProduct( ).getName( ) );
@@ -425,6 +431,7 @@ public class PurchaseJspBean extends AbstractJspBean
 
         String strIdOffer;
         String strIdPurchase = request.getParameter( MARK_PURCHASSE_ID );
+        boolean modeModification = StringUtils.isNotBlank( strIdPurchase );
 
         // Manage validation errors
         FunctionnalException ve = getErrorOnce( request );
@@ -449,18 +456,38 @@ public class PurchaseJspBean extends AbstractJspBean
 
             //get the info of the purchase
             purchase = _servicePurchase.findById( nIdPurchase );
-
             strIdOffer = purchase.getOfferId( ).toString( );
-
             model.put( MARK_PURCHASSE_ID, nIdPurchase );
-
         }
 
         if ( strIdOffer != null )
         {
             Integer idOffer = Integer.parseInt( strIdOffer );
+
+            // si un changement de representation est fait (clic sur refresh), il faut charger les infos d'une autre représentation
+            String strNewIdOffer = request.getParameter( MARK_NEW_ID_OFFER );
+            if ( strNewIdOffer != null )
+            {
+                Integer newIdOffer = Integer.valueOf( strNewIdOffer );
+                if ( newIdOffer > 0 )
+                {
+                    idOffer = newIdOffer;
+                    model.put( MARK_NEW_ID_OFFER, strNewIdOffer );
+                }
+
+                // Libère la réservation prévue sur la page de réservation pour l'offre actuellement associés uniquement si on refresh
+                _purchaseSessionManager.release( request.getSession( ).getId( ), purchase );
+            }
+
+            //affectation de la représentation, soit la même (creation) soit celle issue d'un refresh
             SeanceDTO seance = this._serviceOffer.findSeanceById( idOffer );
             purchase.setOffer( seance );
+
+            //si on ne vient pas de refresh
+            if ( strNewIdOffer == null )
+            {
+                _purchaseSessionManager.release( request.getSession( ).getId( ), purchase );
+            }
 
             Integer quantity;
             if ( seance.getTypeName( ).equals( TicketsConstants.OFFER_TYPE_INVITATION ) )
@@ -475,8 +502,7 @@ public class PurchaseJspBean extends AbstractJspBean
             {
                 quantity = NB_PLACES_MAX_TARIF_REDUIT;
             }
-            // Libère la réservation prévue sur la page de réservation
-            _purchaseSessionManager.release( request.getSession( ).getId( ), purchase );
+
             // Update quantity with quantity in session for this offer
             if ( quantity > seance.getQuantity( ) )
             {
@@ -498,7 +524,8 @@ public class PurchaseJspBean extends AbstractJspBean
             // Reserve tickets
             try
             {
-                if ( quantity == 0 )
+                //dans le cas d'une creation, vérification du nombre de place disponible, s'il n'est pas suffisant, on affiche une erreur
+                if ( !modeModification && quantity == 0 )
                 {
                     throw new PurchaseUnavailable( purchase.getId( ), MESSAGE_INSUFFICIENT_PLACE_REMAINING );
                 }
@@ -507,7 +534,10 @@ public class PurchaseJspBean extends AbstractJspBean
                 {
                     purchase.setQuantity( quantity );
                 }
-                _purchaseSessionManager.reserve( request.getSession( ).getId( ), purchase );
+                if ( !modeModification )
+                {
+                    _purchaseSessionManager.reserve( request.getSession( ).getId( ), purchase );
+                }
             }
             catch ( PurchaseUnavailable e )
             {
@@ -521,6 +551,16 @@ public class PurchaseJspBean extends AbstractJspBean
                     AppLogService.error( e1 );
                 }
                 return null;
+            }
+
+            //dans le cas d'une modification, il faut afficher les representations disponibles
+            if ( modeModification )
+            {
+                SeanceFilter filter = new SeanceFilter( );
+                filter.setDateBegin( DateUtils.getCurrentDate( ) );
+                filter.setProductId( seance.getProduct( ).getId( ) );
+                ResultList<SeanceDTO> offerAvailables = _serviceOffer.findByFilter( filter, null );
+                model.put( MARK_OFFERS_AVAILABLES, offerAvailables );
             }
         }
 
@@ -538,7 +578,6 @@ public class PurchaseJspBean extends AbstractJspBean
         {
             model.put( MARK_TITLE,
                     I18nService.getLocalizedString( PROPERTY_PAGE_TITLE_CREATE_PURCHASE, Locale.getDefault( ) ) );
-
         }
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_SAVE_PURCHASE, getLocale( ), model );
@@ -556,33 +595,31 @@ public class PurchaseJspBean extends AbstractJspBean
         ReservationDTO purchase = new ReservationDTO( );
         String strIdPurchase = request.getParameter( PARAMETER_PURCHASE_ID );
 
+        //redirection si necessaire au lieu d'enregistrer la reservation
         if ( null != request.getParameter( StockConstants.PARAMETER_BUTTON_CANCEL ) )
         {
             if ( strIdPurchase != null )
             {
 
                 return AppPathService.getBaseUrl( request ) + JSP_MANAGE_PURCHASES;
-
             }
             else
             {
                 return doCancelPurchase( request, purchase );
             }
-
         }
 
+        //Dans le cas d'une modification, on actualise la reservation avec les nouvelles informations "textuels" (informations sur l'agent)
         if ( StringUtils.isNotBlank( strIdPurchase ) )
         {
             //case of modification
             Integer nIdPurchase = Integer.parseInt( strIdPurchase );
             purchase = _servicePurchase.findById( nIdPurchase );
             populate( purchase, request );
-
-            _servicePurchase.update( purchase );
         }
         else
         {
-            //case of creation
+            //case of creation, les informations sont récupérés et l'objet est préparé pour une création
             populate( purchase, request );
             purchase.setDate( DateUtils.getCurrentDateString( ) );
         }
@@ -591,25 +628,29 @@ public class PurchaseJspBean extends AbstractJspBean
             // Controls mandatory fields
             validateBilletterie( purchase );
 
+            //si le champs sont valide
+            try
+            {
+                // Reserve tickets
+                // Libère la réservation prévue sur la page de réservation
+                _purchaseSessionManager.release( request.getSession( ).getId( ), purchase );
+
+                // Réserve avec les nouvelles valeurs saisies par l'utilisateur
+                _purchaseSessionManager.reserve( request.getSession( ).getId( ), purchase );
+            }
+            catch ( PurchaseUnavailable e )
+            {
+                throw new BusinessException( purchase, MESSAGE_INSUFFICIENT_PLACE_REMAINING );
+            }
+
+            //le test vient d'être fait quant à la possibilité de faire cette réservation, il faut donc la créer ou mettre à jour l'ancienne
             if ( StringUtils.isBlank( strIdPurchase ) )
             {
-                try
-                {
-
-                    // Reserve tickets
-                    // Libère la réservation prévue sur la page de réservation
-                    _purchaseSessionManager.release( request.getSession( ).getId( ), purchase );
-
-                    // Réserve avec les nouvelles valeurs saisies par l'utilisateur
-                    _purchaseSessionManager.reserve( request.getSession( ).getId( ), purchase );
-
-                }
-                catch ( PurchaseUnavailable e )
-                {
-                    throw new BusinessException( purchase, MESSAGE_INSUFFICIENT_PLACE_REMAINING );
-                }
-
                 _servicePurchase.doSavePurchase( purchase, request.getSession( ).getId( ) );
+            }
+            else
+            {
+                _servicePurchase.update( purchase );
             }
 
         }

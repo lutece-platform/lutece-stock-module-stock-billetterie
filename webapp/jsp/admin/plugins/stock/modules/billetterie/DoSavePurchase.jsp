@@ -4,6 +4,13 @@
 <jsp:useBean id="purchase" scope="session" class="fr.paris.lutece.plugins.stock.modules.billetterie.web.PurchaseJspBean" />
 <% 
 	purchase.init( request, PurchaseJspBean.RIGHT_MANAGE_PURCHASES);
-    response.sendRedirect( purchase.doSavePurchase( request ) );
+	
+	if(request.getParameter( "save" ) == null && request.getParameter( "cancel" ) == null){%>
+	<%@ include file="billetterie_header.inc.jsp" %>
+	<%= purchase.getSavePurchase( request, response ) %>
+		<%@ include file="../../../../AdminFooter.jsp" %>
+	<%}
+	else{
+		response.sendRedirect( purchase.doSavePurchase( request ) ); 
+	}
 %>
-

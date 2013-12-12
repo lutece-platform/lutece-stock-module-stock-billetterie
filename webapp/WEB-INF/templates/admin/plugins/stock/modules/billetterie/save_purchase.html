@@ -1,3 +1,9 @@
+<#macro selected purchase offerId >
+	<#if purchase.offer.id == offerId>
+		selected="selected"
+	</#if>
+</#macro>
+
 <div class="row-fluid">
 	<div class="span12">
 	    <form class="form" method="post" action="jsp/admin/plugins/stock/modules/billetterie/DoSavePurchase.jsp">
@@ -22,6 +28,19 @@
 						<label for="purchase_offer" >#i18n{module.stock.billetterie.save_purchase.offerName} :
 							${(purchase.offer.product.name)!} - ${(purchase.offer.date)!} - ${(purchase.offer.hour)!}
 						</label>
+						<#if offers_availables?? && offers_availables?has_content>
+							<div class="controls">
+								<select class="input-large" id="newIdOffer" name="newIdOffer" >
+									<option value="-1" ></option>
+									<#list offers_availables as offer >
+										<option value="${(offer.id)!}" <@selected purchase offer.id /> >${(offer.product.name)!} - ${(offer.date)!} - ${(offer.hour)!}</option>
+									</#list>
+								</select>
+								<button class="btn btn-small btn-success" type="submit" id="changeOffer" name="changeOffer" >
+									<i class="icon-refresh icon-white" ></i>&nbsp;Refresh
+								</button>
+							</div>
+						</#if>
 					</div>
 					<div class="control-group">
 						<label for="purchase_offerType" >#i18n{module.stock.billetterie.save_purchase.offerType} :
@@ -36,7 +55,7 @@
 					<div class="control-group">
 						<label for="purchase_quantity">
 							#i18n{module.stock.billetterie.save_purchase.nbPurchased} * :
-							<#if purchase.id!?has_content && ((purchase.id)! > 0) >
+							<#if !newIdOffer?? && purchase.id!?has_content && ((purchase.id)! > 0) >
 								${purchase.quantity!}
 							<#else>
 					        	<@combo name="quantity" default_value="${purchase.quantity!}" items=quantity_list! />
@@ -70,7 +89,7 @@
 	    	</fieldset>
 	    	<fieldset>
 				<div class="form-actions pagination-centered">
-					<button type="submit" class="btn btn-primary btn-small" tabindex="3" >
+					<button type="submit" class="btn btn-primary btn-small" tabindex="3" name="save">
 						<i class="icon-ok icon-white"></i>&nbsp;
 						#i18n{module.stock.billetterie.message.buttonSave}
 					</button>
