@@ -644,14 +644,7 @@ public class PurchaseJspBean extends AbstractJspBean
             }
 
             //le test vient d'être fait quant à la possibilité de faire cette réservation, il faut donc la créer ou mettre à jour l'ancienne
-            if ( StringUtils.isBlank( strIdPurchase ) )
-            {
-                _servicePurchase.doSavePurchase( purchase, request.getSession( ).getId( ) );
-            }
-            else
-            {
-                _servicePurchase.update( purchase );
-            }
+            _servicePurchase.doSavePurchase( purchase, request.getSession( ).getId( ) );
 
         }
         catch ( FunctionnalException e )
