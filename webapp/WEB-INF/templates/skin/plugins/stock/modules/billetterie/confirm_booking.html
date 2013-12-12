@@ -1,58 +1,52 @@
-
-
-</div>
-<#-- results -->
-<div id="two-zones-second" class="span-18 last" role="main">
-	<div class="span-18 last">
-		<div class="portlet">
-			<div class="portlet-content">
-				<#if error?has_content && authentified_user>
-					${error}
-					<form method="post" action="jsp/site/plugins/stock/modules/billetterie/DoCancelSaveReservation.jsp">
-						<input type="hidden" name="date_seance" value="${seance_date!}" />
-						<input type="hidden" name="product_id" value="${show_id!}" />
-						<input type="submit" value="Annuler" class="btn-action" />
-					</form>
-				<#else>
-					${error!}
-					<form method="post" action="jsp/site/plugins/stock/modules/billetterie/DoSaveReservation.jsp" style="display:inline;">
-						<div class="content-title">
-							<h2>Récapitulatif de la réservation</h2>
-						</div>
-						<p><strong>Spectacle :</strong> ${show_name!}</p>
-						<p><strong>Date :</strong> ${seance_date!}</p>
-						<#list bookingList as booking>
-							<p><strong>Nombre de place ${booking.offer.typeName} :</strong> ${booking.quantity!}</p>
-							<#if authentified_user>
-								<p><strong>Votre adresse e-mail :</strong> ${booking.emailAgent!}</p>
-							</#if>
-						</#list>
-						<#if !authentified_user>
-							<p><strong>Veuillez renseigner vos coordonnées</strong></p>
-							<p><label for="agent_name">Nom *&nbsp;:</label>
-							<input class="textfield" type="text" name="nameAgent" id="agent_name" value="${purchaser.nameAgent!}"/></p>
-							<p><label for="agent_firstname">Prénom *&nbsp;:</label>
-							<input class="textfield" type="text" name="firstNameAgent" id="agent_firstname"  value="${purchaser.firstNameAgent!}"/></p>
-							<p><label for="agent_email">Email *&nbsp;:</label>
-							<input class="textfield" type="text" name="emailAgent" id="agent_email" value="${purchaser.emailAgent!}"/></p>
-							
-							<#-- Si on boucle suite à une erreur -->
-							<input type="hidden" name="show_name" value="${show_name!}" />
-							<input type="hidden" name="show_id" value="${show_id!}" />
-							<input type="hidden" name="seance_date" value="${seance_date!}" />
+<div class="last">
+	<div class="portlet">
+		<div class="portlet-content">
+			<#if error?has_content && authentified_user>
+				${error}
+				<form method="post" action="jsp/site/plugins/stock/modules/billetterie/DoCancelSaveReservation.jsp">
+					<input type="hidden" name="date_seance" value="${seance_date!}" />
+					<input type="hidden" name="product_id" value="${show_id!}" />
+					<input type="submit" value="Annuler" class="btn-action" />
+				</form>
+			<#else>
+				${error!}
+				<form method="post" action="jsp/site/plugins/stock/modules/billetterie/DoSaveReservation.jsp" style="display:inline;">
+					<div class="content-title">
+						<h2>Récapitulatif de la réservation</h2>
+					</div>
+					<p><strong>Spectacle :</strong> ${show_name!}</p>
+					<p><strong>Date :</strong> ${seance_date!}</p>
+					<#list bookingList as booking>
+						<p><strong>Nombre de place ${booking.offer.typeName} :</strong> ${booking.quantity!}</p>
+						<#if authentified_user>
+							<p><strong>Votre adresse e-mail :</strong> ${booking.emailAgent!}</p>
 						</#if>
-						<p>${cautionTimePurchase!}</p>
-						<input type="submit" value="Confirmer" class="btn-action" />
-						<input type="hidden" name="booking_check" value="${booking_check!}" />
-						<input type="hidden" name="authentified_user" value="${authentified_user?string}" />
-					</form>
-					<form method="post" action="jsp/site/plugins/stock/modules/billetterie/DoCancelSaveReservation.jsp" style="display:inline;">
-						<input type="hidden" name="date_seance" value="${seance_date!}" />
-						<input type="hidden" name="product_id" value="${show_id!}" />
-						<input type="submit" value="Annuler" class="btn-action" />
-					</form>
-				</#if>
-			</div>
+					</#list>
+					<#if !authentified_user>
+						<p><strong>Veuillez renseigner vos coordonnées</strong></p>
+						<p><label for="agent_name">Nom *&nbsp;:</label>
+						<input class="textfield" type="text" name="nameAgent" id="agent_name" value="${purchaser.nameAgent!}"/></p>
+						<p><label for="agent_firstname">Prénom *&nbsp;:</label>
+						<input class="textfield" type="text" name="firstNameAgent" id="agent_firstname"  value="${purchaser.firstNameAgent!}"/></p>
+						<p><label for="agent_email">Email *&nbsp;:</label>
+						<input class="textfield" type="text" name="emailAgent" id="agent_email" value="${purchaser.emailAgent!}"/></p>
+						
+						<#-- Si on boucle suite à une erreur -->
+						<input type="hidden" name="show_name" value="${show_name!}" />
+						<input type="hidden" name="show_id" value="${show_id!}" />
+						<input type="hidden" name="seance_date" value="${seance_date!}" />
+					</#if>
+					<p>${cautionTimePurchase!}</p>
+					<input type="submit" value="Confirmer" class="btn-action" />
+					<input type="hidden" name="booking_check" value="${booking_check!}" />
+					<input type="hidden" name="authentified_user" value="${authentified_user?string}" />
+				</form>
+				<form method="post" action="jsp/site/plugins/stock/modules/billetterie/DoCancelSaveReservation.jsp" style="display:inline;">
+					<input type="hidden" name="date_seance" value="${seance_date!}" />
+					<input type="hidden" name="product_id" value="${show_id!}" />
+					<input type="submit" value="Annuler" class="btn-action" />
+				</form>
+			</#if>
 		</div>
 	</div>
 </div>

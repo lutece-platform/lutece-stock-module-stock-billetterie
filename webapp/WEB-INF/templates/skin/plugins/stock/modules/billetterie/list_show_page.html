@@ -1,50 +1,44 @@
-</div>
-<#-- results -->
-
-<div id="two-zones-second" class="span-18 last">
-	
-   		<div class="content-title"><h2>#i18n{module.stock.billetterie.show_list.${type_list}.title}</h2>
-		    		
-	    </div>
-	    
-	<div class="span-18 last notitle">
-		<div class="portlet ${type_list}">
-			<div class="portlet-content">
-				 <#if show_list?has_content>
-					<p style="margin-top:10px">
-						<strong>#i18n{module.stock.billetterie.show_list.${type_list}.pre_intro}</strong>
-					</p>
-		    		<p>
-		    			#i18n{module.stock.billetterie.show_list.${type_list}.intro}
-		    		</p>
-		    		
-				<div id="show_list_page">
-					<#list show_list as show>
-					<div class="show_details" style="background-color: ${show.categoryColor!};">
-						<a href="jsp/site/Portal.jsp?page=billetterie&action=fiche-spectacle&product_id=${show.id}" title="${show.name!}">
-						<img src="${url_poster}${show.id}" alt="${show.name!}" />
-						</a> 
+<h2>
+	#i18n{module.stock.billetterie.show_list.${type_list}.title}
+</h2>
+    
+<div class="last notitle">
+	<div class="portlet ${type_list}">
+		<div class="portlet-content">
+			 <#if show_list?has_content>
+				<p style="margin-top:10px">
+					<strong>#i18n{module.stock.billetterie.show_list.${type_list}.pre_intro}</strong>
+				</p>
+	    		<p>
+	    			#i18n{module.stock.billetterie.show_list.${type_list}.intro}
+	    		</p>
+	    		
+			<div id="show_list_page">
+				<#list show_list as show>
+				<div class="show_details" style="background-color: ${show.categoryColor!};">
+					<a href="jsp/site/Portal.jsp?page=billetterie&action=fiche-spectacle&product_id=${show.id}" title="${show.name!}">
+					<img src="${url_poster}${show.id}" alt="${show.name!}" />
+					</a> 
+					<br /> 
+					<a  title="${show.name!}" class="en-savoir-plus" href="jsp/site/Portal.jsp?page=billetterie&action=fiche-spectacle&product_id=${show.id}"> 
+					${show.name} 
 						<br /> 
-						<a  title="${show.name!}" class="en-savoir-plus" href="jsp/site/Portal.jsp?page=billetterie&action=fiche-spectacle&product_id=${show.id}"> 
-						${show.name} 
-							<br /> 
-						EN SAVOIR PLUS
-						</a>
-					</div>
-					</#list>
-					<#else>
-					<br/>
-					   <#if type_list ="aLaffiche">
-					   Aucun spectacle à l'affiche.
-					   <#else>
-					    Aucun spectacle à venir.
-					    </#if>
-					</#if>	
-					<br style="clear:both" />
+					EN SAVOIR PLUS
+					</a>
 				</div>
+				</#list>
+				<#else>
 				<br/>
+				   <#if type_list ="aLaffiche">
+				   Aucun spectacle à l'affiche.
+				   <#else>
+				    Aucun spectacle à venir.
+				    </#if>
+				</#if>	
+				<br style="clear:both" />
 			</div>
-			
+			<br/>
 		</div>
+		
 	</div>
 </div>

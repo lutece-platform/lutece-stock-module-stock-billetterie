@@ -1,114 +1,92 @@
-</div>
+@Extender[${show.id!},stock-product,comment]@
 
-<#-- results -->
-<div id="two-zones-second" class="span-18 last" role="main">
-
-	@Extender[${show.id!},stock-product,comment]@
-	<#-- @Extender[${show.id!},stock-product,hit,{show:true}]@ -->
-	<!-- 
-		REPLACE
-		Extender : ${show.id!},stock-product,hit,{show:true}
-	 -->
-	
-	<div class="span-18 last notitle">
-	    <div class="portlet">
-	    	<div class="portlet-content">
-			${error!}
-				<div id="show_page">
-					<div id="bloc-entete">
-						<img src="${url_poster}${show.id}" class="poster" alt="Affiche ${show.name}"/>
-						<div class="content-title"><h2>${show.name} <#if partner.accessible!>
-							<img src="images/skin/plugins/stock/modules/billetterie/accessibility.png" title="#i18n{module.stock.billetterie.accessibleForReducedMobility}" alt="#i18n{module.stock.billetterie.accessibleForReducedMobility}"/>
-						</#if></h2>
-						
-						</div>
-						<#if show.with?has_content><p><strong>Distribution :</strong> <@nl2br>${show.with!}</@nl2br></p></#if>
-						<#if show.targetPublic?has_content><p><strong>Public :</strong> ${show.targetPublic!}</p></#if>
-						<p><strong>Genre :</strong> ${show.categoryName!}</p>
-						<p>
-							<strong>Salle :</strong>
-							${partner.name!}
-							<br />
-							${partner.address!}
-							<br/>
-							<strong>Quartier :</strong>
-							${(district.libelle)!}
-						</p>
-						<p><strong>Dates :</strong> du ${show.startDate!} au ${show.endDate!}</p>
-						<#if partner.accessible! && (partner.accessibleComment!) != "" >
-							<p><strong>Accessibilité : </strong>${partner.accessibleComment!}</p>
-						</#if>
-						<#if (partner.metroComment!) != "" >
-							<p><strong>Métro : </strong>${partner.metroComment!}</p>
-						</#if>
-						
+<div class="last notitle">
+    <div class="portlet">
+    	<div class="portlet-content">
+		${error!}
+			<div id="show_page">
+				<div id="bloc-entete">
+					<img src="${url_poster}${show.id}" class="poster" alt="Affiche ${show.name}"/>
+					<div class="content-title"><h2>${show.name} <#if partner.accessible!>
+						<img src="images/skin/plugins/stock/modules/billetterie/accessibility.png" title="#i18n{module.stock.billetterie.accessibleForReducedMobility}" alt="#i18n{module.stock.billetterie.accessibleForReducedMobility}"/>
+					</#if></h2>
+					
 					</div>
-					
-					<div id="bloc-presentation">
-						<p><@nl2br>${show.description!}</@nl2br></p>
-						
-						<#if show.website?has_content><p><strong>Site internet :</strong> <a title=${show.name}" href="${show.website!}">${show.website!}</a></p></#if>
-					</div>
-					
-					
-					<#if user!?has_content>
-						<fieldset id="bloc-subscription">
-							<#if subscribe!?has_content>
-								<legend>Abonnement</legend>
-								<form action="jsp/site/Portal.jsp?page=billetterie&action=fiche-spectacle&product_id=${show.id}&subscribe=true#bloc-subscription" method="post">
-									<input type="submit" value="S'abonner" class="btn-action" />
-									<br /><br />
-									Recevoir une notification e-mail lors de l'ajout d'une nouvelle séance et vous permettre ainsi de réserver rapidement votre place.
-									<br />
-								</form>
-							<#else>
-								<legend>Désabonnement</legend>
-								Vous êtes actuellement abonné via l'adresse mail suivante : <i>${user_email!}</i>
-								<form action="jsp/site/Portal.jsp?page=billetterie&action=fiche-spectacle&product_id=${show.id}&subscribe=false#bloc-subscription" method="post">
-									<input type="submit" value="Se désabonner" class="btn-action" />
-									<br /><br />
-									Vous désabonner de ce spectacle et ne plus recevoir de notification.
-									<br />
-								</form>
-							</#if>
-						</fieldset>
+					<#if show.with?has_content><p><strong>Distribution :</strong> <@nl2br>${show.with!}</@nl2br></p></#if>
+					<#if show.targetPublic?has_content><p><strong>Public :</strong> ${show.targetPublic!}</p></#if>
+					<p><strong>Genre :</strong> ${show.categoryName!}</p>
+					<p>
+						<strong>Salle :</strong>
+						${partner.name!}
+						<br />
+						${partner.address!}
+						<br/>
+						<strong>Quartier :</strong>
+						${(district.libelle)!}
+					</p>
+					<p><strong>Dates :</strong> du ${show.startDate!} au ${show.endDate!}</p>
+					<#if partner.accessible! && (partner.accessibleComment!) != "" >
+						<p><strong>Accessibilité : </strong>${partner.accessibleComment!}</p>
+					</#if>
+					<#if (partner.metroComment!) != "" >
+						<p><strong>Métro : </strong>${partner.metroComment!}</p>
 					</#if>
 					
-					
-			
-						<fieldset id="bloc-reservation">
-							<legend>Réservation</legend>
-							<#if messageUserBan?has_content >
-								${messageUserBan}
-							<#else>
-								<#if booking_opened = 0>
-									<#if seance_date_list?has_content>
-									<form action="jsp/site/Portal.jsp?page=billetterie&action=fiche-spectacle&product_id=${show.id}#bloc-reservation" method="post">
-										<select name="date_seance" onchange="this.form.submit()">
-											<#list seance_date_list as seance>
-											<option <#if seance == sSeanceDate! >selected="selected"</#if>>${seance}</option>
-											</#list>
-										</select>
-										<input type="submit" value="Voir les places disponibles" class="btn-action" />
-									</form>
-									${bloc_reservation} <#else> Aucune date programmée pour ce
-									spectacle. </#if> <#elseif booking_opened = -1> <em>Les réservations pour ce spectacle sont terminées.</em>
-								<#else>
-									<em>Les réservations seront ouvertes à partir du ${show.startDate!}.</em>
-								</#if>
-							</#if>
-						</fieldset>
-				
-					
-					
-					
 				</div>
+				
+				<div id="bloc-presentation">
+					<p><@nl2br>${show.description!}</@nl2br></p>
+					
+					<#if show.website?has_content><p><strong>Site internet :</strong> <a title=${show.name}" href="${show.website!}">${show.website!}</a></p></#if>
+				</div>
+				
+				
+				<#if user!?has_content>
+					<fieldset id="bloc-subscription">
+						<#if subscribe!?has_content>
+							<legend>Abonnement</legend>
+							<form action="jsp/site/Portal.jsp?page=billetterie&action=fiche-spectacle&product_id=${show.id}&subscribe=true#bloc-subscription" method="post">
+								<input type="submit" value="S'abonner" class="btn-action" />
+								<br /><br />
+								Recevoir une notification e-mail lors de l'ajout d'une nouvelle séance et vous permettre ainsi de réserver rapidement votre place.
+								<br />
+							</form>
+						<#else>
+							<legend>Désabonnement</legend>
+							Vous êtes actuellement abonné via l'adresse mail suivante : <i>${user_email!}</i>
+							<form action="jsp/site/Portal.jsp?page=billetterie&action=fiche-spectacle&product_id=${show.id}&subscribe=false#bloc-subscription" method="post">
+								<input type="submit" value="Se désabonner" class="btn-action" />
+								<br /><br />
+								Vous désabonner de ce spectacle et ne plus recevoir de notification.
+								<br />
+							</form>
+						</#if>
+					</fieldset>
+				</#if>
+		
+				<fieldset id="bloc-reservation">
+					<legend>Réservation</legend>
+					<#if messageUserBan?has_content >
+						${messageUserBan}
+					<#else>
+						<#if booking_opened = 0>
+							<#if seance_date_list?has_content>
+							<form action="jsp/site/Portal.jsp?page=billetterie&action=fiche-spectacle&product_id=${show.id}#bloc-reservation" method="post">
+								<select name="date_seance" onchange="this.form.submit()">
+									<#list seance_date_list as seance>
+									<option <#if seance == sSeanceDate! >selected="selected"</#if>>${seance}</option>
+									</#list>
+								</select>
+								<input type="submit" value="Voir les places disponibles" class="btn-action" />
+							</form>
+							${bloc_reservation} <#else> Aucune date programmée pour ce
+							spectacle. </#if> <#elseif booking_opened = -1> <em>Les réservations pour ce spectacle sont terminées.</em>
+						<#else>
+							<em>Les réservations seront ouvertes à partir du ${show.startDate!}.</em>
+						</#if>
+					</#if>
+				</fieldset>
 			</div>
 		</div>
 	</div>
-		<#--@Extender[${show.id!},stock-product,comment]@ -->
-	<!-- 
-		REPLACE
-		Extender : ${show.id!},stock-product,comment
-	 -->
 </div>
