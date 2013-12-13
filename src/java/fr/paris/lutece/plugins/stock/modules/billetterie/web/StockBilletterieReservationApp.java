@@ -48,6 +48,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 
 import fr.paris.lutece.plugins.stock.business.purchase.PurchaseFilter;
 import fr.paris.lutece.plugins.stock.business.purchase.exception.PurchaseUnavailable;
@@ -90,6 +91,9 @@ import fr.paris.lutece.util.url.UrlItem;
  */
 public class StockBilletterieReservationApp extends AbstractXPageApp implements XPageApplication
 {
+
+    public static final Logger LOGGER = Logger.getLogger( StockBilletterieReservationApp.class );
+
     private static final String PAGE_BOOKING = "reservation";
     private static final String PAGE_TICKETING = "billetterie";
 
@@ -107,6 +111,7 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
     private static final String MESSAGE_NOTIFICATION_BOOKING_SUBJECT = "module.stock.billetterie.notification.booking.subject";
     private static final String MESSAGE_NOTIFICATION_REQUEST_SUBJECT = "module.stock.billetterie.notification.request.subject";
     private static final String MESSAGE_CAUTION_TIME_PURCHASE = "module.stock.billetterie.message.caution.time.max";
+    private static final String MESSAGE_CAUTION_TIME_PURCHASE_PLURAL = "module.stock.billetterie.message.caution.time.max.plural";
     // Parameters
     private static final String PARAMETER_SEANCE_DATE = "seance_date";
     private static final String PARAMETER_SHOW_NAME = "show_name";
@@ -333,8 +338,18 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
         model.put( PARAMETER_SHOW_NAME, showName );
         model.put( PARAMETER_BOOKING_CHECK, bookingCheck );
         model.put( PARAMETER_AUTHENTIFIED_USER, bAuthentified );
-        String localizedString = I18nService.getLocalizedString( MESSAGE_CAUTION_TIME_PURCHASE,
-                new String[] { PARAMETER_TIME_MAX }, locale );
+
+        int timeMax = 1;
+        try
+        {
+            timeMax = Integer.parseInt( PARAMETER_TIME_MAX );
+        }
+        catch ( NumberFormatException e )
+        {
+            LOGGER.error( "Erreur de temps maximum avant suppression de la reservation en session : " + e );
+        }
+        String localizedString = I18nService.getLocalizedString( timeMax > 1 ? MESSAGE_CAUTION_TIME_PURCHASE_PLURAL
+                : MESSAGE_CAUTION_TIME_PURCHASE, new String[] { PARAMETER_TIME_MAX }, locale );
         model.put( MARK_CAUTION_TIME_PURCHASE, localizedString );
 
         // Add DTO when unauthentified

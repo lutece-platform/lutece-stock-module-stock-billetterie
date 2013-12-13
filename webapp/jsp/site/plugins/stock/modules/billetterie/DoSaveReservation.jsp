@@ -7,10 +7,10 @@
 
 <%
 try {
-String url = stockBilletterieReservationApp.doSaveReservation( request, response );
-if(url != null){
-	response.sendRedirect( url );
-}
+	String url = stockBilletterieReservationApp.doSaveReservation( request, response );
+	if(url != null){
+		response.sendRedirect( url );
+	}
 }
 catch( SiteMessageException lme )
 {

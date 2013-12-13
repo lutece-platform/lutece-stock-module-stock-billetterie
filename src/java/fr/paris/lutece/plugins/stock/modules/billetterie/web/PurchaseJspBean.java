@@ -636,7 +636,12 @@ public class PurchaseJspBean extends AbstractJspBean
                 _purchaseSessionManager.release( request.getSession( ).getId( ), purchase );
 
                 // Réserve avec les nouvelles valeurs saisies par l'utilisateur
-                _purchaseSessionManager.reserve( request.getSession( ).getId( ), purchase );
+                //si la quantité n'est pas présente dans la requete, c'est que l'utilisateur n'a pas modifié le nombre de place voulu
+                // dans ce cas, il faut réallouer des places au purchasesessionmanager
+                if ( request.getParameter( "quantity" ) != null )
+                {
+                    _purchaseSessionManager.reserve( request.getSession( ).getId( ), purchase );
+                }
             }
             catch ( PurchaseUnavailable e )
             {

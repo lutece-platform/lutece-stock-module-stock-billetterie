@@ -463,9 +463,10 @@ public class OfferJspBean extends AbstractJspBean
                 if ( request.getParameter( PARAMETER_OFFER_ID_PRODUCT ) != null
                         && !request.getParameter( PARAMETER_OFFER_ID_PRODUCT ).equals( "-1" ) )
                 {
-                    SeanceDTO findSeanceById = _serviceOffer.findSeanceById( Integer.valueOf( request
-                            .getParameter( PARAMETER_OFFER_ID_PRODUCT ) ) );
-                    int idProvider = findSeanceById.getProduct( ).getIdProvider( );
+                    Integer idProduct = Integer.valueOf( request.getParameter( PARAMETER_OFFER_ID_PRODUCT ) );
+                    
+                    ShowDTO productChoose = _serviceProduct.findById( idProduct );
+                    int idProvider = productChoose.getIdProvider( );
                     model.put( MARK_CONTACT_LIST, getContactComboList( idProvider ) );
                 }
             }

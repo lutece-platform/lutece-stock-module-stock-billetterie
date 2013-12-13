@@ -213,9 +213,12 @@ public class NotificationJspBean extends AbstractJspBean
                     if ( idSalle != null )
                     {
                         Integer idContact = seance.getIdContact( );
-                        PartnerDTO partner = _serviceProvider.findById( idSalle );
-                        contactMail = partner.getContactMail(idContact );
-                        notification.setRecipientsTo( contactMail );
+                        if ( idContact != null )
+                        {
+                            PartnerDTO partner = _serviceProvider.findById( idSalle );
+                            contactMail = partner.getContactMail( idContact );
+                            notification.setRecipientsTo( contactMail );
+                        }
                     }
                 }
 
