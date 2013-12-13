@@ -4,7 +4,7 @@
 	<name>stock-billetterie</name>
 	<class>fr.paris.lutece.plugins.stock.modules.billetterie.service.BilletteriePlugin
 	</class>
-	<version>1.0.9</version>
+	<version>1.1.0</version>
 	<description>module.stock.billetterie.module.description</description>
 	<documentation />
 	<installation />
@@ -16,7 +16,7 @@
 	<copyright>Copyright 2001-2013 Mairie de Paris</copyright>
 
 	<core-version-dependency>
-		<min-core-version>2.4.1</min-core-version>
+		<min-core-version>4.1.1</min-core-version>
 		<max-core-version />
 	</core-version-dependency>
 
