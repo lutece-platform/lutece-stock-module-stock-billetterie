@@ -74,16 +74,20 @@
 					<#else>
 						<#if booking_opened = 0>
 							<#if seance_date_list?has_content>
-							<form action="jsp/site/Portal.jsp?page=billetterie&action=fiche-spectacle&product_id=${show.id}#bloc-reservation" method="post">
-								<select name="date_seance" onchange="this.form.submit()">
-									<#list seance_date_list as seance>
-									<option <#if seance == sSeanceDate! >selected="selected"</#if>>${seance}</option>
-									</#list>
-								</select>
-								<input type="submit" value="Voir les places disponibles" class="btn-action" />
-							</form>
-							${bloc_reservation} <#else> Aucune date programmée pour ce
-							spectacle. </#if> <#elseif booking_opened = -1> <em>Les réservations pour ce spectacle sont terminées.</em>
+								<form action="jsp/site/Portal.jsp?page=billetterie&action=fiche-spectacle&product_id=${show.id}#bloc-reservation" method="post">
+									<select name="date_seance" onchange="this.form.submit()">
+										<#list seance_date_list as seance>
+											<option <#if seance == sSeanceDate! >selected="selected"</#if>>${seance}</option>
+										</#list>
+									</select>
+									<input type="submit" value="Voir les places disponibles" class="btn-action" />
+								</form>
+								${bloc_reservation} 
+							<#else>
+								Aucune date programmée pour ce spectacle.
+							</#if>
+						<#elseif booking_opened = -1>
+							<em>Les réservations pour ce spectacle sont terminées.</em>
 						<#else>
 							<em>Les réservations seront ouvertes à partir du ${show.startDate!}.</em>
 						</#if>
