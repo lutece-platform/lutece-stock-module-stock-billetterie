@@ -433,6 +433,11 @@ public class PurchaseJspBean extends AbstractJspBean
         String strIdPurchase = request.getParameter( MARK_PURCHASSE_ID );
         boolean modeModification = StringUtils.isNotBlank( strIdPurchase );
 
+        //id present dans le cas d'un rafraichissement en ayant choisi une autre représentation
+        String strNewIdOffer = request.getParameter( MARK_NEW_ID_OFFER );
+        //ce boolean permet de savoir si une tentative de modification du nombre de places reservé pour une même représentation a lieu
+        boolean refreshSameOffer = false;
+
         // Manage validation errors
         FunctionnalException ve = getErrorOnce( request );
         if ( ve != null )
@@ -465,43 +470,25 @@ public class PurchaseJspBean extends AbstractJspBean
             Integer idOffer = Integer.parseInt( strIdOffer );
 
             // si un changement de representation est fait (clic sur refresh), il faut charger les infos d'une autre représentation
-            String strNewIdOffer = request.getParameter( MARK_NEW_ID_OFFER );
             if ( strNewIdOffer != null )
             {
                 Integer newIdOffer = Integer.valueOf( strNewIdOffer );
                 if ( newIdOffer > 0 )
                 {
+                    refreshSameOffer = newIdOffer.equals( purchase.getOfferId( ) );
                     idOffer = newIdOffer;
                     model.put( MARK_NEW_ID_OFFER, strNewIdOffer );
                 }
-
-                // Libère la réservation prévue sur la page de réservation pour l'offre actuellement associés uniquement si on refresh
-                _purchaseSessionManager.release( request.getSession( ).getId( ), purchase );
             }
 
             //affectation de la représentation, soit la même (creation) soit celle issue d'un refresh
             SeanceDTO seance = this._serviceOffer.findSeanceById( idOffer );
             purchase.setOffer( seance );
 
-            //si on ne vient pas de refresh
-            if ( strNewIdOffer == null )
-            {
-                _purchaseSessionManager.release( request.getSession( ).getId( ), purchase );
-            }
+            _purchaseSessionManager.release( request.getSession( ).getId( ), purchase );
 
-            Integer quantity;
-            if ( seance.getTypeName( ).equals( TicketsConstants.OFFER_TYPE_INVITATION ) )
-            {
-                quantity = NB_PLACES_MAX_INVITATION;
-            }
-            else if ( seance.getTypeName( ).equals( TicketsConstants.OFFER_TYPE_INVITATION_SPECTACLE_ENFANT ) )
-            {
-                quantity = NB_PLACES_MAX_INVITATION_SPECTACLE;
-            }
-            else
-            {
-                quantity = NB_PLACES_MAX_TARIF_REDUIT;
-            }
+            Integer quantity = Integer.MAX_VALUE;
+            maximizeQuantity( seance, quantity );
 
             // Update quantity with quantity in session for this offer
             if ( quantity > seance.getQuantity( ) )
@@ -509,6 +496,12 @@ public class PurchaseJspBean extends AbstractJspBean
                 quantity = seance.getQuantity( );
             }
             quantity = _purchaseSessionManager.updateQuantityWithSession( quantity, idOffer );
+
+            if ( refreshSameOffer )
+            {
+                quantity += purchase.getQuantity( );
+                maximizeQuantity( seance, quantity );
+            }
             seance.setQuantity( quantity );
 
             ReferenceList quantityList = new ReferenceList( );
@@ -586,6 +579,27 @@ public class PurchaseJspBean extends AbstractJspBean
     }
 
     /**
+     * Ensures that quantity are not null and not bigger than maximum define
+     * @param seance the seance with quantity to check
+     * @param actualQuantity the actual quantity
+     */
+    private void maximizeQuantity( SeanceDTO seance, Integer actualQuantity )
+    {
+        if ( seance.getTypeName( ).equals( TicketsConstants.OFFER_TYPE_INVITATION ) )
+        {
+            actualQuantity = Math.min( actualQuantity, NB_PLACES_MAX_INVITATION );
+        }
+        else if ( seance.getTypeName( ).equals( TicketsConstants.OFFER_TYPE_INVITATION_SPECTACLE_ENFANT ) )
+        {
+            actualQuantity = Math.min( actualQuantity, NB_PLACES_MAX_INVITATION_SPECTACLE );
+        }
+        else
+        {
+            actualQuantity = Math.min( actualQuantity, NB_PLACES_MAX_TARIF_REDUIT );
+        }
+    }
+
+    /**
      * Save a purchase
      * @param request The HTTP request
      * @return redirection url
@@ -635,10 +649,16 @@ public class PurchaseJspBean extends AbstractJspBean
                 // Libère la réservation prévue sur la page de réservation
                 _purchaseSessionManager.release( request.getSession( ).getId( ), purchase );
 
+                if ( purchase.getId( ) != null )
+                {
+                    _servicePurchase.doDeletePurchase( purchase.getId( ) );
+                    purchase.setId( null );
+                }
+
                 // Réserve avec les nouvelles valeurs saisies par l'utilisateur
                 //si la quantité n'est pas présente dans la requete, c'est que l'utilisateur n'a pas modifié le nombre de place voulu
                 // dans ce cas, il faut réallouer des places au purchasesessionmanager
-                    _purchaseSessionManager.reserve( request.getSession( ).getId( ), purchase );
+                _purchaseSessionManager.reserve( request.getSession( ).getId( ), purchase );
             }
             catch ( PurchaseUnavailable e )
             {
@@ -647,7 +667,6 @@ public class PurchaseJspBean extends AbstractJspBean
 
             //le test vient d'être fait quant à la possibilité de faire cette réservation, il faut donc la créer ou mettre à jour l'ancienne
             _servicePurchase.doSavePurchase( purchase, request.getSession( ).getId( ) );
-
         }
         catch ( FunctionnalException e )
         {
