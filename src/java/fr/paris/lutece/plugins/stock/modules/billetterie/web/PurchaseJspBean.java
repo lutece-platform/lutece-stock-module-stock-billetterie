@@ -433,11 +433,6 @@ public class PurchaseJspBean extends AbstractJspBean
         String strIdPurchase = request.getParameter( MARK_PURCHASSE_ID );
         boolean modeModification = StringUtils.isNotBlank( strIdPurchase );
 
-        //id present dans le cas d'un rafraichissement en ayant choisi une autre représentation
-        String strNewIdOffer = request.getParameter( MARK_NEW_ID_OFFER );
-        //ce boolean permet de savoir si une tentative de modification du nombre de places reservé pour une même représentation a lieu
-        boolean refreshSameOffer = false;
-
         // Manage validation errors
         FunctionnalException ve = getErrorOnce( request );
         if ( ve != null )
@@ -469,18 +464,6 @@ public class PurchaseJspBean extends AbstractJspBean
         {
             Integer idOffer = Integer.parseInt( strIdOffer );
 
-            // si un changement de representation est fait (clic sur refresh), il faut charger les infos d'une autre représentation
-            if ( strNewIdOffer != null )
-            {
-                Integer newIdOffer = Integer.valueOf( strNewIdOffer );
-                if ( newIdOffer > 0 )
-                {
-                    refreshSameOffer = newIdOffer.equals( purchase.getOfferId( ) );
-                    idOffer = newIdOffer;
-                    model.put( MARK_NEW_ID_OFFER, strNewIdOffer );
-                }
-            }
-
             //affectation de la représentation, soit la même (creation) soit celle issue d'un refresh
             SeanceDTO seance = this._serviceOffer.findSeanceById( idOffer );
             purchase.setOffer( seance );
@@ -488,7 +471,7 @@ public class PurchaseJspBean extends AbstractJspBean
             _purchaseSessionManager.release( request.getSession( ).getId( ), purchase );
 
             Integer quantity = Integer.MAX_VALUE;
-            maximizeQuantity( seance, quantity );
+            quantity = maximizeQuantity( seance, quantity );
 
             // Update quantity with quantity in session for this offer
             if ( quantity > seance.getQuantity( ) )
@@ -497,11 +480,6 @@ public class PurchaseJspBean extends AbstractJspBean
             }
             quantity = _purchaseSessionManager.updateQuantityWithSession( quantity, idOffer );
 
-            if ( refreshSameOffer )
-            {
-                quantity += purchase.getQuantity( );
-                maximizeQuantity( seance, quantity );
-            }
             seance.setQuantity( quantity );
 
             ReferenceList quantityList = new ReferenceList( );
@@ -582,8 +560,9 @@ public class PurchaseJspBean extends AbstractJspBean
      * Ensures that quantity are not null and not bigger than maximum define
      * @param seance the seance with quantity to check
      * @param actualQuantity the actual quantity
+     * @return the maximized quantity
      */
-    private void maximizeQuantity( SeanceDTO seance, Integer actualQuantity )
+    private Integer maximizeQuantity( SeanceDTO seance, Integer actualQuantity )
     {
         if ( seance.getTypeName( ).equals( TicketsConstants.OFFER_TYPE_INVITATION ) )
         {
@@ -597,6 +576,7 @@ public class PurchaseJspBean extends AbstractJspBean
         {
             actualQuantity = Math.min( actualQuantity, NB_PLACES_MAX_TARIF_REDUIT );
         }
+        return actualQuantity;
     }
 
     /**
