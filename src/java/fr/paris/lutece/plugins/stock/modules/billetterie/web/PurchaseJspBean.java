@@ -589,20 +589,6 @@ public class PurchaseJspBean extends AbstractJspBean
         ReservationDTO purchase = new ReservationDTO( );
         String strIdPurchase = request.getParameter( PARAMETER_PURCHASE_ID );
 
-        //redirection si necessaire au lieu d'enregistrer la reservation
-        if ( null != request.getParameter( StockConstants.PARAMETER_BUTTON_CANCEL ) )
-        {
-            if ( strIdPurchase != null )
-            {
-
-                return AppPathService.getBaseUrl( request ) + JSP_MANAGE_PURCHASES;
-            }
-            else
-            {
-                return doCancelPurchase( request, purchase );
-            }
-        }
-
         //Dans le cas d'une modification, on actualise la reservation avec les nouvelles informations "textuels" (informations sur l'agent)
         if ( StringUtils.isNotBlank( strIdPurchase ) )
         {
@@ -617,6 +603,17 @@ public class PurchaseJspBean extends AbstractJspBean
             populate( purchase, request );
             purchase.setDate( DateUtils.getCurrentDateString( ) );
         }
+        
+        //redirection si necessaire au lieu d'enregistrer la reservation
+        if ( null != request.getParameter( StockConstants.PARAMETER_BUTTON_CANCEL ) )
+        {
+            if ( StringUtils.isNotBlank( strIdPurchase ) )
+            {
+
+                return doCancelPurchase( request, purchase );
+            }
+        }
+
         try
         {
             // Controls mandatory fields
