@@ -21,15 +21,17 @@
 						<br />
 						${partner.address!}
 						<br/>
-						<strong>Quartier :</strong>
-						${(district.libelle)!}
+						<#if district?? && district.libelle?has_content>
+							<strong>Quartier :</strong>
+							${(district.libelle)!}
+						</#if>
 					</p>
+					<#if (partner.metroComment!) != "" >
+						<p><strong>Métro : </strong>${partner.metroComment!}</p>
+					</#if>
 					<p><strong>Dates :</strong> du ${show.startDate!} au ${show.endDate!}</p>
 					<#if partner.accessible! && (partner.accessibleComment!) != "" >
 						<p><strong>Accessibilité : </strong>${partner.accessibleComment!}</p>
-					</#if>
-					<#if (partner.metroComment!) != "" >
-						<p><strong>Métro : </strong>${partner.metroComment!}</p>
 					</#if>
 					
 				</div>
