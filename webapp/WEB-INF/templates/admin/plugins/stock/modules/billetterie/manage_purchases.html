@@ -90,13 +90,7 @@
 						<@showSearchButton />
 					</div>
 					<div class="span9">
-						<@dataTable dataTableManager=dataTablePurchase />
-						<#if dataTablePurchase?? && dataTablePurchase.items?has_content>
-							<button class="btn btn-danger btn-small" type="submit" name="masseDelete">
-								<i class="icon-trash icon-white"></i>&nbsp;
-								#i18n{module.stock.billetterie.list_purchase.button.masseDelete}
-							</button>
-						</#if>
+						<@dataTableBilletterie dataTableManager=dataTablePurchase masseDeleteLabel="#i18n{module.stock.billetterie.list_purchase.button.masseDelete}"/>
 					</div>
 				</div>
 			</fieldset>

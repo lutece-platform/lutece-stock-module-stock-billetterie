@@ -93,3 +93,86 @@
 	</div>
 </#macro>
 
+<#-- Duplication de la macro pour y ajouter un comportement d'action en "masse" -->
+<#macro dataTableBilletterie dataTableManager actionMacro="" tableClass="table table-striped table-condensed" caption="&nbsp;" summary="data table" masseDeleteLabel="#i18n{module.stock.billetterie.list_offres.button.masseDelete}">
+	<#if 0 < dataTableManager.items?size >
+		<form class="form-inline" method="post" action="${dataTableManager.sortUrl}">
+			<#if dataTableManager.enablePaginator>
+			    <#if (dataTableManager.paginator.pagesCount > 1) >
+			        <@paginationPageLinks paginator=dataTableManager.paginator />
+			    </#if>
+			    <div class="pull-right">
+					<@paginationItemCount paginator=dataTableManager.paginator combo=1 nb_items_per_page=dataTableManager.paginator.itemsPerPage?string/>
+				</div>
+				<input type="hidden" name="${dataTableManager.id}" id="${dataTableManager.id}" value="${dataTableManager.id}" />
+			</#if>
+			<table class="${tableClass}" summary="${summary}">
+				<caption>${caption}</caption>
+				<tr>
+					<#list dataTableManager.listColumn as column>
+						<th scope="col">
+							#i18n{${column.titleKey}}
+							<#if !(column.typeColumn = "ACTION") && column.sortable>
+								<@sort jsp_url=dataTableManager.sortUrl attribute=column.parameterName />
+							</#if>
+						</th>
+					</#list>
+				</tr>
+				<#list dataTableManager.items as item>
+					<tr>
+						<#list dataTableManager.listColumn as column>
+							<#if column.typeColumn = "STRING">
+								<#assign propName = "item." + column.parameterName>
+								<#assign value = propName?eval>
+								<td>${value!}</td>
+							<#elseif column.typeColumn = "LABEL">
+								<#assign propName = "item." + column.parameterName>
+								<#assign value = propName?eval>
+								<td>#i18n{${value!}}</td>
+							<#elseif column.typeColumn = "BOOLEAN">
+								<#assign propName = "item." + column.parameterName>
+								<#assign value = propName?eval>
+								<#if value?? && value>
+									<td><span class="label label-success" title="#i18n{${column.labelTrue!}}"><i class="icon-ok-sign icon-white"></i>#i18n{${column.labelTrue!}}</span></td>
+								<#else>
+									<td><span class="label label-important" title="#i18n{${column.labelFalse!}}"><i class="icon-remove-sign icon-white"></i>#i18n{${column.labelFalse!}}</span></td>
+								</#if>
+							<#elseif column.typeColumn = "EMAIL">
+								<#assign propName = "item." + column.parameterName>
+								<#assign value = propName?eval>
+								<td><#if value?? && value != ""><a href="mailto:${value}" title="${value}" >${value}</a></#if></td>
+							<#elseif column.typeColumn = "ACTION">
+								<#if column.parameterName?? && column.parameterName != "">
+									<#assign macroName = column.parameterName>
+								<#elseif actionMacro?? && actionMacro != "">
+									<#assign macroName = actionMacro>
+								</#if>
+								<#if macroName?? && macroName != "">
+									<td><@.vars[macroName] item=item /></td>
+								</#if>
+							</#if>
+						</#list>
+					</tr>
+				</#list>
+			</table>
+			<#if dataTableManager.enablePaginator>
+			    <#if (dataTableManager.paginator.pagesCount > 1) >
+			        <@paginationPageLinks paginator=dataTableManager.paginator />
+			    </#if>
+			    <div class="pull-right">
+					<@paginationItemCount paginator=dataTableManager.paginator combo=0 nb_items_per_page=dataTableManager.paginator.itemsPerPage?string/>
+				</div>
+			</#if>
+			<#if dataTableManager?? && dataTableManager.items?has_content>
+				<button class="btn btn-danger btn-small" type="submit" name="masseDelete">
+					<i class="icon-trash icon-white"></i>&nbsp;
+					${masseDeleteLabel}
+				</button>
+				<br/>
+				<br/>
+			</#if>
+		</form>
+	<#else>
+		#i18n{portal.util.labelNoItem}
+	</#if>
+</#macro>
