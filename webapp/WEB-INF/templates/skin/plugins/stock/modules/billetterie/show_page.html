@@ -1,4 +1,3 @@
-@Extender[${show.id!},stock-product,comment]@
 
 <div id="two-zones-second" role="main">
 <div class="last notitle">
@@ -92,6 +91,10 @@
 							<em>Les réservations seront ouvertes à partir du ${show.startDate!}.</em>
 						</#if>
 					</#if>
+				</fieldset>
+				<fieldset>
+					@Extender[${show.id!},stock-product,feedback]@
+					@Extender[${show.id!},stock-product,comment]@
 				</fieldset>
 			</div>
 		</div>
