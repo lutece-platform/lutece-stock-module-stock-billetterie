@@ -715,8 +715,8 @@ public class OfferJspBean extends AbstractJspBean
             return error;
         }
 
-        return AdminMessageService.getMessageUrl( request, masse ? MESSAGE_CONFIRMATION_DELETE_OFFER
-                : MESSAGE_CONFIRMATION_MASSE_DELETE_OFFER, null, MESSAGE_TITLE_CONFIRMATION_MASSE_DELETE_OFFER,
+        return AdminMessageService.getMessageUrl( request, masse ? MESSAGE_CONFIRMATION_MASSE_DELETE_OFFER
+                : MESSAGE_CONFIRMATION_DELETE_OFFER, null, MESSAGE_TITLE_CONFIRMATION_MASSE_DELETE_OFFER,
                 masse ? JSP_DO_MASSE_DELETE_OFFER : JSP_DO_DELETE_OFFER, BilletterieConstants.TARGET_SELF,
                 AdminMessage.TYPE_CONFIRMATION, urlParam, strJspBack );
     }

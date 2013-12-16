@@ -607,11 +607,7 @@ public class PurchaseJspBean extends AbstractJspBean
         //redirection si necessaire au lieu d'enregistrer la reservation
         if ( null != request.getParameter( StockConstants.PARAMETER_BUTTON_CANCEL ) )
         {
-            if ( StringUtils.isNotBlank( strIdPurchase ) )
-            {
-
-                return doCancelPurchase( request, purchase );
-            }
+            return doCancelPurchase( request, purchase );
         }
 
         try

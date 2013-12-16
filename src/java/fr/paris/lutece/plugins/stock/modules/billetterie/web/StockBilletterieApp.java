@@ -391,23 +391,10 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
         Map<String, Object> model = new HashMap<String, Object>( );
 
         model.put( MARK_SEANCE_LIST, seanceList );
+        
         // Add nb max purchase per offer type
         ReferenceList quantityList = new ReferenceList( );
-        ReferenceItem refItem = new ReferenceItem( );
-        String strInteger = String.valueOf( 0 );
-        refItem.setCode( strInteger );
-        refItem.setName( strInteger );
-        quantityList.add( refItem );
-        strInteger = String.valueOf( 1 );
-        refItem = new ReferenceItem( );
-        refItem.setCode( strInteger );
-        refItem.setName( strInteger );
-        quantityList.add( refItem );
-        refItem = new ReferenceItem( );
-        strInteger = AppPropertiesService.getProperty( PROPERTY_NB_PLACES_MAX_INVITATION, "2" );
-        refItem.setCode( strInteger );
-        refItem.setName( strInteger );
-        quantityList.add( refItem );
+        quantityList = getNumberList( AppPropertiesService.getPropertyInt( PROPERTY_NB_PLACES_MAX_INVITATION, 2 ) );
         model.put( MAX_RESERVATION_INVITATION, quantityList );
 
         quantityList = getNumberList( AppPropertiesService.getPropertyInt( PROPERTY_NB_PLACES_MAX_INVITATION_ENFANT, 2 ) );
