@@ -93,7 +93,9 @@
 					</#if>
 				</fieldset>
 				<fieldset>
-					@Extender[${show.id!},stock-product,feedback]@
+					@Extender[${show.id!},stock-product,rating,{show:"all"}]@
+				</fieldset>
+				<fieldset>
 					@Extender[${show.id!},stock-product,comment]@
 				</fieldset>
 			</div>
