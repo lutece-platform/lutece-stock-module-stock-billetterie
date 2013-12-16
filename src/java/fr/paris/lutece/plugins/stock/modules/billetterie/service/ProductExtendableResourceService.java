@@ -83,8 +83,7 @@ public class ProductExtendableResourceService implements IExtendableResourceServ
         {
             int nIdProduct = Integer.parseInt( strIdResource );
 
-            //resources = _serviceProduct.findById( nIdProduct );
-            resources = null;
+            resources = _serviceProduct.findById( nIdProduct );
         }
 
         return resources ;
