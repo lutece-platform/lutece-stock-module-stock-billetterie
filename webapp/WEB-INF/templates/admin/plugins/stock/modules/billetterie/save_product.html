@@ -7,9 +7,11 @@
 			<fieldset>
 				<legend>
 					${title!}
-					<span class="pull-right">
-						${extendableResourceActionsHtml!}
-					</span>
+					<#if product?? && product.id??>
+						<span class="pull-right">
+							${extendableResourceActionsHtml!}
+						</span>
+					</#if>
 				</legend>
 			</fieldset>
 	    <form class="form" method="post" enctype="multipart/form-data" name="save_product" id="save_product" action="jsp/admin/plugins/stock/modules/billetterie/DoSaveProduct.jsp">
