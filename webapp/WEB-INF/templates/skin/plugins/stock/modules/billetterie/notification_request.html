@@ -1,11 +1,11 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr" xml:lang="fr"><head><base href="${base_url}" /><meta http-equiv="Content-Type" content="text/html;charset=UTF-8" /></head><body>
-<strong>Bonjour,</strong>
-${purchaser.firstNameAgent} ${purchaser.nameAgent} &lt;${purchaser.emailAgent}&gt; souhaite effectuer la réservation suivante :
+<strong>#i18n{module.stock.billetterie.notification.request.welcome}</strong>
+${purchaser.firstNameAgent} ${purchaser.nameAgent} &lt;${purchaser.emailAgent}&gt; #i18n{module.stock.billetterie.notification.request.reservation} :
 
 <#assign booking=bookingList[0] />
-<strong>Spectacle :</strong> ${show_name!}
-<strong>Date :</strong> ${seance_date!}
+<strong>#i18n{module.stock.billetterie.notification.request.show} :</strong> ${show_name!}
+<strong>#i18n{module.stock.billetterie.notification.request.date} :</strong> ${seance_date!}
 <#list bookingList as booking>
-	<strong>Nombre de place ${booking.offer.typeName} :</strong> ${booking.quantity!}</strong>
+	<strong>#i18n{module.stock.billetterie.notification.request.nb.places} ${booking.offer.typeName} :</strong> ${booking.quantity!}</strong>
 </#list>
 </body>

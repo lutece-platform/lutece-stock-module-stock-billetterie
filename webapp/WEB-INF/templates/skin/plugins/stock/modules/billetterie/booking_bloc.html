@@ -24,13 +24,13 @@
 				</#list>
 			</tr>
 			<tr>
-				<td style="width:200px">Places disponibles</td>
+				<td style="width:200px">#i18n{module.stock.billetterie.booking_bloc.available.places}</td>
 				<#list seanceList as seance>
 					<td>${seance.quantity}</td>
 				</#list>
 			</tr>
 			<tr>
-				<td>Places à réserver</td>
+				<td>#i18n{module.stock.billetterie.booking_bloc.places.to.book}</td>
 				<#list seanceList as seance>
 					<input type="hidden" name="seance_id" value="${seance.id}" />
 					<input type="hidden" name="seance_type_name" value="${seance.typeName}" />
@@ -44,8 +44,8 @@
 				</#list>
 			</tr>
 		</table>
-		<input type="submit" value="Réserver" class="btn-action" />
+		<input type="submit" value="#i18n{module.stock.billetterie.booking_bloc.book}" class="btn-action" />
 	</form>
 <#else>
-	Aucune séance disponible à la réservation pour cette date.
+	#i18n{module.stock.billetterie.booking_bloc.no.session.available}
 </#if>

@@ -6,38 +6,46 @@
 	<div class="last notitle">
 		<div class="portlet ${type_list}">
 			<div class="portlet-content">
-				 <#if show_list?has_content>
+				<#if show_list?has_content>
 					<p style="margin-top:10px">
 						<strong>#i18n{module.stock.billetterie.show_list.${type_list}.pre_intro}</strong>
 					</p>
 		    		<p>
 		    			#i18n{module.stock.billetterie.show_list.${type_list}.intro}
 		    		</p>
-		    		
-				<div id="show_list_page">
-					<#list show_list as show>
-					<div class="show_details" style="background-color: ${show.categoryColor!};">
-						<a href="jsp/site/Portal.jsp?page=billetterie&action=fiche-spectacle&product_id=${show.id}" title="${show.name!}">
-						<img src="${url_poster}${show.id}" alt="${show.name!}" />
-						</a> 
-						<br /> 
-						<a  title="${show.name!}" class="en-savoir-plus" href="jsp/site/Portal.jsp?page=billetterie&action=fiche-spectacle&product_id=${show.id}"> 
-						${show.name} 
-							<br /> 
-						EN SAVOIR PLUS
-						</a>
+					<div id="show_list_page">
+						<#list show_list as show>
+							<#if show_index == 0>
+								<div class="row-fluid">
+							<#else>
+								<#if show_index % 4 == 0>
+									</div>
+									<div class="row-fluid">
+								</#if>
+							</#if>
+							<div class="show_details span3" style="background-color: ${show.categoryColor!};">
+								<a href="jsp/site/Portal.jsp?page=billetterie&action=fiche-spectacle&product_id=${show.id}" title="${show.name!}">
+								<img src="${url_poster}${show.id}" alt="${show.name!}" />
+								</a> 
+								<br /> 
+								<a  title="${show.name!}" class="en-savoir-plus" href="jsp/site/Portal.jsp?page=billetterie&action=fiche-spectacle&product_id=${show.id}"> 
+								${show.name} 
+									<br /> 
+								#i18n{module.stock.billetterie.liste.show.page.more.info}
+								</a>
+							</div>
+						</#list>
+						</div>
 					</div>
-					</#list>
-					<#else>
+				<#else>
 					<br/>
 					   <#if type_list ="aLaffiche">
-					   Aucun spectacle à l'affiche.
+					   #i18n{module.stock.billetterie.no.show.on.display}.
 					   <#else>
-					    Aucun spectacle à venir.
+					    #i18n{module.stock.billetterie.no.upcoming.show}.
 					    </#if>
 					</#if>	
 					<br style="clear:both" />
-				</div>
 				<br/>
 			</div>
 			

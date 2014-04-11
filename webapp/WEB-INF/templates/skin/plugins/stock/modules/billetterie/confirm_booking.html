@@ -13,26 +13,26 @@
 				${error!}
 				<form method="post" action="jsp/site/plugins/stock/modules/billetterie/DoSaveReservation.jsp" style="display:inline;">
 					<div class="content-title">
-						<h2>Récapitulatif de la réservation</h2>
+						<h2>#i18n{module.stock.billetterie.confirm_booking.summary}</h2>
 					</div>
-					<p><strong>Spectacle :</strong> ${show_name!}</p>
-					<p><strong>Date :</strong> ${seance_date!}</p>
+					<p><strong>#i18n{module.stock.billetterie.confirm_booking.show} :</strong> ${show_name!}</p>
+					<p><strong>#i18n{module.stock.billetterie.confirm_booking.date} :</strong> ${seance_date!}</p>
 					<#list bookingList as booking>
-						<p><strong>Nombre de place ${booking.offer.typeName} :</strong> ${booking.quantity!}</p>
+						<p><strong>#i18n{module.stock.billetterie.confirm_booking.nb.places} ${booking.offer.typeName} :</strong> ${booking.quantity!}</p>
 						<#if authentified_user>
-							<p><strong>Votre adresse e-mail :</strong> ${booking.emailAgent!}</p>
+							<p><strong>#i18n{module.stock.billetterie.confirm_booking.your.email} :</strong> ${booking.emailAgent!}</p>
 						</#if>
 					</#list>
 					<#if !authentified_user>
-						<p><strong>Veuillez renseigner vos coordonnées</strong></p>
-						<p><label for="agent_name">Nom *&nbsp;:</label>
+						<p><strong>#i18n{module.stock.billetterie.confirm_booking.enter.details}</strong></p>
+						<p><label for="agent_name">#i18n{module.stock.billetterie.confirm_booking.name} *&nbsp;:</label>
 						<input class="textfield" type="text" name="nameAgent" id="agent_name" value="${purchaser.nameAgent!}"/></p>
-						<p><label for="agent_firstname">Prénom *&nbsp;:</label>
+						<p><label for="agent_firstname">#i18n{module.stock.billetterie.confirm_booking.first.name} *&nbsp;:</label>
 						<input class="textfield" type="text" name="firstNameAgent" id="agent_firstname"  value="${purchaser.firstNameAgent!}"/></p>
-						<p><label for="agent_email">Email *&nbsp;:</label>
+						<p><label for="agent_email">#i18n{module.stock.billetterie.confirm_booking.email} *&nbsp;:</label>
 						<input class="textfield" type="text" name="emailAgent" id="agent_email" value="${purchaser.emailAgent!}"/></p>
 						
-						<#-- Si on boucle suite à une erreur -->
+						<#-- Si on boucle suite � une erreur -->
 						<input type="hidden" name="show_name" value="${show_name!}" />
 						<input type="hidden" name="show_id" value="${show_id!}" />
 						<input type="hidden" name="seance_date" value="${seance_date!}" />

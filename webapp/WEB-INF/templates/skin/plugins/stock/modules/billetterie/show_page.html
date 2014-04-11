@@ -1,5 +1,6 @@
-<div id="two-zones-second" role="main">
-	<div class="last notitle">
+<#-- results -->
+<div id="two-zones-second" class="span-18 last" role="main">
+	<div class="span-18 last">
 	    <div class="portlet">
 	    	<div class="portlet-content">
 			${error!}
@@ -7,7 +8,7 @@
 					<div id="bloc-entete">
 						<a class="btn btn-primary btn-small" title="Voir les commentaires" href="#commentExtend">
 							<i class="icon-eye-open icon-white"></i>&nbsp;
-							Voir les commentaires
+							#i18n{module.stock.billetterie.show_list.see.comment}
 						</a>
 						<br/>
 						<br/>
@@ -17,26 +18,26 @@
 						</#if></h2>
 						
 						</div>
-						<#if show.with?has_content><p><strong>Distribution :</strong> <@nl2br>${show.with!}</@nl2br></p></#if>
-						<#if show.targetPublic?has_content><p><strong>Public :</strong> ${show.targetPublic!}</p></#if>
-						<p><strong>Genre :</strong> ${show.categoryName!}</p>
+						<#if show.with?has_content><p><strong>#i18n{module.stock.billetterie.show_list.distribution} :</strong> <@nl2br>${show.with!}</@nl2br></p></#if>
+						<#if show.targetPublic?has_content><p><strong>#i18n{module.stock.billetterie.show_list.public} :</strong> ${show.targetPublic!}</p></#if>
+						<p><strong>#i18n{module.stock.billetterie.show_list.genre} :</strong> ${show.categoryName!}</p>
 						<p>
-							<strong>Salle :</strong>
+							<strong>#i18n{module.stock.billetterie.show_list.theater} :</strong>
 							${partner.name!}
 							<br />
 							${partner.address!}
 							<br/>
 							<#if district?? && district.libelle?has_content>
-								<strong>Quartier :</strong>
+								<strong>#i18n{module.stock.billetterie.show_list.district} :</strong>
 								${(district.libelle)!}
 							</#if>
 						</p>
 						<#if (partner.metroComment!) != "" >
-							<p><strong>Métro : </strong>${partner.metroComment!}</p>
+							<p><strong>#i18n{module.stock.billetterie.show_list.subway} : </strong>${partner.metroComment!}</p>
 						</#if>
-						<p><strong>Dates :</strong> du ${show.startDate!} au ${show.endDate!}</p>
+						<p><strong>#i18n{module.stock.billetterie.show_list.dates} :</strong> #i18n{module.stock.billetterie.show_list.dates.from} ${show.startDate!} #i18n{module.stock.billetterie.show_list.dates.to} ${show.endDate!}</p>
 						<#if partner.accessible! && (partner.accessibleComment!) != "" >
-							<p><strong>Accessibilité : </strong>${partner.accessibleComment!}</p>
+							<p><strong>#i18n{module.stock.billetterie.show_list.accessibility} : </strong>${partner.accessibleComment!}</p>
 						</#if>
 						
 					</div>
@@ -44,27 +45,27 @@
 					<div id="bloc-presentation">
 						<p><@nl2br>${show.description!}</@nl2br></p>
 						
-						<#if show.website?has_content><p><strong>Site internet :</strong> <a title=${show.name}" href="${show.website!}">${show.website!}</a></p></#if>
+						<#if show.website?has_content><p><strong>#i18n{module.stock.billetterie.show_list.website} :</strong> <a title=${show.name}" href="${show.website!}">${show.website!}</a></p></#if>
 					</div>
 					
 					
 					<#if user!?has_content>
 						<fieldset id="bloc-subscription">
 							<#if subscribe!?has_content>
-								<legend>Abonnement</legend>
+								<legend>#i18n{module.stock.billetterie.show_list.subscription}</legend>
 								<form action="jsp/site/Portal.jsp?page=billetterie&action=fiche-spectacle&product_id=${show.id}&subscribe=true#bloc-subscription" method="post">
-									<input type="submit" value="S'abonner" class="btn-action" />
+									<input type="submit" value="#i18n{module.stock.billetterie.show_list.button.subscribe}" class="btn-action" />
 									<br /><br />
-									Recevoir une notification e-mail lors de l'ajout d'une nouvelle séance et vous permettre ainsi de réserver rapidement votre place.
+									#i18n{module.stock.billetterie.show_list.info.subscribe}
 									<br />
 								</form>
 							<#else>
-								<legend>Désabonnement</legend>
-								Vous êtes actuellement abonné via l'adresse mail suivante : <i>${user_email!}</i>
+								<legend>#i18n{module.stock.billetterie.show_list.unsubscribe}</legend>
+								#i18n{module.stock.billetterie.show_list.current.subscription} : <i>${user_email!}</i>
 								<form action="jsp/site/Portal.jsp?page=billetterie&action=fiche-spectacle&product_id=${show.id}&subscribe=false#bloc-subscription" method="post">
 									<input type="submit" value="Se désabonner" class="btn-action" />
 									<br /><br />
-									Vous désabonner de ce spectacle et ne plus recevoir de notification.
+									#i18n{module.stock.billetterie.show_list.info.unsubscribe}
 									<br />
 								</form>
 							</#if>
@@ -72,7 +73,7 @@
 					</#if>
 			
 					<fieldset id="bloc-reservation">
-						<legend>Réservation</legend>
+						<legend>#i18n{module.stock.billetterie.show_list.info.reservation}</legend>
 						<#if messageUserBan?has_content >
 							${messageUserBan}
 						<#else>
@@ -84,26 +85,24 @@
 												<option <#if seance == sSeanceDate! >selected="selected"</#if>>${seance}</option>
 											</#list>
 										</select>
-										<input type="submit" value="Voir les places disponibles" class="btn-action" />
+										<input type="submit" value="#i18n{module.stock.billetterie.show_list.button.see.available.places}" class="btn-action" />
 									</form>
 									${bloc_reservation} 
 								<#else>
-									Aucune date programmée pour ce spectacle.
+									#i18n{module.stock.billetterie.show_list.no.dates}
 								</#if>
 							<#elseif booking_opened = -1>
-								<em>Les réservations pour ce spectacle sont terminées.</em>
+								<em>#i18n{module.stock.billetterie.show_list.reservations.completed}</em>
 							<#else>
-								<em>Les réservations seront ouvertes à partir du ${show.startDate!}.</em>
+								<em>#i18n{module.stock.billetterie.show_list.reservations.not.opened} ${show.startDate!}.</em>
 							</#if>
 						</#if>
 					</fieldset>
-					<fieldset>
-						@Extender[${show.id!},stock-product,rating,{show:"all"}]@
-					</fieldset>
+					<br />
 					<fieldset >
-					<div id="commentExtend">
-						@Extender[${show.id!},stock-product,comment]@
-					</div>
+						<div id="commentExtend">
+							@Extender[${show.id!},stock-product,comment]@
+						</div>
 					</fieldset>
 				</div>
 			</div>

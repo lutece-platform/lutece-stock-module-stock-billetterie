@@ -6,16 +6,15 @@
     <div class="portlet">
         <div class="portlet-content">
 
-            <p style="margin-top: 10px">Bonjour
-                ${user.userInfos['user.name.given']!}. Bienvenue sur votre espace
-                de réservation.</p>
+            <p style="margin-top: 10px">#i18n{module.stock.billetterie.my.bookings.hello}
+                ${user.userInfos['user.name.given']!}. #i18n{module.stock.billetterie.my.bookings.welcome}.</p>
             <#if nextBookingList?has_content>
-            <table>
+            <table class="table table-striped">
                 <tbody>
                     <#list nextBookingList as booking>
                     <tr>
                         <td width="70%"><#if booking.offer.statut == 'annule'> <strong
-                            class="annule">Annulé - </strong> </#if> <a
+                            class="annule">#i18n{module.stock.billetterie.my.bookings.cancelled} - </strong> </#if> <a
                             href="jsp/site/Portal.jsp?page=billetterie&action=fiche-spectacle&product_id=${booking.offer.product.id}"
                             title="${booking.offer.product.name}">${booking.offer.product.name}</a>
                             - ${booking.offer.product.providerName} - ${booking.offer.date}
@@ -39,7 +38,7 @@
                 </tbody>
             </table>
             <#else> 
-            <p>Aucune réservation. </p>
+            <p>#i18n{module.stock.billetterie.my.bookings.no.reservation}. </p>
             </#if>
             
             <br style="clear:both" />
@@ -53,7 +52,7 @@
                     <#if booking.toDisplay == true>
                     <tr>
                         <td width="70%"><#if booking.offer.statut == 'annule'> <strong
-                            class="annule">Annulé - </strong> </#if> <a
+                            class="annule">#i18n{module.stock.billetterie.my.bookings.cancelled} - </strong> </#if> <a
                             href="jsp/site/Portal.jsp?page=billetterie&action=fiche-spectacle&product_id=${booking.offer.product.id}"
                             title="${booking.offer.product.name}">${booking.offer.product.name}</a>
                             - ${booking.offer.product.providerName} - ${booking.offer.date}
