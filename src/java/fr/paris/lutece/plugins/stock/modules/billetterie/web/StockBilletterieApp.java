@@ -258,7 +258,7 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
         List<String> orderList = new ArrayList<String>( );
         orderList.add( ORDER_FILTER_DATE );
         filter.setOrders( orderList );
-        model.put( MARK_SEANCE_DATE_LIST, _offerService.findSeanceByShow( show.getId( ), filter ) );
+        model.put( MARK_SEANCE_DATE_LIST, _offerService.findSeanceByShow( show.getId( ), filter, locale ) );
 
         //Get the user
         LuteceUser currentUser = getUser( request );
