@@ -224,7 +224,7 @@ public class PurchaseJspBean extends AbstractJspBean
 
     // ORDER FILTERS
     private static final String ORDER_FILTER_DATE = "date";
-    private static final String ORDER_FILTER_OFFER_TYPE_NAME = "offer.type.name";
+    private static final String ORDER_FILTER_OFFER_TYPE_NAME = "offer.typeName";
     private static final String ORDER_FILTER_OFFER_DATE = "offer.date";
     private static final String ORDER_FILTER_OFFER_PRODUCT_NAME = "offer.product.name";
 
@@ -400,13 +400,13 @@ public class PurchaseJspBean extends AbstractJspBean
         if ( dataTableToUse.getListColumn( ).isEmpty( ) )
         {
             dataTableToUse.addFreeColumn( StringUtils.EMPTY, MACRO_COLUMN_CHECKBOX_DELETE_PURCHASE );
-            dataTableToUse.addFreeColumn( "module.stock.billetterie.list_purchase.table.product",
-                    MACRO_COLUMN_NAME_PURCHASE );
+            dataTableToUse.addColumn( "module.stock.billetterie.list_purchase.table.product",
+                    "offer.product.name", true );
             dataTableToUse.addFreeColumn( "module.stock.billetterie.list_purchase.table.dateOffer",
                     MACRO_COLUMN_DATE_PURCHASE );
             dataTableToUse.addColumn( "module.stock.billetterie.list_purchase.table.datePurchase", "date", false );
-            dataTableToUse.addFreeColumn( "module.stock.billetterie.list_purchase.table.typeOffer",
-                    MACRO_COLUMN_OFFER_TYPE_PURCHASE );
+            dataTableToUse.addColumn( "module.stock.billetterie.list_purchase.table.typeOffer",
+                    "offer.typeName", true );
             dataTableToUse.addFreeColumn( "module.stock.billetterie.list_purchase.table.userName",
                     MACRO_COLUMN_AGENT_PURCHASE );
             dataTableToUse.addColumn( "module.stock.billetterie.list_purchase.table.quantity", "quantity", false );

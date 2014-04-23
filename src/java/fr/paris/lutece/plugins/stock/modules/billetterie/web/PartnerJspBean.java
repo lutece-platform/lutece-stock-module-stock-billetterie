@@ -248,8 +248,8 @@ public class PartnerJspBean extends AbstractJspBean
         //si pas d'objet en session, il faut ajouter les colonnes à afficher
         if ( dataTableToUse.getListColumn( ).isEmpty( ) )
         {
-            dataTableToUse.addFreeColumn( "module.stock.billetterie.manage_category.filter.name",
-                    MACRO_COLUMN_NAME_PARTNER );
+            dataTableToUse.addColumn( "module.stock.billetterie.manage_category.filter.name",
+                    "name", true );
             dataTableToUse.addFreeColumn( "module.stock.billetterie.manage_category.actionsLabel",
                     MACRO_COLUMN_ACTIONS_PARTNER );
         }

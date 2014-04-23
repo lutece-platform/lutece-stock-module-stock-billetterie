@@ -338,10 +338,10 @@ public class ShowJspBean extends AbstractJspBean
         //si pas d'objet en session, il faut ajouter les colonnes à afficher
         if ( dataTableToUse.getListColumn( ).isEmpty( ) )
         {
-            dataTableToUse.addFreeColumn( "module.stock.billetterie.manage_product.filter.name",
-                    MACRO_COLUMN_NAME_PRODUCT );
-            dataTableToUse.addColumn( "module.stock.billetterie.manage_product.filter.provider", "providerName", false );
-            dataTableToUse.addColumn( "module.stock.billetterie.manage_product.filter.category", "categoryName", false );
+            dataTableToUse.addColumn( "module.stock.billetterie.manage_product.filter.name",
+                    "name", true );
+            dataTableToUse.addColumn( "module.stock.billetterie.manage_product.filter.provider", "providerName", true );
+            dataTableToUse.addColumn( "module.stock.billetterie.manage_product.filter.category", "categoryName", true );
             dataTableToUse.addFreeColumn( "module.stock.billetterie.manage_product.dates", MACRO_COLUMN_DATES_PRODUCT );
             dataTableToUse.addFreeColumn( "module.stock.billetterie.manage_product.actionsLabel",
                     MACRO_COLUMN_ACTIONS_PRODUCT );

@@ -190,7 +190,7 @@ public class OfferJspBean extends AbstractJspBean
     // ORDER FILTERS
     private static final String ORDER_FILTER_DATE = "date";
     private static final String ORDER_FILTER_PRODUCT_NAME = "product.name";
-    private static final String ORDER_FILTER_TYPE_NAME = "type.name";
+    private static final String ORDER_FILTER_TYPE_NAME = "typeName";
 
     // MEMBERS VARIABLES
     // @Inject
@@ -373,10 +373,10 @@ public class OfferJspBean extends AbstractJspBean
         {
             dataTableToUse.addFreeColumn( StringUtils.EMPTY, MACRO_COLUMN_STATUT_OFFER );
             dataTableToUse.addFreeColumn( StringUtils.EMPTY, MACRO_COLUMN_CHECKBOX_DELETE_OFFER );
-            dataTableToUse.addFreeColumn( "module.stock.billetterie.list_offres.filter.name", MACRO_COLUMN_NAME_OFFER );
-            dataTableToUse.addFreeColumn( "module.stock.billetterie.list_offres.filter.product",
-                    MACRO_COLUMN_PRODUCT_OFFER );
-            dataTableToUse.addColumn( "module.stock.billetterie.list_offres.type", "typeName", false );
+            dataTableToUse.addColumn( "module.stock.billetterie.list_offres.filter.name", "name", true );
+            dataTableToUse.addColumn( "module.stock.billetterie.list_offres.filter.product",
+                    "product.name", true );
+            dataTableToUse.addColumn( "module.stock.billetterie.list_offres.type", "typeName", true );
             dataTableToUse.addFreeColumn( "module.stock.billetterie.save_offer.date", MACRO_COLUMN_DATES_OFFER );
             dataTableToUse.addFreeColumn( "module.stock.billetterie.save_offer.initialQuantity",
                     "columnInitialQuantityOffer" );

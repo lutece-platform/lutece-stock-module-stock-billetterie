@@ -232,10 +232,11 @@ public class CategoryJspBean extends AbstractJspBean
                 MARK_DATA_TABLE_CATEGORY, JSP_MANAGE_CATEGORYS, _serviceCategory, findMethod );
 
         //si pas d'objet en session, il faut ajouter les colonnes à afficher
+        dataTableToUse.getListColumn().clear();
         if ( dataTableToUse.getListColumn( ).isEmpty( ) )
         {
-            dataTableToUse.addFreeColumn( "module.stock.billetterie.manage_category.filter.name",
-                    MACRO_COLUMN_NAME_CATEGORY );
+            dataTableToUse.addColumn( "module.stock.billetterie.manage_category.filter.name",
+                    "name", true );
             dataTableToUse.addFreeColumn( "module.stock.billetterie.manage_category.actionsLabel",
                     MACRO_COLUMN_ACTIONS_CATEGORY );
         }

@@ -50,6 +50,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
+import fr.paris.lutece.plugins.stock.business.BeanFilter;
 import fr.paris.lutece.plugins.stock.commons.ResultList;
 import fr.paris.lutece.plugins.stock.commons.dao.PaginationPropertiesAdapterDataTable;
 import fr.paris.lutece.plugins.stock.commons.exception.BusinessException;
@@ -68,6 +69,7 @@ import fr.paris.lutece.util.html.HtmlTemplate;
 
 /**
  * Abstract class for jsp bean
+ * 
  * @author abataille
  */
 public class AbstractJspBean extends PluginAdminPageJspBean
@@ -85,20 +87,24 @@ public class AbstractJspBean extends PluginAdminPageJspBean
     protected static final String MARK_NB_ITEMS_PER_PAGE = "nb_items_per_page";
     protected static final String MARK_PAGINATOR = "paginator";
     protected static final String MARK_PLUGIN_NAME = "plugin_name";
+    protected static final String MARK_ASC_SORT = "asc_sort";
 
+    protected static final String PARAMETER_TRUE = "true";
     protected static final String PARAMETER_FIND_BY_FILTER_NAME_METHOD = "findByFilter";
 
     private static final long serialVersionUID = 5259767254583048437L;
     private static final Logger LOGGER = Logger.getLogger( AbstractJspBean.class );
 
-    private String _strCurrentPageIndex = StringUtils.EMPTY;
     protected int _nItemsPerPage;
 
     /**
      * 
      * Get the datatable save in the session
-     * @param request the http request
-     * @param key the key for the data table
+     * 
+     * @param request
+     *            the http request
+     * @param key
+     *            the key for the data table
      * @return the DataTableManager keep in session
      */
     @SuppressWarnings( "unchecked" )
@@ -127,10 +133,15 @@ public class AbstractJspBean extends PluginAdminPageJspBean
     /**
      * Save a Data table manager into the http session with key. Can save
      * various data table.
-     * @param request the http request with the user session
-     * @param dataTable the datatable
-     * @param key the datatable key
-     * @param <T> Type of data
+     * 
+     * @param request
+     *            the http request with the user session
+     * @param dataTable
+     *            the datatable
+     * @param key
+     *            the datatable key
+     * @param <T>
+     *            Type of data
      */
     protected <T> void saveDataTableInSession( HttpServletRequest request, DataTableManager<T> dataTable, String key )
     {
@@ -140,10 +151,12 @@ public class AbstractJspBean extends PluginAdminPageJspBean
     /**
      * Validate a bean using jsr 303 specs.
      * 
-     * @param <T> the bean type
-     * @param bean to validate
-     * @throws ValidationException exception containing informations about
-     *             errors and the bean
+     * @param <T>
+     *            the bean type
+     * @param bean
+     *            to validate
+     * @throws ValidationException
+     *             exception containing informations about errors and the bean
      */
     protected <T> void validateBilletterie( T bean ) throws ValidationException
     {
@@ -161,7 +174,9 @@ public class AbstractJspBean extends PluginAdminPageJspBean
 
     /**
      * Return localized message
-     * @param key i18n key
+     * 
+     * @param key
+     *            i18n key
      * @return localized message
      */
     protected String getMessage( String key )
@@ -171,8 +186,11 @@ public class AbstractJspBean extends PluginAdminPageJspBean
 
     /**
      * Return localized message with args
-     * @param key i18n key
-     * @param args args
+     * 
+     * @param key
+     *            i18n key
+     * @param args
+     *            args
      * @return localized message
      */
     protected String getMessage( String key, String... args )
@@ -182,7 +200,9 @@ public class AbstractJspBean extends PluginAdminPageJspBean
 
     /**
      * Get validation error from session and remove from it
-     * @param request http request
+     * 
+     * @param request
+     *            http request
      * @return validation exception
      */
     protected FunctionnalException getErrorOnce( HttpServletRequest request )
@@ -198,7 +218,9 @@ public class AbstractJspBean extends PluginAdminPageJspBean
 
     /**
      * Return html code for error message
-     * @param e functionnal exception
+     * 
+     * @param e
+     *            functionnal exception
      * @return html
      */
     protected String getHtmlError( FunctionnalException e )
@@ -240,7 +262,9 @@ public class AbstractJspBean extends PluginAdminPageJspBean
 
     /**
      * Ensure path given which use indexing value like [%d] is cleaning
-     * @param propertyPath the property path to clean
+     * 
+     * @param propertyPath
+     *            the property path to clean
      * @return the right i18n key
      */
     private String correctPath( Path propertyPath )
@@ -261,9 +285,12 @@ public class AbstractJspBean extends PluginAdminPageJspBean
     /**
      * Manage functionnal exception. Save it into session
      * 
-     * @param request the request
-     * @param e the e
-     * @param targetUrl the target url
+     * @param request
+     *            the request
+     * @param e
+     *            the e
+     * @param targetUrl
+     *            the target url
      * @return the string
      */
     protected String manageFunctionnalException( HttpServletRequest request, FunctionnalException e, String targetUrl )
@@ -275,11 +302,17 @@ public class AbstractJspBean extends PluginAdminPageJspBean
 
     /**
      * Get the correct filter to use with data table manager
-     * @param request the http request
-     * @param filter the bean filter get with request
-     * @param markFilter the key of the filter
-     * @param dataTable the datatable to use
-     * @param <T> the bean filter type
+     * 
+     * @param request
+     *            the http request
+     * @param filter
+     *            the bean filter get with request
+     * @param markFilter
+     *            the key of the filter
+     * @param dataTable
+     *            the datatable to use
+     * @param <T>
+     *            the bean filter type
      * @return the filter to use
      */
     @SuppressWarnings( "unchecked" )
@@ -291,11 +324,14 @@ public class AbstractJspBean extends PluginAdminPageJspBean
         {
             request.getSession( ).setAttribute( markFilter, null );
         }
-        else{
+        else
+        {
             filterFromSession = request.getParameter( MARK_PLUGIN_NAME ) != null ? null : (T) request.getSession( )
                     .getAttribute( markFilter );
         }
-        //1) est-ce qu'une recherche vient d'être faite ? 2) est-ce qu'un filtre existe en session ? 3) est-ce que le filtre en session est d'un type héritant du fitre fournit en parametre ?
+        // 1) est-ce qu'une recherche vient d'être faite ? 2) est-ce qu'un
+        // filtre existe en session ? 3) est-ce que le filtre en session est
+        // d'un type héritant du fitre fournit en parametre ?
         T filterToUse = request.getParameter( TicketsConstants.MARK_FILTER ) != null || filterFromSession == null
                 || !filterFromSession.getClass( ).isAssignableFrom( filter.getClass( ) ) ? dataTable
                 .getAndUpdateFilter( request, filter ) : filterFromSession;
@@ -304,10 +340,15 @@ public class AbstractJspBean extends PluginAdminPageJspBean
 
     /**
      * Get the correct data table manager
-     * @param request the http request
-     * @param markFilter the key of the filter
-     * @param jspManage the jsp file to manage the beans
-     * @param <T> the bean filter type
+     * 
+     * @param request
+     *            the http request
+     * @param markFilter
+     *            the key of the filter
+     * @param jspManage
+     *            the jsp file to manage the beans
+     * @param <T>
+     *            the bean filter type
      * @return the DataTableManager
      */
     protected <T> DataTableManager<T> getDataTableToUse( HttpServletRequest request, String markFilter, String jspManage )
@@ -321,12 +362,18 @@ public class AbstractJspBean extends PluginAdminPageJspBean
 
     /**
      * 
-     * @param request the http request
-     * @param filter the filter
-     * @param keyDataTable the key to store data table manager
-     * @param jspManage the url to the manage page
-     * @param service the bean service
-     * @param findByFilter the method which give the method to find beans
+     * @param request
+     *            the http request
+     * @param filter
+     *            the filter
+     * @param keyDataTable
+     *            the key to store data table manager
+     * @param jspManage
+     *            the url to the manage page
+     * @param service
+     *            the bean service
+     * @param findByFilter
+     *            the method which give the method to find beans
      * @return the data table to use
      */
     @SuppressWarnings( "unchecked" )
@@ -334,17 +381,21 @@ public class AbstractJspBean extends PluginAdminPageJspBean
             String keyDataTable, String jspManage, Object service, Method findByFilter )
     {
 
-        //si un objet est déjà présent en session, on l'utilise
+        // si un objet est déjà présent en session, on l'utilise
         DataTableManager<T> dataTableToUse = getDataTableToUse( request, keyDataTable, jspManage );
 
-        //determination de l'utilisation d'un nouveau filtre (recherche) ou de celui présent en session (changement de page)
+        // determination de l'utilisation d'un nouveau filtre (recherche) ou de
+        // celui présent en session (changement de page)
         Object filterToUse = getFilterToUse( request, filter, MARK_FILTER, dataTableToUse );
         BeanUtils.copyProperties( filterToUse, filter );
 
-        //mise à jour de la pagination dans le data table pour l'afficahge de la page courante et du nombre d'items
+        sortFilter( request, filterToUse );
+
+        // mise à jour de la pagination dans le data table pour l'affichage de
+        // la page courante et du nombre d'items
         DataTablePaginationProperties updatePaginator = dataTableToUse.getAndUpdatePaginator( request );
 
-        //obtention manuel des beans à afficher
+        // obtention manuel des beans à afficher
         PaginationPropertiesAdapterDataTable paginationProperties = new PaginationPropertiesAdapterDataTable(
                 updatePaginator );
 
@@ -361,6 +412,23 @@ public class AbstractJspBean extends PluginAdminPageJspBean
         dataTableToUse.setItems( listAllBean, listAllBean.getTotalResult( ) );
 
         return dataTableToUse;
+    }
+
+    private void sortFilter( HttpServletRequest request, Object filter )
+    {
+        String ascSort = request.getParameter( MARK_ASC_SORT );
+        String sortedAttribute = request.getParameter( "sorted_attribute_name" );
+        List<String> orders = new ArrayList<String>( );
+        if ( StringUtils.isNotBlank( ascSort ) && StringUtils.isNotBlank( sortedAttribute ) )
+        {
+            if ( filter instanceof BeanFilter )
+            {
+                orders.add( sortedAttribute );
+                ( (BeanFilter) filter ).setOrders( orders );
+
+                ( (BeanFilter) filter ).setOrderAsc( PARAMETER_TRUE.equals( ascSort ) );
+            }
+        }
     }
 
 }
