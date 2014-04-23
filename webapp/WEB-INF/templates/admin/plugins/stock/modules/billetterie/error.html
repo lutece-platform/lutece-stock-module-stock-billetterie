@@ -1,5 +1,9 @@
-<ul>
-	<#list messageList as message>
-	<div class="alert alert-error">${(message)!}</div>
-	</#list>
-</ul>
+<link rel="stylesheet" href="css/plugins/stock/modules/billetterie/billetterie.css" />
+
+<div class="billeterie-error alert alert-error">
+	<ul>
+		<#list messageList as message>
+		<li>${(message)!}</li>
+		</#list>
+	</ul>
+</div>
