@@ -6,6 +6,46 @@
 	</a>
 </#macro>
 
+<#function getIntDayInWeek dayString >
+	<#assign dayInt = 0>
+	<#switch dayString>
+		<#case "lundi">
+	    	<#assign dayInt = 0>
+	    	<#break>
+	  	<#case "mardi">
+		    <#assign dayInt = 1>
+		    <#break>
+		<#case "mercredi">
+			<#assign dayInt = 2>
+		    <#break>
+		<#case "jeudi">
+		    <#assign dayInt = 3>
+		    <#break>
+		<#case "vendredi">
+		    <#assign dayInt = 4>
+		    <#break>
+		<#case "samedi">
+			<#assign dayInt = 5>
+			<#break>
+		<#default>
+			<#assign dayInt = 6>
+	</#switch>
+	<#return dayInt>
+</#function>
+
+<#-- getEndDate returns a string containing the number of days before the end of the week-end
+**(if lambda is 6) or before the end of the next week (if lambda is 13)
+** dayString : day in string format (lundi,mardi,mercredi,...)
+** lambda : 6 if it is for week-end,13 if it is for the next week
+** example : getEndDate("mardi", 6) returns "[NOW%2B5DAYS TO *]"
+** example : getEndDate("jeudi", 13) returns "[NOW%2B10DAYS TO *]"
+-->
+<#function getEndDate dayString lambda >
+	<#assign dayInt = getIntDayInWeek(dayString) >
+	<#assign endDate = "[NOW%2B"+(lambda-dayInt)+"DAYS TO *]">
+	<#return endDate>
+</#function>
+
 <#-- macro permettant d'afficher les différents boutons de l'application-->
 <#macro showButton type href="" link="" title="" additionalParameters="" >
 	<#if type?? && link?? && title??>
