@@ -47,16 +47,16 @@ import org.apache.log4j.Logger;
 public class PurchaseClearDaemon extends Daemon
 {
     public static final Logger LOGGER = Logger.getLogger( PurchaseClearDaemon.class );
-
-    private IPurchaseSessionManager _purchaseSessionManager = SpringContextService.getContext( ).getBean(
-            IPurchaseSessionManager.class );
-    private static final String PARAMETER_TIME_MAX = AppPropertiesService.getProperty( "daemon.lock.session.time.expiration" );
+    private static final String PARAMETER_TIME_MAX = AppPropertiesService.getProperty( 
+            "daemon.lock.session.time.expiration" );
+    private IPurchaseSessionManager _purchaseSessionManager = SpringContextService.getContext(  )
+                                                                                  .getBean( IPurchaseSessionManager.class );
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public synchronized void run( )
+    public synchronized void run(  )
     {
         try
         {
@@ -68,5 +68,4 @@ public class PurchaseClearDaemon extends Daemon
             LOGGER.error( "Erreur de parametrage de la durée de vie d'une reservation en session : " + e );
         }
     }
-
 }

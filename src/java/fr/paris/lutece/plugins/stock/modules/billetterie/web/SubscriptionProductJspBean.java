@@ -39,6 +39,7 @@ import fr.paris.lutece.portal.service.security.LuteceUser;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 
 import org.apache.commons.lang.StringUtils;
+
 import org.apache.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
@@ -54,7 +55,6 @@ public class SubscriptionProductJspBean extends AbstractJspBean
 
     // PARAMETERS
     public static final String PARAMETER_PRODUCT_ID = "product_id";
-
     private static final long serialVersionUID = -4663062407048172927L;
 
     /** The Constant JSP_SAVE_PRODUCT. */
@@ -69,11 +69,11 @@ public class SubscriptionProductJspBean extends AbstractJspBean
     /**
      * Instantiates a new offer jsp bean.
      */
-    public SubscriptionProductJspBean( )
+    public SubscriptionProductJspBean(  )
     {
-        super( );
+        super(  );
 
-        _subscriptionProductService = SpringContextService.getContext( ).getBean( ISubscriptionProductService.class );
+        _subscriptionProductService = SpringContextService.getContext(  ).getBean( ISubscriptionProductService.class );
     }
 
     /**
@@ -85,10 +85,11 @@ public class SubscriptionProductJspBean extends AbstractJspBean
     public String doSubscribeToProduct( HttpServletRequest request, LuteceUser currentUser )
     {
         String strIdProduct = request.getParameter( PARAMETER_PRODUCT_ID );
+
         if ( StringUtils.isNotEmpty( strIdProduct ) && StringUtils.isNumeric( strIdProduct ) )
         {
-            _subscriptionProductService.doSaveSubscriptionProduct(
-                    currentUser.getUserInfo( LuteceUser.HOME_INFO_ONLINE_EMAIL ), strIdProduct );
+            _subscriptionProductService.doSaveSubscriptionProduct( currentUser.getUserInfo( 
+                    LuteceUser.HOME_INFO_ONLINE_EMAIL ), strIdProduct );
         }
 
         return null;
@@ -103,11 +104,13 @@ public class SubscriptionProductJspBean extends AbstractJspBean
     public String doUnsubscribeToProduct( HttpServletRequest request, LuteceUser currentUser )
     {
         String strIdProduct = request.getParameter( PARAMETER_PRODUCT_ID );
+
         if ( StringUtils.isNotEmpty( strIdProduct ) && StringUtils.isNumeric( strIdProduct ) )
         {
-            _subscriptionProductService.doDeleteSubscriptionProduct(
-                    currentUser.getUserInfo( LuteceUser.HOME_INFO_ONLINE_EMAIL ), strIdProduct );
+            _subscriptionProductService.doDeleteSubscriptionProduct( currentUser.getUserInfo( 
+                    LuteceUser.HOME_INFO_ONLINE_EMAIL ), strIdProduct );
         }
+
         return null;
     }
 
@@ -120,8 +123,9 @@ public class SubscriptionProductJspBean extends AbstractJspBean
     public boolean isSubscribeToProduct( HttpServletRequest request, LuteceUser currentUser )
     {
         String strIdProduct = request.getParameter( PARAMETER_PRODUCT_ID );
-        return _subscriptionProductService.hasUserSubscribedToProduct(
-                currentUser.getUserInfo( LuteceUser.HOME_INFO_ONLINE_EMAIL ), strIdProduct );
+
+        return _subscriptionProductService.hasUserSubscribedToProduct( currentUser.getUserInfo( 
+                LuteceUser.HOME_INFO_ONLINE_EMAIL ), strIdProduct );
     }
 
     /**
@@ -132,10 +136,11 @@ public class SubscriptionProductJspBean extends AbstractJspBean
      */
     public String getSubscriptionToProduct( HttpServletRequest request, LuteceUser currentUser )
     {
-        StringBuilder page = new StringBuilder( );
+        StringBuilder page = new StringBuilder(  );
         String strEmail = currentUser.getUserInfo( LuteceUser.HOME_INFO_ONLINE_EMAIL );
-        for ( Product product : _subscriptionProductService.getProductsByUserSubscription( currentUser
-                .getUserInfo( LuteceUser.HOME_INFO_ONLINE_EMAIL ) ) )
+
+        for ( Product product : _subscriptionProductService.getProductsByUserSubscription( currentUser.getUserInfo( 
+                    LuteceUser.HOME_INFO_ONLINE_EMAIL ) ) )
         {
             page.append( strEmail );
             page.append( ":" );
@@ -143,6 +148,6 @@ public class SubscriptionProductJspBean extends AbstractJspBean
             page.append( "\n" );
         }
 
-        return page.toString( );
+        return page.toString(  );
     }
 }

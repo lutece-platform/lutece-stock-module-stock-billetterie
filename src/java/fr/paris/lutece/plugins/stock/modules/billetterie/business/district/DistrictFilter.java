@@ -42,16 +42,15 @@ import java.util.List;
  */
 public class DistrictFilter
 {
-
     /** The _id. */
     private Integer _id;
 
     /** The libelle. */
     private String _libelle;
-  
+
     // order
     /** The _orders. */
-    private List<String> _orders = new ArrayList<String>( );
+    private List<String> _orders = new ArrayList<String>(  );
 
     /** The _order asc. */
     private boolean _orderAsc = true;
@@ -59,7 +58,7 @@ public class DistrictFilter
     /**
      * @return the id
      */
-    public Integer getId( )
+    public Integer getId(  )
     {
         return _id;
     }
@@ -75,7 +74,7 @@ public class DistrictFilter
     /**
      * @return the libelle
      */
-    public String getLibelle( )
+    public String getLibelle(  )
     {
         return _libelle;
     }
@@ -91,7 +90,7 @@ public class DistrictFilter
     /**
      * @return the orders
      */
-    public List<String> getOrders( )
+    public List<String> getOrders(  )
     {
         return _orders;
     }
@@ -107,7 +106,7 @@ public class DistrictFilter
     /**
      * @return the orderAsc
      */
-    public boolean isOrderAsc( )
+    public boolean isOrderAsc(  )
     {
         return _orderAsc;
     }
@@ -119,6 +118,4 @@ public class DistrictFilter
     {
         this._orderAsc = orderAsc;
     }
-
-
 }

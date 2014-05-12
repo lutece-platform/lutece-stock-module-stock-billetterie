@@ -44,7 +44,6 @@ import fr.paris.lutece.portal.service.spring.SpringContextService;
  */
 public class BilletteriePortletHome extends PortletHome
 {
-
     // Static variable pointed at the DAO instance
     private static IBilletterieDAO _dao = SpringContextService.getBean( "stock-billetterie.billetteriePortletDAO" );
 
@@ -54,7 +53,7 @@ public class BilletteriePortletHome extends PortletHome
     /**
      * Constructor
      */
-    public BilletteriePortletHome( )
+    public BilletteriePortletHome(  )
     {
         // if ( _singleton == null )
         // {
@@ -66,10 +65,9 @@ public class BilletteriePortletHome extends PortletHome
      * {@inheritDoc}
      */
     @Override
-    public String getPortletTypeId( )
+    public String getPortletTypeId(  )
     {
-
-        String strCurrentClassName = this.getClass( ).getName( );
+        String strCurrentClassName = this.getClass(  ).getName(  );
         String strPortletTypeId = PortletTypeHome.getPortletTypeId( strCurrentClassName );
 
         return strPortletTypeId;
@@ -79,22 +77,21 @@ public class BilletteriePortletHome extends PortletHome
      * {@inheritDoc}
      */
     @Override
-    public IPortletInterfaceDAO getDAO( )
+    public IPortletInterfaceDAO getDAO(  )
     {
         return _dao;
-
     }
 
     /**
      * Gets the single instance of BilletteriePortletHome.
-     * 
+     *
      * @return single instance of BilletteriePortletHome
      */
-    public static PortletHome getInstance( )
+    public static PortletHome getInstance(  )
     {
         if ( _singleton == null )
         {
-            _singleton = new BilletteriePortletHome( );
+            _singleton = new BilletteriePortletHome(  );
         }
 
         return _singleton;

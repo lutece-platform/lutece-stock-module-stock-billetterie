@@ -42,7 +42,6 @@ import fr.paris.lutece.portal.business.portlet.Portlet;
  */
 public interface IBilletterieDAO extends IPortletInterfaceDAO
 {
-
     /**
      * {@inheritDoc}
      */
@@ -66,5 +65,4 @@ public interface IBilletterieDAO extends IPortletInterfaceDAO
      */
     @Override
     public void store( Portlet portlet );
-
 }

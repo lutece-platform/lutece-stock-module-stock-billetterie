@@ -33,10 +33,11 @@
  */
 package fr.paris.lutece.plugins.stock.modules.billetterie.utils.constants;
 
+
 /**
- * 
+ *
  * Utilitary class of constants for module-stock-billetterie
- * 
+ *
  */
 public final class BilletterieConstants
 {
@@ -51,14 +52,12 @@ public final class BilletterieConstants
 
     /** The Constant ERROR. */
     public static final String ERROR = "error";
-    
     public static final String CONSTANTE_PATTERN_DATE = "dd/MM/yyyy";
 
     /**
      * Prevent instantiation as it is only a constant class
      */
-    private BilletterieConstants( )
+    private BilletterieConstants(  )
     {
-    };
+    }
 }
-

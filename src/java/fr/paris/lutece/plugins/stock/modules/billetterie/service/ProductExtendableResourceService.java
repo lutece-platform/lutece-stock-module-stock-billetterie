@@ -39,26 +39,27 @@ import fr.paris.lutece.portal.service.resource.IExtendableResource;
 import fr.paris.lutece.portal.service.resource.IExtendableResourceService;
 
 import org.apache.commons.lang.StringUtils;
+
 import org.springframework.stereotype.Service;
 
 import java.util.Locale;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+
 import javax.servlet.http.HttpServletRequest;
 
+
 /**
- * 
+ *
  * @author jchaline
  *
  */
 @Service
 public class ProductExtendableResourceService implements IExtendableResourceService
 {
-    
     // BEANS
     private static final String BEAN_STOCK_TICKETS_SHOW_SERVICE = "stock-tickets.showService";
-    
     @Inject
     @Named( "stock-tickets.showService" )
     private IShowService _serviceProduct;
@@ -79,6 +80,7 @@ public class ProductExtendableResourceService implements IExtendableResourceServ
     public IExtendableResource getResource( String strIdResource, String strResourceType )
     {
         IExtendableResource resources = null;
+
         if ( StringUtils.isNotBlank( strIdResource ) && StringUtils.isNumeric( strIdResource ) )
         {
             int nIdProduct = Integer.parseInt( strIdResource );
@@ -86,14 +88,14 @@ public class ProductExtendableResourceService implements IExtendableResourceServ
             resources = _serviceProduct.findById( nIdProduct );
         }
 
-        return resources ;
+        return resources;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public String getResourceType( )
+    public String getResourceType(  )
     {
         return ShowDTO.PROPERTY_RESOURCE_TYPE;
     }

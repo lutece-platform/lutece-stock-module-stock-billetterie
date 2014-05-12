@@ -50,10 +50,13 @@ import fr.paris.lutece.util.datatable.DataTablePaginationProperties;
 import fr.paris.lutece.util.html.HtmlTemplate;
 
 import org.apache.commons.lang.StringUtils;
+
 import org.apache.log4j.Logger;
+
 import org.springframework.beans.BeanUtils;
 
 import java.lang.reflect.Method;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -63,21 +66,20 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
+
 import javax.validation.ConstraintViolation;
 import javax.validation.Path;
 
 
 /**
  * Abstract class for jsp bean
- * 
+ *
  * @author abataille
  */
 public class AbstractJspBean extends PluginAdminPageJspBean
 {
-
-    public static final int N_DEFAULT_ITEMS_PER_PAGE = AppPropertiesService.getPropertyInt(
-            TicketsConstants.PROPERTY_DEFAULT_ITEM_PER_PAGE, 50 );
-
+    public static final int N_DEFAULT_ITEMS_PER_PAGE = AppPropertiesService.getPropertyInt( TicketsConstants.PROPERTY_DEFAULT_ITEM_PER_PAGE,
+            50 );
     protected static final String ERROR_MESSAGE_KEY = "module.stock.billetterie.validation.error";
     protected static final String ERROR_TEMPLATE = "admin/plugins/stock/modules/billetterie/error.html";
     protected static final String FIELD_MESSAGE_PREFIX = "module.stock.billetterie.field.";
@@ -88,19 +90,16 @@ public class AbstractJspBean extends PluginAdminPageJspBean
     protected static final String MARK_PAGINATOR = "paginator";
     protected static final String MARK_PLUGIN_NAME = "plugin_name";
     protected static final String MARK_ASC_SORT = "asc_sort";
-
     protected static final String PARAMETER_TRUE = "true";
     protected static final String PARAMETER_FIND_BY_FILTER_NAME_METHOD = "findByFilter";
-
     private static final long serialVersionUID = 5259767254583048437L;
     private static final Logger LOGGER = Logger.getLogger( AbstractJspBean.class );
-
     protected int _nItemsPerPage;
 
     /**
-     * 
+     *
      * Get the datatable save in the session
-     * 
+     *
      * @param request
      *            the http request
      * @param key
@@ -112,10 +111,10 @@ public class AbstractJspBean extends PluginAdminPageJspBean
     {
         DataTableManager<T> dataTable = null;
 
-        Object object = request.getSession( ).getAttribute(
-                StringUtils.isNotBlank( key ) ? key : MARK_DATA_TABLE_MANAGER );
+        Object object = request.getSession(  )
+                               .getAttribute( StringUtils.isNotBlank( key ) ? key : MARK_DATA_TABLE_MANAGER );
 
-        if ( object != null && object instanceof DataTableManager<?> )
+        if ( ( object != null ) && object instanceof DataTableManager<?> )
         {
             try
             {
@@ -133,7 +132,7 @@ public class AbstractJspBean extends PluginAdminPageJspBean
     /**
      * Save a Data table manager into the http session with key. Can save
      * various data table.
-     * 
+     *
      * @param request
      *            the http request with the user session
      * @param dataTable
@@ -145,12 +144,12 @@ public class AbstractJspBean extends PluginAdminPageJspBean
      */
     protected <T> void saveDataTableInSession( HttpServletRequest request, DataTableManager<T> dataTable, String key )
     {
-        request.getSession( ).setAttribute( StringUtils.isNotBlank( key ) ? key : MARK_DATA_TABLE_MANAGER, dataTable );
+        request.getSession(  ).setAttribute( StringUtils.isNotBlank( key ) ? key : MARK_DATA_TABLE_MANAGER, dataTable );
     }
 
     /**
      * Validate a bean using jsr 303 specs.
-     * 
+     *
      * @param <T>
      *            the bean type
      * @param bean
@@ -161,32 +160,35 @@ public class AbstractJspBean extends PluginAdminPageJspBean
     protected <T> void validateBilletterie( T bean ) throws ValidationException
     {
         Set<ConstraintViolation<T>> constraintViolations = BeanValidationUtil.validate( bean );
-        if ( constraintViolations.size( ) > 0 )
+
+        if ( constraintViolations.size(  ) > 0 )
         {
             ValidationException ve = new ValidationException( bean );
+
             for ( ConstraintViolation<T> constraintViolation : constraintViolations )
             {
                 ve.addConstraintViolation( constraintViolation );
             }
+
             throw ve;
         }
     }
 
     /**
      * Return localized message
-     * 
+     *
      * @param key
      *            i18n key
      * @return localized message
      */
     protected String getMessage( String key )
     {
-        return I18nService.getLocalizedString( key, this.getLocale( ) );
+        return I18nService.getLocalizedString( key, this.getLocale(  ) );
     }
 
     /**
      * Return localized message with args
-     * 
+     *
      * @param key
      *            i18n key
      * @param args
@@ -195,88 +197,95 @@ public class AbstractJspBean extends PluginAdminPageJspBean
      */
     protected String getMessage( String key, String... args )
     {
-        return I18nService.getLocalizedString( key, args, this.getLocale( ) );
+        return I18nService.getLocalizedString( key, args, this.getLocale(  ) );
     }
 
     /**
      * Get validation error from session and remove from it
-     * 
+     *
      * @param request
      *            http request
      * @return validation exception
      */
     protected FunctionnalException getErrorOnce( HttpServletRequest request )
     {
-        FunctionnalException fe = (FunctionnalException) request.getSession( ).getAttribute(
-                TicketsConstants.PARAMETER_ERROR );
+        FunctionnalException fe = (FunctionnalException) request.getSession(  )
+                                                                .getAttribute( TicketsConstants.PARAMETER_ERROR );
+
         if ( fe != null )
         {
-            request.getSession( ).removeAttribute( TicketsConstants.PARAMETER_ERROR );
+            request.getSession(  ).removeAttribute( TicketsConstants.PARAMETER_ERROR );
         }
+
         return fe;
     }
 
     /**
      * Return html code for error message
-     * 
+     *
      * @param e
      *            functionnal exception
      * @return html
      */
     protected String getHtmlError( FunctionnalException e )
     {
-        Map<String, Object> model = new HashMap<String, Object>( );
-        List<String> messageList = new ArrayList<String>( );
+        Map<String, Object> model = new HashMap<String, Object>(  );
+        List<String> messageList = new ArrayList<String>(  );
+
         try
         {
             throw e;
         }
+
         // Validation error
         catch ( ValidationException ve )
         {
-            String typeName = ve.getBean( ).getClass( ).getSimpleName( );
+            String typeName = ve.getBean(  ).getClass(  ).getSimpleName(  );
 
             // Add a validation error message using value, field name and
             // provided
             // message
-            for ( ConstraintViolation<?> constraintViolation : ve.getConstraintViolationList( ) )
+            for ( ConstraintViolation<?> constraintViolation : ve.getConstraintViolationList(  ) )
             {
-                String fieldName = getMessage( FIELD_MESSAGE_PREFIX + typeName + "."
-                        + correctPath( constraintViolation.getPropertyPath( ) ) );
+                String fieldName = getMessage( FIELD_MESSAGE_PREFIX + typeName + "." +
+                        correctPath( constraintViolation.getPropertyPath(  ) ) );
                 messageList.add( getMessage( ERROR_MESSAGE_KEY,
-                        String.valueOf( constraintViolation.getInvalidValue( ) ), fieldName,
-                        constraintViolation.getMessage( ) ) );
+                        String.valueOf( constraintViolation.getInvalidValue(  ) ), fieldName,
+                        constraintViolation.getMessage(  ) ) );
             }
         }
+
         // Business error
         catch ( BusinessException be )
         {
-            messageList.add( getMessage( be.getCode( ), be.getArguments( ) ) );
+            messageList.add( getMessage( be.getCode(  ), be.getArguments(  ) ) );
         }
 
         model.put( MARK_MESSAGE_LIST, messageList );
 
-        HtmlTemplate template = AppTemplateService.getTemplate( ERROR_TEMPLATE, getLocale( ), model );
-        return template.getHtml( );
+        HtmlTemplate template = AppTemplateService.getTemplate( ERROR_TEMPLATE, getLocale(  ), model );
+
+        return template.getHtml(  );
     }
 
     /**
      * Ensure path given which use indexing value like [%d] is cleaning
-     * 
+     *
      * @param propertyPath
      *            the property path to clean
      * @return the right i18n key
      */
     private String correctPath( Path propertyPath )
     {
-        String path = propertyPath.toString( );
+        String path = propertyPath.toString(  );
 
         Pattern pattern = Pattern.compile( "\\[\\d*\\]" );
         Matcher matcher = pattern.matcher( path );
-        if ( matcher.find( ) )
+
+        if ( matcher.find(  ) )
         {
-            path = path.substring( 0, matcher.start( ) )
-                    + path.substring( matcher.start( ) + matcher.group( ).length( ), path.length( ) );
+            path = path.substring( 0, matcher.start(  ) ) +
+                path.substring( matcher.start(  ) + matcher.group(  ).length(  ), path.length(  ) );
         }
 
         return path;
@@ -284,7 +293,7 @@ public class AbstractJspBean extends PluginAdminPageJspBean
 
     /**
      * Manage functionnal exception. Save it into session
-     * 
+     *
      * @param request
      *            the request
      * @param e
@@ -295,14 +304,14 @@ public class AbstractJspBean extends PluginAdminPageJspBean
      */
     protected String manageFunctionnalException( HttpServletRequest request, FunctionnalException e, String targetUrl )
     {
+        request.getSession(  ).setAttribute( TicketsConstants.PARAMETER_ERROR, e );
 
-        request.getSession( ).setAttribute( TicketsConstants.PARAMETER_ERROR, e );
         return targetUrl;
     }
 
     /**
      * Get the correct filter to use with data table manager
-     * 
+     *
      * @param request
      *            the http request
      * @param filter
@@ -316,30 +325,34 @@ public class AbstractJspBean extends PluginAdminPageJspBean
      * @return the filter to use
      */
     protected <T> T getFilterToUse( HttpServletRequest request, T filter, String markFilter,
-            DataTableManager<?> dataTable )
+        DataTableManager<?> dataTable )
     {
         T filterFromSession = null;
+
         if ( request.getParameter( MARK_PLUGIN_NAME ) != null )
         {
-            request.getSession( ).setAttribute( markFilter, null );
+            request.getSession(  ).setAttribute( markFilter, null );
         }
         else
         {
-            filterFromSession = request.getParameter( MARK_PLUGIN_NAME ) != null ? null : (T) request.getSession( )
-                    .getAttribute( markFilter );
+            filterFromSession = ( request.getParameter( MARK_PLUGIN_NAME ) != null ) ? null
+                                                                                     : (T) request.getSession(  )
+                                                                                                  .getAttribute( markFilter );
         }
+
         // 1) est-ce qu'une recherche vient d'être faite ? 2) est-ce qu'un
         // filtre existe en session ? 3) est-ce que le filtre en session est
         // d'un type héritant du fitre fournit en parametre ?
-        T filterToUse = request.getParameter( TicketsConstants.MARK_FILTER ) != null || filterFromSession == null
-                || !filterFromSession.getClass( ).isAssignableFrom( filter.getClass( ) ) ? dataTable
-                .getAndUpdateFilter( request, filter ) : filterFromSession;
+        T filterToUse = ( ( request.getParameter( TicketsConstants.MARK_FILTER ) != null ) ||
+            ( filterFromSession == null ) || !filterFromSession.getClass(  ).isAssignableFrom( filter.getClass(  ) ) )
+            ? dataTable.getAndUpdateFilter( request, filter ) : filterFromSession;
+
         return filterToUse;
     }
 
     /**
      * Get the correct data table manager
-     * 
+     *
      * @param request
      *            the http request
      * @param markFilter
@@ -353,14 +366,15 @@ public class AbstractJspBean extends PluginAdminPageJspBean
     protected <T> DataTableManager<T> getDataTableToUse( HttpServletRequest request, String markFilter, String jspManage )
     {
         DataTableManager<T> dataTableFromSession = loadDataTableFromSession( request, markFilter );
-        DataTableManager<T> dataTablePartner = dataTableFromSession != null ? dataTableFromSession
-                : new DataTableManager<T>( jspManage, StringUtils.EMPTY, 10, true );
+        DataTableManager<T> dataTablePartner = ( dataTableFromSession != null ) ? dataTableFromSession
+                                                                                : new DataTableManager<T>( jspManage,
+                StringUtils.EMPTY, 10, true );
 
         return dataTablePartner;
     }
 
     /**
-     * 
+     *
      * @param request
      *            the http request
      * @param filter
@@ -376,9 +390,8 @@ public class AbstractJspBean extends PluginAdminPageJspBean
      * @return the data table to use
      */
     protected <T> DataTableManager<T> getAbstractDataTableManager( HttpServletRequest request, Object filter,
-            String keyDataTable, String jspManage, Object service, Method findByFilter )
+        String keyDataTable, String jspManage, Object service, Method findByFilter )
     {
-
         // si un objet est déjà présent en session, on l'utilise
         DataTableManager<T> dataTableToUse = getDataTableToUse( request, keyDataTable, jspManage );
 
@@ -394,10 +407,10 @@ public class AbstractJspBean extends PluginAdminPageJspBean
         DataTablePaginationProperties updatePaginator = dataTableToUse.getAndUpdatePaginator( request );
 
         // obtention manuel des beans à afficher
-        PaginationPropertiesAdapterDataTable paginationProperties = new PaginationPropertiesAdapterDataTable(
-                updatePaginator );
+        PaginationPropertiesAdapterDataTable paginationProperties = new PaginationPropertiesAdapterDataTable( updatePaginator );
 
         ResultList<T> listAllBean = null;
+
         try
         {
             listAllBean = (ResultList<T>) findByFilter.invoke( service, filterToUse, paginationProperties );
@@ -406,8 +419,9 @@ public class AbstractJspBean extends PluginAdminPageJspBean
         {
             LOGGER.error( "Erreur lors de l'obtention de la liste des beans : " + e );
         }
-        request.getSession( ).setAttribute( MARK_FILTER, filterToUse );
-        dataTableToUse.setItems( listAllBean, listAllBean.getTotalResult( ) );
+
+        request.getSession(  ).setAttribute( MARK_FILTER, filterToUse );
+        dataTableToUse.setItems( listAllBean, listAllBean.getTotalResult(  ) );
 
         return dataTableToUse;
     }
@@ -416,7 +430,8 @@ public class AbstractJspBean extends PluginAdminPageJspBean
     {
         String ascSort = request.getParameter( MARK_ASC_SORT );
         String sortedAttribute = request.getParameter( "sorted_attribute_name" );
-        List<String> orders = new ArrayList<String>( );
+        List<String> orders = new ArrayList<String>(  );
+
         if ( StringUtils.isNotBlank( ascSort ) && StringUtils.isNotBlank( sortedAttribute ) )
         {
             if ( filter instanceof BeanFilter )
@@ -428,5 +443,4 @@ public class AbstractJspBean extends PluginAdminPageJspBean
             }
         }
     }
-
 }

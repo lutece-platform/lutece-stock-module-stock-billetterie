@@ -33,17 +33,19 @@
  */
 package fr.paris.lutece.plugins.stock.modules.billetterie.service.district;
 
-import java.util.List;
-
-import javax.inject.Inject;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import fr.paris.lutece.plugins.stock.commons.dao.PaginationProperties;
 import fr.paris.lutece.plugins.stock.modules.billetterie.business.district.District;
 import fr.paris.lutece.plugins.stock.modules.billetterie.business.district.DistrictFilter;
 import fr.paris.lutece.plugins.stock.modules.billetterie.dao.quartier.DistrictDAO;
+
+import org.springframework.stereotype.Service;
+
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
+import javax.inject.Inject;
+
 
 @Service
 @Transactional
@@ -51,31 +53,34 @@ public class DistrictService
 {
     @Inject
     private DistrictDAO _daoQuartier;
-    
+
     /**
      * Get district by id
      * @param id the id of the district search
      * @return the District
      */
-    public District findById(Integer id){
+    public District findById( Integer id )
+    {
         return _daoQuartier.findById( id );
     }
-    
+
     /**
      * Get all the district in database
      * @return the list of the district
      */
-    public List<District> findAll(){
-        return _daoQuartier.findAll( );
+    public List<District> findAll(  )
+    {
+        return _daoQuartier.findAll(  );
     }
-    
+
     /**
      * Get district by filter
      * @param filter the district filter
      * @param pagination the pagination properties
      * @return the list of the district
      */
-    public List<District> findByFilter(DistrictFilter filter, PaginationProperties pagination){
+    public List<District> findByFilter( DistrictFilter filter, PaginationProperties pagination )
+    {
         return _daoQuartier.findByFilter( filter, pagination );
     }
 }

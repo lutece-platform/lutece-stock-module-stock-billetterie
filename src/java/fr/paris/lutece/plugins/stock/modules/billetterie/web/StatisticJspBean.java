@@ -33,6 +33,10 @@
  */
 package fr.paris.lutece.plugins.stock.modules.billetterie.web;
 
+import au.com.bytecode.opencsv.CSVWriter;
+
+import com.keypoint.PngEncoder;
+
 import fr.paris.lutece.plugins.stock.commons.exception.BusinessException;
 import fr.paris.lutece.plugins.stock.modules.billetterie.utils.constants.BilletterieConstants;
 import fr.paris.lutece.plugins.stock.modules.tickets.business.ResultStatistic;
@@ -53,16 +57,20 @@ import fr.paris.lutece.util.html.HtmlTemplate;
 import fr.paris.lutece.util.url.UrlItem;
 
 import org.apache.commons.lang.StringUtils;
+
 import org.jfree.chart.ChartRenderingInfo;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.entity.StandardEntityCollection;
 
 import java.awt.image.BufferedImage;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
+
 import java.sql.Timestamp;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -72,10 +80,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import au.com.bytecode.opencsv.CSVWriter;
-
-import com.keypoint.PngEncoder;
 
 
 /**
@@ -88,17 +92,19 @@ public class StatisticJspBean extends AbstractJspBean
 
     /** The constant String CONSTANT_GROUP_BY_DAY */
     public static final String CONSTANT_GROUP_BY_DAY = "0";
+
     /** The constant String CONSTANT_GROUP_BY_WEEK */
     public static final String CONSTANT_GROUP_BY_WEEK = "1";
+
     /** The constant String CONSTANT_GROUP_BY_MONTH */
     public static final String CONSTANT_GROUP_BY_MONTH = "2";
+
     /** The constant String CONSTANT_PURCHASE_TYPE */
     public static final String CONSTANT_PURCHASE_TYPE = "2";
 
     //RIGHT
     /** The constant String RIGHT_MANAGE_STATISTICS */
     public static final String RIGHT_MANAGE_STATISTICS = "STATISTICS_MANAGEMENT";
-
     private static final long serialVersionUID = -2502151554115352120L;
 
     //PAGES TITLES
@@ -114,14 +120,11 @@ public class StatisticJspBean extends AbstractJspBean
     private static final String MARK_NUMBER_RESPONSE = "number_response";
     private static final String MARK_FIRST_RESPONSE_DATE_FILTER = "fist_response_date_filter";
     private static final String MARK_LAST_RESPONSE_DATE_FILTER = "last_response_date_filter";
-
     private static final String PARAMETER_FIRST_RESPONSE_DATE_FILTER = "fist_response_date_filter";
     private static final String PARAMETER_LAST_RESPONSE_DATE_FILTER = "last_response_date_filter";
-
     private static final String MARK_TIMES_UNIT = "times_unit";
     private static final String PARAMETER_TIMES_UNIT = "times_unit";
     private static final String MARK_LOCALE = "locale";
-
     private static final String PARAMETER_TYPE_DATA = "type_data";
 
     //MESSAGES
@@ -130,12 +133,11 @@ public class StatisticJspBean extends AbstractJspBean
     //PROPERTIES
     private static final String PROPERTY_PRODUCT_STAT_EXPORT_FILE_NAME = "stock-billetterie.csv.product.file.name";
     private static final String PROPERTY_PURCHASE_STAT_EXPORT_FILE_NAME = "stock-billetterie.csv.purchase.file.name";
-	private static final String PROPERTY_ENCODING = "stock-billetterie.csv.encoding";
+    private static final String PROPERTY_ENCODING = "stock-billetterie.csv.encoding";
     private static final String PROPERTY_NUMBER_RESPONSE_AXIS_X = "graph.numberResponseAxisX";
     private static final String PROPERTY_LABEL_AXIS_X = "module.stock.billetterie.manage_statistics.labelAxisX";
     private static final String PROPERTY_LABEL_AXIS_Y_PRODUCT = "module.stock.billetterie.manage_products_statistics.labelAxisY";
     private static final String PROPERTY_LABEL_AXIS_Y_PURCHASE = "module.stock.billetterie.manage_purchases_statistics.labelAxisY";
-
     private static final String CONTENT_TYPE_IMAGE_PNG = "image/PNG";
 
     /** The _service statistic. */
@@ -148,13 +150,13 @@ public class StatisticJspBean extends AbstractJspBean
     public StatisticJspBean(  )
     {
         super(  );
-        _serviceStatistic = SpringContextService.getContext( ).getBean( IStatisticService.class );
+        _serviceStatistic = SpringContextService.getContext(  ).getBean( IStatisticService.class );
     }
 
     /**
      * Generates a HTML form that displays the link to manage the visitors
      * statistics and polls.
-     * 
+     *
      * @param request the Http request
      * @return HTML
      */
@@ -170,27 +172,27 @@ public class StatisticJspBean extends AbstractJspBean
 
     /**
      * Gets the form result page.
-     * 
+     *
      * @param request the http request
      * @return the form test page
      */
     public String getManageProducts( HttpServletRequest request )
     {
-        Locale locale = getLocale( );
+        Locale locale = getLocale(  );
         HtmlTemplate template;
         int nNumberResponse = 0;
-        Map<String, Object> model = new HashMap<String, Object>( );
+        Map<String, Object> model = new HashMap<String, Object>(  );
 
         String strFistResponseDateFilter = request.getParameter( PARAMETER_FIRST_RESPONSE_DATE_FILTER );
         String strLastResponseDateFilter = request.getParameter( PARAMETER_LAST_RESPONSE_DATE_FILTER );
         String strTimesUnit = request.getParameter( PARAMETER_TIMES_UNIT );
-        
-        if ( strFistResponseDateFilter != null && strLastResponseDateFilter != null
-                && !strFistResponseDateFilter.equals( StringUtils.EMPTY )
-                && !strLastResponseDateFilter.equals( StringUtils.EMPTY ) )
+
+        if ( ( strFistResponseDateFilter != null ) && ( strLastResponseDateFilter != null ) &&
+                !strFistResponseDateFilter.equals( StringUtils.EMPTY ) &&
+                !strLastResponseDateFilter.equals( StringUtils.EMPTY ) )
         {
-            if ( DateUtil.formatDate( strFistResponseDateFilter, locale ).after(
-                    DateUtil.formatDate( strLastResponseDateFilter, locale ) ) )
+            if ( DateUtil.formatDate( strFistResponseDateFilter, locale )
+                             .after( DateUtil.formatDate( strLastResponseDateFilter, locale ) ) )
             {
                 BusinessException fe = new BusinessException( null, MESSAGE_ERROR_INVALID_DATE );
                 model.put( BilletterieConstants.ERROR, getHtmlError( fe ) );
@@ -203,13 +205,13 @@ public class StatisticJspBean extends AbstractJspBean
         if ( strFistResponseDateFilter != null )
         {
             tFistResponseDateFilter = DateUtils.getDateFirstMinute( DateUtil.formatDate( strFistResponseDateFilter,
-                    locale ) );
+                        locale ) );
         }
 
         if ( strLastResponseDateFilter != null )
         {
             tLastResponseDateFilter = DateUtils.getDateLastMinute( DateUtil.formatDate( strLastResponseDateFilter,
-                    locale ) );
+                        locale ) );
         }
 
         nNumberResponse = _serviceStatistic.getCountProductsByDates( strFistResponseDateFilter,
@@ -220,45 +222,44 @@ public class StatisticJspBean extends AbstractJspBean
             strTimesUnit = CONSTANT_GROUP_BY_DAY;
         }
 
-        model.put( MARK_LOCALE, AdminUserService.getLocale( request ).getLanguage( ) );
+        model.put( MARK_LOCALE, AdminUserService.getLocale( request ).getLanguage(  ) );
         model.put( MARK_NUMBER_RESPONSE, nNumberResponse );
-        model.put( MARK_FIRST_RESPONSE_DATE_FILTER, ( tFistResponseDateFilter == null ) ? null : new Date(
-                tFistResponseDateFilter.getTime( ) ) );
-        model.put( MARK_LAST_RESPONSE_DATE_FILTER, ( tLastResponseDateFilter == null ) ? null : new Date(
-                tLastResponseDateFilter.getTime( ) ) );
+        model.put( MARK_FIRST_RESPONSE_DATE_FILTER,
+            ( tFistResponseDateFilter == null ) ? null : new Date( tFistResponseDateFilter.getTime(  ) ) );
+        model.put( MARK_LAST_RESPONSE_DATE_FILTER,
+            ( tLastResponseDateFilter == null ) ? null : new Date( tLastResponseDateFilter.getTime(  ) ) );
         model.put( MARK_TIMES_UNIT, strTimesUnit );
         //        model.put( MARK_EXPORT_FORMAT_REF_LIST, ExportFormatHome.getListExport( plugin ) );
-        
-        model.put("beanName","product");
+        model.put( "beanName", "product" );
         setPageTitleProperty( PAGE_TITLE_MANAGE_PRODUCTS );
         template = AppTemplateService.getTemplate( TEMPLATE_MANAGE_PRODUCTS_STATISTICS, locale, model );
 
-        return getAdminPage( template.getHtml( ) );
+        return getAdminPage( template.getHtml(  ) );
     }
 
     /**
      * Gets the form result page.
-     * 
+     *
      * @param request the http request
      * @return the form test page
      */
     public String getManagePurchases( HttpServletRequest request )
     {
-        Locale locale = getLocale( );
+        Locale locale = getLocale(  );
         HtmlTemplate template;
         int nNumberResponse = 0;
-        Map<String, Object> model = new HashMap<String, Object>( );
+        Map<String, Object> model = new HashMap<String, Object>(  );
 
         String strFistResponseDateFilter = request.getParameter( PARAMETER_FIRST_RESPONSE_DATE_FILTER );
         String strLastResponseDateFilter = request.getParameter( PARAMETER_LAST_RESPONSE_DATE_FILTER );
         String strTimesUnit = request.getParameter( PARAMETER_TIMES_UNIT );
 
-        if ( strFistResponseDateFilter != null && strLastResponseDateFilter != null
-                && !strFistResponseDateFilter.equals( StringUtils.EMPTY )
-                && !strLastResponseDateFilter.equals( StringUtils.EMPTY ) )
+        if ( ( strFistResponseDateFilter != null ) && ( strLastResponseDateFilter != null ) &&
+                !strFistResponseDateFilter.equals( StringUtils.EMPTY ) &&
+                !strLastResponseDateFilter.equals( StringUtils.EMPTY ) )
         {
-            if ( DateUtil.formatDate( strFistResponseDateFilter, locale ).after(
-                    DateUtil.formatDate( strLastResponseDateFilter, locale ) ) )
+            if ( DateUtil.formatDate( strFistResponseDateFilter, locale )
+                             .after( DateUtil.formatDate( strLastResponseDateFilter, locale ) ) )
             {
                 BusinessException fe = new BusinessException( null, MESSAGE_ERROR_INVALID_DATE );
                 model.put( BilletterieConstants.ERROR, getHtmlError( fe ) );
@@ -271,13 +272,13 @@ public class StatisticJspBean extends AbstractJspBean
         if ( strFistResponseDateFilter != null )
         {
             tFistResponseDateFilter = DateUtils.getDateFirstMinute( DateUtil.formatDate( strFistResponseDateFilter,
-                    locale ) );
+                        locale ) );
         }
 
         if ( strLastResponseDateFilter != null )
         {
             tLastResponseDateFilter = DateUtils.getDateLastMinute( DateUtil.formatDate( strLastResponseDateFilter,
-                    locale ) );
+                        locale ) );
         }
 
         nNumberResponse = _serviceStatistic.getCountPurchasesByDates( strFistResponseDateFilter,
@@ -288,30 +289,30 @@ public class StatisticJspBean extends AbstractJspBean
             strTimesUnit = CONSTANT_GROUP_BY_DAY;
         }
 
-        model.put( MARK_LOCALE, AdminUserService.getLocale( request ).getLanguage( ) );
+        model.put( MARK_LOCALE, AdminUserService.getLocale( request ).getLanguage(  ) );
         model.put( MARK_NUMBER_RESPONSE, nNumberResponse );
-        model.put( MARK_FIRST_RESPONSE_DATE_FILTER, ( tFistResponseDateFilter == null ) ? null : new Date(
-                tFistResponseDateFilter.getTime( ) ) );
-        model.put( MARK_LAST_RESPONSE_DATE_FILTER, ( tLastResponseDateFilter == null ) ? null : new Date(
-                tLastResponseDateFilter.getTime( ) ) );
+        model.put( MARK_FIRST_RESPONSE_DATE_FILTER,
+            ( tFistResponseDateFilter == null ) ? null : new Date( tFistResponseDateFilter.getTime(  ) ) );
+        model.put( MARK_LAST_RESPONSE_DATE_FILTER,
+            ( tLastResponseDateFilter == null ) ? null : new Date( tLastResponseDateFilter.getTime(  ) ) );
         model.put( MARK_TIMES_UNIT, strTimesUnit );
         //model.put( MARK_EXPORT_FORMAT_REF_LIST, ExportFormatHome.getListExport( plugin ) );
         setPageTitleProperty( PAGE_TITLE_MANAGE_PURCHASE );
         template = AppTemplateService.getTemplate( TEMPLATE_MANAGE_PURCHASE_STATISTICS, locale, model );
 
-        return getAdminPage( template.getHtml( ) );
+        return getAdminPage( template.getHtml(  ) );
     }
 
     /**
      * write in the http response the statistic graph of all response submit who
      * verify the date filter.
-     * 
+     *
      * @param request the http request
      * @param response The http response
      */
     public void doGenerateGraph( HttpServletRequest request, HttpServletResponse response )
     {
-        Locale locale = getLocale( );
+        Locale locale = getLocale(  );
         String strFistResponseDateFilter = request.getParameter( PARAMETER_FIRST_RESPONSE_DATE_FILTER );
         String strLastResponseDateFilter = request.getParameter( PARAMETER_LAST_RESPONSE_DATE_FILTER );
         String strTimesUnit = request.getParameter( PARAMETER_TIMES_UNIT );
@@ -321,7 +322,6 @@ public class StatisticJspBean extends AbstractJspBean
 
         if ( strTypeData.equals( CONSTANT_PRODUCT_TYPE ) )
         {
-
             listeResultStatistic = _serviceStatistic.getProductStatistic( strTimesUnit, strFistResponseDateFilter,
                     strLastResponseDateFilter );
         }
@@ -343,18 +343,17 @@ public class StatisticJspBean extends AbstractJspBean
             AppLogService.error( ne );
         }
 
-        List<ResultStatistic> listStatisticGraph = new ArrayList<ResultStatistic>( );
+        List<ResultStatistic> listStatisticGraph = new ArrayList<ResultStatistic>(  );
         ResultStatistic statisticFormSubmit;
 
-        if ( listeResultStatistic.size( ) != 0 )
+        if ( listeResultStatistic.size(  ) != 0 )
         {
             for ( int cpt = 0; cpt < nNumberOfResponseAxisX; cpt++ )
             {
-                statisticFormSubmit = new ResultStatistic( );
+                statisticFormSubmit = new ResultStatistic(  );
                 statisticFormSubmit.setNumberResponse( 0 );
-                statisticFormSubmit.setStatisticDate( StatisticService.addStatisticInterval(
-                        listeResultStatistic.get( 0 )
-                        .getStatisticDate( ), strTimesUnit, cpt ) );
+                statisticFormSubmit.setStatisticDate( StatisticService.addStatisticInterval( 
+                        listeResultStatistic.get( 0 ).getStatisticDate(  ), strTimesUnit, cpt ) );
                 listStatisticGraph.add( statisticFormSubmit );
             }
         }
@@ -363,19 +362,19 @@ public class StatisticJspBean extends AbstractJspBean
         {
             for ( ResultStatistic resultStatistic : listeResultStatistic )
             {
-                if ( StatisticService.sameDate( statisticFormSubmitGraph.getStatisticDate( ),
-                        resultStatistic.getStatisticDate( ), strTimesUnit ) )
+                if ( StatisticService.sameDate( statisticFormSubmitGraph.getStatisticDate(  ),
+                            resultStatistic.getStatisticDate(  ), strTimesUnit ) )
                 {
-                    statisticFormSubmitGraph.setNumberResponse( resultStatistic.getNumberResponse( ) );
+                    statisticFormSubmitGraph.setNumberResponse( resultStatistic.getNumberResponse(  ) );
                 }
             }
         }
 
         String strLabelAxisX = I18nService.getLocalizedString( PROPERTY_LABEL_AXIS_X, locale );
         String strLabelAxisY;
+
         if ( strTypeData.equals( CONSTANT_PRODUCT_TYPE ) )
         {
-
             strLabelAxisY = I18nService.getLocalizedString( PROPERTY_LABEL_AXIS_Y_PRODUCT, locale );
         }
         else
@@ -388,13 +387,13 @@ public class StatisticJspBean extends AbstractJspBean
             JFreeChart chart = StatisticService.createXYGraph( listStatisticGraph, strLabelAxisX, strLabelAxisY,
                     strTimesUnit );
 
-            ChartRenderingInfo info = new ChartRenderingInfo( new StandardEntityCollection( ) );
+            ChartRenderingInfo info = new ChartRenderingInfo( new StandardEntityCollection(  ) );
             BufferedImage chartImage = chart.createBufferedImage( 600, 200, info );
             response.setContentType( CONTENT_TYPE_IMAGE_PNG );
 
             PngEncoder encoder = new PngEncoder( chartImage, false, 0, 9 );
-            response.getOutputStream( ).write( encoder.pngEncode( ) );
-            response.getOutputStream( ).close( );
+            response.getOutputStream(  ).write( encoder.pngEncode(  ) );
+            response.getOutputStream(  ).close(  );
         }
         catch ( Exception e )
         {
@@ -404,7 +403,7 @@ public class StatisticJspBean extends AbstractJspBean
 
     /**
      * Exports all the statistics visitors filtered.
-     * 
+     *
      * @param request The Http request
      * @param response The Http response
      * @return The Url after the export
@@ -432,7 +431,7 @@ public class StatisticJspBean extends AbstractJspBean
         }
 
         List<String[]> listToCSVWriter = StatisticService.buildListToCSVWriter( listeResultStatistic, strTimesUnit,
-                getLocale( ) );
+                getLocale(  ) );
 
         //        if ( listToCSVWriter == null )
         //        {
@@ -445,7 +444,6 @@ public class StatisticJspBean extends AbstractJspBean
         //                return getManagePurchases( request );
         //            }
         //        }
-
         String strCsvSeparator = AppPropertiesService.getProperty( TicketsConstants.PROPERTY_CSV_SEPARATOR );
         StringWriter strWriter = new StringWriter(  );
         CSVWriter csvWriter = new CSVWriter( strWriter, strCsvSeparator.toCharArray(  )[0] );
@@ -467,37 +465,37 @@ public class StatisticJspBean extends AbstractJspBean
         try
         {
             String strFormatExtension = AppPropertiesService.getProperty( TicketsConstants.PROPERTY_CSV_EXTENSION );
-            String strFileName = AppPropertiesService.getProperty( strExportFileName ) + "."
-                    +
-                strFormatExtension;
+            String strFileName = AppPropertiesService.getProperty( strExportFileName ) + "." + strFormatExtension;
             TicketsExportUtils.addHeaderResponse( request, response, strFileName, strFormatExtension );
             response.setContentLength( byteFileOutPut.length );
 
             OutputStream os = response.getOutputStream(  );
             os.write( byteFileOutPut );
+
             // We do not close the output stream to allow HTTP keep alive
         }
         catch ( IOException e )
         {
-            AppLogService.error( e.getMessage( ), e );
+            AppLogService.error( e.getMessage(  ), e );
         }
         finally
         {
             try
             {
-                csvWriter.close( );
+                csvWriter.close(  );
             }
             catch ( IOException e )
             {
-                AppLogService.error( e.getMessage( ), e );
+                AppLogService.error( e.getMessage(  ), e );
             }
+
             try
             {
-                strWriter.close( );
+                strWriter.close(  );
             }
             catch ( IOException e )
             {
-                AppLogService.error( e.getMessage( ), e );
+                AppLogService.error( e.getMessage(  ), e );
             }
         }
 

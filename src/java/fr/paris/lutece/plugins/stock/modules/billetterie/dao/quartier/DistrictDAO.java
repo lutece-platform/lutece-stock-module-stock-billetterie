@@ -53,34 +53,33 @@ import javax.persistence.criteria.Root;
 
 
 /**
- * 
+ *
  * @author jchaline
- * 
+ *
  */
 @Repository
 public class DistrictDAO extends AbstractStockDAO<Integer, District>
 {
-
     /**
      * {@inheritDoc}
      */
     @Override
-    public String getPluginName( )
+    public String getPluginName(  )
     {
         return StockPlugin.PLUGIN_NAME;
     }
 
     /**
      * Find purchases by filter.
-     * 
+     *
      * @param filter the filter
      * @param paginationProperties the pagination properties
      * @return list of purchases
      */
     public ResultList<District> findByFilter( DistrictFilter filter, PaginationProperties paginationProperties )
     {
-        EntityManager em = getEM( );
-        CriteriaBuilder cb = em.getCriteriaBuilder( );
+        EntityManager em = getEM(  );
+        CriteriaBuilder cb = em.getCriteriaBuilder(  );
 
         CriteriaQuery<District> cq = cb.createQuery( District.class );
 
@@ -89,28 +88,28 @@ public class DistrictDAO extends AbstractStockDAO<Integer, District>
         buildSortQuery( filter, root, cq, cb );
         cq.distinct( true );
 
-        return createPagedQuery( cq, paginationProperties ).getResultList( );
+        return createPagedQuery( cq, paginationProperties ).getResultList(  );
     }
 
     /**
      * Add the order by parameter to the query.
-     * 
+     *
      * @param filter the filter
      * @param root the entity root
      * @param query the criteria query
      * @param builder the criteria builder
      */
     protected void buildSortQuery( DistrictFilter filter, Root<District> root, CriteriaQuery<District> query,
-            CriteriaBuilder builder )
+        CriteriaBuilder builder )
     {
-        if ( ( filter.getOrders( ) != null ) && !filter.getOrders( ).isEmpty( ) )
+        if ( ( filter.getOrders(  ) != null ) && !filter.getOrders(  ).isEmpty(  ) )
         {
-            List<Order> orderList = new LinkedList<Order>( );
+            List<Order> orderList = new LinkedList<Order>(  );
 
             // get asc order
-            for ( String order : filter.getOrders( ) )
+            for ( String order : filter.getOrders(  ) )
             {
-                if ( filter.isOrderAsc( ) )
+                if ( filter.isOrderAsc(  ) )
                 {
                     orderList.add( builder.asc( root.get( order ) ) );
                 }
@@ -126,15 +125,14 @@ public class DistrictDAO extends AbstractStockDAO<Integer, District>
 
     /**
      * Build the criteria query used when entity are searched by filter.
-     * 
+     *
      * @param filter the filter
      * @param root the entity root
      * @param query the criteria query
      * @param builder the criteria builder
      */
     protected void buildCriteriaQuery( Object filter, Root<District> root, CriteriaQuery<District> query,
-            CriteriaBuilder builder )
+        CriteriaBuilder builder )
     {
-
     }
 }

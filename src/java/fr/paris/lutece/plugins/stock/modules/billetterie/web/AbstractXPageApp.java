@@ -33,20 +33,6 @@
  */
 package fr.paris.lutece.plugins.stock.modules.billetterie.web;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.ConstraintViolation;
-
-import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-
 import fr.paris.lutece.plugins.stock.commons.dao.PaginationProperties;
 import fr.paris.lutece.plugins.stock.commons.dao.PaginationPropertiesImpl;
 import fr.paris.lutece.plugins.stock.commons.exception.BusinessException;
@@ -64,10 +50,27 @@ import fr.paris.lutece.util.beanvalidation.BeanValidationUtil;
 import fr.paris.lutece.util.html.HtmlTemplate;
 import fr.paris.lutece.util.html.Paginator;
 
+import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang.StringUtils;
+
+import org.apache.log4j.Logger;
+
+import java.lang.reflect.InvocationTargetException;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.servlet.http.HttpServletRequest;
+
+import javax.validation.ConstraintViolation;
+
 
 /**
  * Abstract class for jsp bean
- * 
+ *
  * @author abataille
  */
 public abstract class AbstractXPageApp
@@ -76,7 +79,6 @@ public abstract class AbstractXPageApp
     public static final String DEFAULT_RESULTS_PER_PAGE = "10";
     public static final String DEFAULT_PAGE_INDEX = "1";
     public static final String PROPERTY_RESULTS_PER_PAGE = "search.nb.docs.per.page";
-
     private static final String AUTHENTIFICATION_ERROR_MESSAGE = "Impossible de détecter une authentification.";
     private static final String POPULATE_ERROR_MESSAGE = "Erreur lors de la recuperation des donnees du formulaire.";
     private static final String ERROR_MESSAGE_KEY = "module.stock.billetterie.validation.error";
@@ -87,7 +89,7 @@ public abstract class AbstractXPageApp
 
     /**
      * Populate a bean using parameters in http request
-     * 
+     *
      * @param bean bean to populate
      * @param request http request
      */
@@ -95,7 +97,7 @@ public abstract class AbstractXPageApp
     {
         try
         {
-            BeanUtils.populate( bean, request.getParameterMap( ) );
+            BeanUtils.populate( bean, request.getParameterMap(  ) );
         }
         catch ( IllegalAccessException e )
         {
@@ -109,7 +111,7 @@ public abstract class AbstractXPageApp
 
     /**
      * Validate a bean using jsr 303 specs.
-     * 
+     *
      * @param <T> the generic type
      * @param bean to validate
      * @throws ValidationException exception containing informations about
@@ -118,13 +120,16 @@ public abstract class AbstractXPageApp
     protected <T> void validate( T bean ) throws ValidationException
     {
         Set<ConstraintViolation<T>> constraintViolations = BeanValidationUtil.validate( bean );
-        if ( constraintViolations.size( ) > 0 )
+
+        if ( constraintViolations.size(  ) > 0 )
         {
             ValidationException ve = new ValidationException( bean );
+
             for ( ConstraintViolation<T> constraintViolation : constraintViolations )
             {
                 ve.addConstraintViolation( constraintViolation );
             }
+
             throw ve;
         }
     }
@@ -132,22 +137,24 @@ public abstract class AbstractXPageApp
     /**
      * Return authified user and throw technical exception if no user auth
      * found.
-     * 
+     *
      * @param request http request
      * @return user lutece
      * @throws TechnicalException the technical exception
      */
-    protected LuteceUser getUser( HttpServletRequest request ) throws TechnicalException
+    protected LuteceUser getUser( HttpServletRequest request )
+        throws TechnicalException
     {
         // CAS
         try
         {
-            return SecurityService.getInstance( ).getRemoteUser( request );
+            return SecurityService.getInstance(  ).getRemoteUser( request );
         }
         catch ( UserNotSignedException e )
         {
             throw new TechnicalException( AUTHENTIFICATION_ERROR_MESSAGE, e );
         }
+
         // DEBUT BOUCHON
         //		LuteceUser user = new BasicLuteceUser("abataille@sopragroup.com",
         //				new MultiLuteceAuthentication());
@@ -157,24 +164,23 @@ public abstract class AbstractXPageApp
         //				"abataille@sopragroup.com");
         //		return user;
         // FIN BOUCHON
-
     }
 
     /**
      * Return localized message.
-     * 
+     *
      * @param key i18n key
      * @param request the request
      * @return localized message
      */
     protected String getMessage( String key, HttpServletRequest request )
     {
-        return I18nService.getLocalizedString( key, request.getLocale( ) );
+        return I18nService.getLocalizedString( key, request.getLocale(  ) );
     }
 
     /**
      * Return localized message with args.
-     * 
+     *
      * @param key i18n key
      * @param request the request
      * @param args args
@@ -182,56 +188,60 @@ public abstract class AbstractXPageApp
      */
     protected String getMessage( String key, HttpServletRequest request, String... args )
     {
-        return I18nService.getLocalizedString( key, args, request.getLocale( ) );
+        return I18nService.getLocalizedString( key, args, request.getLocale(  ) );
     }
 
     /**
      * Return html code for error message.
-     * 
+     *
      * @param e the e
      * @param request the request
      * @return html
      */
     protected String getHtmlError( FunctionnalException e, HttpServletRequest request )
     {
-        Map<String, Object> model = new HashMap<String, Object>( );
-        List<String> messageList = new ArrayList<String>( );
+        Map<String, Object> model = new HashMap<String, Object>(  );
+        List<String> messageList = new ArrayList<String>(  );
+
         try
         {
             throw e;
         }
+
         // Validation error
         catch ( ValidationException ve )
         {
-            String typeName = ve.getBean( ).getClass( ).getSimpleName( );
+            String typeName = ve.getBean(  ).getClass(  ).getSimpleName(  );
 
             // Add a validation error message using value, field name and
             // provided
             // message
-            for ( ConstraintViolation<?> constraintViolation : ve.getConstraintViolationList( ) )
+            for ( ConstraintViolation<?> constraintViolation : ve.getConstraintViolationList(  ) )
             {
-                String fieldName = getMessage(
-                        FIELD_MESSAGE_PREFIX + typeName + "." + constraintViolation.getPropertyPath( ), request );
+                String fieldName = getMessage( FIELD_MESSAGE_PREFIX + typeName + "." +
+                        constraintViolation.getPropertyPath(  ), request );
                 messageList.add( getMessage( ERROR_MESSAGE_KEY, request,
-                        String.valueOf( constraintViolation.getInvalidValue( ) ), fieldName,
-                        constraintViolation.getMessage( ) ) );
+                        String.valueOf( constraintViolation.getInvalidValue(  ) ), fieldName,
+                        constraintViolation.getMessage(  ) ) );
             }
         }
+
         // Business error
         catch ( BusinessException be )
         {
-            messageList.add( getMessage( be.getCode( ), request, be.getArguments( ) ) );
+            messageList.add( getMessage( be.getCode(  ), request, be.getArguments(  ) ) );
         }
 
         model.put( MARK_MESSAGE_LIST, messageList );
 
-        HtmlTemplate template = AppTemplateService.getTemplate( ERROR_TEMPLATE, request.getLocale( ), model );
-        return template.getHtml( );
+        HtmlTemplate template = AppTemplateService.getTemplate( ERROR_TEMPLATE, request.getLocale(  ), model );
+
+        return template.getHtml(  );
     }
 
     /**
      * Manage functionnal exception.
-     * 
+     *
      * @param request the request
      * @param e the e
      * @param targetUrl the target url
@@ -239,31 +249,34 @@ public abstract class AbstractXPageApp
      */
     protected String manageFunctionnalException( HttpServletRequest request, FunctionnalException e, String targetUrl )
     {
-        request.getSession( ).setAttribute( TicketsConstants.PARAMETER_ERROR, e );
+        request.getSession(  ).setAttribute( TicketsConstants.PARAMETER_ERROR, e );
+
         return targetUrl;
     }
 
     /**
      * Get validation error from session and remove from it
-     * 
+     *
      * @param request http request
      * @return validation exception
      */
     protected FunctionnalException getErrorOnce( HttpServletRequest request )
     {
-        FunctionnalException fe = (FunctionnalException) request.getSession( ).getAttribute(
-                TicketsConstants.PARAMETER_ERROR );
+        FunctionnalException fe = (FunctionnalException) request.getSession(  )
+                                                                .getAttribute( TicketsConstants.PARAMETER_ERROR );
+
         if ( fe != null )
         {
-            request.getSession( ).removeAttribute( TicketsConstants.PARAMETER_ERROR );
+            request.getSession(  ).removeAttribute( TicketsConstants.PARAMETER_ERROR );
         }
+
         return fe;
     }
 
     /**
      * Return a bean for pagination in service/dao using parameter in http
      * request
-     * 
+     *
      * @param request http request
      * @return paginator the populate paginator
      */
@@ -271,6 +284,7 @@ public abstract class AbstractXPageApp
     {
         String strPageIndex = Paginator.getPageIndex( request, Paginator.PARAMETER_PAGE_INDEX, "1" );
         int nCurrentPageIndex = 1;
+
         if ( StringUtils.isNotEmpty( strPageIndex ) )
         {
             nCurrentPageIndex = Integer.valueOf( strPageIndex );

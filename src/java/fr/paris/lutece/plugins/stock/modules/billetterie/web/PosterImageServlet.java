@@ -36,6 +36,11 @@ package fr.paris.lutece.plugins.stock.modules.billetterie.web;
 import fr.paris.lutece.plugins.stock.modules.tickets.service.IShowService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
+
+import org.apache.log4j.Logger;
+
 import java.io.IOException;
 
 import javax.servlet.ServletException;
@@ -44,52 +49,49 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-
 
 /**
  * Used for special solr queries
- * 
+ *
  * @author abataille
  */
 public class PosterImageServlet extends HttpServlet
 {
-
     private static final String ERROR_MESSAGE = "Appel de PosterImageServlet avec un id de produit null";
     private static final String CONTENT_TYPE_IMAGE_JPEG = "image/jpeg";
     private static final String PARAMETER_TB = "tb";
     private static final String PARAMETER_PRODUCT_ID = "product_id";
     private static final String BEAN_STOCK_TICKETS_SHOW_SERVICE = "stock-tickets.showService";
-    /**  
+
+    /**
      *
      */
     private static final long serialVersionUID = -1165966480942742905L;
     private static final Logger LOGGER = Logger.getLogger( PosterImageServlet.class );
 
     /** The product service. */
-    private IShowService _productService = (IShowService) SpringContextService
-            .getBean( BEAN_STOCK_TICKETS_SHOW_SERVICE );
+    private IShowService _productService = (IShowService) SpringContextService.getBean( BEAN_STOCK_TICKETS_SHOW_SERVICE );
 
     /**
      * Returns poster image
-     * 
+     *
      * @param request the request
      * @param response the response
      * @throws ServletException the servlet exception
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    protected void doGet( HttpServletRequest request, HttpServletResponse response ) throws ServletException,
-            IOException
+    protected void doGet( HttpServletRequest request, HttpServletResponse response )
+        throws ServletException, IOException
     {
         String sIdProduct = request.getParameter( PARAMETER_PRODUCT_ID );
+
         if ( StringUtils.isNotEmpty( sIdProduct ) )
         {
             Integer idProduct = Integer.parseInt( sIdProduct );
-            boolean isThumbnail = request.getParameter( PARAMETER_TB ) != null
-                    && request.getParameter( PARAMETER_TB ).equals( String.valueOf( true ) );
+            boolean isThumbnail = ( request.getParameter( PARAMETER_TB ) != null ) &&
+                request.getParameter( PARAMETER_TB ).equals( String.valueOf( true ) );
             byte[] bImage;
+
             if ( isThumbnail )
             {
                 bImage = _productService.getTbImage( idProduct );
@@ -98,17 +100,17 @@ public class PosterImageServlet extends HttpServlet
             {
                 bImage = _productService.getImage( idProduct );
             }
+
             response.setContentLength( bImage.length );
             response.setContentType( CONTENT_TYPE_IMAGE_JPEG );
 
-            ServletOutputStream os = response.getOutputStream( );
+            ServletOutputStream os = response.getOutputStream(  );
             IOUtils.write( bImage, os );
-            os.close( );
+            os.close(  );
         }
         else
         {
             LOGGER.error( ERROR_MESSAGE );
         }
     }
-
 }

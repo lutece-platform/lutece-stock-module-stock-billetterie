@@ -38,11 +38,15 @@ import fr.paris.lutece.portal.service.util.AppPathService;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
+
 import org.apache.log4j.Logger;
+
 import org.springframework.web.util.UriUtils;
 
 import java.io.IOException;
+
 import java.sql.Timestamp;
+
 import java.text.SimpleDateFormat;
 
 import javax.servlet.ServletException;
@@ -53,17 +57,15 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  * Used for special solr queries
- * 
+ *
  * @author abataille
  */
 public class BilletterieSolrSearch extends HttpServlet
 {
-
-    /**  
+    /**
      *
      */
     private static final long serialVersionUID = -806886865678792151L;
-
     private static final String MARK_QUOI = "quoi";
     private static final String MARK_OU = "ou";
     private static final String MARK_QUAND = "quand";
@@ -72,31 +74,27 @@ public class BilletterieSolrSearch extends HttpServlet
     private static final String MARK_INVITATION_ENFANT = "invitation_enfant";
     private static final String MARK_FULL_SHOW = "full_show";
     private static final String MARK_CATEGORY = "categorie";
-
     private static final String MARK_QUERY = "query";
     private static final String MARK_SORT = "sort";
     private static final String MARK_SORT_ALPHABETIQUE = "alpha";
     private static final String MARK_SORT_DATE = "date";
-
     private static final String MARK_TYPE_SEARCH = "type_search";
-
     private static final String CHECKBOX_ON = "on";
     private static final String SEARCH_SIMPLE = "simple";
     private static final String SEARCH_AVANCEE = "avancee";
-
     private static final Logger LOGGER = Logger.getLogger( BilletterieSolrSearch.class );
 
     /**
      * Get billetterie specific parameters and call Solr Module.
-     * 
+     *
      * @param request the request
      * @param response the response
      * @throws ServletException the servlet exception
      * @throws IOException Signals that an I/O exception has occurred.
      */
     @Override
-    protected void doGet( HttpServletRequest request, HttpServletResponse response ) throws ServletException,
-            IOException
+    protected void doGet( HttpServletRequest request, HttpServletResponse response )
+        throws ServletException, IOException
     {
         StringBuilder sbReq = new StringBuilder( "" );
         sbReq.append( AppPathService.getBaseUrl( request ) ).append( "jsp/site/Portal.jsp?page=search-solr" );
@@ -124,6 +122,7 @@ public class BilletterieSolrSearch extends HttpServlet
         {
             // simple search with facets 
             sTypeSearch = SEARCH_SIMPLE;
+
             String sQuoi = request.getParameter( MARK_QUOI );
             String sOu = request.getParameter( MARK_OU );
             String sQuand = request.getParameter( MARK_QUAND );
@@ -137,10 +136,12 @@ public class BilletterieSolrSearch extends HttpServlet
             {
                 sbFilter.append( sQuoi );
             }
+
             if ( StringUtils.isNotEmpty( sOu ) )
             {
                 sbFilter.append( sOu );
             }
+
             if ( StringUtils.isNotEmpty( sQuand ) )
             {
                 sbFilter.append( sQuand );
@@ -187,7 +188,9 @@ public class BilletterieSolrSearch extends HttpServlet
                 sbReq.append( "&query=(" + sQuery );
 
                 sbFilter.append( " AND categorie:(" );
+
                 int i = 1;
+
                 for ( String categorie : categories )
                 {
                     if ( i < categories.length )
@@ -198,14 +201,18 @@ public class BilletterieSolrSearch extends HttpServlet
                     {
                         sbFilter.append( categorie.replace( " ", "*" ) );
                     }
+
                     i++;
                 }
+
                 sbFilter.append( "))" );
             }
             else if ( !ArrayUtils.isEmpty( categories ) )
             {
                 sbFilter.append( "&query=categorie:(" );
+
                 int i = 1;
+
                 for ( String categorie : categories )
                 {
                     if ( i < categories.length )
@@ -216,8 +223,10 @@ public class BilletterieSolrSearch extends HttpServlet
                     {
                         sbFilter.append( categorie.replace( " ", "*" ) );
                     }
+
                     i++;
                 }
+
                 sbFilter.append( ")" );
             }
 
@@ -227,34 +236,33 @@ public class BilletterieSolrSearch extends HttpServlet
                 String sXmlShowDateStart = sdfXml.format( showDateStart );
                 sbFilter.append( "&fq=end_date:[" ).append( sXmlShowDateStart ).append( " TO *]" );
             }
+
             if ( StringUtils.isNotEmpty( sShowDateEnd ) )
             {
-
                 Timestamp showDateEnd = DateUtils.getDate( sShowDateEnd, true );
                 String sXmlShowDateEnd = sdfXml.format( showDateEnd );
 
                 sbFilter.append( "&fq=start_date:[* TO " ).append( sXmlShowDateEnd ).append( "]" );
             }
-
         }
 
         StringBuilder sbType = new StringBuilder( "&type_search=" + sTypeSearch );
 
-        if ( sbFilter.toString( ).isEmpty( ) && StringUtils.isEmpty( sQuery ) )
+        if ( sbFilter.toString(  ).isEmpty(  ) && StringUtils.isEmpty( sQuery ) )
         {
             // Create default filter
             sbReq.append( "&query=*:*" );
         }
         else
         {
-            sbReq.append( sbFilter.toString( ) );
+            sbReq.append( sbFilter.toString(  ) );
         }
 
-        sbReq.append( sbSort.toString( ) );
-        sbReq.append( sbType.toString( ) );
+        sbReq.append( sbSort.toString(  ) );
+        sbReq.append( sbType.toString(  ) );
 
-        LOGGER.debug( "Requête SOLR de date, redirection vers " + sbReq.toString( ) );
+        LOGGER.debug( "Requête SOLR de date, redirection vers " + sbReq.toString(  ) );
 
-        response.sendRedirect( UriUtils.encodeUri( sbReq.toString( ), "UTF-8" ) );
+        response.sendRedirect( UriUtils.encodeUri( sbReq.toString(  ), "UTF-8" ) );
     }
 }

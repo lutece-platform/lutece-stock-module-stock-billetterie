@@ -74,11 +74,14 @@ import fr.paris.lutece.util.datatable.DataTableManager;
 import fr.paris.lutece.util.html.HtmlTemplate;
 
 import org.apache.commons.lang.StringUtils;
+
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.io.OutputStream;
+
 import java.lang.reflect.Method;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -122,7 +125,6 @@ public class OfferJspBean extends AbstractJspBean
     public static final String PARAMETER_FILTER = "filter";
     public static final String PARAMETER_PRODUCT_ID = "product_id";
     public static final String PARAMETER_REFRESH_CONTACT = "refresh_contact";
-
     public static final String RIGHT_MANAGE_OFFERS = "OFFERS_MANAGEMENT";
     public static final String RESOURCE_TYPE = "STOCK";
 
@@ -136,7 +138,6 @@ public class OfferJspBean extends AbstractJspBean
     public static final String MARK_CURRENT_DATE = "currentDate";
     public static final String MARK_ERRORS = "errors";
     public static final String MARK_CONTACT_LIST = "contact_list";
-
     public static final String MARK_PURCHASE = "purchase";
     public static final String MARK_BASE_URL = "base_url";
     public static final String MARK_USER_NAME = "userName";
@@ -150,7 +151,6 @@ public class OfferJspBean extends AbstractJspBean
     public static final String MACRO_COLUMN_ACTIONS_OFFER = "columnActionsOffer";
     public static final String MACRO_COLUMN_NAME_OFFER = "columnNameOffer";
     public static final String MACRO_COLUMN_DATES_OFFER = "columnDatesOffer";
-
     private static final String MARK_LIST_PRODUCT = "product_list";
     private static final String MARK_LIST_OFFER_GENRE = "offerGenre_list";
     private static final String MARK_RESERVE = "RESERVATIONS";
@@ -196,6 +196,7 @@ public class OfferJspBean extends AbstractJspBean
     // @Inject
     // @Named( "stock-tickets.seanceService" )
     private ISeanceService _serviceOffer;
+
     // @Inject
     // @Named( "stock-tickets.showService" )
     private IShowService _serviceProduct;
@@ -209,23 +210,23 @@ public class OfferJspBean extends AbstractJspBean
     /**
      * Instantiates a new offer jsp bean.
      */
-    public OfferJspBean( )
+    public OfferJspBean(  )
     {
-        super( );
+        super(  );
 
-        _offerFilter = new SeanceFilter( );
+        _offerFilter = new SeanceFilter(  );
         _serviceOffer = (ISeanceService) SpringContextService.getBean( BEAN_STOCK_TICKETS_SEANCE_SERVICE );
         _serviceProduct = (IShowService) SpringContextService.getBean( BEAN_STOCK_TICKETS_SHOW_SERVICE );
         _servicePartner = (IProviderService) SpringContextService.getBean( BEAN_STOCK_TICKETS_PARTNER_SERVICE );
-        _purchaseSessionManager = SpringContextService.getContext( ).getBean( IPurchaseSessionManager.class );
-        _servicePurchase = SpringContextService.getContext( ).getBean( IPurchaseService.class );
-        _serviceNotification = SpringContextService.getContext( ).getBean( INotificationService.class );
-        _subscriptionProductService = SpringContextService.getContext( ).getBean( ISubscriptionProductService.class );
+        _purchaseSessionManager = SpringContextService.getContext(  ).getBean( IPurchaseSessionManager.class );
+        _servicePurchase = SpringContextService.getContext(  ).getBean( IPurchaseService.class );
+        _serviceNotification = SpringContextService.getContext(  ).getBean( INotificationService.class );
+        _subscriptionProductService = SpringContextService.getContext(  ).getBean( ISubscriptionProductService.class );
     }
 
     /**
      * Builds the filter.
-     * 
+     *
      * @param filter the filter
      * @param request the request
      */
@@ -236,7 +237,7 @@ public class OfferJspBean extends AbstractJspBean
 
     /**
      * Gets the offer filter.
-     * 
+     *
      * @param request the request
      * @return the offer filter
      */
@@ -249,14 +250,14 @@ public class OfferJspBean extends AbstractJspBean
         // if ( request.getParameter( TicketsConstants.PARAMETER_FILTER ) !=
         // null )
         // {
-        SeanceFilter filter = new SeanceFilter( );
+        SeanceFilter filter = new SeanceFilter(  );
         buildFilter( filter, request );
         _offerFilter = filter;
-        // }
 
+        // }
         if ( strSortedAttributeName != null )
         {
-            _offerFilter.getOrders( ).add( strSortedAttributeName );
+            _offerFilter.getOrders(  ).add( strSortedAttributeName );
 
             String strAscSort = request.getParameter( Parameters.SORTED_ASC );
             boolean bIsAscSort = Boolean.parseBoolean( strAscSort );
@@ -268,7 +269,7 @@ public class OfferJspBean extends AbstractJspBean
 
     /**
      * Get the manage offers page
-     * 
+     *
      * @param request
      *            the request
      * @return the page with offers list
@@ -278,36 +279,42 @@ public class OfferJspBean extends AbstractJspBean
         setPageTitleProperty( PROPERTY_PAGE_TITLE_MANAGE_OFFER );
 
         SeanceFilter filter = (SeanceFilter) getOfferFilter( request );
-        if ( filter.getProductId( ) != null && filter.getProductId( ) > 0 )
+
+        if ( ( filter.getProductId(  ) != null ) && ( filter.getProductId(  ) > 0 ) )
         {
-            ShowDTO show = this._serviceProduct.findById( filter.getProductId( ) );
-            filter.setProductName( show.getName( ) );
+            ShowDTO show = this._serviceProduct.findById( filter.getProductId(  ) );
+            filter.setProductName( show.getName(  ) );
         }
-        if ( StringUtils.isNotEmpty( filter.getProductName( ) ) )
+
+        if ( StringUtils.isNotEmpty( filter.getProductName(  ) ) )
         {
-            ProductFilter productFilter = new ProductFilter( );
-            productFilter.setName( filter.getProductName( ) );
+            ProductFilter productFilter = new ProductFilter(  );
+            productFilter.setName( filter.getProductName(  ) );
+
             List<ShowDTO> listShow = this._serviceProduct.findByFilter( productFilter );
-            if ( !listShow.isEmpty( ) )
+
+            if ( !listShow.isEmpty(  ) )
             {
-                filter.setProductId( listShow.get( 0 ).getId( ) );
+                filter.setProductId( listShow.get( 0 ).getId(  ) );
             }
         }
 
         // Fill the model
-        Map<String, Object> model = new HashMap<String, Object>( );
-        model.put( MARK_LOCALE, getLocale( ) );
+        Map<String, Object> model = new HashMap<String, Object>(  );
+        model.put( MARK_LOCALE, getLocale(  ) );
 
         // if date begin is after date end, add error
-        List<String> errors = new ArrayList<String>( );
-        if ( filter.getDateBegin( ) != null && filter.getDateEnd( ) != null
-                && filter.getDateBegin( ).after( filter.getDateEnd( ) ) )
+        List<String> errors = new ArrayList<String>(  );
+
+        if ( ( filter.getDateBegin(  ) != null ) && ( filter.getDateEnd(  ) != null ) &&
+                filter.getDateBegin(  ).after( filter.getDateEnd(  ) ) )
         {
-            errors.add( I18nService.getLocalizedString( MESSAGE_SEARCH_PURCHASE_DATE, request.getLocale( ) ) );
+            errors.add( I18nService.getLocalizedString( MESSAGE_SEARCH_PURCHASE_DATE, request.getLocale(  ) ) );
         }
 
         model.put( MARK_ERRORS, errors );
-        List<String> orderList = new ArrayList<String>( );
+
+        List<String> orderList = new ArrayList<String>(  );
         orderList.add( ORDER_FILTER_DATE );
         orderList.add( ORDER_FILTER_PRODUCT_NAME );
         orderList.add( ORDER_FILTER_TYPE_NAME );
@@ -316,34 +323,36 @@ public class OfferJspBean extends AbstractJspBean
 
         DataTableManager<SeanceDTO> dataTableToUse = getDataTable( request, filter );
 
-        for ( SeanceDTO seance : dataTableToUse.getItems( ) )
+        for ( SeanceDTO seance : dataTableToUse.getItems(  ) )
         {
             // Update quantity with quantity in session for this offer
-            seance.setQuantity( _purchaseSessionManager.updateQuantityWithSession( seance.getQuantity( ),
-                    seance.getId( ) ) );
+            seance.setQuantity( _purchaseSessionManager.updateQuantityWithSession( seance.getQuantity(  ),
+                    seance.getId(  ) ) );
         }
+
         model.put( MARK_DATA_TABLE_OFFER, dataTableToUse );
 
         // the paginator
         model.put( TicketsConstants.MARK_NB_ITEMS_PER_PAGE, String.valueOf( _nItemsPerPage ) );
         // the filter
         model.put( TicketsConstants.MARK_FILTER, filter );
+
         // Combo
-        ReferenceList offerGenreComboList = ListUtils.toReferenceList( _serviceOffer.findAllGenre( ),
+        ReferenceList offerGenreComboList = ListUtils.toReferenceList( _serviceOffer.findAllGenre(  ),
                 BilletterieConstants.ID, BilletterieConstants.NAME, StockConstants.EMPTY_STRING );
         model.put( MARK_LIST_OFFER_GENRE, offerGenreComboList );
         // offer statut
         model.put( MARK_OFFER_STATUT_CANCEL, TicketsConstants.OFFER_STATUT_CANCEL );
         model.put( MARK_OFFER_STATUT_LOCK, TicketsConstants.OFFER_STATUT_LOCK );
         // currentDate
-        model.put( MARK_CURRENT_DATE, DateUtils.getCurrentDateString( ) );
+        model.put( MARK_CURRENT_DATE, DateUtils.getCurrentDateString(  ) );
 
-        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_MANAGE_OFFERS, getLocale( ), model );
+        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_MANAGE_OFFERS, getLocale(  ), model );
 
         //opération nécessaire pour eviter les fuites de mémoires
-        dataTableToUse.clearItems( );
+        dataTableToUse.clearItems(  );
 
-        return getAdminPage( template.getHtml( ) );
+        return getAdminPage( template.getHtml(  ) );
     }
 
     /**
@@ -356,36 +365,39 @@ public class OfferJspBean extends AbstractJspBean
     {
         //si un objet est déjà présent en session, on l'utilise
         Method findMethod = null;
+
         try
         {
-            findMethod = _serviceOffer.getClass( ).getMethod( PARAMETER_FIND_BY_FILTER_NAME_METHOD, OfferFilter.class,
+            findMethod = _serviceOffer.getClass(  )
+                                      .getMethod( PARAMETER_FIND_BY_FILTER_NAME_METHOD, OfferFilter.class,
                     PaginationProperties.class );
         }
         catch ( Exception e )
         {
             LOGGER.error( "Erreur lors de l'obtention du data table : ", e );
         }
+
         DataTableManager<T> dataTableToUse = getAbstractDataTableManager( request, filter, MARK_DATA_TABLE_OFFER,
                 JSP_MANAGE_OFFERS, _serviceOffer, findMethod );
 
         //si pas d'objet en session, il faut ajouter les colonnes à afficher
-        if ( dataTableToUse.getListColumn( ).isEmpty( ) )
+        if ( dataTableToUse.getListColumn(  ).isEmpty(  ) )
         {
             dataTableToUse.addFreeColumn( StringUtils.EMPTY, MACRO_COLUMN_STATUT_OFFER );
             dataTableToUse.addFreeColumn( StringUtils.EMPTY, MACRO_COLUMN_CHECKBOX_DELETE_OFFER );
             dataTableToUse.addColumn( "module.stock.billetterie.list_offres.filter.name", "name", true );
-            dataTableToUse.addColumn( "module.stock.billetterie.list_offres.filter.product",
-                    "product.name", true );
+            dataTableToUse.addColumn( "module.stock.billetterie.list_offres.filter.product", "product.name", true );
             dataTableToUse.addColumn( "module.stock.billetterie.list_offres.type", "typeName", true );
             dataTableToUse.addFreeColumn( "module.stock.billetterie.save_offer.date", MACRO_COLUMN_DATES_OFFER );
             dataTableToUse.addFreeColumn( "module.stock.billetterie.save_offer.initialQuantity",
-                    "columnInitialQuantityOffer" );
+                "columnInitialQuantityOffer" );
             dataTableToUse.addColumn( "module.stock.billetterie.save_offer.quantity", "quantity", false );
             dataTableToUse.addFreeColumn( "module.stock.billetterie.save_offer.sessions.actions",
-                    MACRO_COLUMN_ACTIONS_OFFER );
-
+                MACRO_COLUMN_ACTIONS_OFFER );
         }
+
         saveDataTableInSession( request, dataTableToUse, MARK_DATA_TABLE_OFFER );
+
         return dataTableToUse;
     }
 
@@ -397,14 +409,15 @@ public class OfferJspBean extends AbstractJspBean
     public String getSaveOffer( HttpServletRequest request )
     {
         SeanceDTO offer = null;
-        Map<String, Object> model = new HashMap<String, Object>( );
-        model.put( MARK_LOCALE, getLocale( ) );
+        Map<String, Object> model = new HashMap<String, Object>(  );
+        model.put( MARK_LOCALE, getLocale(  ) );
 
         // Manage validation errors
         FunctionnalException ve = getErrorOnce( request );
+
         if ( ve != null )
         {
-            offer = (SeanceDTO) ve.getBean( );
+            offer = (SeanceDTO) ve.getBean(  );
             model.put( BilletterieConstants.ERROR, getHtmlError( ve ) );
         }
         else
@@ -418,29 +431,33 @@ public class OfferJspBean extends AbstractJspBean
             if ( StringUtils.isNotEmpty( strOfferId ) )
             {
                 setPageTitleProperty( PROPERTY_PAGE_TITLE_MODIFY_OFFER );
+
                 Integer nIdOffer = Integer.parseInt( strOfferId );
                 offer = _serviceOffer.findSeanceById( nIdOffer );
+
                 int idProvider = 0;
 
                 if ( request.getParameter( PARAMETER_REFRESH_CONTACT ) != null )
                 {
                     //case of wanting to get the contact which can be link to the offer
                     populate( offer, request );
+
                     String strIdProduct = request.getParameter( PARAMETER_OFFER_ID_PRODUCT );
                     int nIdSelectedProvider = Integer.valueOf( strIdProduct );
+
                     if ( nIdSelectedProvider >= 0 )
                     {
-                        idProvider = _serviceProduct.findById( nIdSelectedProvider ).getIdProvider( );
+                        idProvider = _serviceProduct.findById( nIdSelectedProvider ).getIdProvider(  );
                     }
                     else
                     {
-                        idProvider = offer.getProduct( ).getIdProvider( );
+                        idProvider = offer.getProduct(  ).getIdProvider(  );
                     }
                 }
                 else
                 {
                     //case of taking the contact linking to the offer
-                    idProvider = offer.getProduct( ).getIdProvider( );
+                    idProvider = offer.getProduct(  ).getIdProvider(  );
                 }
 
                 model.put( MARK_CONTACT_LIST, getContactComboList( idProvider ) );
@@ -451,12 +468,13 @@ public class OfferJspBean extends AbstractJspBean
                     offer.setId( null );
                     offer.setStatut( StringUtils.EMPTY );
                 }
-            }//Create a new offer
+            } //Create a new offer
             else
             {
                 setPageTitleProperty( PROPERTY_PAGE_TITLE_CREATE_OFFER );
                 // Create new Offer
-                offer = new SeanceDTO( );
+                offer = new SeanceDTO(  );
+
                 // If creation and filter "Spectacle" exist, pre-select the spectacle
                 if ( StringUtils.isNotBlank( strProductId ) && !strProductId.equals( "0" ) )
                 {
@@ -468,25 +486,25 @@ public class OfferJspBean extends AbstractJspBean
                     populate( offer, request );
                 }
 
-                if ( request.getParameter( PARAMETER_OFFER_ID_PRODUCT ) != null
-                        && !request.getParameter( PARAMETER_OFFER_ID_PRODUCT ).equals( "-1" ) )
+                if ( ( request.getParameter( PARAMETER_OFFER_ID_PRODUCT ) != null ) &&
+                        !request.getParameter( PARAMETER_OFFER_ID_PRODUCT ).equals( "-1" ) )
                 {
                     Integer idProduct = Integer.valueOf( request.getParameter( PARAMETER_OFFER_ID_PRODUCT ) );
-                    
+
                     ShowDTO productChoose = _serviceProduct.findById( idProduct );
-                    int idProvider = productChoose.getIdProvider( );
+                    int idProvider = productChoose.getIdProvider(  );
                     model.put( MARK_CONTACT_LIST, getContactComboList( idProvider ) );
                 }
             }
         }
 
         // Combo
-        List<String> orderList = new ArrayList<String>( );
+        List<String> orderList = new ArrayList<String>(  );
         orderList.add( BilletterieConstants.NAME );
-        ReferenceList productComboList = ListUtils.toReferenceList(
-                _serviceProduct.getCurrentAndComeProduct( orderList ), BilletterieConstants.ID,
-                BilletterieConstants.NAME, StockConstants.EMPTY_STRING );
-        ReferenceList offerGenreComboList = ListUtils.toReferenceList( _serviceOffer.findAllGenre( ),
+
+        ReferenceList productComboList = ListUtils.toReferenceList( _serviceProduct.getCurrentAndComeProduct( orderList ),
+                BilletterieConstants.ID, BilletterieConstants.NAME, StockConstants.EMPTY_STRING );
+        ReferenceList offerGenreComboList = ListUtils.toReferenceList( _serviceOffer.findAllGenre(  ),
                 BilletterieConstants.ID, BilletterieConstants.NAME, StockConstants.EMPTY_STRING );
         model.put( MARK_LIST_PRODUCT, productComboList );
         model.put( MARK_LIST_OFFER_GENRE, offerGenreComboList );
@@ -495,27 +513,28 @@ public class OfferJspBean extends AbstractJspBean
         model.put( StockConstants.MARK_JSP_BACK, request.getParameter( StockConstants.MARK_JSP_BACK ) );
         model.put( MARK_OFFER, offer );
 
-        if ( offer.getId( ) != null )
+        if ( offer.getId(  ) != null )
         {
             model.put( MARK_TITLE,
-                    I18nService.getLocalizedString( PROPERTY_PAGE_TITLE_MODIFY_OFFER, Locale.getDefault( ) ) );
+                I18nService.getLocalizedString( PROPERTY_PAGE_TITLE_MODIFY_OFFER, Locale.getDefault(  ) ) );
         }
         else
         {
             model.put( MARK_TITLE,
-                    I18nService.getLocalizedString( PROPERTY_PAGE_TITLE_CREATE_OFFER, Locale.getDefault( ) ) );
+                I18nService.getLocalizedString( PROPERTY_PAGE_TITLE_CREATE_OFFER, Locale.getDefault(  ) ) );
         }
 
-        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_SAVE_OFFER, getLocale( ), model );
+        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_SAVE_OFFER, getLocale(  ), model );
 
-        return getAdminPage( template.getHtml( ) );
+        return getAdminPage( template.getHtml(  ) );
     }
 
     private ReferenceList getContactComboList( int idProvider )
     {
         PartnerDTO findById = _servicePartner.findById( idProvider );
-        ReferenceList contactComboList = ListUtils.toReferenceList( findById.getContactList( ),
+        ReferenceList contactComboList = ListUtils.toReferenceList( findById.getContactList(  ),
                 BilletterieConstants.ID, BilletterieConstants.NAME, StockConstants.EMPTY_STRING );
+
         return contactComboList;
     }
 
@@ -531,10 +550,10 @@ public class OfferJspBean extends AbstractJspBean
             return doGoBack( request );
         }
 
-        SeanceDTO offer = new SeanceDTO( );
+        SeanceDTO offer = new SeanceDTO(  );
         populate( offer, request );
-        // make sur you set the initial quantity only in the first save offer, not in modify offer
 
+        // make sur you set the initial quantity only in the first save offer, not in modify offer
         try
         {
             // Controls mandatory fields
@@ -563,13 +582,13 @@ public class OfferJspBean extends AbstractJspBean
     public void doNotifyCreateOffer( HttpServletRequest request, SeanceDTO offer )
     {
         //get all subscription for product
-        Product product = _serviceProduct.findById( offer.getProduct( ).getId( ) ).convert( );
+        Product product = _serviceProduct.findById( offer.getProduct(  ).getId(  ) ).convert(  );
 
-        List<String> listUserEmail = _subscriptionProductService.getListEmailSubscriber( Integer.toString( offer.getProduct( )
-                .getId( ) ) );
+        List<String> listUserEmail = _subscriptionProductService.getListEmailSubscriber( Integer.toString( 
+                    offer.getProduct(  ).getId(  ) ) );
 
         //Generate mail content
-        Map<String, Object> model = new HashMap<String, Object>( );
+        Map<String, Object> model = new HashMap<String, Object>(  );
         model.put( MARK_OFFER, offer );
         model.put( MARK_PRODUCT, product );
         model.put( MARK_BASE_URL, AppPathService.getBaseUrl( request ) );
@@ -581,19 +600,19 @@ public class OfferJspBean extends AbstractJspBean
         for ( String strUserEmail : listUserEmail )
         {
             model.put( MARK_USER_NAME, strUserEmail );
-            template = AppTemplateService.getTemplate( TEMPLATE_NOTIFICATION_CREATE_OFFER, request.getLocale( ), model );
+            template = AppTemplateService.getTemplate( TEMPLATE_NOTIFICATION_CREATE_OFFER, request.getLocale(  ), model );
 
-            notificationDTO = new NotificationDTO( );
+            notificationDTO = new NotificationDTO(  );
             notificationDTO.setRecipientsTo( strUserEmail );
-            String[] args = new String[] { product.getName( ), };
+
+            String[] args = new String[] { product.getName(  ), };
             notificationDTO.setSubject( I18nService.getLocalizedString( MESSAGE_NOTIFICATION_OFFER_PRODUCT, args,
-                    request.getLocale( ) ) );
-            notificationDTO.setMessage( template.getHtml( ) );
+                    request.getLocale(  ) ) );
+            notificationDTO.setMessage( template.getHtml(  ) );
 
             // Send it
             _serviceNotification.send( notificationDTO );
         }
-
     }
 
     /**
@@ -606,12 +625,12 @@ public class OfferJspBean extends AbstractJspBean
         String strJspBack = request.getParameter( StockConstants.MARK_JSP_BACK );
 
         return StringUtils.isNotBlank( strJspBack ) ? ( AppPathService.getBaseUrl( request ) + strJspBack )
-                : AppPathService.getBaseUrl( request ) + JSP_MANAGE_OFFERS;
+                                                    : ( AppPathService.getBaseUrl( request ) + JSP_MANAGE_OFFERS );
     }
 
     /**
      * Returns the confirmation message to delete an offer
-     * 
+     *
      * @param request The Http request
      * @return the html code message
      */
@@ -630,30 +649,31 @@ public class OfferJspBean extends AbstractJspBean
             LOGGER.debug( e );
 
             return AdminMessageService.getMessageUrl( request, StockConstants.MESSAGE_ERROR_OCCUR,
-                    AdminMessage.TYPE_STOP );
+                AdminMessage.TYPE_STOP );
         }
 
-        Map<String, Object> urlParam = new HashMap<String, Object>( );
+        Map<String, Object> urlParam = new HashMap<String, Object>(  );
 
         String strJspBack = JSP_MANAGE_OFFERS;
 
-        ArrayList<Integer> offersIdToDelete = new ArrayList<Integer>( );
+        ArrayList<Integer> offersIdToDelete = new ArrayList<Integer>(  );
         offersIdToDelete.add( nIdOffer );
 
         String error = errorWithDeleteOffer( request, urlParam, offersIdToDelete );
+
         if ( error != null )
         {
             return error;
         }
 
         return AdminMessageService.getMessageUrl( request, MESSAGE_CONFIRMATION_DELETE_OFFER, null,
-                MESSAGE_TITLE_CONFIRMATION_DELETE_OFFER, JSP_DO_DELETE_OFFER, BilletterieConstants.TARGET_SELF,
-                AdminMessage.TYPE_CONFIRMATION, urlParam, strJspBack );
+            MESSAGE_TITLE_CONFIRMATION_DELETE_OFFER, JSP_DO_DELETE_OFFER, BilletterieConstants.TARGET_SELF,
+            AdminMessage.TYPE_CONFIRMATION, urlParam, strJspBack );
     }
 
     /**
      * Delete an offer
-     * 
+     *
      * @param request The Http request
      * @return the html code message
      */
@@ -672,7 +692,7 @@ public class OfferJspBean extends AbstractJspBean
             LOGGER.debug( e );
 
             return AdminMessageService.getMessageUrl( request, StockConstants.MESSAGE_ERROR_OCCUR,
-                    AdminMessage.TYPE_STOP );
+                AdminMessage.TYPE_STOP );
         }
 
         _serviceOffer.doDeleteOffer( nIdOffer );
@@ -682,19 +702,20 @@ public class OfferJspBean extends AbstractJspBean
 
     /**
      * Returns the confirmation message to delete an offer
-     * 
+     *
      * @param request The Http request
      * @return the html code message
      */
     public String getMasseDeleteOffer( HttpServletRequest request )
     {
-        ArrayList<Integer> offersIdToDelete = new ArrayList<Integer>( );
+        ArrayList<Integer> offersIdToDelete = new ArrayList<Integer>(  );
         String[] parameterValues = request.getParameterValues( PARAMETER_OFFERS_ID );
+
         // if no case checked
         if ( parameterValues == null )
         {
             return AdminMessageService.getMessageUrl( request, MESSAGE_DELETE_MASSE_OFFER_NO_OFFER_CHECK,
-                    AdminMessage.TYPE_STOP );
+                AdminMessage.TYPE_STOP );
         }
 
         try
@@ -709,38 +730,40 @@ public class OfferJspBean extends AbstractJspBean
             LOGGER.debug( e );
 
             return AdminMessageService.getMessageUrl( request, StockConstants.MESSAGE_ERROR_OCCUR,
-                    AdminMessage.TYPE_STOP );
+                AdminMessage.TYPE_STOP );
         }
 
-        boolean masse = offersIdToDelete.size( ) > 1;
+        boolean masse = offersIdToDelete.size(  ) > 1;
 
         String strJspBack = JSP_MANAGE_OFFERS;
 
-        Map<String, Object> urlParam = new HashMap<String, Object>( );
+        Map<String, Object> urlParam = new HashMap<String, Object>(  );
         String error = errorWithDeleteOffer( request, urlParam, offersIdToDelete );
+
         if ( error != null )
         {
             return error;
         }
 
-        return AdminMessageService.getMessageUrl( request, masse ? MESSAGE_CONFIRMATION_MASSE_DELETE_OFFER
-                : MESSAGE_CONFIRMATION_DELETE_OFFER, null, MESSAGE_TITLE_CONFIRMATION_MASSE_DELETE_OFFER,
-                masse ? JSP_DO_MASSE_DELETE_OFFER : JSP_DO_DELETE_OFFER, BilletterieConstants.TARGET_SELF,
-                AdminMessage.TYPE_CONFIRMATION, urlParam, strJspBack );
+        return AdminMessageService.getMessageUrl( request,
+            masse ? MESSAGE_CONFIRMATION_MASSE_DELETE_OFFER : MESSAGE_CONFIRMATION_DELETE_OFFER, null,
+            MESSAGE_TITLE_CONFIRMATION_MASSE_DELETE_OFFER, masse ? JSP_DO_MASSE_DELETE_OFFER : JSP_DO_DELETE_OFFER,
+            BilletterieConstants.TARGET_SELF, AdminMessage.TYPE_CONFIRMATION, urlParam, strJspBack );
     }
 
     /**
      * Delete offers on masse
-     * 
+     *
      * @param request The Http request which contains the offer checked
      * @return the html code message
      */
     public String doMasseDeleteOffer( HttpServletRequest request )
     {
-        ArrayList<Integer> listOffer = new ArrayList<Integer>( );
+        ArrayList<Integer> listOffer = new ArrayList<Integer>(  );
+
         try
         {
-            for ( Object key : request.getParameterMap( ).keySet( ) )
+            for ( Object key : request.getParameterMap(  ).keySet(  ) )
             {
                 //ensure the key parameter it rightly an offer, can be offer_id1, offer_id2, ... or "offer_id" with only one offer
                 if ( ( (String) key ).startsWith( PARAMETER_OFFER_ID ) )
@@ -754,8 +777,9 @@ public class OfferJspBean extends AbstractJspBean
             LOGGER.debug( e );
 
             return AdminMessageService.getMessageUrl( request, StockConstants.MESSAGE_ERROR_OCCUR,
-                    AdminMessage.TYPE_STOP );
+                AdminMessage.TYPE_STOP );
         }
+
         _serviceOffer.doMasseDeleteOffer( listOffer );
 
         return doGoBack( request );
@@ -770,26 +794,30 @@ public class OfferJspBean extends AbstractJspBean
      * @return null if there aren't error, the message otherwise
      */
     private String errorWithDeleteOffer( HttpServletRequest request, Map<String, Object> urlParam,
-            ArrayList<Integer> offersIdToDelete )
+        ArrayList<Integer> offersIdToDelete )
     {
-        boolean masse = offersIdToDelete.size( ) > 1;
-        PurchaseFilter filter = new PurchaseFilter( );
+        boolean masse = offersIdToDelete.size(  ) > 1;
+        PurchaseFilter filter = new PurchaseFilter(  );
         int i = 0;
+
         for ( Integer nIdOffer : offersIdToDelete )
         {
-            urlParam.put( masse ? PARAMETER_OFFER_ID + i++ : PARAMETER_OFFER_ID, nIdOffer );
+            urlParam.put( masse ? ( PARAMETER_OFFER_ID + i++ ) : PARAMETER_OFFER_ID, nIdOffer );
             filter.setIdOffer( nIdOffer );
+
             ResultList<ReservationDTO> bookingList = _servicePurchase.findByFilter( filter, null );
+
             // // BO-E07-RGE02 : Only offer with date before current date or offer
             // with statut "Cancel" can be delete
             SeanceDTO seance = _serviceOffer.findSeanceById( nIdOffer );
 
-            if ( !bookingList.isEmpty( ) && !seance.getStatut( ).equals( TicketsConstants.OFFER_STATUT_CANCEL ) )
+            if ( !bookingList.isEmpty(  ) && !seance.getStatut(  ).equals( TicketsConstants.OFFER_STATUT_CANCEL ) )
             {
-                if ( !DateUtils.getDate( seance.getDate( ), false ).before( DateUtils.getCurrentDate( ) ) )
+                if ( !DateUtils.getDate( seance.getDate(  ), false ).before( DateUtils.getCurrentDate(  ) ) )
                 {
-                    return AdminMessageService.getMessageUrl( request, masse ? MESSAGE_OFFER_STATUT_ISNT_MASSE_CANCEL
-                            : MESSAGE_OFFER_STATUT_ISNT_CANCEL, AdminMessage.TYPE_STOP );
+                    return AdminMessageService.getMessageUrl( request,
+                        masse ? MESSAGE_OFFER_STATUT_ISNT_MASSE_CANCEL : MESSAGE_OFFER_STATUT_ISNT_CANCEL,
+                        AdminMessage.TYPE_STOP );
                 }
             }
         }
@@ -799,8 +827,8 @@ public class OfferJspBean extends AbstractJspBean
 
     public void doExportPurchase( HttpServletRequest request, HttpServletResponse response )
     {
-        ResultList<ReservationDTO> reservationModel = new ResultList<ReservationDTO>( );
-        PurchaseFilter filter = new PurchaseFilter( );
+        ResultList<ReservationDTO> reservationModel = new ResultList<ReservationDTO>(  );
+        PurchaseFilter filter = new PurchaseFilter(  );
         String parameter = request.getParameter( PARAMETER_OFFER_ID );
         int idOffer = Integer.valueOf( parameter );
         filter.setIdOffer( idOffer );
@@ -810,18 +838,19 @@ public class OfferJspBean extends AbstractJspBean
         {
             //Génère le CSV
             String strFormatExtension = AppPropertiesService.getProperty( TicketsConstants.PROPERTY_CSV_EXTENSION );
-            String strFileName = AppPropertiesService.getProperty( TicketsConstants.PROPERTY_CSV_PURCHASE_NAME ) + "."
-                    + strFormatExtension;
+            String strFileName = AppPropertiesService.getProperty( TicketsConstants.PROPERTY_CSV_PURCHASE_NAME ) + "." +
+                strFormatExtension;
             TicketsExportUtils.addHeaderResponse( request, response, strFileName, strFormatExtension );
 
-            OutputStream os = response.getOutputStream( );
+            OutputStream os = response.getOutputStream(  );
+
             //say how to decode the csv file, with utf8
             byte[] bom = new byte[] { (byte) 0xEF, (byte) 0xBB, (byte) 0xBF }; // BOM values
             os.write( bom ); // adds BOM 
             CsvUtils.ecrireCsv( MARK_RESERVE, reservationModel, os );
 
-            os.flush( );
-            os.close( );
+            os.flush(  );
+            os.close(  );
         }
         catch ( IOException e )
         {

@@ -33,18 +33,6 @@
  */
 package fr.paris.lutece.plugins.stock.modules.billetterie.web;
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-
 import fr.paris.lutece.plugins.stock.business.category.CategoryFilter;
 import fr.paris.lutece.plugins.stock.commons.ResultList;
 import fr.paris.lutece.plugins.stock.commons.dao.PaginationProperties;
@@ -67,6 +55,20 @@ import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.web.constants.Parameters;
 import fr.paris.lutece.util.datatable.DataTableManager;
 import fr.paris.lutece.util.html.HtmlTemplate;
+
+import org.apache.commons.lang.StringUtils;
+
+import org.apache.log4j.Logger;
+
+import java.lang.reflect.Method;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
 
 
 /**
@@ -156,17 +158,17 @@ public class CategoryJspBean extends AbstractJspBean
     /**
      * Instantiates a new category jsp bean.
      */
-    public CategoryJspBean( )
+    public CategoryJspBean(  )
     {
         // super( );
-        _categoryFilter = new CategoryFilter( );
-        _serviceCategory = SpringContextService.getContext( ).getBean( IShowCategoryService.class );
+        _categoryFilter = new CategoryFilter(  );
+        _serviceCategory = SpringContextService.getContext(  ).getBean( IShowCategoryService.class );
         _serviceShow = (IShowService) SpringContextService.getBean( BEAN_STOCK_TICKETS_SHOW_SERVICE );
     }
 
     /**
      * Builds the filter.
-     * 
+     *
      * @param filter the filter
      * @param request the request
      */
@@ -177,7 +179,7 @@ public class CategoryJspBean extends AbstractJspBean
 
     /**
      * Generates a HTML form that displays all categorys.
-     * 
+     *
      * @param request the Http request
      * @return HTML
      */
@@ -186,13 +188,13 @@ public class CategoryJspBean extends AbstractJspBean
         setPageTitleProperty( PAGE_TITLE_MANAGE_CATEGORY );
 
         CategoryFilter filter = getCategoryFilter( request );
-        List<String> orderList = new ArrayList<String>( );
+        List<String> orderList = new ArrayList<String>(  );
         orderList.add( BilletterieConstants.NAME );
         filter.setOrders( orderList );
         filter.setOrderAsc( true );
 
         // Fill the model
-        Map<String, Object> model = new HashMap<String, Object>( );
+        Map<String, Object> model = new HashMap<String, Object>(  );
 
         //Obtention des objets sauvegardés en session
         DataTableManager<ShowCategoryDTO> dataTableToUse = getDataTable( request, filter );
@@ -201,12 +203,12 @@ public class CategoryJspBean extends AbstractJspBean
         model.put( TicketsConstants.MARK_NB_ITEMS_PER_PAGE, String.valueOf( _nItemsPerPage ) );
         model.put( TicketsConstants.MARK_FILTER, filter );
 
-        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_MANAGE_CATEGORIES, getLocale( ), model );
+        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_MANAGE_CATEGORIES, getLocale(  ), model );
 
         //opération nécessaire pour eviter les fuites de mémoires
-        dataTableToUse.clearItems( );
+        dataTableToUse.clearItems(  );
 
-        return getAdminPage( template.getHtml( ) );
+        return getAdminPage( template.getHtml(  ) );
     }
 
     /**
@@ -219,34 +221,39 @@ public class CategoryJspBean extends AbstractJspBean
     {
         //si un objet est déjà présent en session, on l'utilise
         Method findMethod = null;
+
         try
         {
-            findMethod = _serviceCategory.getClass( ).getMethod( PARAMETER_FIND_BY_FILTER_NAME_METHOD,
-                    CategoryFilter.class, PaginationProperties.class );
+            findMethod = _serviceCategory.getClass(  )
+                                         .getMethod( PARAMETER_FIND_BY_FILTER_NAME_METHOD, CategoryFilter.class,
+                    PaginationProperties.class );
         }
         catch ( Exception e )
         {
             LOGGER.error( "Erreur lors de l'obtention du data table : ", e );
         }
+
         DataTableManager<ShowCategoryDTO> dataTableToUse = getAbstractDataTableManager( request, filter,
                 MARK_DATA_TABLE_CATEGORY, JSP_MANAGE_CATEGORYS, _serviceCategory, findMethod );
 
         //si pas d'objet en session, il faut ajouter les colonnes à afficher
-        dataTableToUse.getListColumn().clear();
-        if ( dataTableToUse.getListColumn( ).isEmpty( ) )
+        dataTableToUse.getListColumn(  ).clear(  );
+
+        if ( dataTableToUse.getListColumn(  ).isEmpty(  ) )
         {
-            dataTableToUse.addColumn( "module.stock.billetterie.manage_category.filter.name",
-                    "name", true );
+            dataTableToUse.addColumn( "module.stock.billetterie.manage_category.filter.name", "name", true );
             dataTableToUse.addFreeColumn( "module.stock.billetterie.manage_category.actionsLabel",
-                    MACRO_COLUMN_ACTIONS_CATEGORY );
+                MACRO_COLUMN_ACTIONS_CATEGORY );
         }
+
         saveDataTableInSession( request, dataTableToUse, MARK_DATA_TABLE_CATEGORY );
+
         return dataTableToUse;
     }
 
     /**
      * Returns the form to modify a provider.
-     * 
+     *
      * @param request The Http request
      * @param strCategoryClassName The class name of the provider entity to
      *            modify
@@ -254,52 +261,54 @@ public class CategoryJspBean extends AbstractJspBean
      */
     public String getSaveCategory( HttpServletRequest request, String strCategoryClassName )
     {
-
         ShowCategoryDTO category = null;
-        Map<String, Object> model = new HashMap<String, Object>( );
+        Map<String, Object> model = new HashMap<String, Object>(  );
 
         FunctionnalException fe = getErrorOnce( request );
+
         if ( fe != null )
         {
-            category = (ShowCategoryDTO) fe.getBean( );
+            category = (ShowCategoryDTO) fe.getBean(  );
             model.put( BilletterieConstants.ERROR, getHtmlError( fe ) );
         }
         else
         {
             String strCategoryId = request.getParameter( PARAMETER_CATEGORY_ID );
+
             if ( strCategoryId != null )
             {
                 setPageTitleProperty( PAGE_TITLE_MODIFY_CATEGORY );
+
                 int nIdCategory = Integer.parseInt( strCategoryId );
                 category = _serviceCategory.findById( nIdCategory );
             }
             else
             {
                 setPageTitleProperty( PAGE_TITLE_CREATE_CATEGORY );
-                category = new ShowCategoryDTO( );
+                category = new ShowCategoryDTO(  );
             }
         }
 
         model.put( StockConstants.MARK_JSP_BACK, JSP_MANAGE_CATEGORYS );
         model.put( MARK_CATEGORY, category );
 
-        if ( category.getId( ) != null && category.getId( ) != 0 )
+        if ( ( category.getId(  ) != null ) && ( category.getId(  ) != 0 ) )
         {
-            model.put( MARK_TITLE, I18nService.getLocalizedString( PAGE_TITLE_MODIFY_CATEGORY, Locale.getDefault( ) ) );
+            model.put( MARK_TITLE, I18nService.getLocalizedString( PAGE_TITLE_MODIFY_CATEGORY, Locale.getDefault(  ) ) );
         }
         else
         {
-            model.put( MARK_TITLE, I18nService.getLocalizedString( PAGE_TITLE_CREATE_CATEGORY, Locale.getDefault( ) ) );
+            model.put( MARK_TITLE, I18nService.getLocalizedString( PAGE_TITLE_CREATE_CATEGORY, Locale.getDefault(  ) ) );
         }
 
-        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_SAVE_CATEGORY, getLocale( ), model );
+        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_SAVE_CATEGORY, getLocale(  ), model );
 
-        return getAdminPage( template.getHtml( ) );
+        return getAdminPage( template.getHtml(  ) );
     }
 
     /**
      * Save a category.
-     * 
+     *
      * @param request The HTTP request
      * @return redirection url
      */
@@ -310,7 +319,7 @@ public class CategoryJspBean extends AbstractJspBean
             return doGoBack( request );
         }
 
-        ShowCategoryDTO category = new ShowCategoryDTO( );
+        ShowCategoryDTO category = new ShowCategoryDTO(  );
         populate( category, request );
 
         try
@@ -322,7 +331,6 @@ public class CategoryJspBean extends AbstractJspBean
         catch ( FunctionnalException e )
         {
             return manageFunctionnalException( request, e, JSP_SAVE_CATEGORY );
-
         }
 
         return doGoBack( request );
@@ -330,7 +338,7 @@ public class CategoryJspBean extends AbstractJspBean
 
     /**
      * Return the url of the JSP which called the last action.
-     * 
+     *
      * @param request The Http request
      * @return The url of the last JSP
      */
@@ -339,12 +347,12 @@ public class CategoryJspBean extends AbstractJspBean
         String strJspBack = request.getParameter( StockConstants.MARK_JSP_BACK );
 
         return StringUtils.isNotBlank( strJspBack ) ? ( AppPathService.getBaseUrl( request ) + strJspBack )
-                : AppPathService.getBaseUrl( request ) + JSP_MANAGE_CATEGORYS;
+                                                    : ( AppPathService.getBaseUrl( request ) + JSP_MANAGE_CATEGORYS );
     }
 
     /**
      * Gets the category filter.
-     * 
+     *
      * @param request the request
      * @return the category filter
      */
@@ -353,13 +361,13 @@ public class CategoryJspBean extends AbstractJspBean
         // SORT
         String strSortedAttributeName = request.getParameter( Parameters.SORTED_ATTRIBUTE_NAME );
 
-        CategoryFilter filter = new CategoryFilter( );
+        CategoryFilter filter = new CategoryFilter(  );
         buildFilter( filter, request );
         _categoryFilter = filter;
 
         if ( strSortedAttributeName != null )
         {
-            _categoryFilter.getOrders( ).add( strSortedAttributeName );
+            _categoryFilter.getOrders(  ).add( strSortedAttributeName );
 
             String strAscSort = request.getParameter( Parameters.SORTED_ASC );
             boolean bIsAscSort = Boolean.parseBoolean( strAscSort );
@@ -371,7 +379,7 @@ public class CategoryJspBean extends AbstractJspBean
 
     /**
      * Returns the confirmation message to delete a category.
-     * 
+     *
      * @param request The Http request
      * @return the html code message
      */
@@ -390,10 +398,10 @@ public class CategoryJspBean extends AbstractJspBean
             AppLogService.debug( e );
 
             return AdminMessageService.getMessageUrl( request, StockConstants.MESSAGE_ERROR_OCCUR,
-                    AdminMessage.TYPE_STOP );
+                AdminMessage.TYPE_STOP );
         }
 
-        Map<String, Object> urlParam = new HashMap<String, Object>( );
+        Map<String, Object> urlParam = new HashMap<String, Object>(  );
         urlParam.put( PARAMETER_CATEGORY_ID, nIdCategory );
 
         String strJspBack = request.getParameter( StockConstants.MARK_JSP_BACK );
@@ -405,23 +413,23 @@ public class CategoryJspBean extends AbstractJspBean
 
         // BO-CU02-E02-RGE01 : Aucun spectacle ne doit être rattaché à la
         // catégorie sélectionnée
-        ShowFilter filter = new ShowFilter( );
+        ShowFilter filter = new ShowFilter(  );
         filter.setIdCategory( nIdCategory );
+
         ResultList<ShowDTO> bookingList = this._serviceShow.findByFilter( filter, null );
 
-        if ( bookingList != null && !bookingList.isEmpty( ) )
+        if ( ( bookingList != null ) && !bookingList.isEmpty(  ) )
         {
-            return AdminMessageService.getMessageUrl( request, MESSAGE_DELETE_CATEGORY_WITH_SHOW,
-                    AdminMessage.TYPE_STOP );
+            return AdminMessageService.getMessageUrl( request, MESSAGE_DELETE_CATEGORY_WITH_SHOW, AdminMessage.TYPE_STOP );
         }
 
         return AdminMessageService.getMessageUrl( request, MESSAGE_CONFIRMATION_DELETE_CATEGORY,
-                CATEGORY_DO_DELETE_JSP, AdminMessage.TYPE_CONFIRMATION, urlParam );
+            CATEGORY_DO_DELETE_JSP, AdminMessage.TYPE_CONFIRMATION, urlParam );
     }
 
     /**
      * Delete a category.
-     * 
+     *
      * @param request The Http request
      * @return the html code message
      */
@@ -440,7 +448,7 @@ public class CategoryJspBean extends AbstractJspBean
             AppLogService.debug( e );
 
             return AdminMessageService.getMessageUrl( request, StockConstants.MESSAGE_ERROR_OCCUR,
-                    AdminMessage.TYPE_STOP );
+                AdminMessage.TYPE_STOP );
         }
 
         _serviceCategory.doDeleteCategory( nIdCategory );

@@ -74,13 +74,17 @@ import fr.paris.lutece.util.html.HtmlTemplate;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
+
 import org.apache.log4j.Logger;
+
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+
 import java.lang.reflect.Method;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -125,7 +129,6 @@ public class ShowJspBean extends AbstractJspBean
 
     /** The Constant PARAMETER_PRODUCT_TYPE_LIST. */
     public static final String PARAMETER_PRODUCT_TYPE_LIST = "product_type_list";
-
     private static final long serialVersionUID = 5782544563181019800L;
 
     /** The Constant PARAMETER_PRODUCT_TYPE_LIST_DEFAULT. */
@@ -142,7 +145,6 @@ public class ShowJspBean extends AbstractJspBean
 
     /** The Constant MARK_LIST_PROVIDERS. */
     private static final String MARK_LIST_PROVIDERS = "provider_list";
-
     private static final String MARK_URL_POSTER = "url_poster";
 
     /** The Constant MARK_PUBLIC_LIST. */
@@ -159,12 +161,10 @@ public class ShowJspBean extends AbstractJspBean
 
     /** The Constant PROPERTY_POSTER_HEIGHT. */
     private static final String PROPERTY_POSTER_THUMB_HEIGHT = "stock-billetterie.poster.height";
-
     private static final String PROPERTY_POSTER_MAX_HEIGHT = "stock-billetterie.poster.max-height";
     private static final String PROPERTY_POSTER_MAX_WIDTH = "stock-billetterie.poster.max-width";
     private static final int PROPERTY_POSTER_MAX_HEIGHT_DEFAULT = 400;
     private static final int PROPERTY_POSTER_MAX_WIDTH_DEFAULT = 400;
-
     private static final String PROPERTY_POSTER_PATH = "stock-billetterie.poster.path";
 
     /** The Constant PROPERTY_STOCK_BILLETTERIE_SHOW_PUBLIC. */
@@ -204,6 +204,7 @@ public class ShowJspBean extends AbstractJspBean
 
     /** The Constant TEMPLATE_SAVE_PRODUCT. */
     private static final String TEMPLATE_SAVE_PRODUCT = "admin/plugins/stock/modules/billetterie/save_product.html";
+
     //
     // // Mark
 
@@ -242,7 +243,6 @@ public class ShowJspBean extends AbstractJspBean
     /** The _service statistic. */
     // @Inject
     private IStatisticService _serviceStatistic;
-
     private ISubscriptionProductService _subscriptionProductService;
 
     /** The _product filter. */
@@ -251,20 +251,20 @@ public class ShowJspBean extends AbstractJspBean
     /**
      * Instantiates a new show jsp bean.
      */
-    public ShowJspBean( )
+    public ShowJspBean(  )
     {
-        _productFilter = new ShowFilter( );
+        _productFilter = new ShowFilter(  );
         _serviceProduct = (IShowService) SpringContextService.getBean( BEAN_STOCK_TICKETS_SHOW_SERVICE );
         _serviceOffer = (ISeanceService) SpringContextService.getBean( BEAN_STOCK_TICKETS_SEANCE_SERVICE );
-        _serviceProvider = SpringContextService.getContext( ).getBean( IProviderService.class );
-        _serviceCategory = SpringContextService.getContext( ).getBean( ICategoryService.class );
-        _serviceStatistic = SpringContextService.getContext( ).getBean( IStatisticService.class );
-        _subscriptionProductService = SpringContextService.getContext( ).getBean( ISubscriptionProductService.class );
+        _serviceProvider = SpringContextService.getContext(  ).getBean( IProviderService.class );
+        _serviceCategory = SpringContextService.getContext(  ).getBean( ICategoryService.class );
+        _serviceStatistic = SpringContextService.getContext(  ).getBean( IStatisticService.class );
+        _subscriptionProductService = SpringContextService.getContext(  ).getBean( ISubscriptionProductService.class );
     }
 
     /**
      * Generates a HTML form that displays all products.
-     * 
+     *
      * @param request
      *            the Http request
      * @return HTML
@@ -274,14 +274,14 @@ public class ShowJspBean extends AbstractJspBean
         setPageTitleProperty( PAGE_TITLE_MANAGE_PRODUCT );
 
         ProductFilter filter = getProductFilter( request );
-        List<String> orderList = new ArrayList<String>( );
+        List<String> orderList = new ArrayList<String>(  );
         orderList.add( BilletterieConstants.NAME );
         filter.setOrderAsc( true );
         filter.setOrders( orderList );
 
         DataTableManager<ShowDTO> dataTableToUse = getDataTable( request, filter );
 
-        Map<String, Object> model = new HashMap<String, Object>( );
+        Map<String, Object> model = new HashMap<String, Object>(  );
 
         model.put( MARK_DATA_TABLE_PRODUCT, dataTableToUse );
 
@@ -289,29 +289,29 @@ public class ShowJspBean extends AbstractJspBean
         model.put( TicketsConstants.MARK_NB_ITEMS_PER_PAGE, String.valueOf( _nItemsPerPage ) );
 
         // Combo
-        ProviderFilter providerFilter = new ProviderFilter( );
+        ProviderFilter providerFilter = new ProviderFilter(  );
         providerFilter.setOrderAsc( true );
         providerFilter.setOrders( orderList );
-        ReferenceList providerComboList = ListUtils.toReferenceList(
-                _serviceProvider.findByFilter( providerFilter, null ), BilletterieConstants.ID,
-                BilletterieConstants.NAME, StockConstants.EMPTY_STRING );
-        CategoryFilter categoryFilter = new CategoryFilter( );
+
+        ReferenceList providerComboList = ListUtils.toReferenceList( _serviceProvider.findByFilter( providerFilter, null ),
+                BilletterieConstants.ID, BilletterieConstants.NAME, StockConstants.EMPTY_STRING );
+        CategoryFilter categoryFilter = new CategoryFilter(  );
         categoryFilter.setOrderAsc( true );
         categoryFilter.setOrders( orderList );
-        ReferenceList categoryComboList = ListUtils.toReferenceList(
-                _serviceCategory.findByFilter( categoryFilter, null ), BilletterieConstants.ID,
-                BilletterieConstants.NAME, StockConstants.EMPTY_STRING );
+
+        ReferenceList categoryComboList = ListUtils.toReferenceList( _serviceCategory.findByFilter( categoryFilter, null ),
+                BilletterieConstants.ID, BilletterieConstants.NAME, StockConstants.EMPTY_STRING );
         model.put( MARK_LIST_PROVIDERS, providerComboList );
         model.put( MARK_LIST_CATEGORIES, categoryComboList );
         // the filter
         model.put( TicketsConstants.MARK_FILTER, filter );
 
-        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_MANAGE_PRODUCTS, getLocale( ), model );
+        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_MANAGE_PRODUCTS, getLocale(  ), model );
 
         //opération nécessaire pour eviter les fuites de mémoires
-        dataTableToUse.clearItems( );
+        dataTableToUse.clearItems(  );
 
-        return getAdminPage( template.getHtml( ) );
+        return getAdminPage( template.getHtml(  ) );
     }
 
     /**
@@ -324,36 +324,40 @@ public class ShowJspBean extends AbstractJspBean
     {
         //si un objet est déjà présent en session, on l'utilise
         Method findMethod = null;
+
         try
         {
-            findMethod = _serviceProduct.getClass( ).getMethod( PARAMETER_FIND_BY_FILTER_NAME_METHOD,
-                    ProductFilter.class, PaginationProperties.class );
+            findMethod = _serviceProduct.getClass(  )
+                                        .getMethod( PARAMETER_FIND_BY_FILTER_NAME_METHOD, ProductFilter.class,
+                    PaginationProperties.class );
         }
         catch ( Exception e )
         {
             LOGGER.error( "Erreur lors de l'obtention du data table : ", e );
         }
+
         DataTableManager<ShowDTO> dataTableToUse = getAbstractDataTableManager( request, filter,
                 MARK_DATA_TABLE_PRODUCT, JSP_MANAGE_PRODUCTS, _serviceProduct, findMethod );
 
         //si pas d'objet en session, il faut ajouter les colonnes à afficher
-        if ( dataTableToUse.getListColumn( ).isEmpty( ) )
+        if ( dataTableToUse.getListColumn(  ).isEmpty(  ) )
         {
-            dataTableToUse.addColumn( "module.stock.billetterie.manage_product.filter.name",
-                    "name", true );
+            dataTableToUse.addColumn( "module.stock.billetterie.manage_product.filter.name", "name", true );
             dataTableToUse.addColumn( "module.stock.billetterie.manage_product.filter.provider", "providerName", true );
             dataTableToUse.addColumn( "module.stock.billetterie.manage_product.filter.category", "categoryName", true );
             dataTableToUse.addFreeColumn( "module.stock.billetterie.manage_product.dates", MACRO_COLUMN_DATES_PRODUCT );
             dataTableToUse.addFreeColumn( "module.stock.billetterie.manage_product.actionsLabel",
-                    MACRO_COLUMN_ACTIONS_PRODUCT );
+                MACRO_COLUMN_ACTIONS_PRODUCT );
         }
+
         saveDataTableInSession( request, dataTableToUse, MARK_DATA_TABLE_PRODUCT );
+
         return dataTableToUse;
     }
 
     /**
      * Returns the form to modify a provider.
-     * 
+     *
      * @param request The Http request
      * @param strProductClassName The class name of the provider entity to
      *            modify
@@ -363,12 +367,13 @@ public class ShowJspBean extends AbstractJspBean
     public String getSaveProduct( HttpServletRequest request, String strProductClassName )
     {
         ShowDTO product = null;
-        Map<String, Object> model = new HashMap<String, Object>( );
+        Map<String, Object> model = new HashMap<String, Object>(  );
 
         FunctionnalException fe = getErrorOnce( request );
+
         if ( fe != null )
         {
-            product = (ShowDTO) fe.getBean( );
+            product = (ShowDTO) fe.getBean(  );
             model.put( BilletterieConstants.ERROR, getHtmlError( fe ) );
         }
         else
@@ -380,6 +385,7 @@ public class ShowJspBean extends AbstractJspBean
             if ( strProductId != null )
             {
                 setPageTitleProperty( PAGE_TITLE_MODIFY_PRODUCT );
+
                 int nIdProduct = Integer.parseInt( strProductId );
                 product = _serviceProduct.findById( nIdProduct );
 
@@ -388,12 +394,14 @@ public class ShowJspBean extends AbstractJspBean
             else
             {
                 setPageTitleProperty( PAGE_TITLE_CREATE_PRODUCT );
-                product = new ShowDTO( );
+                product = new ShowDTO(  );
+
                 // If creation and filter "Salle" exist, pre-select the partner
                 if ( StringUtils.isNotBlank( strPartnerId ) )
                 {
                     product.setIdProvider( Integer.parseInt( strPartnerId ) );
                 }
+
                 // If creation and filter "Categorie" exist, pre-select the category
                 if ( StringUtils.isNotBlank( strCategoryId ) )
                 {
@@ -403,20 +411,21 @@ public class ShowJspBean extends AbstractJspBean
         }
 
         // Combo
-        List<String> orderList = new ArrayList<String>( );
+        List<String> orderList = new ArrayList<String>(  );
         orderList.add( BilletterieConstants.NAME );
-        ProviderFilter providerFilter = new ProviderFilter( );
+
+        ProviderFilter providerFilter = new ProviderFilter(  );
         providerFilter.setOrderAsc( true );
         providerFilter.setOrders( orderList );
-        ReferenceList providerComboList = ListUtils.toReferenceList(
-                _serviceProvider.findByFilter( providerFilter, null ), BilletterieConstants.ID,
-                BilletterieConstants.NAME, StockConstants.EMPTY_STRING );
-        CategoryFilter categoryFilter = new CategoryFilter( );
+
+        ReferenceList providerComboList = ListUtils.toReferenceList( _serviceProvider.findByFilter( providerFilter, null ),
+                BilletterieConstants.ID, BilletterieConstants.NAME, StockConstants.EMPTY_STRING );
+        CategoryFilter categoryFilter = new CategoryFilter(  );
         categoryFilter.setOrderAsc( true );
         categoryFilter.setOrders( orderList );
-        ReferenceList categoryComboList = ListUtils.toReferenceList(
-                _serviceCategory.findByFilter( categoryFilter, null ), BilletterieConstants.ID,
-                BilletterieConstants.NAME, StockConstants.EMPTY_STRING );
+
+        ReferenceList categoryComboList = ListUtils.toReferenceList( _serviceCategory.findByFilter( categoryFilter, null ),
+                BilletterieConstants.ID, BilletterieConstants.NAME, StockConstants.EMPTY_STRING );
         model.put( MARK_LIST_PROVIDERS, providerComboList );
         model.put( MARK_LIST_CATEGORIES, categoryComboList );
         model.put( MARK_PUBLIC_LIST, ListUtils.getPropertyList( PROPERTY_STOCK_BILLETTERIE_SHOW_PUBLIC ) );
@@ -427,28 +436,28 @@ public class ShowJspBean extends AbstractJspBean
 
         // Richtext editor parameters
         model.put( MARK_WEBAPP_URL, AppPathService.getBaseUrl( request ) );
-        model.put( MARK_LOCALE, request.getLocale( ) );
+        model.put( MARK_LOCALE, request.getLocale(  ) );
 
-        if ( product.getId( ) != null && product.getId( ) != 0 )
+        if ( ( product.getId(  ) != null ) && ( product.getId(  ) != 0 ) )
         {
-            model.put( MARK_TITLE, I18nService.getLocalizedString( PAGE_TITLE_MODIFY_PRODUCT, Locale.getDefault( ) ) );
+            model.put( MARK_TITLE, I18nService.getLocalizedString( PAGE_TITLE_MODIFY_PRODUCT, Locale.getDefault(  ) ) );
         }
         else
         {
-            model.put( MARK_TITLE, I18nService.getLocalizedString( PAGE_TITLE_CREATE_PRODUCT, Locale.getDefault( ) ) );
+            model.put( MARK_TITLE, I18nService.getLocalizedString( PAGE_TITLE_CREATE_PRODUCT, Locale.getDefault(  ) ) );
         }
 
-        ExtendableResourcePluginActionManager.fillModel( request, getUser( ), model,
-                String.valueOf( product.getId( ) ), ShowDTO.PROPERTY_RESOURCE_TYPE );
+        ExtendableResourcePluginActionManager.fillModel( request, getUser(  ), model,
+            String.valueOf( product.getId(  ) ), ShowDTO.PROPERTY_RESOURCE_TYPE );
 
-        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_SAVE_PRODUCT, getLocale( ), model );
+        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_SAVE_PRODUCT, getLocale(  ), model );
 
-        return getAdminPage( template.getHtml( ) );
+        return getAdminPage( template.getHtml(  ) );
     }
 
     /**
      * Save a product.
-     * 
+     *
      * @param request The HTTP request
      * @return redirection url
      */
@@ -459,8 +468,9 @@ public class ShowJspBean extends AbstractJspBean
             return doGoBack( request );
         }
 
-        ShowDTO product = new ShowDTO( );
+        ShowDTO product = new ShowDTO(  );
         populate( product, request );
+
         if ( StringUtils.isNotEmpty( request.getParameter( PARAMETER_A_LAFFICHE ) ) )
         {
             product.setAlaffiche( true );
@@ -490,32 +500,35 @@ public class ShowJspBean extends AbstractJspBean
 
     /**
      * Get the poster in the request and write it on the disk.
-     * 
+     *
      * @param request http request (multipart if contains poster)
      * @param product product entity
      * @return the poster image file (0 : thumbnail, 1 : full size)
      * @throws BusinessException the business exception
      */
-    private File[] writePoster( HttpServletRequest request, ShowDTO product ) throws BusinessException
+    private File[] writePoster( HttpServletRequest request, ShowDTO product )
+        throws BusinessException
     {
         File[] filePosterArray = null;
         boolean fileGotten = false;
+
         //File uploaded
         if ( request instanceof MultipartHttpServletRequest )
         {
             MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
             FileItem fileItem = multipartRequest.getFile( PARAMETER_POSTER );
 
-            if ( fileItem != null && fileItem.getSize( ) > 0 )
+            if ( ( fileItem != null ) && ( fileItem.getSize(  ) > 0 ) )
             {
                 InputStream fisPoster = null;
+
                 try
                 {
-                    fisPoster = fileItem.getInputStream( );
+                    fisPoster = fileItem.getInputStream(  );
 
                     // File fPoster = new File( new File( posterFolderPath ),
                     // fileItem.getName( ) );
-                    File fPoster = File.createTempFile( FilenameUtils.getBaseName( fileItem.getName( ) ), null );
+                    File fPoster = File.createTempFile( FilenameUtils.getBaseName( fileItem.getName(  ) ), null );
 
                     // Generate unique name
                     fPoster = fr.paris.lutece.plugins.stock.utils.FileUtils.getUniqueFile( fPoster );
@@ -523,9 +536,11 @@ public class ShowJspBean extends AbstractJspBean
                     // Store poster picture
                     fr.paris.lutece.plugins.stock.utils.FileUtils.writeInputStreamToFile( fisPoster, fPoster );
 
-                    File fPosterResize = ImageUtils.resizeImage( fPoster, AppPropertiesService.getPropertyInt(
-                            PROPERTY_POSTER_MAX_WIDTH, PROPERTY_POSTER_MAX_WIDTH_DEFAULT ), AppPropertiesService
-                            .getPropertyInt( PROPERTY_POSTER_MAX_HEIGHT, PROPERTY_POSTER_MAX_HEIGHT_DEFAULT ), null );
+                    File fPosterResize = ImageUtils.resizeImage( fPoster,
+                            AppPropertiesService.getPropertyInt( PROPERTY_POSTER_MAX_WIDTH,
+                                PROPERTY_POSTER_MAX_WIDTH_DEFAULT ),
+                            AppPropertiesService.getPropertyInt( PROPERTY_POSTER_MAX_HEIGHT,
+                                PROPERTY_POSTER_MAX_HEIGHT_DEFAULT ), null );
 
                     // Create a thumbnail image
                     File fTbPoster = ImageUtils.createThumbnail( fPoster,
@@ -533,11 +548,10 @@ public class ShowJspBean extends AbstractJspBean
                             AppPropertiesService.getPropertyInt( PROPERTY_POSTER_THUMB_HEIGHT, 200 ) );
 
                     // Save file name into entity
-                    product.setPosterName( fPoster.getName( ) );
+                    product.setPosterName( fPoster.getName(  ) );
                     fileGotten = true;
 
                     filePosterArray = new File[] { fTbPoster, fPosterResize };
-
                 }
                 catch ( IOException e )
                 {
@@ -549,11 +563,11 @@ public class ShowJspBean extends AbstractJspBean
                     {
                         try
                         {
-                            fisPoster.close( );
+                            fisPoster.close(  );
                         }
                         catch ( IOException e )
                         {
-                            AppLogService.error( e.getMessage( ), e );
+                            AppLogService.error( e.getMessage(  ), e );
                         }
                     }
                 }
@@ -563,18 +577,18 @@ public class ShowJspBean extends AbstractJspBean
         if ( !fileGotten )
         {
             // Error mandatory poster
-            if ( StringUtils.isEmpty( product.getPosterName( ) ) )
+            if ( StringUtils.isEmpty( product.getPosterName(  ) ) )
             {
                 throw new BusinessException( product, MESSAGE_ERROR_MANDATORY_POSTER );
             }
-
         }
+
         return filePosterArray;
     }
 
     /**
      * Return the url of the JSP which called the last action.
-     * 
+     *
      * @param request The Http request
      * @return The url of the last JSP
      */
@@ -583,12 +597,12 @@ public class ShowJspBean extends AbstractJspBean
         String strJspBack = request.getParameter( StockConstants.MARK_JSP_BACK );
 
         return StringUtils.isNotBlank( strJspBack ) ? ( AppPathService.getBaseUrl( request ) + strJspBack )
-                : AppPathService.getBaseUrl( request ) + JSP_MANAGE_PRODUCTS;
+                                                    : ( AppPathService.getBaseUrl( request ) + JSP_MANAGE_PRODUCTS );
     }
 
     /**
      * Gets the product filter.
-     * 
+     *
      * @param request the request
      * @return the product filter
      */
@@ -601,19 +615,20 @@ public class ShowJspBean extends AbstractJspBean
         // if ( request.getParameter( TicketsConstants.PARAMETER_FILTER ) !=
         // null )
         // {
-        ProductFilter filter = new ShowFilter( );
+        ProductFilter filter = new ShowFilter(  );
         populate( filter, request );
 
         if ( StringUtils.isNotEmpty( request.getParameter( PARAMETER_A_LAFFICHE ) ) )
         {
             filter.setAlaffiche( true );
         }
-        _productFilter = filter;
-        // }
 
+        _productFilter = filter;
+
+        // }
         if ( strSortedAttributeName != null )
         {
-            _productFilter.getOrders( ).add( strSortedAttributeName );
+            _productFilter.getOrders(  ).add( strSortedAttributeName );
 
             String strAscSort = request.getParameter( Parameters.SORTED_ASC );
             boolean bIsAscSort = Boolean.parseBoolean( strAscSort );
@@ -625,7 +640,7 @@ public class ShowJspBean extends AbstractJspBean
 
     /**
      * Returns the confirmation message to delete a product.
-     * 
+     *
      * @param request The Http request
      * @return the html code message
      */
@@ -644,10 +659,10 @@ public class ShowJspBean extends AbstractJspBean
             LOGGER.debug( e );
 
             return AdminMessageService.getMessageUrl( request, StockConstants.MESSAGE_ERROR_OCCUR,
-                    AdminMessage.TYPE_STOP );
+                AdminMessage.TYPE_STOP );
         }
 
-        Map<String, Object> urlParam = new HashMap<String, Object>( );
+        Map<String, Object> urlParam = new HashMap<String, Object>(  );
         urlParam.put( PARAMETER_CATEGORY_ID, nIdProduct );
 
         String strJspBack = request.getParameter( StockConstants.MARK_JSP_BACK );
@@ -658,22 +673,23 @@ public class ShowJspBean extends AbstractJspBean
         }
 
         // Only product without seance can be delete
-        SeanceFilter filter = new SeanceFilter( );
+        SeanceFilter filter = new SeanceFilter(  );
         filter.setProductId( nIdProduct );
+
         ResultList<SeanceDTO> bookingList = _serviceOffer.findByFilter( filter, null );
 
-        if ( bookingList != null && !bookingList.isEmpty( ) )
+        if ( ( bookingList != null ) && !bookingList.isEmpty(  ) )
         {
             return AdminMessageService.getMessageUrl( request, MESSAGE_DELETE_SHOW_WITH_SEANCE, AdminMessage.TYPE_STOP );
         }
 
         return AdminMessageService.getMessageUrl( request, MESSAGE_CONFIRMATION_DELETE_PRODUCT, CATEGORY_DO_DELETE_JSP,
-                AdminMessage.TYPE_CONFIRMATION, urlParam );
+            AdminMessage.TYPE_CONFIRMATION, urlParam );
     }
 
     /**
      * Delete a product.
-     * 
+     *
      * @param request The Http request
      * @return the html code message
      */
@@ -692,8 +708,9 @@ public class ShowJspBean extends AbstractJspBean
             LOGGER.debug( e );
 
             return AdminMessageService.getMessageUrl( request, StockConstants.MESSAGE_ERROR_OCCUR,
-                    AdminMessage.TYPE_STOP );
+                AdminMessage.TYPE_STOP );
         }
+
         //On supprime les statistiques du spectacle
         _serviceStatistic.doRemoveProductStatisticByIdProduct( nIdProduct );
 
@@ -704,7 +721,7 @@ public class ShowJspBean extends AbstractJspBean
 
         //on supprime toutes référence à ce spectacle dans le plugin extends
         ExtendableResourceRemovalListenerService.doRemoveResourceExtentions( ShowDTO.PROPERTY_RESOURCE_TYPE,
-                Integer.toString( nIdProduct ) );
+            Integer.toString( nIdProduct ) );
 
         return doGoBack( request );
     }

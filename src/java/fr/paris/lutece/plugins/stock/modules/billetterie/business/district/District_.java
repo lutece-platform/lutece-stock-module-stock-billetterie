@@ -38,15 +38,13 @@ import javax.persistence.metamodel.StaticMetamodel;
 
 
 /**
- * 
+ *
  * @author jchaline
  *
  */
 @StaticMetamodel( District.class )
 public abstract class District_
 {
-
     public static volatile SingularAttribute<District, Integer> _id;
     public static volatile SingularAttribute<District, String> _libelle;
-
 }
