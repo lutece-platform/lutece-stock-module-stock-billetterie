@@ -57,10 +57,9 @@ public class BilletteriePortletDAO implements IBilletterieDAO
     private static final String SQL_QUERY_UPDATE = "UPDATE billetterie_portlet SET id_portlet = ?, number_show = ?,type_content_portlet=? WHERE id_portlet = ? ";
 
     /**
-     * Delete record from table.
-     * 
-     * @param nPortletId The indentifier of the Portlet
+     * {@inheritDoc}
      */
+    @Override
     public void delete( int nPortletId )
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE );
@@ -71,11 +70,9 @@ public class BilletteriePortletDAO implements IBilletterieDAO
     }
 
     /**
-     * Insert a new record in the table.
-     * 
-     * @param portlet
-     *            The Instance of the Portlet
+     * {@inheritDoc}
      */
+    @Override
     public void insert( Portlet portlet )
     {
 
@@ -89,11 +86,9 @@ public class BilletteriePortletDAO implements IBilletterieDAO
     }
 
     /**
-     * load the data of dbpagePortlet from the table.
-     * 
-     * @param nIdPortlet The indentifier of the portlet
-     * @return portlet The instance of the object portlet
+     * {@inheritDoc}
      */
+    @Override
     public Portlet load( int nIdPortlet )
     {
         PortletBilletterie portlet = new PortletBilletterie( );
@@ -112,13 +107,11 @@ public class BilletteriePortletDAO implements IBilletterieDAO
     }
 
     /**
-     * Update the record in the table.
-     * 
-     * @param portlet The reference of the portlet
+     * {@inheritDoc}
      */
+    @Override
     public void store( Portlet portlet )
     {
-
         PortletBilletterie portl = (PortletBilletterie) portlet;
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE );
         daoUtil.setInt( 1, portl.getId( ) );
@@ -127,7 +120,6 @@ public class BilletteriePortletDAO implements IBilletterieDAO
         daoUtil.setInt( 4, portl.getId( ) );
         daoUtil.executeUpdate( );
         daoUtil.free( );
-
     }
 
 }

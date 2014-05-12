@@ -36,7 +36,6 @@ package fr.paris.lutece.plugins.stock.modules.billetterie.web;
 import fr.paris.lutece.plugins.stock.business.purchase.PurchaseFilter;
 import fr.paris.lutece.plugins.stock.commons.exception.FunctionnalException;
 import fr.paris.lutece.plugins.stock.modules.billetterie.utils.constants.BilletterieConstants;
-import fr.paris.lutece.plugins.stock.modules.tickets.business.Contact;
 import fr.paris.lutece.plugins.stock.modules.tickets.business.NotificationDTO;
 import fr.paris.lutece.plugins.stock.modules.tickets.business.PartnerDTO;
 import fr.paris.lutece.plugins.stock.modules.tickets.business.ReservationDTO;
@@ -55,6 +54,9 @@ import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.util.html.HtmlTemplate;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -62,9 +64,6 @@ import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 
 
 /**
@@ -205,19 +204,33 @@ public class NotificationJspBean extends AbstractJspBean
                     || ( notification.getNotificationAction( ) != null && notification.getNotificationAction( ).equals(
                             TicketsConstants.OFFER_STATUT_LOCK ) ) )
             {
-                String contactMail = null;
                 ShowDTO product = seance.getProduct( );
                 if ( product != null )
                 {
                     Integer idSalle = product.getIdProvider( );
                     if ( idSalle != null )
                     {
-                        Integer idContact = seance.getIdContact( );
-                        if ( idContact != null )
+                        Integer[] arrayIdContact = seance.getIdContact( );
+                        if ( arrayIdContact != null && arrayIdContact.length > 0 )
                         {
                             PartnerDTO partner = _serviceProvider.findById( idSalle );
-                            contactMail = partner.getContactMail( idContact );
-                            notification.setRecipientsTo( contactMail );
+                            StringBuilder contactMail = null;
+                            for ( Integer idContact : arrayIdContact )
+                            {
+                                if ( contactMail == null )
+                                {
+                                    contactMail = new StringBuilder( );
+                                }
+                                else
+                                {
+                                    contactMail.append( ";" );
+                                }
+                                contactMail.append( partner.getContactMail( idContact ) );
+                            }
+                            if ( contactMail != null )
+                            {
+                                notification.setRecipientsTo( contactMail.toString( ) );
+                            }
                         }
                     }
                 }

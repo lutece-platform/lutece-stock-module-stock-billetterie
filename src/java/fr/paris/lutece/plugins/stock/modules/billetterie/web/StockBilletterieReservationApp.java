@@ -33,23 +33,6 @@
  */
 package fr.paris.lutece.plugins.stock.modules.billetterie.web;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.UUID;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-
 import fr.paris.lutece.plugins.stock.business.purchase.PurchaseFilter;
 import fr.paris.lutece.plugins.stock.business.purchase.exception.PurchaseUnavailable;
 import fr.paris.lutece.plugins.stock.commons.exception.BusinessException;
@@ -84,6 +67,23 @@ import fr.paris.lutece.util.html.HtmlTemplate;
 import fr.paris.lutece.util.html.Paginator;
 import fr.paris.lutece.util.url.UrlItem;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.UUID;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 
 /**
  * Pages for billetterie front
@@ -91,8 +91,9 @@ import fr.paris.lutece.util.url.UrlItem;
  */
 public class StockBilletterieReservationApp extends AbstractXPageApp implements XPageApplication
 {
-
     public static final Logger LOGGER = Logger.getLogger( StockBilletterieReservationApp.class );
+
+    private static final long serialVersionUID = -3160877399020602862L;
 
     private static final String PAGE_BOOKING = "reservation";
     private static final String PAGE_TICKETING = "billetterie";
@@ -154,13 +155,13 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
 
     private static final String ENCODING_UTF_8 = "utf-8";
 
-    private final ISeanceService _offerService = (ISeanceService) SpringContextService.getContext( ).getBean(
+    private final ISeanceService _offerService = SpringContextService.getContext( ).getBean(
             ISeanceService.class );
-    private final IPurchaseService _purchaseService = (IPurchaseService) SpringContextService.getContext( ).getBean(
+    private final IPurchaseService _purchaseService = SpringContextService.getContext( ).getBean(
             IPurchaseService.class );
-    private final INotificationService _notificationService = (INotificationService) SpringContextService.getContext( )
+    private final INotificationService _notificationService = SpringContextService.getContext( )
             .getBean( INotificationService.class );
-    private final IPurchaseSessionManager _purchaseSessionManager = (IPurchaseSessionManager) SpringContextService
+    private final IPurchaseSessionManager _purchaseSessionManager = SpringContextService
             .getContext( ).getBean( IPurchaseSessionManager.class );
 
     /**
@@ -416,11 +417,8 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
                         targetUrl.addParameter( PARAMETER_PRODUCT_ID, seance.getProduct( ).getId( ) );
                         return manageFunctionnalException( request, e, targetUrl.getUrl( ) );
                     }
-                    else
-                    {
                         SiteMessageService.setMessage( request, PurchaseService.MESSAGE_ERROR_PURCHASE_SESSION_EXPIRED,
                                 SiteMessage.TYPE_ERROR, JSP_PORTAL );
-                    }
                 }
             }
             else

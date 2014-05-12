@@ -52,6 +52,11 @@ import fr.paris.lutece.util.date.DateUtil;
 import fr.paris.lutece.util.html.HtmlTemplate;
 import fr.paris.lutece.util.url.UrlItem;
 
+import org.apache.commons.lang.StringUtils;
+import org.jfree.chart.ChartRenderingInfo;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.entity.StandardEntityCollection;
+
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -67,11 +72,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.lang.StringUtils;
-import org.jfree.chart.ChartRenderingInfo;
-import org.jfree.chart.JFreeChart;
-import org.jfree.chart.entity.StandardEntityCollection;
 
 import au.com.bytecode.opencsv.CSVWriter;
 
@@ -98,6 +98,8 @@ public class StatisticJspBean extends AbstractJspBean
     //RIGHT
     /** The constant String RIGHT_MANAGE_STATISTICS */
     public static final String RIGHT_MANAGE_STATISTICS = "STATISTICS_MANAGEMENT";
+
+    private static final long serialVersionUID = -2502151554115352120L;
 
     //PAGES TITLES
     private static final String PAGE_TITLE_MANAGE_PRODUCTS = "module.stock.billetterie.manage_products_statistics.pageTitle";

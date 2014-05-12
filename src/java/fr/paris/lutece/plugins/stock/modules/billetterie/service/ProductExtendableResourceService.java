@@ -38,14 +38,14 @@ import fr.paris.lutece.plugins.stock.modules.tickets.service.IShowService;
 import fr.paris.lutece.portal.service.resource.IExtendableResource;
 import fr.paris.lutece.portal.service.resource.IExtendableResourceService;
 
+import org.apache.commons.lang.StringUtils;
+import org.springframework.stereotype.Service;
+
 import java.util.Locale;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.lang.StringUtils;
-import org.springframework.stereotype.Service;
 
 /**
  * 
@@ -106,12 +106,18 @@ public class ProductExtendableResourceService implements IExtendableResourceServ
         return StringUtils.EMPTY;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getResourceTypeDescription( Locale locale )
     {
         return StringUtils.EMPTY;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getResourceUrl( String strIdResource, String strResourceType )
     {

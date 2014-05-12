@@ -1,6 +1,7 @@
 <#setting url_escaping_charset='UTF-8'>
 <#macro columnActionsOffer item >
 	<@showButton type="see" title="module.stock.billetterie.list_offres.linkShowReservation" href="jsp/admin/plugins/stock/modules/billetterie/ManagePurchase.jsp?offer_id=${item.id!}" />
+	<@showButton type="edit" title="module.stock.billetterie.list_offres.linkModifyOffer" href="jsp/admin/plugins/stock/modules/billetterie/SaveOffer.jsp?offer_id=${item.id!}" />
 	<#if ( item.date?date("dd/MM/yyyy") &gt;= currentDate?date("dd/MM/yyyy") ) && ( item.statut != strStatutCancel ) && ( item.quantity > 0 )>
 		<a class="btn btn-small btn-primary" title="#i18n{module.stock.billetterie.list_offres.linkCreateReservation}" href="jsp/admin/plugins/stock/modules/billetterie/SavePurchase.jsp?offer_id=${item.id!}"> 
 			<i class="icon-plus icon-white"></i>
@@ -10,13 +11,12 @@
 		<i class="icon-lock icon-white"></i>
 	</a>
 	<@showButton type="send" title="module.stock.billetterie.list_offres.linkSendNotification" href="jsp/admin/plugins/stock/modules/billetterie/SendNotification.jsp?offer_id=${item.id!}" />
-	<@showButton type="edit" title="module.stock.billetterie.list_offres.linkModifyOffer" href="jsp/admin/plugins/stock/modules/billetterie/SaveOffer.jsp?offer_id=${item.id!}" />
 	<@showButton type="clone" title="module.stock.billetterie.list_offres.linkDuplicateOffer" href="jsp/admin/plugins/stock/modules/billetterie/SaveOffer.jsp?offer_id=${item.id!}&duplicate=true" />
-	<#if item.statut != strStatutCancel && ( item.date?date("dd/MM/yyyy") &gt;= currentDate?date("dd/MM/yyyy") )>
+   	<@showButton type="export" title="module.stock.billetterie.message.buttonExport" href="jsp/admin/plugins/stock/modules/billetterie/DoExportPurchases.jsp?offer_id=${item.id!}" />
+   	<#if item.statut != strStatutCancel && ( item.date?date("dd/MM/yyyy") &gt;= currentDate?date("dd/MM/yyyy") )>
 		<@showButton type="cancel" title="module.stock.billetterie.list_offres.linkCanceloffer" href="jsp/admin/plugins/stock/modules/billetterie/SendNotification.jsp?offer_id=${item.id!}&cancel=true" />
 	</#if>
    	<@showButton type="delete" title="module.stock.billetterie.list_offres.linkDeleteOffer" href="jsp/admin/plugins/stock/modules/billetterie/DeleteOffer.jsp?offer_id=${item.id!}" /> 
-   	<@showButton type="export" title="module.stock.billetterie.message.buttonExport" href="jsp/admin/plugins/stock/modules/billetterie/DoExportPurchases.jsp?offer_id=${item.id!}" />
 </#macro>
 
 <#macro columnStatutOffer item >

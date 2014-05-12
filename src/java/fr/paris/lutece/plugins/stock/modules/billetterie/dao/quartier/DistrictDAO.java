@@ -33,6 +33,15 @@
  */
 package fr.paris.lutece.plugins.stock.modules.billetterie.dao.quartier;
 
+import fr.paris.lutece.plugins.stock.commons.ResultList;
+import fr.paris.lutece.plugins.stock.commons.dao.AbstractStockDAO;
+import fr.paris.lutece.plugins.stock.commons.dao.PaginationProperties;
+import fr.paris.lutece.plugins.stock.modules.billetterie.business.district.District;
+import fr.paris.lutece.plugins.stock.modules.billetterie.business.district.DistrictFilter;
+import fr.paris.lutece.plugins.stock.service.StockPlugin;
+
+import org.springframework.stereotype.Repository;
+
 import java.util.LinkedList;
 import java.util.List;
 
@@ -41,15 +50,6 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Root;
-
-import org.springframework.stereotype.Repository;
-
-import fr.paris.lutece.plugins.stock.commons.ResultList;
-import fr.paris.lutece.plugins.stock.commons.dao.AbstractStockDAO;
-import fr.paris.lutece.plugins.stock.commons.dao.PaginationProperties;
-import fr.paris.lutece.plugins.stock.modules.billetterie.business.district.District;
-import fr.paris.lutece.plugins.stock.modules.billetterie.business.district.DistrictFilter;
-import fr.paris.lutece.plugins.stock.service.StockPlugin;
 
 
 /**
@@ -61,6 +61,9 @@ import fr.paris.lutece.plugins.stock.service.StockPlugin;
 public class DistrictDAO extends AbstractStockDAO<Integer, District>
 {
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getPluginName( )
     {

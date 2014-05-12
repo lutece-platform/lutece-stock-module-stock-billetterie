@@ -71,6 +71,12 @@ import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.datatable.DataTableManager;
 import fr.paris.lutece.util.html.HtmlTemplate;
 
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -83,19 +89,12 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-import org.springframework.transaction.annotation.Transactional;
-
 
 /**
  * The Class ShowJspBean.
  */
 public class ShowJspBean extends AbstractJspBean
 {
-
     /** The Constant LOGGER. */
     public static final Logger LOGGER = Logger.getLogger( ShowJspBean.class );
 
@@ -126,6 +125,8 @@ public class ShowJspBean extends AbstractJspBean
 
     /** The Constant PARAMETER_PRODUCT_TYPE_LIST. */
     public static final String PARAMETER_PRODUCT_TYPE_LIST = "product_type_list";
+
+    private static final long serialVersionUID = 5782544563181019800L;
 
     /** The Constant PARAMETER_PRODUCT_TYPE_LIST_DEFAULT. */
     public static final String PARAMETER_PRODUCT_TYPE_LIST_DEFAULT = "product_type_list_default";
@@ -245,7 +246,7 @@ public class ShowJspBean extends AbstractJspBean
     private ISubscriptionProductService _subscriptionProductService;
 
     /** The _product filter. */
-    private ProductFilter _productFilter;
+    private transient ProductFilter _productFilter;
 
     /**
      * Instantiates a new show jsp bean.
@@ -507,9 +508,10 @@ public class ShowJspBean extends AbstractJspBean
 
             if ( fileItem != null && fileItem.getSize( ) > 0 )
             {
+                InputStream fisPoster = null;
                 try
                 {
-                    InputStream fisPoster = fileItem.getInputStream( );
+                    fisPoster = fileItem.getInputStream( );
 
                     // File fPoster = new File( new File( posterFolderPath ),
                     // fileItem.getName( ) );
@@ -540,6 +542,20 @@ public class ShowJspBean extends AbstractJspBean
                 catch ( IOException e )
                 {
                     throw new BusinessException( product, MESSAGE_ERROR_GET_AFFICHE );
+                }
+                finally
+                {
+                    if ( fisPoster != null )
+                    {
+                        try
+                        {
+                            fisPoster.close( );
+                        }
+                        catch ( IOException e )
+                        {
+                            AppLogService.error( e.getMessage( ), e );
+                        }
+                    }
                 }
             }
         }

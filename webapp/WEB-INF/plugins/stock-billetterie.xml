@@ -11,7 +11,7 @@
 	<user-guide/>
 	<provider>module.stock.billetterie.module.provider</provider>
 	<provider-url>http://lutece.paris.fr</provider-url>
-	<icon-url>images/admin/skin/plugins/stock/stock.png</icon-url>
+	<icon-url>images/admin/skin/plugins/stock/modules/billetterie/ticket.png</icon-url>
 	<copyright>Copyright 2001-2013 Mairie de Paris</copyright>
 
 	<core-version-dependency>

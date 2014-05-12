@@ -33,20 +33,6 @@
  */
 package fr.paris.lutece.plugins.stock.modules.billetterie.web;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.lang.StringUtils;
-
 import fr.paris.lutece.plugins.stock.commons.exception.FunctionnalException;
 import fr.paris.lutece.plugins.stock.commons.exception.TechnicalException;
 import fr.paris.lutece.plugins.stock.modules.billetterie.business.district.District;
@@ -77,6 +63,20 @@ import fr.paris.lutece.util.ReferenceItem;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.html.HtmlTemplate;
 
+import org.apache.commons.lang.StringUtils;
+
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
 
 /**
  * Pages for billetterie front
@@ -84,6 +84,7 @@ import fr.paris.lutece.util.html.HtmlTemplate;
  */
 public class StockBilletterieApp extends AbstractXPageApp implements XPageApplication
 {
+    private static final long serialVersionUID = -4553179819252666450L;
 
     // Beans
     private static final String BEAN_STOCK_TICKETS_SEANCE_SERVICE = "stock-tickets.seanceService";
@@ -166,21 +167,15 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
     private final IPurchaseSessionManager _purchaseSessionManager = SpringContextService.getContext( ).getBean(
             IPurchaseSessionManager.class );
 
-    private DistrictService _districtService = (DistrictService) SpringContextService.getContext( ).getBean(
+    private DistrictService _districtService = SpringContextService.getContext( ).getBean(
             DistrictService.class );
 
-    private final IUserService _serviceUser = (IUserService) SpringContextService.getBean( BEAN_USER_SERVICE );
+    private final IUserService _serviceUser = SpringContextService.getBean( BEAN_USER_SERVICE );
 
     /**
-     * Return page with action specified.
-     * 
-     * @param request the request
-     * @param nMode the n mode
-     * @param plugin the plugin
-     * @return the page
-     * @throws UserNotSignedException the user not signed exception
-     * @throws SiteMessageException the site message exception
+     * {@inheritDoc}
      */
+    @Override
     public XPage getPage( HttpServletRequest request, int nMode, Plugin plugin ) throws UserNotSignedException,
             SiteMessageException
     {
@@ -393,8 +388,8 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
         model.put( MARK_SEANCE_LIST, seanceList );
         
         // Add nb max purchase per offer type
-        ReferenceList quantityList = new ReferenceList( );
-        quantityList = getNumberList( AppPropertiesService.getPropertyInt( PROPERTY_NB_PLACES_MAX_INVITATION, 2 ) );
+        ReferenceList quantityList = getNumberList( AppPropertiesService.getPropertyInt(
+                PROPERTY_NB_PLACES_MAX_INVITATION, 2 ) );
         model.put( MAX_RESERVATION_INVITATION, quantityList );
 
         quantityList = getNumberList( AppPropertiesService.getPropertyInt( PROPERTY_NB_PLACES_MAX_INVITATION_ENFANT, 2 ) );

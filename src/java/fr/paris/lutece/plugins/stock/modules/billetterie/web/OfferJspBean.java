@@ -73,6 +73,9 @@ import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.datatable.DataTableManager;
 import fr.paris.lutece.util.html.HtmlTemplate;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.reflect.Method;
@@ -84,9 +87,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 
 
 /**
@@ -427,7 +427,15 @@ public class OfferJspBean extends AbstractJspBean
                     //case of wanting to get the contact which can be link to the offer
                     populate( offer, request );
                     String strIdProduct = request.getParameter( PARAMETER_OFFER_ID_PRODUCT );
-                    idProvider = _serviceProduct.findById( Integer.valueOf( strIdProduct ) ).getIdProvider( );
+                    int nIdSelectedProvider = Integer.valueOf( strIdProduct );
+                    if ( nIdSelectedProvider >= 0 )
+                    {
+                        idProvider = _serviceProduct.findById( nIdSelectedProvider ).getIdProvider( );
+                    }
+                    else
+                    {
+                        idProvider = offer.getProduct( ).getIdProvider( );
+                    }
                 }
                 else
                 {

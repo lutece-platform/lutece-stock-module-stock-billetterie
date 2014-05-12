@@ -41,12 +41,12 @@ import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.web.portlet.PortletJspBean;
 import fr.paris.lutece.util.html.HtmlTemplate;
 
+import org.apache.commons.lang.StringUtils;
+
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.lang.StringUtils;
 
 
 /**
@@ -54,6 +54,7 @@ import org.apache.commons.lang.StringUtils;
  */
 public class PortletBilletterieJspBean extends PortletJspBean
 {
+    private static final long serialVersionUID = -4180051741846176406L;
 
     /** The Constant MARK_WEBAPP_URL. */
     private static final String MARK_WEBAPP_URL = "webapp_url";
@@ -71,12 +72,8 @@ public class PortletBilletterieJspBean extends PortletJspBean
     private static final String PARAMETRE_TYPE_CONTENT_PORTLET = "type_content";
 
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * fr.paris.lutece.portal.web.portlet.PortletJspBean#getCreate(javax.servlet
-     * .http.HttpServletRequest)
+    /**
+     * {@inheritDoc}
      */
     @Override
     public String getCreate( HttpServletRequest request )
@@ -94,12 +91,8 @@ public class PortletBilletterieJspBean extends PortletJspBean
         return template.getHtml( );
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * fr.paris.lutece.portal.web.portlet.PortletJspBean#doCreate(javax.servlet
-     * .http.HttpServletRequest)
+    /**
+     * {@inheritDoc}
      */
     @Override
     public String doCreate( HttpServletRequest request )
@@ -127,12 +120,8 @@ public class PortletBilletterieJspBean extends PortletJspBean
         return COMPLEMENT_URL_ADMIN_SITE + getPageUrl( billetteriePortlet.getPageId( ) );
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * fr.paris.lutece.portal.web.portlet.PortletJspBean#getModify(javax.servlet
-     * .http.HttpServletRequest)
+    /**
+     * {@inheritDoc}
      */
     @Override
     public String getModify( HttpServletRequest request )
@@ -159,12 +148,8 @@ public class PortletBilletterieJspBean extends PortletJspBean
         return template.getHtml( );
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * fr.paris.lutece.portal.web.portlet.PortletJspBean#doModify(javax.servlet
-     * .http.HttpServletRequest)
+    /**
+     * {@inheritDoc}
      */
     @Override
     public String doModify( HttpServletRequest request )

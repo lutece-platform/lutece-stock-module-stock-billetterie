@@ -36,6 +36,11 @@ package fr.paris.lutece.plugins.stock.modules.billetterie.web;
 import fr.paris.lutece.plugins.stock.utils.DateUtils;
 import fr.paris.lutece.portal.service.util.AppPathService;
 
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.springframework.web.util.UriUtils;
+
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
@@ -44,11 +49,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-import org.springframework.web.util.UriUtils;
 
 
 /**
@@ -94,6 +94,7 @@ public class BilletterieSolrSearch extends HttpServlet
      * @throws ServletException the servlet exception
      * @throws IOException Signals that an I/O exception has occurred.
      */
+    @Override
     protected void doGet( HttpServletRequest request, HttpServletResponse response ) throws ServletException,
             IOException
     {

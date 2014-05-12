@@ -33,23 +33,6 @@
  */
 package fr.paris.lutece.plugins.stock.modules.billetterie.web;
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.ConstraintViolation;
-import javax.validation.Path;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-import org.springframework.beans.BeanUtils;
-
 import fr.paris.lutece.plugins.stock.business.BeanFilter;
 import fr.paris.lutece.plugins.stock.commons.ResultList;
 import fr.paris.lutece.plugins.stock.commons.dao.PaginationPropertiesAdapterDataTable;
@@ -65,6 +48,23 @@ import fr.paris.lutece.util.beanvalidation.BeanValidationUtil;
 import fr.paris.lutece.util.datatable.DataTableManager;
 import fr.paris.lutece.util.datatable.DataTablePaginationProperties;
 import fr.paris.lutece.util.html.HtmlTemplate;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.springframework.beans.BeanUtils;
+
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.ConstraintViolation;
+import javax.validation.Path;
 
 
 /**
@@ -315,7 +315,6 @@ public class AbstractJspBean extends PluginAdminPageJspBean
      *            the bean filter type
      * @return the filter to use
      */
-    @SuppressWarnings( "unchecked" )
     protected <T> T getFilterToUse( HttpServletRequest request, T filter, String markFilter,
             DataTableManager<?> dataTable )
     {
@@ -376,7 +375,6 @@ public class AbstractJspBean extends PluginAdminPageJspBean
      *            the method which give the method to find beans
      * @return the data table to use
      */
-    @SuppressWarnings( "unchecked" )
     protected <T> DataTableManager<T> getAbstractDataTableManager( HttpServletRequest request, Object filter,
             String keyDataTable, String jspManage, Object service, Method findByFilter )
     {

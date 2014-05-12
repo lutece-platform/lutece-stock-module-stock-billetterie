@@ -1,6 +1,6 @@
 <div class="row-fluid">
 	<div class="span12">
-	    <form method="post" action="jsp/admin/plugins/stock/modules/billetterie/DoSaveOffer.jsp">
+	    <form method="post" class="form-horizontal" action="jsp/admin/plugins/stock/modules/billetterie/DoSaveOffer.jsp">
 			<fieldset>
 				<legend>${title!}</legend>
 			</fieldset>
@@ -11,57 +11,87 @@
 			    	<input type="hidden" id="offer_statut" name="statut" value="${offer.statut!}"/>
 			    	<input type="hidden" id="jsp_back" name="jsp_back" value="${jsp_back!}"/>
 			    	<input type="hidden" id="offer_description" name="description" value=""/>
-					<div>
-						<label for="offer_name" >#i18n{module.stock.billetterie.save_offer.name} :</label>
-						<input type="text" id="offer_name" name="name" size="60" maxlength="100" value="${offer.name!}"/>
-						<input type="hidden" name="offer_id" value="${offer.id!}" />
+					<div class="control-group">
+						<label class="control-label" for="offer_name" >#i18n{module.stock.billetterie.save_offer.name} :</label>
+						<div class="controls">
+							<input type="text" id="offer_name" name="name" size="60" maxlength="100" value="${offer.name!}"/>
+							<input type="hidden" name="offer_id" value="${offer.id!}" />
+						</div>
 					</div>
-					<div>
-						<label>#i18n{module.stock.billetterie.save_offer.product} * :</label>
-			        	<@combo name="product.id" default_value="${(offer.product!).id!}" items=product_list! /> 
-			        	<input type="submit" name="refresh_contact" value="#i18n{module.stock.billetterie.message.search.contact}" class="btn btn-primary btn-small" />
+					<div class="control-group">
+						<label class="control-label">#i18n{module.stock.billetterie.save_offer.product} * :</label>
+			        	<div class="controls">
+							<@combo name="product.id" default_value="${(offer.product!).id!}" items=product_list! /> 
+			        		<input type="submit" name="refresh_contact" value="#i18n{module.stock.billetterie.message.search.contact}" class="btn btn-primary btn-small" />
+			        	</div>
 					</div>
 					<#if contact_list?has_content>
-						<div>
-				           <label>#i18n{module.stock.billetterie.save_offer.contact} :</label>
-				        	<@combo name="idContact" default_value="${offer.idContact!}" items=contact_list! />  
+						<div class="control-group">
+				           <label class="control-label">#i18n{module.stock.billetterie.save_offer.contact} :</label>
+				           <div class="controls">
+							<select name="idContact" <#if contact_list?size &gt; 2 >multiple="multiple"</#if>>
+					           		<#list contact_list as contact>
+						           		<option value="${contact.code}"
+						           			<#list offer.idContact as selectedContact>
+						           				<#if selectedContact?string == contact.code>
+						           					selected="selected"
+						           					<#break>
+						           				</#if>
+						           			</#list>
+						           		>
+						           			${contact.name}
+						           		</option>
+					           		</#list>
+					           </select>
+					           <#if contact_list?size &gt; 2 >
+					           		<span class="help-block">#i18n{module.stock.billetterie.save_offer.contact.help}</span>
+					           </#if>
+					   		</div>
 				        </div>
 			        </#if>
-					<div>
-			           <label>#i18n{module.stock.billetterie.save_offer.offerType} * :</label>
-			        	<@combo name="idGenre" default_value="${offer.idGenre!}" items=offerGenre_list! />  
+					<div class="control-group">
+			           <label class="control-label">#i18n{module.stock.billetterie.save_offer.offerType} * :</label>
+			        	<div class="controls">
+							<@combo name="idGenre" default_value="${offer.idGenre!}" items=offerGenre_list! />
+						</div>  
 			        </div>
-		        	<div>  
-		           		<label for="offer_date" >#i18n{module.stock.billetterie.save_offer.date} * :</label>
-						<div class="input-prepend">
-							<span class="add-on">
-								<i class="icon-calendar"></i>
-							</span>
-			           		<input type="text" id="offer_date" name="date" class="input-small" maxlength="50" value="${offer.date!}"/>
+		        	<div class="control-group">  
+		           		<label class="control-label" for="offer_date" >#i18n{module.stock.billetterie.save_offer.date} * :</label>
+						<div class="controls">
+							<div class="input-prepend">
+								<span class="add-on">
+									<i class="icon-calendar"></i>
+								</span>
+				           		<input type="text" id="offer_date" name="date" class="input-small" maxlength="50" value="${offer.date!}"/>
+							</div>
 						</div>
 		           	</div>
-					<div>
-						<label for="offer_hour" >#i18n{module.stock.billetterie.save_offer.hour} * :</label>
-						<input type="text" id="offer_hour" name="hour" class="input-small" maxlength="5"  value="${offer.hour!}"/>
+					<div class="control-group">
+						<label class="control-label" for="offer_hour" >#i18n{module.stock.billetterie.save_offer.hour} * :</label>
+						<div class="controls">
+							<input type="text" id="offer_hour" name="hour" class="input-small" maxlength="5"  value="${offer.hour!}"/>
+						</div>
 					</div>
-					<div>
-						<label for="offer_quantity" >#i18n{module.stock.billetterie.save_offer.quantity} * :</label>
-						<input type="text" id="offer_quantity" name="quantity" class="input-small" maxlength="6"  value="${offer.quantity!}"/>
-						<#if offer.initialQuantity?exists >
-							<input type="hidden" id="offer_initialQuantity" name="initialQuantity" class="input-small" maxlength="6"  value="${offer.initialQuantity!}"/>
-						(${offer.initialQuantity!} #i18n{module.stock.billetterie.message.placesAvailableInitially})
-						</#if>
+					<div class="control-group">
+						<label class="control-label" for="offer_quantity" >#i18n{module.stock.billetterie.save_offer.quantity} * :</label>
+						<div class="controls">
+							<input type="text" id="offer_quantity" name="quantity" class="input-small" maxlength="6"  value="${offer.quantity!}"/>
+							<#if offer.initialQuantity?exists >
+								<input type="hidden" id="offer_initialQuantity" name="initialQuantity" class="input-small" maxlength="6"  value="${offer.initialQuantity!}"/>
+							(${offer.initialQuantity!} #i18n{module.stock.billetterie.message.placesAvailableInitially})
+							</#if>
+						</div>
 					</div>
-			        <div>
-						<label for="offer_reductPrice" >#i18n{module.stock.billetterie.save_offer.reductPrice} :</label>
-						<#setting locale="en_US">
-						<input type="text" id="offer_reductPrice" name="reductPrice" class="input-small" maxlength="50"  value="${(offer.reductPrice?string.number)!}"/>
-						<#setting locale=locale>
+			        <div class="control-group">
+						<label class="control-label" for="offer_reductPrice" >#i18n{module.stock.billetterie.save_offer.reductPrice} :</label>
+						<div class="controls">
+							<#setting locale="en_US">
+							<input type="text" id="offer_reductPrice" name="reductPrice" class="input-small" maxlength="50"  value="${(offer.reductPrice?string.number)!}"/>
+							<#setting locale=locale>
+						</div>
 					</div>
 				</div>
-			</fieldset>
-			<fieldset>
-				<div class="form-actions pagination-centered">
+				<div class="form-actions">
 					<button type="submit" name="save" class="btn btn-primary btn-small" tabindex="3" >
 						<i class="icon-ok icon-white"></i>&nbsp;
 						#i18n{module.stock.billetterie.message.buttonSave}

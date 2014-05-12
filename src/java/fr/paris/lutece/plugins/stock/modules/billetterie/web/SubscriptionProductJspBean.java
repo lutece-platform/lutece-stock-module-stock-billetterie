@@ -38,16 +38,15 @@ import fr.paris.lutece.plugins.stock.service.ISubscriptionProductService;
 import fr.paris.lutece.portal.service.security.LuteceUser;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+
+import javax.servlet.http.HttpServletRequest;
 
 
 /**
  * This class provides the user interface to manage form features ( manage,
  * create, modify, remove)
- * @author jchaline
  */
 public class SubscriptionProductJspBean extends AbstractJspBean
 {

@@ -33,13 +33,6 @@
  */
 package fr.paris.lutece.plugins.stock.modules.billetterie.business.portlet;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-
 import fr.paris.lutece.plugins.stock.commons.dao.PaginationProperties;
 import fr.paris.lutece.plugins.stock.commons.dao.PaginationPropertiesImpl;
 import fr.paris.lutece.plugins.stock.modules.tickets.business.ShowDTO;
@@ -53,6 +46,13 @@ import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.util.url.UrlItem;
 import fr.paris.lutece.util.xml.XmlUtil;
+
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
 
 
 /**
@@ -142,6 +142,7 @@ public class PortletBilletterie extends Portlet
      * @param request the request
      * @return string
      */
+    @Override
     public String getXml( HttpServletRequest request )
     {
         StringBuffer strXml = new StringBuffer( );
@@ -210,7 +211,10 @@ public class PortletBilletterie extends Portlet
         return addPortletTags( strXml );
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public String getXmlDocument( HttpServletRequest request ) throws SiteMessageException
     {
         return XmlUtil.getXmlHeader( ) + getXml( request );
@@ -227,6 +231,7 @@ public class PortletBilletterie extends Portlet
     /**
      * Removes the current instance of the PortletBilletterie object
      */
+    @Override
     public void remove( )
     {
         BilletteriePortletHome.getInstance( ).remove( this );

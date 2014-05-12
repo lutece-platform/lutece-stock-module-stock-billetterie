@@ -39,9 +39,9 @@ import fr.paris.lutece.plugins.stock.utils.IntegerConverter;
 import fr.paris.lutece.plugins.stock.utils.TimestampConverter;
 import fr.paris.lutece.portal.service.util.AppLogService;
 
-import java.sql.Timestamp;
-
 import org.apache.commons.beanutils.ConvertUtils;
+
+import java.sql.Timestamp;
 
 
 /**
@@ -56,6 +56,7 @@ public class BilletteriePlugin extends TicketsPlugin
     /**
      * Initialize the module billetterie
      */
+    @Override
     public void init( )
     {
         super.init( );

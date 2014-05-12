@@ -49,7 +49,7 @@ public class BilletteriePortletHome extends PortletHome
     private static IBilletterieDAO _dao = SpringContextService.getBean( "stock-billetterie.billetteriePortletDAO" );
 
     /* This class implements the Singleton design pattern. */
-    private static BilletteriePortletHome _singleton = null;
+    private static volatile BilletteriePortletHome _singleton = null;
 
     /**
      * Constructor

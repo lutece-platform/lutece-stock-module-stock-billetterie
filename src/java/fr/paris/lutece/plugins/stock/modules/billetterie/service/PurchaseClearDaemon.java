@@ -33,18 +33,16 @@
  */
 package fr.paris.lutece.plugins.stock.modules.billetterie.service;
 
-import org.apache.log4j.Logger;
-
 import fr.paris.lutece.plugins.stock.service.IPurchaseSessionManager;
 import fr.paris.lutece.portal.service.daemon.Daemon;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 
+import org.apache.log4j.Logger;
+
 
 /**
  * The daemon class to delete expired sessions
- * @author jchaline
- * 
  */
 public class PurchaseClearDaemon extends Daemon
 {
@@ -54,6 +52,9 @@ public class PurchaseClearDaemon extends Daemon
             IPurchaseSessionManager.class );
     private static final String PARAMETER_TIME_MAX = AppPropertiesService.getProperty( "daemon.lock.session.time.expiration" );
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public synchronized void run( )
     {
