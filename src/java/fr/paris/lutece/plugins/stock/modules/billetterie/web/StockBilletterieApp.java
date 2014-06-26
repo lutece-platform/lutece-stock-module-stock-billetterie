@@ -63,12 +63,9 @@ import fr.paris.lutece.util.ReferenceItem;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.html.HtmlTemplate;
 
-import org.apache.commons.lang.StringUtils;
-
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -77,6 +74,8 @@ import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang.StringUtils;
 
 
 /**
@@ -360,12 +359,12 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
      */
     private String getBookingBloc( ShowDTO show, String sDateSeance, Locale locale )
     {
-        DateFormat sdfComboSeance = new SimpleDateFormat( TicketsConstants.FORMAT_COMBO_DATE_SEANCE );
-
         if ( sDateSeance == null )
         {
             return StringUtils.EMPTY;
         }
+
+        DateFormat sdfComboSeance = new SimpleDateFormat( TicketsConstants.FORMAT_COMBO_DATE_SEANCE );
 
         Date dateSeance;
 
