@@ -68,15 +68,11 @@ import fr.paris.lutece.util.html.Paginator;
 import fr.paris.lutece.util.url.UrlItem;
 
 import org.apache.commons.lang.StringUtils;
-
 import org.apache.log4j.Logger;
 
 import java.io.UnsupportedEncodingException;
-
 import java.net.URLEncoder;
-
 import java.sql.Timestamp;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -188,7 +184,13 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
         }
         else if ( ACTION_MY_BOOKINGS.equals( strAction ) )
         {
-            page = getMyBookings( page, request, locale );
+            String strContent = getMyBookings( request, getUser( request ), locale );
+            page.setContent( strContent );
+
+            String pageTitle = getMessage( TITLE_MY_BOOKINGS, request );
+            page.setPathLabel( pageTitle );
+            page.setTitle( pageTitle );
+
         }
         else if ( ACTION_DELETE_BOOKING.equals( strAction ) )
         {
@@ -517,18 +519,15 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
 
     /**
      * Returns page for managing user bookings.
-     *
-     * @param page xpage
      * @param request http request
+     * @param user The user
      * @param locale local
-     * @return xpage
-     * @throws UserNotSignedException the user not signed exception
+     * @return The content to display
+     * @throws UserNotSignedException If the user has not signed in
      */
-    private XPage getMyBookings( XPage page, HttpServletRequest request, Locale locale )
-        throws UserNotSignedException
+    public static String getMyBookings( HttpServletRequest request, LuteceUser user, Locale locale )
+            throws UserNotSignedException
     {
-        LuteceUser user = getUser( request );
-
         if ( user == null )
         {
             throw new UserNotSignedException(  );
@@ -540,13 +539,15 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
         purchaseFilter.setUserName( user.getName(  ) );
         purchaseFilter.setDateBeginOffer( new Timestamp( today.getTime(  ) ) );
 
+        IPurchaseService purchaseService = SpringContextService.getContext( ).getBean( IPurchaseService.class );
+
         // Dispatch booking list into two differents lists (old and to come)
-        List<ReservationDTO> toComeBookingList = _purchaseService.findByFilter( purchaseFilter );
+        List<ReservationDTO> toComeBookingList = purchaseService.findByFilter( purchaseFilter );
 
         purchaseFilter.setDateBeginOffer( null );
         purchaseFilter.setDateEndOffer( new Timestamp( today.getTime(  ) ) );
 
-        List<ReservationDTO> oldBookingList = _purchaseService.findByFilter( purchaseFilter,
+        List<ReservationDTO> oldBookingList = purchaseService.findByFilter( purchaseFilter,
                 getPaginationProperties( request ) );
 
         // Generates template
@@ -554,7 +555,7 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
         model.put( PARAMETER_NEXT_BOOKING_LIST, toComeBookingList );
         model.put( PARAMETER_PAST_BOOKING_LIST, oldBookingList );
 
-        model.put( MARK_USER, getUser( request ) );
+        model.put( MARK_USER, user );
 
         String strNbItemPerPage = request.getParameter( PARAMETER_NB_ITEMS_PER_PAGE );
         String strDefaultNbItemPerPage = DEFAULT_RESULTS_PER_PAGE;
@@ -573,13 +574,7 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_DIR + TEMPLATE_MY_BOOKINGS, locale, model );
 
-        page.setContent( template.getHtml(  ) );
-
-        String pageTitle = getMessage( TITLE_MY_BOOKINGS, request );
-        page.setPathLabel( pageTitle );
-        page.setTitle( pageTitle );
-
-        return page;
+        return template.getHtml( );
     }
 
     /**

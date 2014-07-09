@@ -52,11 +52,9 @@ import fr.paris.lutece.util.html.Paginator;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.StringUtils;
-
 import org.apache.log4j.Logger;
 
 import java.lang.reflect.InvocationTargetException;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -64,7 +62,6 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
-
 import javax.validation.ConstraintViolation;
 
 
@@ -280,7 +277,7 @@ public abstract class AbstractXPageApp
      * @param request http request
      * @return paginator the populate paginator
      */
-    protected PaginationProperties getPaginationProperties( HttpServletRequest request )
+    protected static PaginationProperties getPaginationProperties( HttpServletRequest request )
     {
         String strPageIndex = Paginator.getPageIndex( request, Paginator.PARAMETER_PAGE_INDEX, "1" );
         int nCurrentPageIndex = 1;
