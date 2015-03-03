@@ -21,16 +21,14 @@
 		  	
 			<div class="form-group">
 				<label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3"  for="poster" >#i18n{module.stock.billetterie.save_product.poster} * :</label>
-				<#if product.id?? && product.posterName?has_content>
 				<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
+				<#if product.id?? && product.posterName?has_content>
 					<input type="hidden" name="posterName" value="${product.posterName}" />
 					<img src="${url_poster}${product.id}" style="width:100%"/>
 					<p>Renseigner le champ ci-dessous pour modifier le poster :</p>
-				</div>
+			
 				</#if>
-				<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
-
-					<input type="file" id="poster" name="posterFile" style="width:100%" maxlength="100" />	
+					<input type="file" accept="image/*" id="poster" name="posterFile" style="width:100%" maxlength="100" />	
 				</div>
 				
 			</div>
