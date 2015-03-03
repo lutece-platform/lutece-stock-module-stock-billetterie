@@ -13,7 +13,6 @@
 	{
 		%>
 			<jsp:include page="../../../../AdminHeader.jsp" />
-			<jsp:include page="../../../../AdminHeader.jsp" />
 			<%= purchase.getManagePurchases( request ) %>
 			<%@ include file="../../../../AdminFooter.jsp" %>
 		<%  
