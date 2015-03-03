@@ -305,7 +305,7 @@ public class ShowJspBean extends AbstractJspBean
         model.put( MARK_LIST_CATEGORIES, categoryComboList );
         // the filter
         model.put( TicketsConstants.MARK_FILTER, filter );
-
+        model.put( MARK_LOCALE, getLocale(  ) );
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_MANAGE_PRODUCTS, getLocale(  ), model );
 
         //opération nécessaire pour eviter les fuites de mémoires
@@ -436,7 +436,7 @@ public class ShowJspBean extends AbstractJspBean
 
         // Richtext editor parameters
         model.put( MARK_WEBAPP_URL, AppPathService.getBaseUrl( request ) );
-        model.put( MARK_LOCALE, request.getLocale(  ) );
+        model.put( MARK_LOCALE, getLocale(  ) );
 
         if ( ( product.getId(  ) != null ) && ( product.getId(  ) != 0 ) )
         {
