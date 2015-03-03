@@ -26,7 +26,7 @@
 		<dependency>
 			<groupId>fr.paris.lutece.plugins</groupId>
 			<artifactId>plugin-userban</artifactId>
-			<version>1.0.0</version>
+			<version>1.0.1-SNAPSHOT</version>
 			<type>lutece-plugin</type>
 		</dependency>
 		<dependency>
@@ -38,7 +38,7 @@
 		<dependency>
  			<groupId>fr.paris.lutece</groupId>
  			<artifactId>lutece-core</artifactId>
-            <version>4.1.1</version>
+            <version>5.0.0</version>
             <type>lutece-core</type>
             <exclusions>
             	<exclusion>
@@ -55,7 +55,7 @@
 		<dependency>
 			<groupId>fr.paris.lutece.plugins</groupId>
 			<artifactId>module-mylutece-cas</artifactId>
-			<version>1.1.8</version>
+			<version>1.1.11-SNAPSHOT</version>
 			<type>lutece-plugin</type>
 		</dependency>
 	</dependencies>
