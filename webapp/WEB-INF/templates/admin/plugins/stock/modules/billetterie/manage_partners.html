@@ -10,8 +10,8 @@
 	</a>
 </#macro>
 
-<div class="row-fluid">
-	<div class="span12">
+<div class="">
+	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
 		<fieldset>
 			<legend>
 				#i18n{module.stock.billetterie.manage_partner.list.partners}
@@ -21,19 +21,20 @@
 				  	</a>
 				</span>
 			</legend>
-			<div class="row-fluid">
-				<div class="span3 well">
+			<div class="row">
+				<div class="col-sm-3 well">
 					<form action="jsp/admin/plugins/stock/modules/billetterie/ManagePartners.jsp" method="post">
 						<input type="hidden" name="filter" value="filter" />
 						<p>
-							<label for="filter_name">#i18n{module.stock.billetterie.field.PartnerDTO.name} : </label>
+							
+							<label  class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="filter_name">#i18n{module.stock.billetterie.field.PartnerDTO.name} : </label>
 							<input class="span"  type="text" value="${filter.name!}" name="name" id="filter_name" />
 						</p>
 						
 						<@showSearchButton />
 					</form>
 				</div>
-				<div class="span9">
+				<div class="col-sm-9">
 					<@dataTable dataTableManager=dataTablePartner />
 				</div>
 			</div>

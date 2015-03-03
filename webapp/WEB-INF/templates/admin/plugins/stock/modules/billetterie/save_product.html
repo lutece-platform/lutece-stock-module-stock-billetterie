@@ -1,105 +1,130 @@
 <#include "/admin/util/editor/editor.html" />
 
-<div class="row-fluid">
-	<div class="span12">
+<div class="row">
+	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
 	    	<input type="hidden" id="jsp_back" name="jsp_back" value="${jsp_back!}"/>
 			
-			<fieldset>
-				<legend>
-					${title!}
-					<#if product?? && product.id??>
-						<span class="pull-right">
-							${extendableResourceActionsHtml!}
-						</span>
-					</#if>
-				</legend>
-			</fieldset>
-	    <form class="form" method="post" enctype="multipart/form-data" name="save_product" id="save_product" action="jsp/admin/plugins/stock/modules/billetterie/DoSaveProduct.jsp">
-			<fieldset>
+		<fieldset>
+			<legend>
+				${title!}
+				<#if product?? && product.id??>
+					<span class="pull-right">
+						${extendableResourceActionsHtml!}
+					</span>
+				</#if>
+			</legend>
+		</fieldset>
+	    <form class="form-horizontal"  method="post" enctype="multipart/form-data" name="save_product" id="save_product" action="jsp/admin/plugins/stock/modules/billetterie/DoSaveProduct.jsp">
+		<fieldset>
    				 ${error!}
 		    	
-		    	<div class="span3">
-					<div>
-						<label for="poster" >#i18n{module.stock.billetterie.save_product.poster} * :</label>
-						<#if product.id?? && product.posterName?has_content>
-							<input type="hidden" name="posterName" value="${product.posterName}" />
-							<img src="${url_poster}${product.id}" style="width:100%"/>
-							<p>Renseigner le champ ci-dessous pour modifier le poster :</p>
-						</#if>
-						<input type="file" id="poster" name="posterFile" style="width:100%" maxlength="100" />
-					</div>
-					<div style="clear:left">
-						<label for="product_name" >#i18n{module.stock.billetterie.save_product.name} * :</label>
+		  	
+			<div class="form-group">
+				<label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3"  for="poster" >#i18n{module.stock.billetterie.save_product.poster} * :</label>
+				<#if product.id?? && product.posterName?has_content>
+				<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
+					<input type="hidden" name="posterName" value="${product.posterName}" />
+					<img src="${url_poster}${product.id}" style="width:100%"/>
+					<p>Renseigner le champ ci-dessous pour modifier le poster :</p>
+				</div>
+				</#if>
+				<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
+
+					<input type="file" id="poster" name="posterFile" style="width:100%" maxlength="100" />	
+				</div>
+				
+			</div>
+			<div class="form-group">
+				<div style="clear:left">
+					<label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3"  for="product_name" >#i18n{module.stock.billetterie.save_product.name} * :</label>
+					<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
 						<input type="text" id="name" name="name" class="span" maxlength="100" value="${product.name!}"/>
 					</div>
-			        <div>
-						<label for="show_aLaffiche" >
-							#i18n{module.stock.billetterie.save_product.aLaffiche} :
-							<input type="checkbox" id="show_aLaffiche" name="aLaffiche" value="on" <#if product.alaffiche?has_content && product.alaffiche>checked="checked"</#if>/>
-						</label>
-					</div>
-					<div>
-						<label>#i18n{module.stock.billetterie.save_product.category} * :</label>
-				        <@combo name="idCategory" default_value="${(product.idCategory!)}" items=category_list! />           
-					</div>
-					<div>
-						<label>#i18n{module.stock.billetterie.save_product.provider} * :</label>
-				        <@combo name="idProvider" default_value="${(product.idProvider!)}" items=provider_list! />           
-					</div>
 				</div>
-				<div class="span7">
-					<div>
-						<label>#i18n{module.stock.billetterie.save_product.with} :</label>
-						<textarea name="with" cols="60" rows="5" maxlength="500">${product.with!}</textarea>
-					</div>
-					<div>
-						<label>#i18n{module.stock.billetterie.save_product.targetPublic} :</label>
-						<select name="targetPublic">
-								<option> </option> 
-							<#list public_list as public>
-								<option<#if product.targetPublic?has_content && product.targetPublic == public> selected="selected"</#if>>${public}</option>
-							</#list>
-						</select>
-					</div>
-					<div>
-						<label for="product_description" >#i18n{module.stock.billetterie.save_product.description} :</label>
-						<div class="editor">
-							<textarea id="description" name="description" cols="90" rows="10" maxlength="2000" class="richtext">${product.description!}</textarea>
-						</div>
-					</div>
-					<div>
-						<label>#i18n{module.stock.billetterie.save_product.start} * :</label>
-						<div class="input-prepend">
-							<span class="add-on">
-								<i class="icon-calendar"></i>
-							</span>
-							<input type="text" name="startDate" id="date_start" class="input-small" maxlength="10" value="${product.startDate!}"/>
-						</div>
-					</div>
-					<div>
-						<label>#i18n{module.stock.billetterie.save_product.end} * :</label>
-						<div class="input-prepend">
-							<span class="add-on">
-								<i class="icon-calendar"></i>
-							</span>
-							<input type="text" name="endDate" id="date_end" class="input-small" maxlength="10" value="${product.endDate!}"/>
-						</div>
-					</div>
-					<@getDatePickerRange idFieldFrom="date_start" idFieldTo="date_end" language="fr_FR" />
-					<div>
-						<label>#i18n{module.stock.billetterie.save_product.website} :</label>
-						<input type="text" name="website" size="60" maxlength="100" value="${product.website!}"/>
-					</div>
-					<div>
-						<label for="subscribable">#i18n{module.stock.billetterie.save_product.subscriptionPossible} ? :
-							<input type="checkbox" id="subscribable" name="subscribable" <#if product.subscribable?has_content && product.subscribable>checked="checked"</#if>/>
-						</label>
-					</div>
+			</div>
+			<div class="form-group">
+				<label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3"   for="show_aLaffiche" >
+						#i18n{module.stock.billetterie.save_product.aLaffiche} :
+				</label>
+				<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
+					<input class="" type="checkbox" id="show_aLaffiche" name="aLaffiche" value="on" <#if product.alaffiche?has_content && product.alaffiche>checked="checked"</#if>/>
 				</div>
-			</fieldset>
+				
+			</div>
+			<div class="form-group">
+				<label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" >#i18n{module.stock.billetterie.save_product.category} * :</label>
+				<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
+				       	<@combo name="idCategory" default_value="${(product.idCategory!)}" items=category_list! />
+				</div>           
+			</div>
+			<div class="form-group">
+				<label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" >#i18n{module.stock.billetterie.save_product.provider} * :</label>
+				<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
+				        <@combo name="idProvider" default_value="${(product.idProvider!)}" items=provider_list! />
+				</div>           
+			</div>
+				
+			<div class="form-group">
+				<label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3">#i18n{module.stock.billetterie.save_product.with} :</label>
+				<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
+					<textarea name="with" cols="60" rows="5" maxlength="500">${product.with!}</textarea>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" >#i18n{module.stock.billetterie.save_product.targetPublic} :</label>
+				<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
+					<select name="targetPublic">
+						<option> </option> 
+						<#list public_list as public>
+							<option<#if product.targetPublic?has_content && product.targetPublic == public> selected="selected"</#if>>${public}</option>
+						</#list>
+					</select>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3"  for="product_description" >#i18n{module.stock.billetterie.save_product.description} :</label>
+				<div class="editor col-xs-12 col-sm-12 col-md-9 col-lg-9">
+					<textarea id="description" name="description" cols="90" rows="10" maxlength="2000" class="richtext">${product.description!}</textarea>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" >#i18n{module.stock.billetterie.save_product.start} * :</label>
+				<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
+					<span class="add-on">
+						<i class="icon-calendar"></i>
+					</span>
+					<input type="text" name="startDate" id="date_start" class="input-small" maxlength="10" value="${product.startDate!}"/>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" >#i18n{module.stock.billetterie.save_product.end} * :</label>
+				<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
+					<span class="add-on">
+						<i class="icon-calendar"></i>
+						</span>
+						<input type="text" name="endDate" id="date_end" class="input-small" maxlength="10" value="${product.endDate!}"/>
+				</div>
+			</div>
+			<@getDatePickerBootstrap idField="date_start" language=locale />
+			<@getDatePickerBootstrap idField="date_end" language=locale />
+			<div class="form-group">
+				<label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3"  >#i18n{module.stock.billetterie.save_product.website} :</label>
+				<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
+					<input type="text" name="website" size="60" maxlength="100" value="${product.website!}"/>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3"  for="subscribable">#i18n{module.stock.billetterie.save_product.subscriptionPossible} ? :</label>
+				<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
+					<input class="" type="checkbox" id="subscribable" name="subscribable" <#if product.subscribable?has_content && product.subscribable>checked="checked"</#if>/>
+				</div>
+			</div>
 			
-			<fieldset>
-				<div class="form-actions pagination-centered">
+		</fieldset>
+		<div>	
+		<fieldset>
+			<div class="form-group">
+				<div class="col-xs-12 col-sm-12 col-md-offset-3 col-lg-offset-3"> 
 					<input type="hidden" id="product_id" name="id" value="${product.id!}"/>
 					<button type="submit" name="save" class="btn btn-primary btn-small" tabindex="3" >
 						<i class="icon-ok icon-white"></i>&nbsp;
@@ -110,9 +135,10 @@
 						#i18n{portal.admin.message.buttonCancel}
 					</button>
 				</div>
-			</fieldset>
+			</div>
+		</fieldset>
+		</div>
 	   </form>
 	</div>
 </div>
 <@initEditor />
-<script src="js/jquery/plugins/ui/ui.datepicker-fr.js"></script>

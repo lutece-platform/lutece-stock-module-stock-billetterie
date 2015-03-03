@@ -16,34 +16,38 @@
 	Colors[6] = "FF";
 	
 </script>
-<div class="row-fluid">
-	<div class="span12">
-	    <form method="post"  name="save_category" id="save_category" action="jsp/admin/plugins/stock/modules/billetterie/DoSaveCategory.jsp">
+<div class="row">
+	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+	    <form class="form-horizontal" method="post"  name="save_category" id="save_category" action="jsp/admin/plugins/stock/modules/billetterie/DoSaveCategory.jsp">
 			<fieldset>
 				<legend>${title!}</legend>
 			    ${error!}
 		    	<input type="hidden" id="jsp_back" name="jsp_back" value="${jsp_back!}"/>
 		        
-				<div>
-					<label for="category_name" >#i18n{stock.create_category.name} * :</label>
-					<input type="text" id="name" name="name" class="input-large" maxlength="100" value="${category.name!}"/>
+				<div class="form-group">
+					<label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="category_name" >#i18n{stock.create_category.name} * :</label>
+					<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
+						<input class="form-control" type="text" id="name" name="name" class="input-large" maxlength="100" value="${category.name!}"/>
+					</div>
 				</div>
-				<div>
-					<label for="category_description" >#i18n{stock.create_category.description} :</label>
-					<input type="text" id="description" name="description" class="input-large" maxlength="100" value="${category.description!}"/>
+				<div class="form-group">
+					<label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="category_description" >#i18n{stock.create_category.description} :</label>
+					<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
+						<input class="form-control" type="text" id="description" name="description" class="input-large" maxlength="100" value="${category.description!}"/>
+					</div>
 				</div>
-		       	<div>
-		            <label for="color" >#i18n{module.stock.billetterie.create_category.labelColor} * :</label>
-		            <div>
-		           		<input type="text" class="input-large" id="color" name="color" maxlength="7" value="${category.color!}" style="float:left"/>
+		       	<div class="form-group">
+		            <label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="color" >#i18n{module.stock.billetterie.create_category.labelColor} * :</label>
+		            <div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
+		           		<input class="form-control" type="text" class="input-large" id="color" name="color" maxlength="7" value="${category.color!}" style="float:left"/>
 		           		
 		        		<div style="width:15px;height:15px;background-color:${category.color!}; display:inline-block; margin:3px 0 0 2px" id="bloc_couleur">
 		        		</div>
 		        	</div>
 		        </div>
-		        <div  style="clear:left" class="pull-left">
-		            <label for="color_picker" >#i18n{module.stock.billetterie.create_category.labelColorPicker} : </label>
-					<table id="color_picker" style='' border="0" align=center>
+		        <div  style="clear:left" >
+		            <label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="color_picker" >#i18n{module.stock.billetterie.create_category.labelColorPicker} : </label>
+					<table id="color_picker" style='' border="0" align="center" class="col-xs-1 col-sm-1 col-md-1 col-lg-1">
 		 				<tr>
 							<script language="JavaScript">
 		 						for(i=1 ; i <= 6 ; i++)
@@ -65,20 +69,24 @@
 		 			</table>
 		        </div>
 			</fieldset>
+			<div class="row">
 			<fieldset>
-				<div class="form-actions pagination-centered">   
-					<input type="hidden" id="category_id" name="id" value="${category.id!}"/>
+				<div class="form-group">  
+					<div class="col-xs-12 col-sm-12 col-md-offset-6 col-lg-offset-6"> 
+						<input type="hidden" id="category_id" name="id" value="${category.id!}"/>
 					
-					<button type="submit" name="save" class="btn btn-primary btn-small" tabindex="3" >
-						<i class="icon-ok icon-white"></i>&nbsp;
-						#i18n{module.stock.billetterie.message.buttonSave}
-					</button>
-					<button class="btn btn-small" type="submit" name="cancel">
-						<i class="icon-remove-circle"></i>&nbsp;
-						#i18n{portal.admin.message.buttonCancel}
-					</button>
+						<button type="submit" name="save" class="btn btn-primary btn-small" tabindex="3" >
+							<i class="icon-ok icon-white"></i>&nbsp;
+							#i18n{module.stock.billetterie.message.buttonSave}
+						</button>
+						<button class="btn btn-small" type="submit" name="cancel">
+							<i class="icon-remove-circle"></i>&nbsp;
+							#i18n{portal.admin.message.buttonCancel}
+						</button>
+					</div>
 				</div>
 			</fieldset>
+			</div>
 	   </form>
 	</div>
 </div>

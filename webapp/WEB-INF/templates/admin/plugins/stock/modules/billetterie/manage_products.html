@@ -15,8 +15,8 @@
 	Du ${item.startDate!} au ${item.endDate!}
 </#macro>
 
-<div class="row-fluid">
-	<div class="span12">
+<div class="">
+	<div  class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
 		<fieldset>
 			<legend>
 				#i18n{module.stock.billetterie.manage_product.title}
@@ -31,8 +31,8 @@
 					</a>
 				</span>
 			</legend>
-			<div class="row-fluid">
-				<div class="span3 well">
+			<div class="row">
+				<div class="col-sm-3 well">
 					<form action="jsp/admin/plugins/stock/modules/billetterie/ManageProducts.jsp" method="post">
 						<input type="hidden" name="filter" value="${filter!}" />
 						
@@ -66,13 +66,12 @@
 						<@showSearchButton />
 					</form>
 				</div>
-				<div class="span9">
+				<div class="col-sm-9">
 					<@dataTable dataTableManager=dataTableProduct />
 				</div>
 			</div>
 		</fieldset>
 	</div>
 </div>
-
-<@getDatePickerRange idFieldFrom="date_from" idFieldTo="date_to" language="fr_FR" />
-<script src="js/jquery/plugins/ui/ui.datepicker-fr.js"></script>
+<@getDatePickerBootstrap idField="date_from" language="${locale!}"/>
+<@getDatePickerBootstrap idField="date_to" language="${locale!}"/>

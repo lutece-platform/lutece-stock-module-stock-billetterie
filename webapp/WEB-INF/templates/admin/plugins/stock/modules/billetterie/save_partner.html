@@ -1,82 +1,95 @@
-<form method="post" action="jsp/admin/plugins/stock/modules/billetterie/DoSavePartner.jsp?partner_id=${partner.id!}">
-	<div class="row-fluid">
-		<div >
+<div class="row">
+	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">	
+		<form class="form-horizontal" method="post" action="jsp/admin/plugins/stock/modules/billetterie/DoSavePartner.jsp?partner_id=${partner.id!}">
+		<fieldset>
+			<legend>
+				#i18n{module.stock.billetterie.modify_partner.title}
+				<span class="pull-right">
+					<button class="btn btn-primary btn-small" type="submit" name="action_add_contact" value="" id="more_contact" >
+						<i class="icon-plus icon-white" ></i>&nbsp;
+						#i18n{module.stock.billetterie.manage_partner.additionnalContact}
+					</button>
+				</span>
+			</legend>
+		</fieldset>
+	
+		<div>
 			<fieldset>
-				<legend>
-					#i18n{module.stock.billetterie.modify_partner.title}
-					<span class="pull-right">
-						<button class="btn btn-primary btn-small" type="submit" name="action_add_contact" value="" id="more_contact" >
-							<i class="icon-plus icon-white" ></i>&nbsp;
-							#i18n{module.stock.billetterie.manage_partner.additionnalContact}
-						</button>
-					</span>
-				</legend>
-			</fieldset>
-		</div>
-		<div >
-			<fieldset>
-				<div class="span6">
+				<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
 				    ${error!}
 			    	<input type="hidden" id="partner_id" name="id" value="${partner.id!}"/>
 			    	<input type="hidden" id="jsp_back" name="jsp_back" value="${jsp_back!}"/>
-					<div>
-						<label for="provider_name" >#i18n{module.stock.billetterie.field.PartnerDTO.name} * :</label>
-						<input type="text" id="provider_name" name="name" class="input-large" maxlength="100" value="${partner.name!}"/>
+					<div class="form-group">
+						<label  class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="provider_name" >#i18n{module.stock.billetterie.field.PartnerDTO.name} * :</label>
+						<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
+							<input class="form-control" type="text" id="provider_name" name="name" class="input-large" maxlength="100" value="${partner.name!}"/>
+						</div>
 					</div>
-					<div>
-						<label for="provider_address" >#i18n{stock.create_provider.address} :</label>
-						<textarea name="address" cols="30" rows="5" maxlength="250">${partner.address!}</textarea> 
+					<div class="form-group">
+						<label  class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="provider_address" >#i18n{stock.create_provider.address} :</label>
+						<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
+							<textarea class="form-control" name="address" cols="30" rows="5" maxlength="250">${partner.address!}</textarea> 
+						</div>					
 					</div>
-					<div>
-						<label for="provider_district" >#i18n{module.stock.billetterie.create_provider.district} :</label>
-						<select id="provider_district" name="district" class="input-medium">
+					<div class="form-group">
+						<label  class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="provider_district" >#i18n{module.stock.billetterie.create_provider.district} :</label>
+						<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
+						<select id="provider_district" name="district" class="form-control input-md">
 							<option value="-1"></option>
 							<#list list_district as district>
 								<option value="${(district.id)!}" <#if partner.district?? && partner.district==district.id>selected="selected"</#if>>${(district.libelle)!}</option>
 							</#list>
 						</select>
+						</div>
 					</div>
-					<div>
-						<label for="provider_comment" >#i18n{stock.create_provider.comment} :</label>
-						<input type="text" id="provider_comment" name="comment" class="input-large" maxlength="250"  value="${partner.comment!}"/>
+					<div class="form-group">
+						<label  class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="provider_comment" >#i18n{stock.create_provider.comment} :</label>
+						<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
+							<input class="form-control" type="text" id="provider_comment" name="comment" class="input-large" maxlength="250"  value="${partner.comment!}"/>
+						</div>
 					</div>
-					<div>
-						<label for="provider_accessibility" >
+					<div class="form-group">
+						<label  class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="provider_accessibility" >
 							#i18n{module.stock.billetterie.create_provider.isAccessible} :
-							<input type="checkbox" id="provider_accessibility" name="accessible" maxlength="250"  <#if partner.accessible! == true> checked </#if> />
 						</label>
+						<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
+							<input class="" type="checkbox" id="provider_accessibility" name="accessible" maxlength="250"  <#if partner.accessible! == true> checked </#if> />
+						</div>
 					</div>
-					<div>
-						<label for="provider_accessibility_comment" >#i18n{module.stock.billetterie.create_provider.accessibilityComment} :</label>
-						<textarea name="accessibleComment" cols="60" rows="5" maxlength="250">${partner.accessibleComment!}</textarea> 
+					<div class="form-group">
+						<label  class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="provider_accessibility_comment" >#i18n{module.stock.billetterie.create_provider.accessibilityComment} :</label>
+						<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
+							<textarea class="form-control" name="accessibleComment" cols="60" rows="5" maxlength="250">${partner.accessibleComment!}</textarea> 
+						</div>
 					</div>
-					<div>
-						<label for="provider_metro_comment" >#i18n{module.stock.billetterie.create_provider.metroComment} :</label>
-						<input type="text" id="provider_metro_comment" name="metroComment" class="input-large" maxlength="250"  value="${partner.metroComment!}"/>
+					<div class="form-group">
+						<label  class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="provider_metro_comment" >#i18n{module.stock.billetterie.create_provider.metroComment} :</label>						<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
+							<input class="form-control" type="text" id="provider_metro_comment" name="metroComment" class="input-large" maxlength="250"  value="${partner.metroComment!}"/>
+						</div>
 					</div>
 				</div>
 				<#if list_contacts?has_content>
 				    <#list list_contacts as contact>
-						<div class="span3 well"> 
-					    	<div>
-								<label for="provider_contact_name" >#i18n{stock.create_provider.contact} :</label>
-								<div class="input-prepend">
+						<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 well"> 
+					    		<div class="form-group">
+								<label  class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="provider_contact_name" >#i18n{stock.create_provider.contact} :</label>
+								<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
 									<span class="add-on"><i class="icon-user"></i></span>
-									<input type="text" id="provider_contact_name" name="contactForm[${contact_index}].name" class="span10" maxlength="60"  value="${contact.name!}"/>
+									<input class="form-control" class="form-control" type="text" id="provider_contact_name" name="contactForm[${contact_index}].name" maxlength="60"  value="${contact.name!}"/>
 								</div>
 							</div>
-							<div>
-								<label for="provider_phone_number" >#i18n{stock.create_provider.phoneNumber} :</label>
-								<div class="input-prepend">
+							<div class="form-group">
+								<label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="provider_phone_number" >#i18n{stock.create_provider.phoneNumber} :</label>
+								<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
 									<span class="add-on"><i class="icon-book"></i></span>
-									<input type="text" id="provider_phone_number" name="contactForm[${contact_index}].phoneNumber" class="span10" maxlength="10"  value="${contact.phoneNumber!}"/>
+									<input class="form-control" type="text" id="provider_phone_number" name="contactForm[${contact_index}].phoneNumber" class="span10" maxlength="10"  value="${contact.phoneNumber!}"/>
 								</div>
 							</div>
-					        <div>
-								<label for="provider_mail" >#i18n{stock.create_provider.mail} :</label>
-								<div class="input-prepend">
+					       		<div class="form-group">
+								<label  class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="provider_mail" >#i18n{stock.create_provider.mail} :</label>
+								<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
 									<span class="add-on"><i class="icon-envelope"></i></span>
-									<input type="text" id="provider_mail" name="contactForm[${contact_index}].mail" maxlength="50" class="span10" value="${contact.mail!}"/>
+									<input class="form-control" type="text" id="provider_mail" name="contactForm[${contact_index}].mail" maxlength="50" class="span10" value="${contact.mail!}"/>
 								</div>
 								<span class="pull-right">
 									<button class="btn btn-danger btn-small" type="submit" name="action_del_contact${contact.id!}">
@@ -92,17 +105,21 @@
 		</div>
 		<div>
 			<fieldset>
-				<div class="pagination-centered form-actions">
-					<button type="submit" name="save" class="btn btn-primary btn-small" tabindex="3" >
-						<i class="icon-ok icon-white"></i>&nbsp;
-						#i18n{module.stock.billetterie.message.buttonSave}
-					</button>
-					<button class="btn btn-small" type="submit" name="cancel">
-						<i class="icon-remove-circle"></i>&nbsp;
-						#i18n{portal.admin.message.buttonCancel}
-					</button>
+				<div class="form-group">
+					<div class="col-xs-12 col-sm-12 col-md-offset-3 col-lg-offset-3"> 
+						<button type="submit" name="save" class="btn btn-primary btn-small" tabindex="3" >
+							<i class="icon-ok icon-white"></i>&nbsp;
+							#i18n{module.stock.billetterie.message.buttonSave}
+						</button>
+						<button class="btn btn-small" type="submit" name="cancel">
+							<i class="icon-remove-circle"></i>&nbsp;
+							#i18n{portal.admin.message.buttonCancel}
+						</button>
+					</div>
 				</div>
 			</fieldset>
 		</div>
+
+	</form>
 	</div>
-</form>
+</div>

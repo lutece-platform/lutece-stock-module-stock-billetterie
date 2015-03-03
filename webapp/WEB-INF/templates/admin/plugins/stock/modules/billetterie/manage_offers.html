@@ -53,8 +53,8 @@
 	${item.initialQuantity!}
 </#macro>
 
-<div class="row-fluid">
-	<div class="span12">
+<div class="">
+	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
 		<form action="jsp/admin/plugins/stock/modules/billetterie/ManageOffers.jsp" method="post">
 			<fieldset>
 				<legend>
@@ -70,22 +70,22 @@
 				<#list errors as error>
 					${error!}
 				</#list>
-				<div class="row-fluid">
-					<div class="span3 well">
+				<div class="row">
+					<div class="col-sm-3 well">
 						<input type="hidden" name="filter" value="${filter!}" />
-						<p>
+						<div class="control-group">
 							<label for="filter_name">#i18n{module.stock.billetterie.list_offres.filter.name} : </label>
 							<input class="span"  type="text" name="name" id="filter_name" value="${(filter.name)!}" />
-						</p>
-						<p>
+						</div>
+						<div class="control-group">
 							<label for="filter_product">#i18n{module.stock.billetterie.list_offres.filter.product} : </label>
 							<input class="span"  type="text" name="productName" id="filter_product" value="${(filter.productName)!}" />
-						</p>
-						<p>
+						</div>
+						<div class="control-group">
 							<label>#i18n{module.stock.billetterie.list_offres.filter.typeOffre} : </label>
 				        	<@comboWithParams additionalParameters="class='span'" name="idGenre" default_value="${filter.idGenre!}" items=offerGenre_list! />
-						</p>
-						<p>
+						</div>
+						<div class="control-group">
 							<label for="filter_date_begin">#i18n{module.stock.billetterie.list_offres.filter.date} : </label>
 							<div class="input-prepend">
 								<span class="add-on">
@@ -107,10 +107,10 @@
 								</span>
 								<input class="input-small" type="text" name="dateOr" id="filter_date_or" value="${(filter.dateOr?date)!}"/>
 							</div>
-						</p>
+						</div>
 						<@showSearchButton />
 					</div>
-					<div class="span9">
+					<div class="col-sm-9">
 						<@dataTableBilletterie dataTableManager=dataTableOffer />
 					</div>
 				</div>
@@ -118,6 +118,6 @@
 		</form>
 	</div>
 </div>
-<@getDatePickerRange idFieldFrom="filter_date_begin" idFieldTo="filter_date_end" language="${locale!}" />
-<@getDatePicker idField="filter_date_or" language="${locale!}" />
-<script src="js/jquery/plugins/ui/ui.datepicker-fr.js"></script>
+<@getDatePickerBootstrap idField="filter_date_begin" language="${locale!}" />
+<@getDatePickerBootstrap idField="filter_date_end" language="${locale!}" />
+<@getDatePickerBootstrap idField="filter_date_or" language="${locale!}" />
