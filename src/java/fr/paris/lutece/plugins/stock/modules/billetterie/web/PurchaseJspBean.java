@@ -211,19 +211,6 @@ public class PurchaseJspBean extends AbstractJspBean
     public static final String MARK_OFFERS_AVAILABLES = "offers_availables";
     public static final String MARK_NEW_ID_OFFER = "newIdOffer";
 
-    // PROPERTIES
-    /** The constant Integer NB_PLACES_MAX_INVITATION */
-    public static final Integer NB_PLACES_MAX_INVITATION = AppPropertiesService.getPropertyInt( "stock-billetterie.nb_places_max.invitation",
-            2 );
-
-    /** The constant Integer NB_PLACES_MAX_INVITATION_SPECTACLE */
-    public static final Integer NB_PLACES_MAX_INVITATION_SPECTACLE = AppPropertiesService.getPropertyInt( "stock-billetterie.nb_places_max.invitation_enfant",
-            2 );
-
-    /** The constant Integer NB_PLACES_MAX_TARIF_REDUIT */
-    public static final Integer NB_PLACES_MAX_TARIF_REDUIT = AppPropertiesService.getPropertyInt( "stock-billetterie.nb_places_max.tarif_reduit",
-            2 );
-
     // BEANS
     private static final String BEAN_STOCK_TICKETS_SEANCE_SERVICE = "stock-tickets.seanceService";
 
@@ -614,18 +601,7 @@ public class PurchaseJspBean extends AbstractJspBean
      */
     private Integer maximizeQuantity( SeanceDTO seance, Integer actualQuantity )
     {
-        if ( seance.getTypeName(  ).equals( TicketsConstants.OFFER_TYPE_INVITATION ) )
-        {
-            actualQuantity = Math.min( actualQuantity, NB_PLACES_MAX_INVITATION );
-        }
-        else if ( seance.getTypeName(  ).equals( TicketsConstants.OFFER_TYPE_INVITATION_SPECTACLE_ENFANT ) )
-        {
-            actualQuantity = Math.min( actualQuantity, NB_PLACES_MAX_INVITATION_SPECTACLE );
-        }
-        else
-        {
-            actualQuantity = Math.min( actualQuantity, NB_PLACES_MAX_TARIF_REDUIT );
-        }
+        actualQuantity = Math.min( actualQuantity, seance.getMaxTickets(  ) );
 
         return actualQuantity;
     }

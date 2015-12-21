@@ -41,6 +41,7 @@ import fr.paris.lutece.plugins.stock.commons.dao.PaginationProperties;
 import fr.paris.lutece.plugins.stock.commons.exception.BusinessException;
 import fr.paris.lutece.plugins.stock.commons.exception.FunctionnalException;
 import fr.paris.lutece.plugins.stock.modules.billetterie.utils.constants.BilletterieConstants;
+import fr.paris.lutece.plugins.stock.modules.tickets.business.PartnerDTO;
 import fr.paris.lutece.plugins.stock.modules.tickets.business.SeanceDTO;
 import fr.paris.lutece.plugins.stock.modules.tickets.business.SeanceFilter;
 import fr.paris.lutece.plugins.stock.modules.tickets.business.ShowDTO;
@@ -74,17 +75,13 @@ import fr.paris.lutece.util.html.HtmlTemplate;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
-
 import org.apache.log4j.Logger;
-
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-
 import java.lang.reflect.Method;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -145,6 +142,11 @@ public class ShowJspBean extends AbstractJspBean
 
     /** The Constant MARK_LIST_PROVIDERS. */
     private static final String MARK_LIST_PROVIDERS = "provider_list";
+    private static final String MARK_CONTACT_LIST = "contact_list";
+    
+    private static final String PARAMETER_PRODUCT_ID_PROVIDER = "idProvider";
+    public static final String PARAMETER_REFRESH_CONTACT = "refresh_contact";
+
     private static final String MARK_URL_POSTER = "url_poster";
 
     /** The Constant MARK_PUBLIC_LIST. */
@@ -354,6 +356,15 @@ public class ShowJspBean extends AbstractJspBean
 
         return dataTableToUse;
     }
+    
+    private ReferenceList getContactComboList( int idProvider )
+    {
+        PartnerDTO findById = _serviceProvider.findById( idProvider );
+        ReferenceList contactComboList = ListUtils.toReferenceList( findById.getContactList(  ),
+                BilletterieConstants.ID, BilletterieConstants.NAME, StockConstants.EMPTY_STRING );
+
+        return contactComboList;
+    }
 
     /**
      * Returns the form to modify a provider.
@@ -388,6 +399,24 @@ public class ShowJspBean extends AbstractJspBean
 
                 int nIdProduct = Integer.parseInt( strProductId );
                 product = _serviceProduct.findById( nIdProduct );
+                
+                int idProvider = product.getIdProvider(  );
+
+                if ( request.getParameter( PARAMETER_REFRESH_CONTACT ) != null )
+                {
+                    //case of wanting to get the contact which can be link to the product
+                    populate( product, request );
+                    String strIdProvider = request.getParameter( PARAMETER_PRODUCT_ID_PROVIDER );
+                    int nIdSelectedProvider = Integer.valueOf( strIdProvider );
+
+                    if ( nIdSelectedProvider >= 0 )
+                    {
+                        idProvider = nIdSelectedProvider;
+                    }
+                    
+                }
+                
+                model.put( MARK_CONTACT_LIST, getContactComboList( idProvider ) );
 
                 _serviceProduct.correctProduct( product );
             }
@@ -401,15 +430,40 @@ public class ShowJspBean extends AbstractJspBean
                 {
                     product.setIdProvider( Integer.parseInt( strPartnerId ) );
                 }
+                else
+                {
+                    populate( product, request );
+                }
 
                 // If creation and filter "Categorie" exist, pre-select the category
                 if ( StringUtils.isNotBlank( strCategoryId ) )
                 {
                     product.setIdCategory( Integer.parseInt( strCategoryId ) );
                 }
+                
+                if ( ( request.getParameter( PARAMETER_PRODUCT_ID_PROVIDER ) != null ) &&
+                        !request.getParameter( PARAMETER_PRODUCT_ID_PROVIDER ).equals( "-1" ) )
+                {
+                    Integer idProvider = Integer.valueOf( request.getParameter( PARAMETER_PRODUCT_ID_PROVIDER ) );
+
+                    model.put( MARK_CONTACT_LIST, getContactComboList( idProvider ) );
+                }
             }
         }
 
+        if ( request instanceof MultipartHttpServletRequest )
+        {
+	        MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
+	        FileItem fileItem = multipartRequest.getFile( PARAMETER_POSTER );
+	        
+	        if ( ( fileItem != null ) && ( fileItem.getSize(  ) > 0 ) )
+	        {
+	        	//writePoster( request, product );
+	        	product.setPosterName( fileItem.getName() );
+	        	populate( product, request );
+	        }
+        }
+        
         // Combo
         List<String> orderList = new ArrayList<String>(  );
         orderList.add( BilletterieConstants.NAME );
@@ -480,7 +534,7 @@ public class ShowJspBean extends AbstractJspBean
         {
             // Get and save the poster into temp files
             File[] filePosterArray = writePoster( request, product );
-
+            
             // Controls mandatory fields
             validateBilletterie( product );
 
@@ -494,6 +548,7 @@ public class ShowJspBean extends AbstractJspBean
         {
             return manageFunctionnalException( request, e, JSP_SAVE_PRODUCT );
         }
+
 
         return doGoBack( request );
     }

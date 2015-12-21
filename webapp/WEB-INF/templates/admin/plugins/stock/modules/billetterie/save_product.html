@@ -59,9 +59,36 @@
 				<label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" >#i18n{module.stock.billetterie.save_product.provider} * :</label>
 				<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
 				        <@combo name="idProvider" default_value="${(product.idProvider!)}" items=provider_list! />
+				        <input type="submit" name="refresh_contact" value="#i18n{module.stock.billetterie.message.search.contact}" class="btn btn-primary btn-small" />
 				</div>           
 			</div>
-				
+				<#if contact_list?has_content>
+					<div class="form-group">
+				           <label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3">#i18n{module.stock.billetterie.save_product.contact} :</label>
+				           <div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
+						<select name="idContact" <#if contact_list?size &gt; 2 >multiple="multiple"</#if>>
+				           		<#list contact_list as contact>
+				           			
+					           		<option value="${contact.code}"
+				           			<#if product?has_content && product.idContact?has_content >
+					           			<#list product.idContact as selectedContact>
+					           				<#if selectedContact?string == contact.code>
+					           					selected="selected"
+					           					<#break>
+					           				</#if>
+					           			</#list>
+				           			</#if>
+					           		>
+					           			${contact.name}
+					           		</option>
+				           		</#list>
+					        </select>
+					        <#if contact_list?size &gt; 2 >
+					        	<span class="help-block">#i18n{module.stock.billetterie.save_offer.contact.help}</span>
+					        </#if>
+					   </div>
+				        </div>
+			        </#if>
 			<div class="form-group">
 				<label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3">#i18n{module.stock.billetterie.save_product.with} :</label>
 				<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
@@ -85,26 +112,27 @@
 					<textarea id="description" name="description" cols="90" rows="10" maxlength="2000" class="richtext">${product.description!}</textarea>
 				</div>
 			</div>
-			<div class="form-group">
-				<label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" >#i18n{module.stock.billetterie.save_product.start} * :</label>
-				<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
-					<span class="add-on">
-						<i class="icon-calendar"></i>
-					</span>
-					<input type="text" name="startDate" id="date_start" class="input-small" maxlength="10" value="${product.startDate!}"/>
-				</div>
-			</div>
-			<div class="form-group">
-				<label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" >#i18n{module.stock.billetterie.save_product.end} * :</label>
-				<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
-					<span class="add-on">
-						<i class="icon-calendar"></i>
+			<div class="input-daterange">
+				<div class="form-group">
+					<label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" >#i18n{module.stock.billetterie.save_product.start} * :</label>
+					<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
+						<span class="add-on">
+							<i class="icon-calendar"></i>
 						</span>
-						<input type="text" name="endDate" id="date_end" class="input-small" maxlength="10" value="${product.endDate!}"/>
+						<input type="text" name="startDate" id="date_start" class="input-small" maxlength="10" value="${product.startDate!}"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" >#i18n{module.stock.billetterie.save_product.end} * :</label>
+					<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
+						<span class="add-on">
+							<i class="icon-calendar"></i>
+							</span>
+							<input type="text" name="endDate" id="date_end" class="input-small" maxlength="10" value="${product.endDate!}"/>
+					</div>
 				</div>
 			</div>
-			<@getDatePickerBootstrap idField="date_start" language=locale />
-			<@getDatePickerBootstrap idField="date_end" language=locale />
+			<@getDatePickerRangeBootstrap language="${locale!}" />
 			<div class="form-group">
 				<label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3"  >#i18n{module.stock.billetterie.save_product.website} :</label>
 				<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">

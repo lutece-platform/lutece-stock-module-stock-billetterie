@@ -120,6 +120,7 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
     private static final String MARK_USER_EMAIL = "user_email";
     private static final String MARK_DISTRICT = "district";
     private static final String MARK_MESSAGE_USER_BAN = "messageUserBan";
+    private static final String MARK_NB_RESERVATION_LIST = "nb_reservation_list";
 
     // Actions
     private static final String ACTION_SHOW_PAGE = "fiche-spectacle";
@@ -133,10 +134,6 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
     // Properties
     private static final String PROPERTY_POSTER_PATH = "stock-billetterie.poster.path";
     private static final String PROPERTY_POSTER_TB_PATH = "stock-billetterie.poster.tb.path";
-    private static final String PROPERTY_NB_PLACES_MAX_TARIF_REDUIT = "stock-billetterie.nb_places_max.tarif_reduit";
-    private static final String PROPERTY_NB_PLACES_MAX_INVITATION_ENFANT = "stock-billetterie.nb_places_max.invitation_enfant";
-    private static final String PROPERTY_NB_PLACES_MAX_INVITATION = "stock-billetterie.nb_places_max.invitation";
-
     // Order filters
     private static final String ORDER_FILTER_DATE = "date";
     private static final String ORDER_FILTER_DATE_END = "dateEnd";
@@ -145,9 +142,7 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
     // Constants
     private static final String TITLE_CURRENT_SHOW_LIST = "module.stock.billetterie.show_list.aLaffiche.title";
     private static final String TITLE_COME_SHOW_LIST = "module.stock.billetterie.show_list.aVenir.title";
-    private static final String MAX_RESERVATION_INVITATION = "nb_max_invitation";
-    private static final String MAX_RESERVATION_INVITATION_ENFANT = "nb_max_invitation_enfant";
-    private static final String MAX_RESERVATION_TARIF_REDUIT = "nb_max_tarif_reduit";
+    
     private static final String STRING_TRUE = "true";
     private static final int BOOKING_OPENED = 0;
     private static final int BOOKING_TO_COME = 1;
@@ -391,17 +386,12 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
         Map<String, Object> model = new HashMap<String, Object>(  );
 
         model.put( MARK_SEANCE_LIST, seanceList );
+        
+        SeanceDTO currentSeance = seanceList.get( 0 );
 
-        // Add nb max purchase per offer type
-        ReferenceList quantityList = getNumberList( AppPropertiesService.getPropertyInt( 
-                    PROPERTY_NB_PLACES_MAX_INVITATION, 2 ) );
-        model.put( MAX_RESERVATION_INVITATION, quantityList );
-
-        quantityList = getNumberList( AppPropertiesService.getPropertyInt( PROPERTY_NB_PLACES_MAX_INVITATION_ENFANT, 2 ) );
-        model.put( MAX_RESERVATION_INVITATION_ENFANT, quantityList );
-
-        quantityList = getNumberList( AppPropertiesService.getPropertyInt( PROPERTY_NB_PLACES_MAX_TARIF_REDUIT, 2 ) );
-        model.put( MAX_RESERVATION_TARIF_REDUIT, quantityList );
+        // Add nb of purchase per offer type
+        ReferenceList quantityList = getNumberList( currentSeance.getMinTickets(), currentSeance.getMaxTickets() );
+        model.put( MARK_NB_RESERVATION_LIST, quantityList );
 
         model.put( MARK_SEANCE_DATE, sDateSeance );
         model.put( MARK_SHOW, show );
@@ -422,6 +412,28 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
         ReferenceList quantityList = new ReferenceList(  );
 
         for ( Integer i = 0; i <= quantity; i++ )
+        {
+            ReferenceItem refItem = new ReferenceItem(  );
+            refItem.setCode( i.toString(  ) );
+            refItem.setName( i.toString(  ) );
+            quantityList.add( refItem );
+        }
+
+        return quantityList;
+    }
+    
+    /**
+     * Return a list of number from min to max
+     *
+     * @param min the minimum
+     * @param max the maximum
+     * @return list of number
+     */
+    private ReferenceList getNumberList( Integer min, Integer max )
+    {
+        ReferenceList quantityList = new ReferenceList(  );
+
+        for ( Integer i = min; i <= max; i++ )
         {
             ReferenceItem refItem = new ReferenceItem(  );
             refItem.setCode( i.toString(  ) );

@@ -1,8 +1,7 @@
 <#macro placesNumberChooser idType idSeance>
-	<#assign types = [nb_max_tarif_reduit,nb_max_invitation,nb_max_invitation_enfant] >
 	<#if (idType >= 1) && (idType <=3) >
 		<select class="" name="nb_places">
-			<#list types[idType-1] as nb>
+			<#list nb_reservation_list as nb>
 				<option>${nb.code!}</option>
 			</#list>
 		</select>

@@ -43,19 +43,21 @@
 						<@showFilterSelect list=category_list id="filter_category" name="idCategory" value="${filter.idCategory!}" label="#i18n{module.stock.billetterie.manage_product.filter.category}" />
 
 						<div class="control-group">
-							<label for="date_from">#i18n{module.stock.billetterie.manage_product.filter.date_from} : </label>
-							<div class="input-prepend">
-								<span class="add-on">
-									<i class="icon-calendar"></i>
-								</span>
-								<input class="input-small" type="text" name="dateFrom" id="date_from" maxlength="10" value="${filter.dateFrom!}"/>
-							</div>
-								#i18n{module.stock.billetterie.manage_product.filter.date_to} : 
-							<div class="input-prepend">
-								<span class="add-on">
-									<i class="icon-calendar"></i>
-								</span>
-								<input class="input-small" type="text" name="dateTo" id="date_to" maxlength="10" value="${filter.dateTo!}"/>
+							<div class="input-daterange">
+								<label for="date_from">#i18n{module.stock.billetterie.manage_product.filter.date_from} : </label>
+								<div class="input-prepend">
+									<span class="add-on">
+										<i class="icon-calendar"></i>
+									</span>
+									<input class="input-small" type="text" name="dateFrom" id="date_from" maxlength="10" value="${filter.dateFrom!}"/>
+								</div>
+									#i18n{module.stock.billetterie.manage_product.filter.date_to} : 
+								<div class="input-prepend">
+									<span class="add-on">
+										<i class="icon-calendar"></i>
+									</span>
+									<input class="input-small" type="text" name="dateTo" id="date_to" maxlength="10" value="${filter.dateTo!}"/>
+								</div>
 							</div>
 						</div>
 						<div class="control-group">
@@ -73,5 +75,4 @@
 		</fieldset>
 	</div>
 </div>
-<@getDatePickerBootstrap idField="date_from" language="${locale!}"/>
-<@getDatePickerBootstrap idField="date_to" language="${locale!}"/>
+<@getDatePickerRangeBootstrap language="${locale!}" />

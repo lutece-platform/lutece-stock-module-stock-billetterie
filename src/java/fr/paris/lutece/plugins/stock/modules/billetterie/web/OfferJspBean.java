@@ -39,8 +39,10 @@ import fr.paris.lutece.plugins.stock.business.product.ProductFilter;
 import fr.paris.lutece.plugins.stock.business.purchase.PurchaseFilter;
 import fr.paris.lutece.plugins.stock.commons.ResultList;
 import fr.paris.lutece.plugins.stock.commons.dao.PaginationProperties;
+import fr.paris.lutece.plugins.stock.commons.exception.BusinessException;
 import fr.paris.lutece.plugins.stock.commons.exception.FunctionnalException;
 import fr.paris.lutece.plugins.stock.modules.billetterie.utils.constants.BilletterieConstants;
+import fr.paris.lutece.plugins.stock.modules.tickets.business.Contact;
 import fr.paris.lutece.plugins.stock.modules.tickets.business.NotificationDTO;
 import fr.paris.lutece.plugins.stock.modules.tickets.business.PartnerDTO;
 import fr.paris.lutece.plugins.stock.modules.tickets.business.ReservationDTO;
@@ -74,14 +76,11 @@ import fr.paris.lutece.util.datatable.DataTableManager;
 import fr.paris.lutece.util.html.HtmlTemplate;
 
 import org.apache.commons.lang.StringUtils;
-
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.io.OutputStream;
-
 import java.lang.reflect.Method;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -181,7 +180,7 @@ public class OfferJspBean extends AbstractJspBean
     private static final String MESSAGE_DELETE_MASSE_OFFER_NO_OFFER_CHECK = "module.stock.billetterie.message.deleteMasseOffer.noCaseCheck";
     private static final String MESSAGE_SEARCH_PURCHASE_DATE = "module.stock.billetterie.message.search.purchase.date";
     private static final String MESSAGE_NOTIFICATION_OFFER_PRODUCT = "module.stock.billetterie.notification.offer.product";
-
+    private static final String MESSAGE_ERROR_TICKETS_RANGE = "module.stock.billetterie.message.error.tickets.range";
     // BEANS
     private static final String BEAN_STOCK_TICKETS_SHOW_SERVICE = "stock-tickets.showService";
     private static final String BEAN_STOCK_TICKETS_SEANCE_SERVICE = "stock-tickets.seanceService";
@@ -426,6 +425,7 @@ public class OfferJspBean extends AbstractJspBean
             String strOfferId = request.getParameter( PARAMETER_OFFER_ID );
             String strDuplicate = request.getParameter( PARAMETER_OFFER_DUPLICATE );
             String strProductId = request.getParameter( PARAMETER_OFFER_PRODUCT_ID );
+            ShowDTO selectedProduct;
 
             //Modification of an existing offer
             if ( StringUtils.isNotEmpty( strOfferId ) )
@@ -447,20 +447,21 @@ public class OfferJspBean extends AbstractJspBean
 
                     if ( nIdSelectedProvider >= 0 )
                     {
-                        idProvider = _serviceProduct.findById( nIdSelectedProvider ).getIdProvider(  );
+                        selectedProduct = _serviceProduct.findById( nIdSelectedProvider );
                     }
                     else
                     {
-                        idProvider = offer.getProduct(  ).getIdProvider(  );
+                        selectedProduct = _serviceProduct.findById( offer.getProduct(  ).getId(  ) );
                     }
                 }
                 else
                 {
                     //case of taking the contact linking to the offer
-                    idProvider = offer.getProduct(  ).getIdProvider(  );
+                    selectedProduct = _serviceProduct.findById( offer.getProduct(  ).getId(  ) );
                 }
-
-                model.put( MARK_CONTACT_LIST, getContactComboList( idProvider ) );
+                idProvider = selectedProduct.getIdProvider();
+                
+                model.put( MARK_CONTACT_LIST, getContactComboList( idProvider, selectedProduct ) );
 
                 // Duplicate offer, set id to 0 to create a new offer
                 if ( StringUtils.isNotEmpty( strDuplicate ) )
@@ -493,7 +494,7 @@ public class OfferJspBean extends AbstractJspBean
 
                     ShowDTO productChoose = _serviceProduct.findById( idProduct );
                     int idProvider = productChoose.getIdProvider(  );
-                    model.put( MARK_CONTACT_LIST, getContactComboList( idProvider ) );
+                    model.put( MARK_CONTACT_LIST, getContactComboList( idProvider, productChoose ) );
                 }
             }
         }
@@ -529,10 +530,30 @@ public class OfferJspBean extends AbstractJspBean
         return getAdminPage( template.getHtml(  ) );
     }
 
-    private ReferenceList getContactComboList( int idProvider )
+    /**
+     * Get only the selected contacts in the product, not all the contacts from the provider of the product
+     * @param idProvider
+     * @param product
+     * @return The ReferenceList
+     */
+    private ReferenceList getContactComboList( int idProvider, ShowDTO product )
     {
         PartnerDTO findById = _servicePartner.findById( idProvider );
-        ReferenceList contactComboList = ListUtils.toReferenceList( findById.getContactList(  ),
+        List<Contact> contactList = findById.getContactList(  );
+        Integer[] selectedContacts =  product.getIdContact(  );
+        List<Contact> resultContactList = new ArrayList<Contact>(  );
+       
+        for ( Contact contact : contactList )
+        {
+            for ( Integer contactId : selectedContacts )
+            {
+                if ( contactId == contact.getId(  ) )
+                {
+                    resultContactList.add( contact );
+                }
+            }
+        }
+        ReferenceList contactComboList = ListUtils.toReferenceList( resultContactList,
                 BilletterieConstants.ID, BilletterieConstants.NAME, StockConstants.EMPTY_STRING );
 
         return contactComboList;
@@ -558,6 +579,11 @@ public class OfferJspBean extends AbstractJspBean
         {
             // Controls mandatory fields
             validateBilletterie( offer );
+            if ( offer.getMinTickets(  ) > offer.getMaxTickets(  ) )
+            {
+                throw new BusinessException( offer, MESSAGE_ERROR_TICKETS_RANGE );
+            }
+            
             _serviceOffer.doSaveOffer( offer );
         }
         catch ( FunctionnalException e )

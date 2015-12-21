@@ -47,7 +47,7 @@
 							<label for="filter_product">#i18n{module.stock.billetterie.list_offres.filter.product} : </label>
 							<input class="span" type="text" name="productName" id="filter_product" value="${(filter.productName)!}" />
 						</p>
-						<p>
+						<div class="input-daterange">
 							<label for="filter_date_beginOffer">#i18n{module.stock.billetterie.list_purchase.filter.offerDate} : </label>
 							<div class="input-prepend">
 								<span class="add-on">
@@ -62,8 +62,8 @@
 								</span>
 								<input class="input-small" type="text" name="dateEndOffer" id="filter_date_endOffer" value="${(filter.dateEndOffer?date)!}"/>
 							</div>
-						</p>
-						<p>
+						</div>
+						<div class="input-daterange">
 							<label for="filter_date_begin">#i18n{module.stock.billetterie.list_purchase.filter.purchaseDate} : </label>
 							<div class="input-prepend">
 								<span class="add-on">
@@ -78,7 +78,7 @@
 								</span>
 								<input class="input-small" type="text" name="dateEnd" id="filter_date_end" value="${(filter.dateEnd?date)!}"/>
 							</div>
-						</p>
+						</div>
 						<p>
 							<label>#i18n{module.stock.billetterie.list_purchase.filter.offerType} : </label>
 				        	<@comboWithParams additionalParameters="class='span'" name="idGenre" default_value="${filter.idGenre!}" items=offerGenre_list! />
@@ -99,7 +99,4 @@
 </div>
 <br/>
 <br/>
-<@getDatePickerBootstrap idField="filter_date_beginOffer" language="${locale!}" />
-<@getDatePickerBootstrap idField="filter_date_endOffer" language="${locale!}" />
-<@getDatePickerBootstrap idField="filter_date_begin" language="${locale!}" />
-<@getDatePickerBootstrap idField="filter_date_end" language="${locale!}" />
+<@getDatePickerRangeBootstrap language="${locale!}" />

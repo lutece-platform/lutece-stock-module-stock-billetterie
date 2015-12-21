@@ -11,6 +11,7 @@
 			    	<input type="hidden" id="offer_statut" name="statut" value="${offer.statut!}"/>
 			    	<input type="hidden" id="jsp_back" name="jsp_back" value="${jsp_back!}"/>
 			    	<input type="hidden" id="offer_description" name="description" value=""/>
+			 	</div>
 			 	<div class="form-group">
 					<label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="offer_name" >#i18n{module.stock.billetterie.save_offer.name} :</label>
 					<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
@@ -85,14 +86,27 @@
 					</div>
 				</div>
 			        <div class="form-group">
-					<label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="offer_reductPrice" >#i18n{module.stock.billetterie.save_offer.reductPrice} :</label>
-					<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
-						<#setting locale="en_US">
-						<input type="text" id="offer_reductPrice" name="reductPrice" class="input-small" maxlength="50"  value="${(offer.reductPrice?string.number)!}"/>
-						<#setting locale=locale>
+						<label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="offer_reductPrice" >#i18n{module.stock.billetterie.save_offer.reductPrice} :</label>
+						<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
+							<#setting locale="en_US">
+							<input type="text" id="offer_reductPrice" name="reductPrice" class="input-small" maxlength="50"  value="${(offer.reductPrice?string.number)!}"/>
+							<#setting locale=locale>
+						</div>
 					</div>
-				</div>
-			</div>
+					<div class="form-group">
+						<label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="offer_minTickets" >#i18n{module.stock.billetterie.save_offer.minTickets} * :</label>
+						<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
+							<input type="text" id="offer_minTickets" name="minTickets" class="input-small" maxlength="2"  value="${offer.minTickets!}"/>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="offer_maxTickets" >#i18n{module.stock.billetterie.save_offer.maxTickets} * :</label>
+						<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
+							<input type="text" id="offer_maxTickets" name="maxTickets" class="input-small" maxlength="2"  value="${offer.maxTickets!}"/>
+						</div>
+					</div>
+			</fieldset>
+			<fieldset>
 				<div class="form-group">
 					<div class="col-xs-12 col-sm-12 col-md-offset-3 col-lg-offset-3">
 						<button type="submit" name="save" class="btn btn-primary btn-small" tabindex="3" >
