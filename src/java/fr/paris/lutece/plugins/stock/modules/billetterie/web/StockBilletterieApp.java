@@ -388,9 +388,10 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
         model.put( MARK_SEANCE_LIST, seanceList );
         
         SeanceDTO currentSeance = seanceList.get( 0 );
-
+        Integer nMaxPossibleTickets = Math.min( currentSeance.getMaxTickets(  ), currentSeance.getQuantity(  ) );
+        
         // Add nb of purchase per offer type
-        ReferenceList quantityList = getNumberList( currentSeance.getMinTickets(), currentSeance.getMaxTickets() );
+        ReferenceList quantityList = getNumberList( currentSeance.getMinTickets(  ), nMaxPossibleTickets );
         model.put( MARK_NB_RESERVATION_LIST, quantityList );
 
         model.put( MARK_SEANCE_DATE, sDateSeance );
