@@ -54,6 +54,8 @@ import fr.paris.lutece.plugins.stock.utils.DateUtils;
 import fr.paris.lutece.plugins.stock.utils.ListUtils;
 import fr.paris.lutece.plugins.stock.utils.NumberUtils;
 import fr.paris.lutece.plugins.stock.utils.constants.StockConstants;
+import fr.paris.lutece.portal.business.user.AdminUser;
+import fr.paris.lutece.portal.business.user.AdminUserHome;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
@@ -78,6 +80,7 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -210,7 +213,10 @@ public class PurchaseJspBean extends AbstractJspBean
     public static final String MARK_BASE_URL = "base_url";
     public static final String MARK_OFFERS_AVAILABLES = "offers_availables";
     public static final String MARK_NEW_ID_OFFER = "newIdOffer";
-
+    
+    /** The constant String MARK_SEANCE */
+    public static final String MARK_SEANCE = "seance";
+    
     // BEANS
     private static final String BEAN_STOCK_TICKETS_SEANCE_SERVICE = "stock-tickets.seanceService";
 
@@ -225,6 +231,7 @@ public class PurchaseJspBean extends AbstractJspBean
     private static final String TEMPLATE_MANAGE_PURCHASES = "admin/plugins/stock/modules/billetterie/manage_purchases.html";
     private static final String TEMPLATE_SAVE_PURCHASE = "admin/plugins/stock/modules/billetterie/save_purchase.html";
     private static final String TEMPLATE_NOTIFICATION_BOOKING = "admin/plugins/stock/modules/billetterie/notification_booking.html";
+    private static final String TEMPLATE_NOTIFICATION_ADMIN_OFFER_QUANTITY = "notification_admin_offer_quantity.html";
 
     // PAGE TITLES
     private static final String PROPERTY_PAGE_TITLE_MANAGE_PURCHASE = "module.stock.billetterie.list_purchase.title";
@@ -242,6 +249,7 @@ public class PurchaseJspBean extends AbstractJspBean
     private static final String MESSAGE_NOTIFY_PURCHASE_CONFIRMATION = "module.stock.billetterie.message.notifyPurchase.confirmation";
     private static final String MESSAGE_TITLE_NOTIFY_PURCHASE_CONFIRMATION = "module.stock.billetterie.message.title.notifyPurchase.confirmation";
     private static final String MESSAGE_DELETE_MASSE_PURCHASE_NO_CHECK = "module.stock.billetterie.message.deleteMassePurchase.noCaseCheck";
+    private static final String MESSAGE_NOTIFICATION_ADMIN_OFFER_QUANTITY_SUBJECT = "module.stock.billetterie.notification.admin.offer.quantity.subject";
 
     // ORDER FILTERS
     private static final String ORDER_FILTER_DATE = "date";
@@ -667,6 +675,9 @@ public class PurchaseJspBean extends AbstractJspBean
 
             //le test vient d'être fait quant à la possibilité de faire cette réservation, il faut donc la créer ou mettre à jour l'ancienne
             _servicePurchase.doSavePurchase( purchase, request.getSession(  ).getId(  ) );
+
+            // Send a notification when the remaining tickets cannot be purchased
+            sendNotificationToAdmins( request, purchase );
         }
         catch ( FunctionnalException e )
         {
@@ -680,6 +691,44 @@ public class PurchaseJspBean extends AbstractJspBean
         return redirection.getUrl(  );
     }
 
+    /**
+     * Send a notification to all the admins when all the tickets of an
+     * offer are booked
+     * @param request The HTTP request
+     * @param purchase
+     */
+    private void sendNotificationToAdmins( HttpServletRequest request, ReservationDTO purchase )
+    {
+        SeanceDTO seance = this._serviceOffer.findSeanceById( purchase.getOffer(  ).getId(  ) );
+
+        if ( seance != null && seance.getQuantity(  ) < seance.getMinTickets(  ) )
+        {
+            //Generate mail content
+            Map<String, Object> model = new HashMap<String, Object>(  );
+            model.put( MARK_SEANCE, seance );
+            model.put( MARK_BASE_URL, AppPathService.getBaseUrl( request ) );
+
+            HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_NOTIFICATION_ADMIN_OFFER_QUANTITY, request.getLocale(  ),
+                    model );
+
+            Collection<AdminUser> listUsers = (List<AdminUser>) AdminUserHome.findUserList(  );
+
+            for ( AdminUser adminUser : listUsers )
+            {
+                // Create mail object
+                NotificationDTO notificationDTO = new NotificationDTO(  );
+                notificationDTO.setRecipientsTo( adminUser.getEmail(  ) );
+
+                String[] args = new String[] { String.valueOf( seance.getId(  ) ) };
+                notificationDTO.setSubject( I18nService.getLocalizedString( MESSAGE_NOTIFICATION_ADMIN_OFFER_QUANTITY_SUBJECT, args,
+                        request.getLocale(  ) ) );
+                notificationDTO.setMessage( template.getHtml(  ) );
+
+                // Send it
+                _serviceNotification.send( notificationDTO );
+            }
+        }
+    }
     /**
      * Return the url of the JSP which called the last action and release
      * reservation from session

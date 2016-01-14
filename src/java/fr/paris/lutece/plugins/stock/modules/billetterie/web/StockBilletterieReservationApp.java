@@ -50,6 +50,8 @@ import fr.paris.lutece.plugins.stock.modules.tickets.service.PurchaseService;
 import fr.paris.lutece.plugins.stock.modules.tickets.utils.constants.TicketsConstants;
 import fr.paris.lutece.plugins.stock.service.IPurchaseSessionManager;
 import fr.paris.lutece.plugins.stock.utils.DateUtils;
+import fr.paris.lutece.portal.business.user.AdminUser;
+import fr.paris.lutece.portal.business.user.AdminUserHome;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.message.SiteMessage;
 import fr.paris.lutece.portal.service.message.SiteMessageException;
@@ -74,6 +76,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -110,6 +113,7 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
     private static final String MESSAGE_NOTIFICATION_REQUEST_SUBJECT = "module.stock.billetterie.notification.request.subject";
     private static final String MESSAGE_CAUTION_TIME_PURCHASE = "module.stock.billetterie.message.caution.time.max";
     private static final String MESSAGE_CAUTION_TIME_PURCHASE_PLURAL = "module.stock.billetterie.message.caution.time.max.plural";
+    private static final String MESSAGE_NOTIFICATION_ADMIN_OFFER_QUANTITY_SUBJECT = "module.stock.billetterie.notification.admin.offer.quantity.subject";
 
     // Parameters
     private static final String PARAMETER_SEANCE_DATE = "seance_date";
@@ -145,6 +149,7 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
     private static final String MARK_PURCHASER = "purchaser";
     private static final String MARK_PAGINATOR = "paginator";
     private static final String MARK_CAUTION_TIME_PURCHASE = "cautionTimePurchase";
+    private static final String MARK_SEANCE = "seance";
 
     // Templates
     private static final String TEMPLATE_DIR = "skin/plugins/stock/modules/billetterie/";
@@ -152,6 +157,8 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
     private static final String TEMPLATE_MY_BOOKINGS = "my_bookings.html";
     private static final String TEMPLATE_CONFIRM_BOOKING = "confirm_booking.html";
     private static final String TEMPLATE_NOTIFICATION_REQUEST = "notification_request.html";
+    private static final String TEMPLATE_NOTIFICATION_ADMIN_OFFER_QUANTITY = "notification_admin_offer_quantity.html";
+
     private static final String ENCODING_UTF_8 = "utf-8";
     private final ISeanceService _offerService = SpringContextService.getContext(  ).getBean( ISeanceService.class );
     private final IPurchaseService _purchaseService = SpringContextService.getContext(  ).getBean( IPurchaseService.class );
@@ -414,6 +421,11 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
                     bookingList = _purchaseService.doSavePurchaseList( bookingList, request.getSession(  ).getId(  ) );
                     sendBookingNotification( bookingList, request );
 
+                    for ( ReservationDTO booking : bookingList )
+                    {
+                        sendNotificationToAdmins( request, booking );
+                    }
+
                     // Go to page "mes reservations"
                     UrlItem url = new UrlItem( AppPathService.getBaseUrl( request ) + JSP_PORTAL );
                     url.addParameter( PARAMETER_PAGE, PAGE_BOOKING );
@@ -467,6 +479,45 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
         }
 
         return returnUrl;
+    }
+
+    /**
+     * Send a notification to all the admins when all the tickets of an
+     * offer are booked
+     * @param request The HTTP request
+     * @param purchase
+     */
+    private void sendNotificationToAdmins( HttpServletRequest request, ReservationDTO purchase )
+    {
+        SeanceDTO seance = this._offerService.findSeanceById( purchase.getOffer(  ).getId(  ) );
+
+        if ( seance != null && seance.getQuantity(  ) < seance.getMinTickets(  ) )
+        {
+            //Generate mail content
+            Map<String, Object> model = new HashMap<String, Object>(  );
+            model.put( MARK_SEANCE, seance );
+            model.put( MARK_BASE_URL, AppPathService.getBaseUrl( request ) );
+
+            HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_NOTIFICATION_ADMIN_OFFER_QUANTITY, request.getLocale(  ),
+                    model );
+
+            Collection<AdminUser> listUsers = (List<AdminUser>) AdminUserHome.findUserList(  );
+
+            for ( AdminUser adminUser : listUsers )
+            {
+                // Create mail object
+                NotificationDTO notificationDTO = new NotificationDTO(  );
+                notificationDTO.setRecipientsTo( adminUser.getEmail(  ) );
+
+                String[] args = new String[] { String.valueOf( seance.getId(  ) ) };
+                notificationDTO.setSubject( I18nService.getLocalizedString( MESSAGE_NOTIFICATION_ADMIN_OFFER_QUANTITY_SUBJECT, args,
+                        request.getLocale(  ) ) );
+                notificationDTO.setMessage( template.getHtml(  ) );
+
+                // Send it
+                _notificationService.send( notificationDTO );
+            }
+        }
     }
 
     /**
