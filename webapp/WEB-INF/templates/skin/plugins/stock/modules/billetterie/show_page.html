@@ -100,6 +100,11 @@
 					</fieldset>
 					<br />
 					<fieldset >
+					   @Extender[${page_id},PAGE,hit,{show:true}]@
+                       @Extender[${page_id},PAGE,rating,{show:"all"}]@
+					</fieldset>
+                    <br />
+                    <fieldset >
 						<div id="commentExtend">
 							@Extender[${show.id!},stock-product,comment]@
 						</div>
