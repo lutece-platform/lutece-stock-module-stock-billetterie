@@ -2,6 +2,7 @@
 <#macro columnActionsProduct item >
   	<@showButton type="see" title="module.stock.billetterie.manage_product.linkSeance" href="jsp/admin/plugins/stock/modules/billetterie/ManageOffers.jsp?productId=${item.id!}" />
 	<@showButton type="edit" title="module.stock.billetterie.manage_product.linkModifyProduct" href="jsp/admin/plugins/stock/modules/billetterie/SaveProduct.jsp?product_id=${item.id}" />
+  	<@showButton type="comment"  title="module.stock.billetterie.manage_product.buttonSeeComments" href="jsp/admin/plugins/extend/ViewExtenderInfo.jsp?extenderType=comment&idExtendableResource=${item.id}&extendableResourceType=stock-product&from_url=jsp/admin/plugins/stock/modules/billetterie/ManageProducts.jsp" />
   	<@showButton type="delete"  title="module.stock.billetterie.manage_product.linkDeleteProduct" href="jsp/admin/plugins/stock/modules/billetterie/DeleteProduct.jsp?product_id=${item.id}" />
 </#macro>
 
@@ -29,6 +30,10 @@
 						<i class="icon-plus icon-white" ></i>
 						<span class="hidden-phone"> #i18n{module.stock.billetterie.manage_product.buttonCreateProduct}</span>
 					</a>
+					<a class="btn btn-small btn-primary" href="jsp/admin/plugins/extend/ViewExtenderInfo.jsp?extenderType=comment&idExtendableResource=*&extendableResourceType=stock-product&from_url=jsp/admin/plugins/stock/modules/billetterie/ManageProducts.jsp" >
+                        <i class="icon-comment icon-white" ></i>
+                        <span class="hidden-phone"> #i18n{module.stock.billetterie.manage_product.buttonSeeAllComments}</span>
+                    </a>
 				</span>
 			</legend>
 			<div class="row">
