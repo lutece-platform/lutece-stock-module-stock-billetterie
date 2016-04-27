@@ -14,27 +14,70 @@
 		    			#i18n{module.stock.billetterie.show_list.${type_list}.intro}
 		    		</p>
 					<div id="show_list_page">
-						<#list show_list as show>
-							<#if show_index == 0>
-								<div class="row-fluid">
-							<#else>
-								<#if show_index % 4 == 0>
+						<#if type_list ="aLaffiche">
+							<div id="carousel-show" class="carousel slide" data-ride="carousel">
+								<ol class="carousel-indicators">
+								<#list show_list as show>
+									<#if show_index == 0>
+										<li class="active" data-slide-to="0" data-target="#carousel-show"></li>
+									<#else>
+										<li data-slide-to="${show_index}" data-target="#carousel-show"></li>
+									</#if>
+								</#list>
+								</ol>
+								<div role="listbox" class="carousel-inner">
+								<#list show_list as show>
+									<#if show_index == 0>
+										<div class="item active">
+									<#else>
+										<div class="item">
+									</#if>
+										<img class="img-responsive" src="${url_poster}${show.id}">
+										<div class="carousel-caption">
+											<h3>
+												<a target="_top" title="${show.name!}" href="jsp/site/Portal.jsp?page=billetterie&amp;action=fiche-spectacle&amp;product_id=${show.id}">${show.name} </a>
+											</h3>
+										</div>
 									</div>
-									<div class="row-fluid">
-								</#if>
-							</#if>
-							<div class="show_details span3" style="background-color: ${show.categoryColor!};">
-								<a href="jsp/site/Portal.jsp?page=billetterie&action=fiche-spectacle&product_id=${show.id}" title="${show.name!}">
-								<img src="${url_poster}${show.id}" alt="${show.name!}" />
-								</a> 
-								<br /> 
-								<a  title="${show.name!}" class="en-savoir-plus" href="jsp/site/Portal.jsp?page=billetterie&action=fiche-spectacle&product_id=${show.id}"> 
-								${show.name} 
-									<br /> 
-								#i18n{module.stock.billetterie.liste.show.page.more.info}
+
+								</#list>
+								</div>
+								<a data-slide="prev" role="button" href="#carousel-show" class="left carousel-control">
+									<span aria-hidden="true" class="glyphicon glyphicon-chevron-left"></span>
+									<span class="sr-only">Precedent</span>
 								</a>
-							</div>
-						</#list>
+								<a data-slide="next" role="button" href="#carousel-show" class="right carousel-control">
+									<span aria-hidden="true" class="glyphicon glyphicon-chevron-right"></span>
+									<span class="sr-only">Suivant</span>
+								</a>
+							</div>							
+						<#else>
+							<#list show_list as show>
+								<#if show_index == 0>
+									<div class="row-fluid">
+								<#else>
+									<#if show_index % 4 == 0>
+										</div>
+										<div class="row-fluid">
+									</#if>
+								</#if>
+								<#if type_list ="aLaffiche">
+									
+								<#else>
+									<div class="show_details span3" style="background-color: ${show.categoryColor!};">
+										<a href="jsp/site/Portal.jsp?page=billetterie&action=fiche-spectacle&product_id=${show.id}" title="${show.name!}">
+										<img src="${url_poster}${show.id}" alt="${show.name!}" />
+										</a> 
+										<br /> 
+										<a  title="${show.name!}" class="en-savoir-plus" href="jsp/site/Portal.jsp?page=billetterie&action=fiche-spectacle&product_id=${show.id}"> 
+										${show.name} 
+											<br /> 
+										#i18n{module.stock.billetterie.liste.show.page.more.info}
+										</a>
+									</div>
+								</#if>
+							</#list>
+							</#if>
 						</div>
 					</div>
 				<#else>
