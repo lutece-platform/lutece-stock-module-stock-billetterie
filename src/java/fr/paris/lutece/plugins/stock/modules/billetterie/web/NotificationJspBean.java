@@ -230,21 +230,32 @@ public class NotificationJspBean extends AbstractJspBean
 
                             for ( Integer idContact : arrayIdContact )
                             {
-                                if ( contactMail == null )
-                                {
-                                    contactMail = new StringBuilder(  );
-                                }
-                                else
-                                {
-                                    contactMail.append( ";" );
-                                }
-
-                                contactMail.append( partner.getContactMail( idContact ) );
+                            	// Hide empty contact in mailing list
+                            	if ( idContact >= 0) 
+                            	{
+	                                if ( contactMail == null )
+	                                {
+	                                    contactMail = new StringBuilder(  );
+	                                }
+	                                else
+	                                {
+	                                    contactMail.append( ";" );
+	                                }
+	
+	                                contactMail.append( partner.getContactMail( idContact ) );
+                            	}
                             }
 
                             if ( contactMail != null )
                             {
-                                notification.setRecipientsTo( contactMail.toString(  ) );
+                            	if ( contactMail.toString( ) != null )
+                            	{
+                            		notification.setRecipientsTo( contactMail.toString(  ) );
+                            	}
+                            	else
+                            	{
+                            		notification.setRecipientsTo( "" );
+                            	}
                             }
                         }
                     }
