@@ -70,15 +70,14 @@
 				           		<#list contact_list as contact>
 				           			
 					           		<option value="${contact.code}"
-				           			<#if product?has_content && product.idContact?has_content >
+				           			<#if product?has_content && product.idContact?has_content>
 					           			<#list product.idContact as selectedContact>
 					           				<#if selectedContact?string == contact.code>
 					           					selected="selected"
 					           					<#break>
 					           				</#if>
 					           			</#list>
-				           			</#if>
-					           		>
+				           			</#if> >
 					           			${contact.name}
 					           		</option>
 				           		</#list>
