@@ -413,7 +413,26 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
         {
             List<ReservationDTO> bookingList = (List<ReservationDTO>) request.getSession(  )
                                                                              .getAttribute( PARAMETER_BOOKING_LIST );
+            
+            //Check booked quantity is available
+            for ( ReservationDTO booking: bookingList )
+            {
+            	SeanceDTO seance = _offerService.findSeanceById( bookingList.get( 0 ).getOffer(  ).getId(  ) );
+            	
+            	if ( booking.getQuantity( ) > seance.getQuantity( ) )
+            	{
+            		UrlItem targetUrl = new UrlItem( AppPathService.getBaseUrl( request ) + JSP_PORTAL );
+                    targetUrl.addParameter( PARAMETER_PAGE, PAGE_TICKETING );
+                    targetUrl.addParameter( PARAMETER_ACTION, ACTION_SHOW_DETAILS );
+                    targetUrl.addParameter( PARAMETER_PRODUCT_ID, seance.getProduct(  ).getId(  ) );
 
+                    SiteMessageService.setMessage( request, PurchaseService.MESSAGE_ERROR_PURCHASE_QUANTITY_OFFER,
+                            SiteMessage.TYPE_ERROR, JSP_PORTAL );
+                    
+                    return targetUrl.getUrl( );
+            	}
+            }
+            
             if ( Boolean.valueOf( request.getParameter( PARAMETER_AUTHENTIFIED_USER ) ) )
             {
                 try
