@@ -2,38 +2,56 @@
 	<div class="box-header">
 		<h3 class="box-title">#i18n{module.stock.billetterie.dashboard.pageTitle}</h3>
 		<div class="box-tools">
-      		<button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
-      		<button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
-    	</div>
-  	</div>
+		  <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+		  <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+		</div>
+	</div>
 	<div class="box-body">
-		<p>
-			<img src="images/admin/skin/plugins/stock/modules/billetterie/clap.png" alt="" height="24" width="24" align="middle"/>
-			<a href="jsp/admin/plugins/stock/modules/billetterie/ManageProductsStatistics.jsp">
-				#i18n{module.stock.billetterie.dashboard.nbSpectaclesALAffiche}
-			</a>
-			: ${nbProductALAffiche}
-		</p>
-		<p>
-			<img src="images/admin/skin/plugins/stock/modules/billetterie/clap.png" alt="" height="24" width="24" align="middle"/>
-			<a href="jsp/admin/plugins/stock/modules/billetterie/ManageProductsStatistics.jsp">
-				#i18n{module.stock.billetterie.dashboard.nbSpectaclesAVenir}
-			</a> 
-			: ${nbProductAVenir}
-		</p>
-		<p>
-			<img src="images/admin/skin/plugins/stock/modules/billetterie/ticket.png" alt="" height="24" width="24" align="middle"/>
-			<a href="jsp/admin/plugins/stock/modules/billetterie/ManagePurchasesStatistics.jsp">
-				#i18n{module.stock.billetterie.dashboard.nbReservationsJour} 
-			</a> 
-			: ${nbPurchaseCountDuJour}
-		</p>
-		<p>
-			<img src="images/admin/skin/plugins/stock/modules/billetterie/ticket.png" alt="" height="24" width="24" align="middle"/>
-			<a href="jsp/admin/plugins/stock/modules/billetterie/ManagePurchasesStatistics.jsp">
-				#i18n{module.stock.billetterie.dashboard.nbReservationsMois}
-			</a> 
-			: ${nbPurchaseCountDuMois}
-		</p>
-	</div><!-- /.box-body -->
+		<ul class="products-list product-list-in-box">
+			<li class="item">
+                <div class="product-img">
+                    <i class="fa fa-film fa-2x"></i>
+                </div>
+                <div class="product-info">
+					<a href="jsp/admin/plugins/stock/modules/billetterie/ManageProductsStatistics.jsp">
+						#i18n{module.stock.billetterie.dashboard.nbSpectaclesALAffiche}
+						<span class="label label-info pull-right"><strong>${nbProductALAffiche}</strong></span>
+					</a>
+                </div>
+            </li>
+            <li class="item">
+				<div class="product-img">
+                    <i class="fa fa-film fa-2x"></i>
+                </div>
+                <div class="product-info">
+					<a href="jsp/admin/plugins/stock/modules/billetterie/ManageProductsStatistics.jsp">
+						#i18n{module.stock.billetterie.dashboard.nbSpectaclesAVenir} : 
+						<span class="label label-info pull-right"><strong>${nbProductAVenir}</strong></span>
+					</a> 
+				</div>
+            </li>
+            <li class="item">
+				<div class="product-img">
+                    <i class="fa fa-ticket fa-2x"></i>
+                </div>
+				<div class="product-info">
+					<a href="jsp/admin/plugins/stock/modules/billetterie/ManagePurchasesStatistics.jsp">
+						#i18n{module.stock.billetterie.dashboard.nbReservationsJour} : 
+						<span class="label label-info pull-right"><strong>${nbPurchaseCountDuJour}</strong></span> 
+					</a>
+				</div>				
+            </li>
+            <li class="item">
+				<div class="product-img">
+                   <i class="fa fa-ticket fa-2x"></i>
+                </div>
+				<div class="product-info">
+					<a href="jsp/admin/plugins/stock/modules/billetterie/ManagePurchasesStatistics.jsp">
+						#i18n{module.stock.billetterie.dashboard.nbReservationsMois} : 
+						<span class="label label-info pull-right"><strong>${nbPurchaseCountDuMois}</strong></span>
+					</a>
+				</div>				
+			</li>
+        </ul>
+	</div>
 </div> 

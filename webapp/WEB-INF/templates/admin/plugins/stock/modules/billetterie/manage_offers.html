@@ -3,36 +3,36 @@
 	<@showButton type="see" title="module.stock.billetterie.list_offres.linkShowReservation" href="jsp/admin/plugins/stock/modules/billetterie/ManagePurchase.jsp?offer_id=${item.id!}" />
 	<@showButton type="edit" title="module.stock.billetterie.list_offres.linkModifyOffer" href="jsp/admin/plugins/stock/modules/billetterie/SaveOffer.jsp?offer_id=${item.id!}" />
 	<#if ( item.date?date("dd/MM/yyyy") &gt;= currentDate?date("dd/MM/yyyy") ) && ( item.statut != strStatutCancel ) && ( item.quantity > 0 )>
-		<a class="btn btn-small btn-primary" title="#i18n{module.stock.billetterie.list_offres.linkCreateReservation}" href="jsp/admin/plugins/stock/modules/billetterie/SavePurchase.jsp?offer_id=${item.id!}"> 
-			<i class="icon-plus icon-white"></i>
+		<a class="btn btn-xs btn-primary" title="#i18n{module.stock.billetterie.list_offres.linkCreateReservation}" href="jsp/admin/plugins/stock/modules/billetterie/SavePurchase.jsp?offer_id=${item.id!}">
+			<i class="fa fa-plus"></i>
 		</a>
 	</#if>
-	<a class="btn btn-small btn-success" title="#i18n{module.stock.billetterie.list_offres.linkSendReservation}" href="jsp/admin/plugins/stock/modules/billetterie/SendNotification.jsp?offer_id=${item.id!}&lock=true"> 
-		<i class="icon-lock icon-white"></i>
+	<a class="btn btn-xs btn-success" title="#i18n{module.stock.billetterie.list_offres.linkSendReservation}" href="jsp/admin/plugins/stock/modules/billetterie/SendNotification.jsp?offer_id=${item.id!}&lock=true">
+		<i class="fa fa-lock"></i>
 	</a>
 	<@showButton type="send" title="module.stock.billetterie.list_offres.linkSendNotification" href="jsp/admin/plugins/stock/modules/billetterie/SendNotification.jsp?offer_id=${item.id!}" />
 	<@showButton type="clone" title="module.stock.billetterie.list_offres.linkDuplicateOffer" href="jsp/admin/plugins/stock/modules/billetterie/SaveOffer.jsp?offer_id=${item.id!}&duplicate=true" />
-   	<@showButton type="export" title="module.stock.billetterie.message.buttonExport" href="jsp/admin/plugins/stock/modules/billetterie/DoExportPurchases.jsp?offer_id=${item.id!}" />
-   	<#if item.statut != strStatutCancel && ( item.date?date("dd/MM/yyyy") &gt;= currentDate?date("dd/MM/yyyy") )>
+	<@showButton type="export" title="module.stock.billetterie.message.buttonExport" href="jsp/admin/plugins/stock/modules/billetterie/DoExportPurchases.jsp?offer_id=${item.id!}" />
+	<#if item.statut != strStatutCancel && ( item.date?date("dd/MM/yyyy") &gt;= currentDate?date("dd/MM/yyyy") )>
 		<@showButton type="cancel" title="module.stock.billetterie.list_offres.linkCanceloffer" href="jsp/admin/plugins/stock/modules/billetterie/SendNotification.jsp?offer_id=${item.id!}&cancel=true" />
 	</#if>
-   	<@showButton type="delete" title="module.stock.billetterie.list_offres.linkDeleteOffer" href="jsp/admin/plugins/stock/modules/billetterie/DeleteOffer.jsp?offer_id=${item.id!}" /> 
+   	<@showButton type="delete" title="module.stock.billetterie.list_offres.linkDeleteOffer" href="jsp/admin/plugins/stock/modules/billetterie/DeleteOffer.jsp?offer_id=${item.id!}" />
 </#macro>
 
 <#macro columnStatutOffer item >
 	<#if item.statut == strStatutCancel>
-		<strong style="color:red">
+		<strong class="text-danger">
 			<em>#i18n{module.stock.billetterie.list_offres.cancel}</em>
 		</strong>
    	<#elseif item.statut == strStatutLock>
-   		<strong style="color:red">
+   		<strong class="text-danger">
    			<em>#i18n{module.stock.billetterie.list_offres.lock}</em>
    		</strong>
    	</#if>
 </#macro>
 
 <#macro columnCheckboxDeleteOffer item >
-	<input type="checkbox" name="offers_id" value="${item.id!}" />
+	<input type="checkbox" name="offers_id" value="${item.id!}">
 </#macro>
 
 <#macro columnNameOffer item >
@@ -53,71 +53,72 @@
 	${item.initialQuantity!}
 </#macro>
 
-<div class="">
+<div class="row">
 	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-		<form action="jsp/admin/plugins/stock/modules/billetterie/ManageOffers.jsp" method="post">
-			<fieldset>
-				<legend>
-					#i18n{module.stock.billetterie.list_offres.title}
-					<span class="pull-right spaced">
-					  	<a class="btn btn-primary btn-small" href="jsp/admin/plugins/stock/modules/billetterie/SaveOffer.jsp?productId=${(filter.productId)!'0'}" >
-					      	<i class="icon-plus icon-white" ></i> <span class="hidden-phone">#i18n{module.stock.billetterie.list_offres.button.createOffer}</span>
-					  	</a>
-					</span>
-				</legend>
-			</fieldset>
-			<fieldset>
-				<#list errors as error>
-					${error!}
-				</#list>
-				<div class="row">
-					<div class="col-sm-3 well">
-						<input type="hidden" name="filter" value="${filter!}" />
-						<div class="control-group">
-							<label for="filter_name">#i18n{module.stock.billetterie.list_offres.filter.name} : </label>
-							<input class="span"  type="text" name="name" id="filter_name" value="${(filter.name)!}" />
-						</div>
-						<div class="control-group">
-							<label for="filter_product">#i18n{module.stock.billetterie.list_offres.filter.product} : </label>
-							<input class="span"  type="text" name="productName" id="filter_product" value="${(filter.productName)!}" />
-						</div>
-						<div class="control-group">
-							<label>#i18n{module.stock.billetterie.list_offres.filter.typeOffre} : </label>
-				        	<@comboWithParams additionalParameters="class='span'" name="idGenre" default_value="${filter.idGenre!}" items=offerGenre_list! />
-						</div>
-						<div class="control-group">
-							<div class="input-daterange">
-								<label for="filter_date_begin">#i18n{module.stock.billetterie.list_offres.filter.date} : </label>
-								<div class="input-prepend">
-									<span class="add-on">
-										<i class="icon-calendar"></i>
-									</span>
-									<input class="input-small" type="text" name="dateBegin" id="filter_date_begin" value="${(filter.dateBegin?date)!}"/>
+		<div class="box box-primary">
+			<div class="box-header">
+				<h3 class="box-title">#i18n{module.stock.billetterie.list_offres.title}</h3>
+	      <div class="box-tools">
+					<a class="btn btn-primary btn-sm" href="jsp/admin/plugins/stock/modules/billetterie/SaveOffer.jsp?productId=${(filter.productId)!'0'}" >
+			      <i class="fa fa-plus" ></i> <span class="hidden-xs">#i18n{module.stock.billetterie.list_offres.button.createOffer}</span>
+			  	</a>
+				</div>
+			</div>
+      <div class="box-body">
+		    <div class="row">
+          <div class="col-xs-12 col-sm-12">
+						<form class="form-inline" action="jsp/admin/plugins/stock/modules/billetterie/ManageOffers.jsp" method="post">
+							<input type="hidden" name="filter" value="${filter!}">
+							<input class="form-control"  type="hidden" name="name" id="filter_name" value="${(filter.name)!}">
+							<div class="form-group">
+								<#list errors as error>
+									${error!}
+								</#list>
+							</div>
+							<div class="form-group">
+								<label for="filter_product" class="sr-only">#i18n{module.stock.billetterie.list_offres.filter.product} : </label>
+								<input class="form-control" type="text" name="productName" placeholder="#i18n{module.stock.billetterie.list_offres.filter.product}" id="filter_product" value="${(filter.productName)!}">
+							</div>
+							<div class="form-group">
+								<label for="idGenre" class="sr-only">#i18n{module.stock.billetterie.list_offres.filter.typeOffre} : </label>
+				      	<@comboStockWithParams additionalParameters="class=\"form-control\"" name="idGenre" default_value="${filter.idGenre!}" items=offerGenre_list! first_option="#i18n{module.stock.billetterie.list_offres.filter.typeOffre} " />
+							</div>
+							<div class="form-group">
+								<div class="input-daterange inline">
+									<label for="filter_date_begin" class="sr-only">#i18n{module.stock.billetterie.list_offres.filter.date} : </label>
+									<div class="input-group">
+										<span class="input-group-addon">
+											<i class="fa fa-calendar"></i>
+										</span>
+										<input class="form-control input-sm" type="text" placeholder="#i18n{module.stock.billetterie.list_offres.filter.date}" name="dateBegin" id="filter_date_begin" value="${(filter.dateBegin?date)!}">
+									</div>
+									<span class="inline">#i18n{module.stock.billetterie.list_offres.filter.dateEt}
+									<div class="input-group">
+										<span class="input-group-addon">
+											<i class="fa fa-calendar"></i>
+										</span>
+										<input class="form-control input-sm" type="text" name="dateEnd" id="filter_date_end" value="${(filter.dateEnd?date)!}">
+									</div>
 								</div>
-								#i18n{module.stock.billetterie.list_offres.filter.dateEt}
-								<div class="input-prepend">
-									<span class="add-on">
-										<i class="icon-calendar"></i>
+								<span class="inline">#i18n{module.stock.billetterie.list_offres.filter.dateOuLe}</span>
+								<div class="input-group inline">
+									<span class="input-group-addon">
+										<i class="fa fa-calendar"></i>
 									</span>
-									<input class="input-small" type="text" name="dateEnd" id="filter_date_end" value="${(filter.dateEnd?date)!}"/>
+									<input class="form-control" type="text" name="dateOr" id="filter_date_or" value="${(filter.dateOr?date)!}">
 								</div>
 							</div>
-							#i18n{module.stock.billetterie.list_offres.filter.dateOuLe}
-							<div class="input-prepend">
-								<span class="add-on">
-									<i class="icon-calendar"></i>
-								</span>
-								<input class="input-small" type="text" name="dateOr" id="filter_date_or" value="${(filter.dateOr?date)!}"/>
-							</div>
-						</div>
-						<@showSearchButton />
-					</div>
-					<div class="col-sm-9">
-						<@dataTableBilletterie dataTableManager=dataTableOffer />
+							<@showSearchButton />
 					</div>
 				</div>
-			</fieldset>
-		</form>
+				<div class="row">
+					<div class="col-xs-12 col-sm-12">
+						<@dataTableBilletterie dataTableManager=dataTableOffer masseDeleteLabel="" />
+					</div>
+				</div>
+			</form>
+			</div>
+		</div>
 	</div>
 </div>
 <@getDatePickerRangeBootstrap language="${locale!}" />

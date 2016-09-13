@@ -1,16 +1,11 @@
-<#include "/admin/util/editor/editor.html" />
-<p>
-<label>Contenu :</label>
-</p>
-<p>
-<select name="type_content" >
-<option value="a-laffiche" <#if type_content="a-laffiche"> selected=selected</#if> >à l'affiche</option>
-<option value="a-venir" <#if type_content="a-venir"> selected=selected</#if>>à venir</option>
-</select>
-</p>
-<p>
-<label>Nombre d'articles :</label>
-</p>
-<input type="text" name="porlet_number_show"  value="${porlet_number_show}" size="3" maxlength="3" />
-<br>
-<@initEditor />
+<div class="form-group">
+	<label for="type_content">Contenu :</label>
+	<select class="form-control" name="type_content" id="type_content">
+		<option value="a-laffiche" <#if type_content="a-laffiche"> selected=selected</#if> >à l'affiche</option>
+		<option value="a-venir" <#if type_content="a-venir"> selected=selected</#if>>à venir</option>
+	</select>
+</div>
+<div class="form-group">
+	<label for="porlet_number_show">Nombre d'articles :</label>
+	<input type="text" name="porlet_number_show" id="porlet_number_show" value="${porlet_number_show}" class="form-control" maxlength="3">
+</div>

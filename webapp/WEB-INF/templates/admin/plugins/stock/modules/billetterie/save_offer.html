@@ -1,127 +1,113 @@
 <div class="row">
 	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-	    <form class="form-horizontal" method="post"  action="jsp/admin/plugins/stock/modules/billetterie/DoSaveOffer.jsp">
-			<fieldset>
-				<legend>${title!}</legend>
-			</fieldset>
-			<fieldset>
+		<div class="box box-primary">
+			<div class="box-header">
+				<h3 class="box-title">${title!}</h3>
+	    </div>
+      <div class="box-body">
 				${error!}
-			    <div>
-			    	<input type="hidden" id="offer_id" name="id" value="${offer.id!}"/>
-			    	<input type="hidden" id="offer_statut" name="statut" value="${offer.statut!}"/>
-			    	<input type="hidden" id="jsp_back" name="jsp_back" value="${jsp_back!}"/>
-			    	<input type="hidden" id="offer_description" name="description" value=""/>
-			 	</div>
-			 	<div class="form-group">
-					<label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="offer_name" >#i18n{module.stock.billetterie.save_offer.name} :</label>
-					<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
-						<input type="text" id="offer_name" name="name" size="60" maxlength="100" value="${offer.name!}"/>
-						<input type="hidden" name="offer_id" value="${offer.id!}" />
-					</div>
-				</div>
+	    	<form class="form-horizontal" method="post"  action="jsp/admin/plugins/stock/modules/billetterie/DoSaveOffer.jsp">
+				<input type="hidden" id="offer_id" name="id" value="${offer.id!}">
+			  <input type="hidden" id="offer_statut" name="statut" value="${offer.statut!}">
+			  <input type="hidden" id="jsp_back" name="jsp_back" value="${jsp_back!}">
+			  <input type="hidden" id="offer_description" name="description" value="">
+				<input type="hidden" id="offer_name" name="name" value="${offer.name!}">
 				<div class="form-group">
-					<label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3">#i18n{module.stock.billetterie.save_offer.product} * :</label>
-			        	<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
-						<@combo name="product.id" default_value="${(offer.product!).id!}" items=product_list! /> 
-			        		<input type="submit" name="refresh_contact" value="#i18n{module.stock.billetterie.message.search.contact}" class="btn btn-primary btn-small" />
-			        	</div>
+					<label class="control-label col-xs-12 col-sm-3">#i18n{module.stock.billetterie.save_offer.product} * :</label>
+		      <div class="col-xs-12 col-sm-6">
+						<div class="input-group">
+			      	<@comboWithParams name="product.id" items=product_list! default_value="${(offer.product!).id!}" additionalParameters=" class=\"form-control input-sm\"" />
+							<span class="input-group-btn">
+			      		<button type="submit" name="refresh_contact" value="#i18n{module.stock.billetterie.message.search.contact}" class="btn btn-default btn-sm">
+									#i18n{module.stock.billetterie.message.search.contact}
+								</button>
+							</span>
+		      	</div>
+					</div>
 				</div>
 				<#if contact_list?has_content>
 					<div class="form-group">
-				           <label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3">#i18n{module.stock.billetterie.save_offer.contact} :</label>
-				           <div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
-						<select name="idContact" <#if contact_list?size &gt; 2 >multiple="multiple"</#if>>
-				           		<#list contact_list as contact>
-				           			
-					           		<option value="${contact.code}"
-				           			<#if offer?has_content && offer.idContact?has_content >
-					           			<#list offer.idContact as selectedContact>
-					           				<#if selectedContact?string == contact.code>
-					           					selected="selected"
-					           					<#break>
-					           				</#if>
-					           			</#list>
-				           			</#if>
-					           		>
-					           			${contact.name}
-					           		</option>
-				           		</#list>
-					        </select>
-					        <#if contact_list?size &gt; 2 >
-					        	<span class="help-block">#i18n{module.stock.billetterie.save_offer.contact.help}</span>
-					        </#if>
-					   </div>
-				        </div>
-			        </#if>
-				<div class="form-group">
-			        	<label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3">#i18n{module.stock.billetterie.save_offer.offerType} * :</label>
-			        	<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
-							<@combo name="idGenre" default_value="${offer.idGenre!}" items=offerGenre_list! />
-					</div>  
-			        </div>
-		        	<div class="form-group">  
-		           		<label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="offer_date" >#i18n{module.stock.billetterie.save_offer.date} * :</label>
-					<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
-						<span class="add-on">
-							<i class="icon-calendar"></i>
-						</span>
-				           	<input type="text" id="offer_date" name="date" class="input-small" maxlength="50" value="${offer.date!}"/>
-						
+			     	<label class="control-label col-xs-12 col-sm-3">#i18n{module.stock.billetterie.save_offer.contact} :</label>
+			     	<div class="col-xs-12 col-sm-6">
+				     	<select class="form-control" name="idContact" <#if contact_list?size &gt; 2 >multiple="multiple"</#if>>
+				   		<#list contact_list as contact>
+				 				<option value="${contact.code}"	<#if offer?has_content && offer.idContact?has_content><#list offer.idContact as selectedContact><#if selectedContact?string == contact.code>selected="selected"<#break></#if></#list></#if>>${contact.name}</option>
+				      </#list>
+					    </select>
+					    <#if contact_list?size &gt; 2 >
+					    	<span class="help-block">#i18n{module.stock.billetterie.save_offer.contact.help}</span>
+					    </#if>
+			      	</div>
+			      </div>
+		      </#if>
+					<div class="form-group">
+		      	<label class="control-label col-xs-12 col-sm-3">#i18n{module.stock.billetterie.save_offer.offerType} * :</label>
+		      	<div class="col-xs-12 col-sm-2">
+		      		<@comboWithParams name="idGenre" items=offerGenre_list! default_value="${offer.idGenre!}" additionalParameters=" class=\"form-control input-sm\"" />
+		      	</div>
+		      </div>
+	        <div class="form-group">
+	       		<label class="control-label col-xs-12 col-sm-3" for="offer_date" >#i18n{module.stock.billetterie.save_offer.date} * :</label>
+						<div class="col-xs-12 col-sm-2">
+							<div class="input-group">
+							<span class="input-group-addon">
+								<i class="fa fa-calendar"></i>
+							</span>
+		        	<input type="text" id="offer_date" name="date" class="form-control" maxlength="50" value="${offer.date!}"/>
+							</div>
+						</div>
+	        </div>
+					<div class="form-group">
+						<label class="control-label col-xs-12 col-sm-3" for="offer_hour" >#i18n{module.stock.billetterie.save_offer.hour} * :</label>
+						<div class="col-xs-12 col-sm-1">
+							<input type="text" id="offer_hour" name="hour" class="form-control" maxlength="5"  value="${offer.hour!}"/>
+						</div>
 					</div>
-		           	</div>
-				<div class="form-group">
-					<label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="offer_hour" >#i18n{module.stock.billetterie.save_offer.hour} * :</label>
-					<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
-						<input type="text" id="offer_hour" name="hour" class="input-small" maxlength="5"  value="${offer.hour!}"/>
+					<div class="form-group">
+						<label class="control-label col-xs-12 col-sm-3" for="offer_quantity" >#i18n{module.stock.billetterie.save_offer.quantity} * :</label>
+						<div class="col-xs-12 col-sm-1">
+							<input type="text" id="offer_quantity" name="quantity" class="form-control" maxlength="6"  value="${offer.quantity!}">
+							<#if offer.initialQuantity?exists >
+								<input type="hidden" id="offer_initialQuantity" name="initialQuantity" class="form-control" maxlength="6"  value="${offer.initialQuantity!}">
+							(${offer.initialQuantity!} #i18n{module.stock.billetterie.message.placesAvailableInitially})
+							</#if>
+						</div>
 					</div>
-				</div>
-				<div class="form-group">
-					<label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="offer_quantity" >#i18n{module.stock.billetterie.save_offer.quantity} * :</label>
-					<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
-						<input type="text" id="offer_quantity" name="quantity" class="input-small" maxlength="6"  value="${offer.quantity!}"/>
-						<#if offer.initialQuantity?exists >
-							<input type="hidden" id="offer_initialQuantity" name="initialQuantity" class="input-small" maxlength="6"  value="${offer.initialQuantity!}"/>
-						(${offer.initialQuantity!} #i18n{module.stock.billetterie.message.placesAvailableInitially})
-						</#if>
-					</div>
-				</div>
-			        <div class="form-group">
-						<label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="offer_reductPrice" >#i18n{module.stock.billetterie.save_offer.reductPrice} :</label>
-						<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
+					<div class="form-group">
+						<label class="control-label col-xs-12 col-sm-3" for="offer_reductPrice" >#i18n{module.stock.billetterie.save_offer.reductPrice} :</label>
+						<div class="col-xs-12 col-sm-1">
 							<#setting locale="en_US">
-							<input type="text" id="offer_reductPrice" name="reductPrice" class="input-small" maxlength="50"  value="${(offer.reductPrice?string.number)!}"/>
+							<input type="text" id="offer_reductPrice" name="reductPrice" class="form-control" maxlength="50"  value="${(offer.reductPrice?string.number)!}"/>
 							<#setting locale=locale>
 						</div>
 					</div>
 					<div class="form-group">
-						<label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="offer_minTickets" >#i18n{module.stock.billetterie.save_offer.minTickets} * :</label>
-						<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
-							<input type="text" id="offer_minTickets" name="minTickets" class="input-small" maxlength="2"  value="${offer.minTickets!}"/>
+						<label class="control-label col-xs-12 col-sm-3" for="offer_minTickets" >#i18n{module.stock.billetterie.save_offer.minTickets} * :</label>
+						<div class="col-xs-12 col-sm-1">
+							<input type="text" id="offer_minTickets" name="minTickets" class="form-control" maxlength="2"  value="${offer.minTickets!}"/>
 						</div>
 					</div>
 					<div class="form-group">
-						<label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="offer_maxTickets" >#i18n{module.stock.billetterie.save_offer.maxTickets} * :</label>
-						<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
-							<input type="text" id="offer_maxTickets" name="maxTickets" class="input-small" maxlength="2"  value="${offer.maxTickets!}"/>
+						<label class="control-label col-xs-12 col-sm-3" for="offer_maxTickets" >#i18n{module.stock.billetterie.save_offer.maxTickets} * :</label>
+						<div class="col-xs-12 col-sm-1">
+							<input type="text" id="offer_maxTickets" name="maxTickets" class="form-control" maxlength="2"  value="${offer.maxTickets!}"/>
 						</div>
 					</div>
-			</fieldset>
-			<fieldset>
-				<div class="form-group">
-					<div class="col-xs-12 col-sm-12 col-md-offset-3 col-lg-offset-3">
-						<button type="submit" name="save" class="btn btn-primary btn-small" tabindex="3" >
-							<i class="icon-ok icon-white"></i>&nbsp;
-							#i18n{module.stock.billetterie.message.buttonSave}
-						</button>
-						<button class="btn btn-small" type="submit" name="cancel">
-							<i class="icon-remove-circle"></i>&nbsp;
-							#i18n{portal.admin.message.buttonCancel}
-						</button>
+					<div class="form-group">
+						<div class="col-xs-12 col-sm-12 col-md-offset-3 col-lg-offset-3">
+							<button type="submit" name="save" class="btn btn-primary btn-small" tabindex="3" >
+								<i class="icon-ok icon-white"></i>&nbsp;
+								#i18n{module.stock.billetterie.message.buttonSave}
+							</button>
+							<button class="btn btn-small" type="submit" name="cancel">
+								<i class="icon-remove-circle"></i>&nbsp;
+								#i18n{portal.admin.message.buttonCancel}
+							</button>
+						</div>
 					</div>
-				</div>
-			</fieldset>
-	   </form>
+				</form>
+			</div>
+		</div>
 	</div>
 </div>
-
 <@getDatePickerBootstrap idField="offer_date" language="${locale!}" />

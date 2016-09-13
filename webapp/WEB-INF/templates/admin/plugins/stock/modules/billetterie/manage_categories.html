@@ -9,32 +9,32 @@
 	</a>
 </#macro>
 
-<div class="row-fluid">
-	<div class="span12">
-		<fieldset>
-			<legend>
-				#i18n{module.stock.billetterie.manage_category.title}
-				<span class="pull-right spaced">
-				  	<a class="btn btn-primary btn-small" href="jsp/admin/plugins/stock/modules/billetterie/SaveCategory.jsp">	    	
-			     		<i class="icon-plus icon-white" ></i> <span class="hidden-phone">#i18n{module.stock.billetterie.manage_category.buttonCreateCategory}</span>	
+<div class="row">
+	<div class="col-xs-12 col-sm-12 col-md-12">
+		<div class="box box-primary">
+			<div class="box-header">
+				<h3 class="box-title">#i18n{module.stock.billetterie.manage_category.title}</h3>
+				<div class="box-tools">
+          <span class="pull-right spaced">
+				  	<a class="btn btn-primary btn-sm" href="jsp/admin/plugins/stock/modules/billetterie/SaveCategory.jsp">
+			     		<i class="fa fa-plus" ></i> <span class="hidden-phone">#i18n{module.stock.billetterie.manage_category.buttonCreateCategory}</span>
 				  	</a>
-				</span>
-			</legend>
-			<div class="row-fluid">
-				<div class="span3 well">
-					<form action="jsp/admin/plugins/stock/modules/billetterie/ManageCategories.jsp" method="post">
-						<input type="hidden" name="filter" value="filter" />
-						<p>
-							<label for="filter_name">#i18n{module.stock.billetterie.manage_category.filter.name} : </label>
-							<input class="span"  type="text" value="${filter.name!}" name="filter_name" id="filter_name" />
-						</p>
-						<@showSearchButton />
-					</form>
-				</div>
-				<div class="span9">
-					<@dataTable dataTableManager=dataTableCategory />
-				</div>
+				  </span>
+          <form class="form-inline pull-right spaced" action="jsp/admin/plugins/stock/modules/billetterie/ManageCategories.jsp" method="post">
+            <input type="hidden" name="filter" value="filter">
+            <label for="filter_name">#i18n{module.stock.billetterie.manage_category.filter.name} : </label>
+            <div class="input-group">
+              <input class="form-control input-sm"  type="text" value="${filter.name!}" name="filter_name" id="filter_name">
+              <span class="input-group-btn">
+                <@showSearchButton />
+              <span>
+            </div>
+          </form>
+			  </div>
+			  <div class="box-body">
+				  <@dataTable dataTableManager=dataTableCategory />
+			  </div>
 			</div>
-		</fieldset>
-	</div>
+	  </div>
+  </div>
 </div>

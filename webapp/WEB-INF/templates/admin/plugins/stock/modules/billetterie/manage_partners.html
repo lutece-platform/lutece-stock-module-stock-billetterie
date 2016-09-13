@@ -1,7 +1,7 @@
 <#macro columnActionsPartner item >
-	<@showButton type="see" title="module.stock.billetterie.manage_partner.linkManageProducts" href="jsp/admin/plugins/stock/modules/billetterie/ManageProducts.jsp?idProvider=${item.id}"/> 
+	<@showButton type="see" title="module.stock.billetterie.manage_partner.linkManageProducts" href="jsp/admin/plugins/stock/modules/billetterie/ManageProducts.jsp?idProvider=${item.id}"/>
 	<@showButton type="edit" title="module.stock.billetterie.manage_partner.linkModifyPartner" href="jsp/admin/plugins/stock/modules/billetterie/SavePartner.jsp?partner_id=${item.id}" />
-   	<@showButton type="delete" title="module.stock.billetterie.manage_partner.linkDeletePartner" href="jsp/admin/plugins/stock/modules/billetterie/DeletePartner.jsp?partner_id=${item.id}" />
+  <@showButton type="delete" title="module.stock.billetterie.manage_partner.linkDeletePartner" href="jsp/admin/plugins/stock/modules/billetterie/DeletePartner.jsp?partner_id=${item.id}" />
 </#macro>
 
 <#macro columnNamePartner item >
@@ -10,34 +10,31 @@
 	</a>
 </#macro>
 
-<div class="">
-	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-		<fieldset>
-			<legend>
-				#i18n{module.stock.billetterie.manage_partner.list.partners}
-				<span class="pull-right spaced">
-				  	<a  class="btn btn-primary btn-small" href="jsp/admin/plugins/stock/modules/billetterie/SavePartner.jsp">	    	
-			      		<i class="icon-plus icon-white" ></i><span class="hidden-phone"> #i18n{module.stock.billetterie.manage_partner.buttonCreatePartner}</span>
-				  	</a>
-				</span>
-			</legend>
-			<div class="row">
-				<div class="col-sm-3 well">
-					<form action="jsp/admin/plugins/stock/modules/billetterie/ManagePartners.jsp" method="post">
-						<input type="hidden" name="filter" value="filter" />
-						<p>
-							
-							<label  class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="filter_name">#i18n{module.stock.billetterie.field.PartnerDTO.name} : </label>
-							<input class="span"  type="text" value="${filter.name!}" name="name" id="filter_name" />
-						</p>
-						
-						<@showSearchButton />
+<div class="row">
+	<div class="col-xs-12 col-sm-12 col-md-12">
+		<div class="box box-primary">
+			<div class="box-header">
+				<h3 class="box-title">#i18n{module.stock.billetterie.manage_partner.list.partners}</h3>
+				<div class="box-tools">
+					<form class="form-inline" action="jsp/admin/plugins/stock/modules/billetterie/ManagePartners.jsp" method="post" >
+						<input type="hidden" name="filter" value="filter">
+							<label class="sr-only" for="filter_name">#i18n{module.stock.billetterie.field.PartnerDTO.name} : </label>
+							<div class="input-group">
+							<input class="form-control input-sm" type="text" value="${filter.name!}" placeholder="#i18n{module.stock.billetterie.field.PartnerDTO.name}" name="name" id="filter_name">
+							<span class="input-group-btn">
+							<@showSearchButton />
+							</span>
+							</div>
+
+						<a  class="btn btn-primary btn-sm" href="jsp/admin/plugins/stock/modules/billetterie/SavePartner.jsp">
+							<i class="fa fa-plus" ></i><span class="hidden-xs"> #i18n{module.stock.billetterie.manage_partner.buttonCreatePartner}</span>
+						</a>
 					</form>
-				</div>
-				<div class="col-sm-9">
-					<@dataTable dataTableManager=dataTablePartner />
-				</div>
+        </div>
+      </div>
+      <div class="box-body">
+				<@dataTable dataTableManager=dataTablePartner />
 			</div>
-		</fieldset>
+		</div>
 	</div>
 </div>

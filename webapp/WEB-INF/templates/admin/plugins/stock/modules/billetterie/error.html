@@ -1,9 +1,7 @@
-<link rel="stylesheet" href="css/plugins/stock/modules/billetterie/billetterie.css" />
-
-<div class="billeterie-error alert alert-error">
-	<ul>
+<div class="callout callout-danger">
+	<ul class="unstyled">
 		<#list messageList as message>
-		<li>${(message)!}</li>
+		<li><i class="fa fa-warning"></i> ${(message)!}</li>
 		</#list>
 	</ul>
 </div>
