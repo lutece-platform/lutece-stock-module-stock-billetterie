@@ -106,6 +106,7 @@ public class PosterImageServlet extends HttpServlet
 
             ServletOutputStream os = response.getOutputStream(  );
             IOUtils.write( bImage, os );
+            os.flush();
             os.close(  );
         }
         else

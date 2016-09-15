@@ -393,6 +393,7 @@ public class StatisticJspBean extends AbstractJspBean
 
             PngEncoder encoder = new PngEncoder( chartImage, false, 0, 9 );
             response.getOutputStream(  ).write( encoder.pngEncode(  ) );
+            response.getOutputStream(  ).flush();
             response.getOutputStream(  ).close(  );
         }
         catch ( Exception e )
@@ -471,6 +472,8 @@ public class StatisticJspBean extends AbstractJspBean
 
             OutputStream os = response.getOutputStream(  );
             os.write( byteFileOutPut );
+            os.flush();
+            os.close();
 
             // We do not close the output stream to allow HTTP keep alive
         }
