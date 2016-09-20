@@ -461,7 +461,7 @@ public class OfferJspBean extends AbstractJspBean
                 }
                 idProvider = selectedProduct.getIdProvider();
                 
-                model.put( MARK_CONTACT_LIST, getContactComboList( idProvider, selectedProduct ) );
+                model.put( MARK_CONTACT_LIST, getContactComboList( idProvider ) );
 
                 // Duplicate offer, set id to 0 to create a new offer
                 if ( StringUtils.isNotEmpty( strDuplicate ) )
@@ -494,7 +494,8 @@ public class OfferJspBean extends AbstractJspBean
 
                     ShowDTO productChoose = _serviceProduct.findById( idProduct );
                     int idProvider = productChoose.getIdProvider(  );
-                    model.put( MARK_CONTACT_LIST, getContactComboList( idProvider, productChoose ) );
+                    
+                    model.put( MARK_CONTACT_LIST, getContactComboList(idProvider) );
                 }
             }
         }
@@ -533,31 +534,14 @@ public class OfferJspBean extends AbstractJspBean
     /**
      * Get only the selected contacts in the product, not all the contacts from the provider of the product
      * @param idProvider
-     * @param product
      * @return The ReferenceList
      */
-    private ReferenceList getContactComboList( int idProvider, ShowDTO product )
-    {
-        PartnerDTO findById = _servicePartner.findById( idProvider );
-        List<Contact> contactList = findById.getContactList(  );
-        Integer[] selectedContacts =  product.getIdContact(  );
-        List<Contact> resultContactList = new ArrayList<Contact>(  );
-       
-        for ( Contact contact : contactList )
-        {
-            for ( Integer contactId : selectedContacts )
-            {
-                if ( contactId == contact.getId(  ) )
-                {
-                    resultContactList.add( contact );
-                }
-            }
-        }
-        ReferenceList contactComboList = ListUtils.toReferenceList( resultContactList,
-                BilletterieConstants.ID, BilletterieConstants.NAME, StockConstants.EMPTY_STRING );
-
-        return contactComboList;
-    }
+    private ReferenceList getContactComboList(int idProvider) {
+		PartnerDTO findById = _servicePartner.findById(idProvider);
+		ReferenceList contactComboList = ListUtils.toReferenceList(findById.getContactList(), BilletterieConstants.ID,
+				BilletterieConstants.NAME, StockConstants.EMPTY_STRING);
+		return contactComboList;
+	}
 
     /**
      * Save a offer
