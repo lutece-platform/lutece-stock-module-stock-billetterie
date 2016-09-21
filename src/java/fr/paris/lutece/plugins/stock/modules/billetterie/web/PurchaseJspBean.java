@@ -305,14 +305,18 @@ public class PurchaseJspBean extends AbstractJspBean
     {
         // SORT
         String strSortedAttributeName = request.getParameter( Parameters.SORTED_ATTRIBUTE_NAME );
+        
+        ReservationFilter filter = new ReservationFilter(  );
 
         // "filter" in request  ==> new filter. use old one otherwise
         if ( request.getParameter( TicketsConstants.PARAMETER_FILTER ) != null )
         {
-            ReservationFilter filter = new ReservationFilter(  );
+            //ReservationFilter filter = new ReservationFilter(  );
             buildFilter( filter, request );
-            _purchaseFilter = filter;
+            //_purchaseFilter = filter;
         }
+        
+        _purchaseFilter = filter;
 
         if ( strSortedAttributeName != null )
         {
