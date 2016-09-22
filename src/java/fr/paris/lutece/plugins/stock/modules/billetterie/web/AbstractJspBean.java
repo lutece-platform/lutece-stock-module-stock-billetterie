@@ -42,6 +42,7 @@ import fr.paris.lutece.plugins.stock.commons.exception.ValidationException;
 import fr.paris.lutece.plugins.stock.modules.tickets.utils.constants.TicketsConstants;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
+import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.portal.web.admin.PluginAdminPageJspBean;
 import fr.paris.lutece.util.beanvalidation.BeanValidationUtil;
@@ -50,13 +51,10 @@ import fr.paris.lutece.util.datatable.DataTablePaginationProperties;
 import fr.paris.lutece.util.html.HtmlTemplate;
 
 import org.apache.commons.lang.StringUtils;
-
 import org.apache.log4j.Logger;
-
 import org.springframework.beans.BeanUtils;
 
 import java.lang.reflect.Method;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -66,7 +64,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
-
 import javax.validation.ConstraintViolation;
 import javax.validation.Path;
 
@@ -80,6 +77,7 @@ public class AbstractJspBean extends PluginAdminPageJspBean
 {
     public static final int N_DEFAULT_ITEMS_PER_PAGE = AppPropertiesService.getPropertyInt( TicketsConstants.PROPERTY_DEFAULT_ITEM_PER_PAGE,
             50 );
+    public static final String PROPERTY_DEFAULT_PAGINATION = "stock-billetterie.nbitemsperpage";
     protected static final String ERROR_MESSAGE_KEY = "module.stock.billetterie.validation.error";
     protected static final String ERROR_TEMPLATE = "admin/plugins/stock/modules/billetterie/error.html";
     protected static final String FIELD_MESSAGE_PREFIX = "module.stock.billetterie.field.";
@@ -365,10 +363,21 @@ public class AbstractJspBean extends PluginAdminPageJspBean
      */
     protected <T> DataTableManager<T> getDataTableToUse( HttpServletRequest request, String markFilter, String jspManage )
     {
+    	String strDefaultPagination = AppPropertiesService.getProperty( PROPERTY_DEFAULT_PAGINATION );
+    	Integer nDefaultPagination = null;
+    	try 
+    	{
+    		nDefaultPagination = Integer.parseInt(strDefaultPagination);
+        } 
+    	catch (NumberFormatException e) 
+    	{
+    		AppLogService.error("NumberFormatException " , e);
+        }
+    	
         DataTableManager<T> dataTableFromSession = loadDataTableFromSession( request, markFilter );
         DataTableManager<T> dataTablePartner = ( dataTableFromSession != null ) ? dataTableFromSession
                                                                                 : new DataTableManager<T>( jspManage,
-                StringUtils.EMPTY, 10, true );
+                StringUtils.EMPTY, nDefaultPagination != null ? nDefaultPagination : 10, true );
 
         return dataTablePartner;
     }
