@@ -283,8 +283,9 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
 
                             if ( user != null )
                             {
+                            	String strEmail = !user.getUserInfo( LuteceUser.HOME_INFO_ONLINE_EMAIL ).equals("") ? user.getUserInfo( LuteceUser.HOME_INFO_ONLINE_EMAIL ) : user.getUserInfo( LuteceUser.BUSINESS_INFO_ONLINE_EMAIL );//BUSINESS_INFO_ONLINE_EMAIL
                                 booking.setUserName( user.getName(  ) );
-                                booking.setEmailAgent( user.getUserInfo( LuteceUser.HOME_INFO_ONLINE_EMAIL ) );
+                                booking.setEmailAgent( strEmail );
                                 booking.setFirstNameAgent( user.getUserInfo( LuteceUser.NAME_GIVEN ) );
                                 booking.setNameAgent( user.getUserInfo( LuteceUser.NAME_FAMILY ) );
 
