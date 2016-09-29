@@ -281,59 +281,62 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
                 int i = 0;
                 ReservationDTO booking;
                 int nbPlaces;
-
-                for ( String seanceId : seanceIdList )
+                
+                if(seanceIdList != null)
                 {
-                    // Check validity of parameter
-                    if ( StringUtils.isNumeric( numberPlacesList[i] ) && ( Integer.valueOf( numberPlacesList[i] ) > 0 ) )
+                	for ( String seanceId : seanceIdList )
                     {
-                        bPlacesInvalid = false;
-
-                        // Create booking object
-                        nbPlaces = Integer.valueOf( numberPlacesList[i] );
-
-                        if ( nbPlaces > 0 )
+                        // Check validity of parameter
+                        if ( StringUtils.isNumeric( numberPlacesList[i] ) && ( Integer.valueOf( numberPlacesList[i] ) > 0 ) )
                         {
-                            booking = new ReservationDTO(  );
-                            booking.getOffer(  ).setId( Integer.valueOf( seanceId ) );
-                            booking.getOffer(  ).setTypeName( seanceTypeNameList[i] );
-                            booking.setQuantity( nbPlaces );
-                            booking.setDate( DateUtils.getCurrentDateString(  ) );
-                            booking.setHeure( DateUtils.getHourFr( DateUtils.getCurrentDate(  ) ) );
+                            bPlacesInvalid = false;
 
-                            if ( user != null )
+                            // Create booking object
+                            nbPlaces = Integer.valueOf( numberPlacesList[i] );
+
+                            if ( nbPlaces > 0 )
                             {
-                            	String strEmail = !user.getUserInfo( LuteceUser.HOME_INFO_ONLINE_EMAIL ).equals("") ? user.getUserInfo( LuteceUser.HOME_INFO_ONLINE_EMAIL ) : user.getUserInfo( LuteceUser.BUSINESS_INFO_ONLINE_EMAIL );//BUSINESS_INFO_ONLINE_EMAIL
-                                booking.setUserName( user.getName(  ) );
-                                booking.setEmailAgent( strEmail );
-                                booking.setFirstNameAgent( user.getUserInfo( LuteceUser.NAME_GIVEN ) );
-                                booking.setNameAgent( user.getUserInfo( LuteceUser.NAME_FAMILY ) );
+                                booking = new ReservationDTO(  );
+                                booking.getOffer(  ).setId( Integer.valueOf( seanceId ) );
+                                booking.getOffer(  ).setTypeName( seanceTypeNameList[i] );
+                                booking.setQuantity( nbPlaces );
+                                booking.setDate( DateUtils.getCurrentDateString(  ) );
+                                booking.setHeure( DateUtils.getHourFr( DateUtils.getCurrentDate(  ) ) );
 
-                                bAuthentified = true;
+                                if ( user != null )
+                                {
+                                	String strEmail = !user.getUserInfo( LuteceUser.HOME_INFO_ONLINE_EMAIL ).equals("") ? user.getUserInfo( LuteceUser.HOME_INFO_ONLINE_EMAIL ) : user.getUserInfo( LuteceUser.BUSINESS_INFO_ONLINE_EMAIL );//BUSINESS_INFO_ONLINE_EMAIL
+                                    booking.setUserName( user.getName(  ) );
+                                    booking.setEmailAgent( strEmail );
+                                    booking.setFirstNameAgent( user.getUserInfo( LuteceUser.NAME_GIVEN ) );
+                                    booking.setNameAgent( user.getUserInfo( LuteceUser.NAME_FAMILY ) );
 
-                                // Reserve tickets
-                                try
-                                {
-                                    _purchaseSessionManager.reserve( request.getSession(  ).getId(  ), booking );
+                                    bAuthentified = true;
+
+                                    // Reserve tickets
+                                    try
+                                    {
+                                        _purchaseSessionManager.reserve( request.getSession(  ).getId(  ), booking );
+                                    }
+                                    catch ( PurchaseUnavailable e )
+                                    {
+                                        throw new BusinessException( null, MESSAGE_INSUFFICIENT_PLACE_REMAINING );
+                                    }
                                 }
-                                catch ( PurchaseUnavailable e )
-                                {
-                                    throw new BusinessException( null, MESSAGE_INSUFFICIENT_PLACE_REMAINING );
-                                }
+
+                                bookingList.add( booking );
                             }
-
-                            bookingList.add( booking );
                         }
+
+                        i++;
                     }
-
-                    i++;
+                	
+                	if ( bPlacesInvalid )
+                    {
+                        throw new BusinessException( null, MESSAGE_NB_PLACES_INVALID );
+                    }
                 }
-
-                if ( bPlacesInvalid )
-                {
-                    throw new BusinessException( null, MESSAGE_NB_PLACES_INVALID );
-                }
-
+                
                 // Save booking into session
                 request.getSession(  ).setAttribute( PARAMETER_BOOKING_LIST, bookingList );
                 request.getSession(  ).setAttribute( PARAMETER_BOOKING_CHECK, bookingCheck );
