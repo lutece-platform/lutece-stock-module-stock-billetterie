@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.stock.modules.billetterie.web;
 
+import fr.paris.lutece.plugins.stock.business.product.Product;
 import fr.paris.lutece.plugins.stock.business.purchase.PurchaseFilter;
 import fr.paris.lutece.plugins.stock.business.purchase.exception.PurchaseUnavailable;
 import fr.paris.lutece.plugins.stock.commons.exception.BusinessException;
@@ -136,12 +137,19 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
     private static final String PARAMETER_PAGE_INDEX = "page_index";
     private static final String PARAMETER_TIME_MAX = AppPropertiesService.getProperty( 
             "daemon.lock.session.time.expiration" );
+    private static final String PARAMETER_SUBSCRIBE = "subscribe";
+    
+    private static final String PARAMETER_TAB_ACTIVE = "tab_active";
+    private static final String CONSTANT_RESERVATION_TAB_ACTIVE = "reservation";
+    private static final String CONSTANT_SUBSCRIPTION_TAB_ACTIVE = "subscription";
+    private static final String MARK_LIST_PRODUCT_SUBSCRIBED = "list_product_subscribed";
 
     // Actions
     private static final String ACTION_MY_BOOKINGS = "mes-reservations";
     private static final String ACTION_BOOK = "reserver";
     private static final String ACTION_DELETE_BOOKING = "delete-purchase";
     private static final String ACTION_SHOW_DETAILS = "fiche-spectacle";
+    private static final String ACTION_DELETE_SUBSCRIPTION = "delete-subscription";
 
     // Marks
     private static final String MARK_BASE_URL = "base_url";
@@ -191,6 +199,7 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
         }
         else if ( ACTION_MY_BOOKINGS.equals( strAction ) )
         {
+        	request.setAttribute(PARAMETER_TAB_ACTIVE, CONSTANT_RESERVATION_TAB_ACTIVE);
             String strContent = getMyBookings( request, getUser( request ), locale );
             page.setContent( strContent );
 
@@ -203,7 +212,18 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
         {
             page = getDeleteBooking( page, request, locale );
         }
+        else if ( ACTION_DELETE_SUBSCRIPTION.equals( strAction ) )
+        {
+            deleteSubscription( page, request, locale );
+            
+            String strContent = getMyBookings( request, getUser( request ), locale );
+            page.setContent( strContent );
 
+            String pageTitle = getMessage( TITLE_MY_BOOKINGS, request );
+            page.setPathLabel( pageTitle );
+            page.setTitle( pageTitle );
+        }
+        
         return page;
     }
 
@@ -614,6 +634,9 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
 
         // Dispatch booking list into two differents lists (old and to come)
         List<ReservationDTO> toComeBookingList = purchaseService.findByFilter( purchaseFilter );
+        
+        SubscriptionProductJspBean jspBean = new SubscriptionProductJspBean(  );
+        List<Product> listProduct = jspBean.getProductsSubscribedByUser(user);
 
         purchaseFilter.setDateBeginOffer( null );
         purchaseFilter.setDateEndOffer( new Timestamp( today.getTime(  ) ) );
@@ -627,6 +650,9 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
         model.put( PARAMETER_PAST_BOOKING_LIST, oldBookingList );
 
         model.put( MARK_USER, user );
+        
+        model.put( MARK_LIST_PRODUCT_SUBSCRIBED, listProduct );
+        model.put( PARAMETER_TAB_ACTIVE, (String)request.getAttribute(PARAMETER_TAB_ACTIVE) );
 
         String strNbItemPerPage = request.getParameter( PARAMETER_NB_ITEMS_PER_PAGE );
         String strDefaultNbItemPerPage = DEFAULT_RESULTS_PER_PAGE;
@@ -765,5 +791,35 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
         _notificationService.send( notificationDTO );
 
         return notificationDTO;
+    }
+    
+    /**
+     * Returns page for deleting user booking.
+     *
+     * @param page xpage
+     * @param request http request
+     * @param locale local
+     * @return xpage
+     * @throws SiteMessageException the site message exception
+     */
+    public void  deleteSubscription( XPage page, HttpServletRequest request, Locale locale )
+        throws SiteMessageException
+    {
+    	String strSubscribe = request.getParameter( PARAMETER_SUBSCRIBE );
+    	request.setAttribute(PARAMETER_TAB_ACTIVE, CONSTANT_SUBSCRIPTION_TAB_ACTIVE);
+       
+    	//Get the user
+        LuteceUser currentUser = getUser( request );
+        
+        SubscriptionProductJspBean jspBean = new SubscriptionProductJspBean(  );
+        
+        if ( strSubscribe != null )
+        {
+            if ( strSubscribe.equals( "false" ) )
+            {
+            	jspBean.doUnsubscribeToProduct( request, currentUser );
+            }
+        }
+
     }
 }

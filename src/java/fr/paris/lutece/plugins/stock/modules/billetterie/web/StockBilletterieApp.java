@@ -256,7 +256,10 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
         //check if the user is not ban, don't check for unregistred user
         if ( currentUser != null )
         {
-            User userBan = _serviceUser.findByPrimaryKey( currentUser.getUserInfo( LuteceUser.HOME_INFO_ONLINE_EMAIL ) );
+        	String strEmailHome = currentUser.getUserInfo( LuteceUser.HOME_INFO_ONLINE_EMAIL );
+        	String strEmailBusiness = currentUser.getUserInfo( LuteceUser.BUSINESS_INFO_ONLINE_EMAIL );
+        	String strEmail = !strEmailHome.equals("") ? strEmailHome : strEmailBusiness;
+            User userBan = _serviceUser.findByPrimaryKey( strEmail );
 
             if ( userBan != null )
             {
@@ -274,6 +277,10 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
         //if the user wants to subscribe to the show (get an email if a new representation is added)
         if ( currentUser != null )
         {
+        	String strEmailHome = currentUser.getUserInfo( LuteceUser.HOME_INFO_ONLINE_EMAIL );
+        	String strEmailBusiness = currentUser.getUserInfo( LuteceUser.BUSINESS_INFO_ONLINE_EMAIL );
+        	String strEmail = !strEmailHome.equals("") ? strEmailHome : strEmailBusiness;
+        	
             SubscriptionProductJspBean jspBean = new SubscriptionProductJspBean(  );
             boolean isSubscribe = false;
 
@@ -284,7 +291,7 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
                 {
                     jspBean.doSubscribeToProduct( request, currentUser );
                     isSubscribe = true;
-                    model.put( MARK_USER_EMAIL, currentUser.getUserInfo( LuteceUser.HOME_INFO_ONLINE_EMAIL ) );
+                    model.put( MARK_USER_EMAIL, strEmail );
                 }
                 else
                 {
@@ -302,7 +309,7 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
             }
             else
             {
-                model.put( MARK_USER_EMAIL, currentUser.getUserInfo( LuteceUser.HOME_INFO_ONLINE_EMAIL ) );
+                model.put( MARK_USER_EMAIL, strEmail );
             }
         }
 
