@@ -21,18 +21,32 @@
                             - ${booking.offer.hour}</td>
                         <td>${booking.offer.typeName}</td>
                         <td>${booking.quantity!}</td>
-                        <td style="padding: 5px; width:50px;"><#if booking.offer.statut! != 'annule'><a
-                            title="#i18n{module.stock.billetterie.list_purchase.linkPrintTicket}"
-                            href="servlet/plugins/jasper/downloadFile?report_id=contremarque&report_type=pdf&value1=${booking.id!}&value2=${booking.userName!}"><img
-                                src="images/local/skin/buttons/b_print.png"
-                                alt="#i18n{module.stock.billetterie.list_purchase.linkPrintTicket}" />
-                        </a> </#if><#if booking.offer.statut! != 'annule' && booking.offer.statut! != 'verrouille'><a
-                            title="#i18n{module.stock.billetterie.list_purchase.linkCancelPurchase}"
-                            href="jsp/site/Portal.jsp?page=reservation&action=delete-purchase&purchase_id=${booking.id!}"><img
-                                height="22" width="22"
-                                src="images/local/skin/cancel_reservation.png"
-                                alt="#i18n{module.stock.billetterie.list_purchase.linkCancelPurchase}" />
-                        </a></#if></td>
+                        <td style="padding: 5px; width:50px;">
+	                        <#if booking.offer.statut! != 'annule'>
+		                        <a title="#i18n{module.stock.billetterie.list_purchase.linkPrintTicket}"
+		                            href="servlet/plugins/jasper/downloadFile?report_id=contremarque&report_type=pdf&value1=${booking.id!}&value2=${booking.userName!}"><img
+		                                src="images/local/skin/buttons/b_print.png"
+		                                alt="#i18n{module.stock.billetterie.list_purchase.linkPrintTicket}" />
+		                        </a> 
+	                        </#if>
+	                        <#if booking.offer.statut! != 'annule' && booking.offer.statut! != 'verrouille'>
+		                        <a title="#i18n{module.stock.billetterie.list_purchase.linkCancelPurchase}"
+		                            href="jsp/site/Portal.jsp?page=reservation&action=delete-purchase&purchase_id=${booking.id!}"><img
+		                                height="22" width="22"
+		                                src="images/local/skin/cancel_reservation.png"
+		                                alt="#i18n{module.stock.billetterie.list_purchase.linkCancelPurchase}" />
+		                        </a>
+	                        </#if>
+	 
+	                        <#if booking.offer.statut! != 'annule' && booking.offer.statut! != 'verrouille'>
+		                        <a title="#i18n{module.stock.billetterie.list_purchase.modifyPurchase}"
+		                           href="jsp/site/Portal.jsp?page=billetterie&action=fiche-spectacle&purchase_id=${booking.id!}"><img
+		                           height="22" width="22"
+		                           src=""
+		                           alt="#i18n{module.stock.billetterie.list_purchase.modifyPurchase}" />Modifier
+		                        </a>
+	                        </#if>
+                        </td>
                     </tr>
                     </#list>
                 </tbody>

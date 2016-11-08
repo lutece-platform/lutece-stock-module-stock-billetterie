@@ -38,10 +38,12 @@ import fr.paris.lutece.plugins.stock.commons.exception.TechnicalException;
 import fr.paris.lutece.plugins.stock.modules.billetterie.business.district.District;
 import fr.paris.lutece.plugins.stock.modules.billetterie.service.district.DistrictService;
 import fr.paris.lutece.plugins.stock.modules.tickets.business.PartnerDTO;
+import fr.paris.lutece.plugins.stock.modules.tickets.business.ReservationDTO;
 import fr.paris.lutece.plugins.stock.modules.tickets.business.SeanceDTO;
 import fr.paris.lutece.plugins.stock.modules.tickets.business.SeanceFilter;
 import fr.paris.lutece.plugins.stock.modules.tickets.business.ShowDTO;
 import fr.paris.lutece.plugins.stock.modules.tickets.service.IProviderService;
+import fr.paris.lutece.plugins.stock.modules.tickets.service.IPurchaseService;
 import fr.paris.lutece.plugins.stock.modules.tickets.service.ISeanceService;
 import fr.paris.lutece.plugins.stock.modules.tickets.service.IShowService;
 import fr.paris.lutece.plugins.stock.modules.tickets.utils.constants.TicketsConstants;
@@ -76,6 +78,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 
 /**
@@ -102,12 +105,14 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
     private static final String PARAMETER_PRODUCT_ID = "product_id";
     private static final String PARAMETER_ACTION = "action";
     private static final String PARAMETER_SUBSCRIBE = "subscribe";
+    private static final String PARAMETER_PURCHASE_ID = "purchase_id";
 
     // Marks
     private static final String MARK_TYPE_LIST = "type_list";
     private static final String MARK_SHOW_LIST = "show_list";
     private static final String MARK_SEANCE_DATE = "seance_date";
     private static final String MARK_SEANCE_LIST = "seanceList";
+    private static final String MARK_NB_PLACE_SELECTED = "nbSelected";
     private static final String MARK_S_SEANCE_DATE = "sSeanceDate";
     private static final String MARK_BLOC_RESERVATION = "bloc_reservation";
     private static final String MARK_USER = "user";
@@ -161,6 +166,8 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
                                                                                         .getBean( IPurchaseSessionManager.class );
     private DistrictService _districtService = SpringContextService.getContext(  ).getBean( DistrictService.class );
     private final IUserService _serviceUser = SpringContextService.getBean( BEAN_USER_SERVICE );
+    
+    private final IPurchaseService _purchaseService = SpringContextService.getContext(  ).getBean( IPurchaseService.class );
 
     /**
      * {@inheritDoc}
@@ -203,14 +210,57 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
     public XPage getShowPage( XPage page, HttpServletRequest request, Locale locale )
     {
         String sIdShow = request.getParameter( PARAMETER_PRODUCT_ID );
-        String sSeanceDate = request.getParameter( PARAMETER_DATE_SEANCE );
-        String strSubscribe = request.getParameter( PARAMETER_SUBSCRIBE );
+        
         Integer idShow = -1;
 
         if ( StringUtils.isNotEmpty( sIdShow ) && StringUtils.isNumeric( sIdShow ) )
         {
             idShow = Integer.valueOf( sIdShow );
         }
+        
+        String sSeanceDate = request.getParameter( PARAMETER_DATE_SEANCE );
+        String strSubscribe = request.getParameter( PARAMETER_SUBSCRIBE );
+        
+        String strPurchaseId = request.getParameter( PARAMETER_PURCHASE_ID );
+        request.getSession().setAttribute( PARAMETER_PURCHASE_ID, strPurchaseId);
+        
+        Integer idPurchase = -1;
+        String strNdPlaceBook = null;
+      
+        if( StringUtils.isNotEmpty( strPurchaseId ) && StringUtils.isNumeric( strPurchaseId ))
+        {
+        	idPurchase = Integer.valueOf( strPurchaseId );
+        	ReservationDTO booking = _purchaseService.findById(idPurchase);
+        	if( booking != null)
+            {
+            	final DateFormat sdfComboSeance = new SimpleDateFormat( TicketsConstants.FORMAT_COMBO_DATE_SEANCE, locale );
+            	
+            	Date today = new Date(  );
+            	
+            	SeanceDTO seance = booking.getOffer();
+
+                String sDateHour = sdfComboSeance.format( seance.getDateHour(  ) );
+                
+                if ( seance.getStatut(  ).equals( TicketsConstants.OFFER_STATUT_OPEN ) && seance.getDateHour(  ).after( today ) )
+            	{
+                	if ( seance.getQuantity(  ) == 0 )
+                    {
+                		sSeanceDate = sDateHour + " - COMPLET" ;
+       
+                    }
+                    else
+                    {
+                    	sSeanceDate = sDateHour;
+                    }
+                }
+            	
+            }
+        	
+        	strNdPlaceBook = "" + booking.getQuantity();
+        	
+        	request.getSession().setAttribute( PARAMETER_PURCHASE_ID, strPurchaseId);
+        	
+        } 
 
         // Get the show
         ShowDTO show = _showService.getProduct( idShow );
@@ -271,7 +321,7 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
 
         // If user authenticated, display booking bloc
         model.put( MARK_USER, currentUser );
-        model.put( MARK_BLOC_RESERVATION, getBookingBloc( show, sSeanceDate, locale ) );
+        model.put( MARK_BLOC_RESERVATION, getBookingBloc( show, sSeanceDate, locale, strNdPlaceBook ) );
         model.put( MARK_S_SEANCE_DATE, sSeanceDate );
 
         //if the user wants to subscribe to the show (get an email if a new representation is added)
@@ -359,7 +409,7 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
      * @param locale locale
      * @return xpage
      */
-    private String getBookingBloc( ShowDTO show, String sDateSeance, Locale locale )
+    private String getBookingBloc( ShowDTO show, String sDateSeance, Locale locale, String strNbPlace )
     {
         if ( sDateSeance == null )
         {
@@ -400,6 +450,7 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
         // Add nb of purchase per offer type
         ReferenceList quantityList = getNumberList( currentSeance.getMinTickets(  ), nMaxPossibleTickets );
         model.put( MARK_NB_RESERVATION_LIST, quantityList );
+        model.put( MARK_NB_PLACE_SELECTED, strNbPlace );
 
         model.put( MARK_SEANCE_DATE, sDateSeance );
         model.put( MARK_SHOW, show );

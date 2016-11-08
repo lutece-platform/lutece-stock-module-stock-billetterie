@@ -148,9 +148,10 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
     private static final String ACTION_MY_BOOKINGS = "mes-reservations";
     private static final String ACTION_BOOK = "reserver";
     private static final String ACTION_DELETE_BOOKING = "delete-purchase";
+    private static final String ACTION_MODIFY_BOOKING = "modify-purchase";
     private static final String ACTION_SHOW_DETAILS = "fiche-spectacle";
     private static final String ACTION_DELETE_SUBSCRIPTION = "delete-subscription";
-
+    
     // Marks
     private static final String MARK_BASE_URL = "base_url";
     private static final String MARK_USER = "user";
@@ -163,6 +164,7 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
     private static final String TEMPLATE_DIR = "skin/plugins/stock/modules/billetterie/";
     private static final String TEMPLATE_NOTIFICATION_BOOKING = "notification_booking.html";
     private static final String TEMPLATE_MY_BOOKINGS = "my_bookings.html";
+    private static final String TEMPLATE_MODIFY_BOOK = "modify_book.html";
     private static final String TEMPLATE_CONFIRM_BOOKING = "confirm_booking.html";
     private static final String TEMPLATE_NOTIFICATION_REQUEST = "notification_request.html";
     private static final String TEMPLATE_NOTIFICATION_ADMIN_OFFER_QUANTITY = "notification_admin_offer_quantity.html";
@@ -223,6 +225,10 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
             page.setPathLabel( pageTitle );
             page.setTitle( pageTitle );
         }
+        else if ( ACTION_MODIFY_BOOKING.equals( strAction ) )
+        {
+            
+        }
         
         return page;
     }
@@ -243,6 +249,8 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
         String[] seanceTypeNameList = request.getParameterValues( PARAMETER_SEANCE_TYPE_NAME );
         String[] numberPlacesList = request.getParameterValues( PARAMETER_NB_PLACES );
         String showId = request.getParameter( PARAMETER_SHOW_ID );
+        
+        String strPurchaseId = request.getParameter( PARAMETER_PURCHASE_ID );
 
         Map<String, Object> model = new HashMap<String, Object>(  );
         model.put( PARAMETER_SHOW_ID, showId );
@@ -423,6 +431,12 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
     public String doSaveReservation( HttpServletRequest request, HttpServletResponse response )
         throws SiteMessageException
     {
+    	String strPurchaseId = (String) request.getSession().getAttribute(PARAMETER_PURCHASE_ID);
+    	if( strPurchaseId != null)
+    	{
+    		_purchaseService.doDeletePurchase( Integer.valueOf( strPurchaseId ) );
+    	}
+    	
         String returnUrl = null;
 
         // Check mixing booking (with two tabs and two booking opened
