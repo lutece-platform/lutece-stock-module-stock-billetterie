@@ -114,6 +114,7 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
     private static final String MARK_SEANCE_LIST = "seanceList";
     private static final String MARK_NB_PLACE_SELECTED = "nbSelected";
     private static final String MARK_S_SEANCE_DATE = "sSeanceDate";
+    private static final String MARK_IS_MODIFY = "ismodify";
     private static final String MARK_BLOC_RESERVATION = "bloc_reservation";
     private static final String MARK_USER = "user";
     private static final String MARK_SEANCE_DATE_LIST = "seance_date_list";
@@ -226,6 +227,8 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
         
         Integer idPurchase = -1;
         String strNdPlaceBook = null;
+        
+        Map<String, Object> model = new HashMap<String, Object>(  );
       
         if( StringUtils.isNotEmpty( strPurchaseId ) && StringUtils.isNumeric( strPurchaseId ))
         {
@@ -259,6 +262,7 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
         	strNdPlaceBook = "" + booking.getQuantity();
         	
         	request.getSession().setAttribute( PARAMETER_PURCHASE_ID, strPurchaseId);
+        	model.put( MARK_IS_MODIFY, idPurchase );
         	
         } 
 
@@ -266,7 +270,7 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
         ShowDTO show = _showService.getProduct( idShow );
 
         // Generates template
-        Map<String, Object> model = new HashMap<String, Object>(  );
+        
 
         FunctionnalException fe = getErrorOnce( request );
 
@@ -323,6 +327,7 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
         model.put( MARK_USER, currentUser );
         model.put( MARK_BLOC_RESERVATION, getBookingBloc( show, sSeanceDate, locale, strNdPlaceBook ) );
         model.put( MARK_S_SEANCE_DATE, sSeanceDate );
+        
 
         //if the user wants to subscribe to the show (get an email if a new representation is added)
         if ( currentUser != null )
