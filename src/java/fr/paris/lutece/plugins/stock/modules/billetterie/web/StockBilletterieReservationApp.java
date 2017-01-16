@@ -314,7 +314,8 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
                                 if ( user != null )
                                 {
                                 	String strEmail = !user.getUserInfo( LuteceUser.HOME_INFO_ONLINE_EMAIL ).equals("") ? user.getUserInfo( LuteceUser.HOME_INFO_ONLINE_EMAIL ) : user.getUserInfo( LuteceUser.BUSINESS_INFO_ONLINE_EMAIL );//BUSINESS_INFO_ONLINE_EMAIL
-                                    booking.setUserName( user.getName(  ) );
+                                    //booking.setUserName( user.getName(  ) );
+                                    booking.setUserName( strEmail );
                                     booking.setEmailAgent( strEmail );
                                     booking.setFirstNameAgent( user.getUserInfo( LuteceUser.NAME_GIVEN ) );
                                     booking.setNameAgent( user.getUserInfo( LuteceUser.NAME_FAMILY ) );
@@ -644,7 +645,10 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
         // Get user bookings
         Date today = new Date(  );
         PurchaseFilter purchaseFilter = new PurchaseFilter(  );
-        purchaseFilter.setUserName( user.getName(  ) );
+        
+        String strEmail = !user.getUserInfo( LuteceUser.HOME_INFO_ONLINE_EMAIL ).equals("") ? user.getUserInfo( LuteceUser.HOME_INFO_ONLINE_EMAIL ) : user.getUserInfo( LuteceUser.BUSINESS_INFO_ONLINE_EMAIL );//BUSINESS_INFO_ONLINE_EMAIL
+        purchaseFilter.setUserName( strEmail );
+        //purchaseFilter.setUserName( user.getName(  ) );
         purchaseFilter.setDateBeginOffer( new Timestamp( today.getTime(  ) ) );
 
         IPurchaseService purchaseService = SpringContextService.getContext( ).getBean( IPurchaseService.class );
