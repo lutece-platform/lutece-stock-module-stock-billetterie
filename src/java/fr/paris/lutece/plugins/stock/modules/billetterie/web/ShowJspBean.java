@@ -82,7 +82,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -275,8 +277,15 @@ public class ShowJspBean extends AbstractJspBean {
 		List<String> orderList = new ArrayList<String>();
 		orderList.add(BilletterieConstants.NAME);
 		filter.setOrderAsc(true);
-		filter.setOrders(orderList);
-
+		if(filter.getOrders() != null && filter.getOrders().size() > 0 ) 
+		{
+			filter.setOrders(filter.getOrders());
+		}
+		else
+		{
+			filter.setOrders(orderList);
+		}
+		
 		DataTableManager<ShowDTO> dataTableToUse = getDataTable(request, filter);
 
 		Map<String, Object> model = new HashMap<String, Object>();
@@ -340,6 +349,8 @@ public class ShowJspBean extends AbstractJspBean {
 			dataTableToUse.addColumn("module.stock.billetterie.manage_product.filter.name", "name", true);
 			dataTableToUse.addColumn("module.stock.billetterie.manage_product.filter.provider", "providerName", true);
 			dataTableToUse.addColumn("module.stock.billetterie.manage_product.filter.category", "categoryName", true);
+			//dataTableToUse.addColumn("module.stock.billetterie.manage_product.filter.date_from", "startDate", true);
+			//dataTableToUse.addColumn("module.stock.billetterie.manage_product.filter.date_to", "endDate", true);
 			dataTableToUse.addFreeColumn("module.stock.billetterie.manage_product.dates", MACRO_COLUMN_DATES_PRODUCT);
 			dataTableToUse.addFreeColumn("module.stock.billetterie.manage_product.actionsLabel",
 					MACRO_COLUMN_ACTIONS_PRODUCT);
@@ -495,9 +506,18 @@ public class ShowJspBean extends AbstractJspBean {
 		if (null != request.getParameter(StockConstants.PARAMETER_BUTTON_CANCEL)) {
 			return doGoBack(request);
 		}
+		
+		String format = "dd/MM/yyyy";
+
+		SimpleDateFormat formater = new java.text.SimpleDateFormat( format );
+		Date date = new java.util.Date(); 
+		
+		String strUpdateDate = formater.format( date );
 
 		ShowDTO product = new ShowDTO();
 		populate(product, request);
+		
+		product.setUpdateDate( strUpdateDate );
 
 		if (StringUtils.isNotEmpty(request.getParameter(PARAMETER_A_LAFFICHE))) {
 			product.setAlaffiche(true);

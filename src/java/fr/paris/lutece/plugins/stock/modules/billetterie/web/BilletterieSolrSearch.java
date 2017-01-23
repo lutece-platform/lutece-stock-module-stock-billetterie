@@ -115,7 +115,7 @@ public class BilletterieSolrSearch extends HttpServlet
         {
             // Sort by date
             sTypeSort = MARK_SORT_DATE;
-            sbSort = new StringBuilder( "&sort_name=end_date&sort_order=desc" );
+            sbSort = new StringBuilder( "&sort_name=update_date&sort_order=desc" );
         }
 
         if ( StringUtils.isEmpty( sTypeSearch ) || SEARCH_SIMPLE.equals( sTypeSearch ) )
