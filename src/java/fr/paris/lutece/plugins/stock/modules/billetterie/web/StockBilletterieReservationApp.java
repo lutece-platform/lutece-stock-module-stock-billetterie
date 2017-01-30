@@ -314,8 +314,8 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
                                 if ( user != null )
                                 {
                                 	String strEmail = !user.getUserInfo( LuteceUser.HOME_INFO_ONLINE_EMAIL ).equals("") ? user.getUserInfo( LuteceUser.HOME_INFO_ONLINE_EMAIL ) : user.getUserInfo( LuteceUser.BUSINESS_INFO_ONLINE_EMAIL );//BUSINESS_INFO_ONLINE_EMAIL
-                                    //booking.setUserName( user.getName(  ) );
-                                    booking.setUserName( strEmail );
+                                    booking.setUserName( user.getName(  ) );
+                                    //booking.setUserName( strEmail );
                                     booking.setEmailAgent( strEmail );
                                     booking.setFirstNameAgent( user.getUserInfo( LuteceUser.NAME_GIVEN ) );
                                     booking.setNameAgent( user.getUserInfo( LuteceUser.NAME_FAMILY ) );
@@ -644,25 +644,36 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
 
         // Get user bookings
         Date today = new Date(  );
-        PurchaseFilter purchaseFilter = new PurchaseFilter(  );
+        PurchaseFilter purchaseFilterUserName = new PurchaseFilter(  );
+        PurchaseFilter purchaseFilterEmail = new PurchaseFilter(  );
         
         String strEmail = !user.getUserInfo( LuteceUser.HOME_INFO_ONLINE_EMAIL ).equals("") ? user.getUserInfo( LuteceUser.HOME_INFO_ONLINE_EMAIL ) : user.getUserInfo( LuteceUser.BUSINESS_INFO_ONLINE_EMAIL );//BUSINESS_INFO_ONLINE_EMAIL
-        purchaseFilter.setUserName( strEmail );
-        //purchaseFilter.setUserName( user.getName(  ) );
-        purchaseFilter.setDateBeginOffer( new Timestamp( today.getTime(  ) ) );
+        purchaseFilterEmail.setUserName( strEmail );
+        purchaseFilterEmail.setDateBeginOffer( new Timestamp( today.getTime(  ) ) );
+        
+        purchaseFilterUserName.setUserName( user.getName(  ) );
+        purchaseFilterUserName.setDateBeginOffer( new Timestamp( today.getTime(  ) ) );
 
         IPurchaseService purchaseService = SpringContextService.getContext( ).getBean( IPurchaseService.class );
 
         // Dispatch booking list into two differents lists (old and to come)
-        List<ReservationDTO> toComeBookingList = purchaseService.findByFilter( purchaseFilter );
+        List<ReservationDTO> toComeBookingList = purchaseService.findByFilter( purchaseFilterUserName );
+        List<ReservationDTO> toComeBookingListEmail = purchaseService.findByFilter( purchaseFilterEmail );
+        for(ReservationDTO reservationDTO : toComeBookingListEmail)
+        {
+        	if(!toComeBookingList.contains(reservationDTO))
+        	{
+        		toComeBookingList.add(reservationDTO);
+        	}
+        }
         
         SubscriptionProductJspBean jspBean = new SubscriptionProductJspBean(  );
         List<Product> listProduct = jspBean.getProductsSubscribedByUser(user);
 
-        purchaseFilter.setDateBeginOffer( null );
-        purchaseFilter.setDateEndOffer( new Timestamp( today.getTime(  ) ) );
+        purchaseFilterUserName.setDateBeginOffer( null );
+        purchaseFilterUserName.setDateEndOffer( new Timestamp( today.getTime(  ) ) );
 
-        List<ReservationDTO> oldBookingList = purchaseService.findByFilter( purchaseFilter,
+        List<ReservationDTO> oldBookingList = purchaseService.findByFilter( purchaseFilterUserName,
                 getPaginationProperties( request ) );
 
         // Generates template

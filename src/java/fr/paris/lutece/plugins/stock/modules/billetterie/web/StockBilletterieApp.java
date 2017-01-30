@@ -37,6 +37,8 @@ import fr.paris.lutece.plugins.stock.commons.exception.FunctionnalException;
 import fr.paris.lutece.plugins.stock.commons.exception.TechnicalException;
 import fr.paris.lutece.plugins.stock.modules.billetterie.business.district.District;
 import fr.paris.lutece.plugins.stock.modules.billetterie.service.district.DistrictService;
+import fr.paris.lutece.plugins.stock.modules.recommendation.business.RecommendedProduct;
+import fr.paris.lutece.plugins.stock.modules.recommendation.service.StockRecommendationService;
 import fr.paris.lutece.plugins.stock.modules.tickets.business.PartnerDTO;
 import fr.paris.lutece.plugins.stock.modules.tickets.business.ReservationDTO;
 import fr.paris.lutece.plugins.stock.modules.tickets.business.SeanceDTO;
@@ -55,9 +57,11 @@ import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.message.SiteMessageException;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.security.LuteceUser;
+import fr.paris.lutece.portal.service.security.SecurityService;
 import fr.paris.lutece.portal.service.security.UserNotSignedException;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
+import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.portal.web.xpages.XPage;
 import fr.paris.lutece.portal.web.xpages.XPageApplication;
@@ -66,6 +70,7 @@ import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.html.HtmlTemplate;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.mahout.cf.taste.common.TasteException;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -106,6 +111,8 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
     private static final String PARAMETER_ACTION = "action";
     private static final String PARAMETER_SUBSCRIBE = "subscribe";
     private static final String PARAMETER_PURCHASE_ID = "purchase_id";
+    
+    private static final String PARAMETER_USERNAME = "username";
 
     // Marks
     private static final String MARK_TYPE_LIST = "type_list";
@@ -127,6 +134,7 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
     private static final String MARK_DISTRICT = "district";
     private static final String MARK_MESSAGE_USER_BAN = "messageUserBan";
     private static final String MARK_NB_RESERVATION_LIST = "nb_reservation_list";
+    public static final String MARK_PRODUCTS_LIST = "products_list";
 
     // Actions
     private static final String ACTION_SHOW_PAGE = "fiche-spectacle";
@@ -515,9 +523,24 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
      * @param request the request
      * @param locale the locale
      * @return the current list show page
+     * @throws UserNotSignedException 
      */
-    private XPage getCurrentListShowPage( XPage page, HttpServletRequest request, Locale locale )
+    private XPage getCurrentListShowPage( XPage page, HttpServletRequest request, Locale locale ) throws UserNotSignedException
     {
+    	String strUserName = getUsername( request );
+    	
+    	List<RecommendedProduct> listProducts = null;
+        try
+        {
+            listProducts = StockRecommendationService.instance( ).getRecommendedProducts( strUserName );
+        }
+        catch( TasteException ex )
+        {
+            // User not found
+            //addError( "User not found" );
+            AppLogService.info( "Recommendation error : " + ex.getMessage( ) );
+        }
+        
         List<String> orderList = new ArrayList<String>(  );
         orderList.add( ORDER_FILTER_DATE_END );
 
@@ -526,6 +549,7 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
         model.put( MARK_SHOW_LIST, currentListShow );
         model.put( MARK_TYPE_LIST, TYPE_A_LAFFICHE );
         model.put( MARK_URL_POSTER, AppPropertiesService.getProperty( PROPERTY_POSTER_TB_PATH ) );
+        model.put( MARK_PRODUCTS_LIST, listProducts );
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_DIR + TEMPLATE_LIST_SHOW_PAGE, locale, model );
         page.setContent( template.getHtml(  ) );
@@ -564,5 +588,22 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
         page.setTitle( title );
 
         return page;
+    }
+    
+    /**
+     * Gets the user name
+     * @param request The HTTP request
+     * @return the user name
+     * @throws UserNotSignedException 
+     */
+    public static String getUsername( HttpServletRequest request ) throws UserNotSignedException
+    {
+        LuteceUser user = SecurityService.getInstance( ).getRegisteredUser( request );
+        if ( user == null )
+        {
+             throw new UserNotSignedException( );
+        }
+        
+        return user.getName( );        
     }
 }
