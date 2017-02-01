@@ -270,7 +270,13 @@ public class ShowJspBean extends AbstractJspBean {
 	 *            the Http request
 	 * @return HTML
 	 */
-	public String getManageProducts(HttpServletRequest request) {
+	public String getManageProducts(HttpServletRequest request) 
+	{
+		String format = "dd/MM/yyyy";
+		SimpleDateFormat formater = new java.text.SimpleDateFormat( format );
+		Date date = new java.util.Date(); 
+		String strToDate = formater.format( date );
+		
 		setPageTitleProperty(PAGE_TITLE_MANAGE_PRODUCT);
 
 		ProductFilter filter = getProductFilter(request);
@@ -284,6 +290,11 @@ public class ShowJspBean extends AbstractJspBean {
 		else
 		{
 			filter.setOrders(orderList);
+		}
+		
+		if( filter.getDateFrom() == null )
+		{
+			filter.setDateFrom(strToDate);
 		}
 		
 		DataTableManager<ShowDTO> dataTableToUse = getDataTable(request, filter);
@@ -747,5 +758,13 @@ public class ShowJspBean extends AbstractJspBean {
 				Integer.toString(nIdProduct));
 
 		return doGoBack(request);
+	}
+	
+	public String getToday()
+	{
+		String format = "dd/MM/yyyy";
+		SimpleDateFormat formater = new java.text.SimpleDateFormat( format );
+		Date date = new java.util.Date(); 
+		return formater.format( date );
 	}
 }
