@@ -272,10 +272,7 @@ public class ShowJspBean extends AbstractJspBean {
 	 */
 	public String getManageProducts(HttpServletRequest request) 
 	{
-		String format = "dd/MM/yyyy";
-		SimpleDateFormat formater = new java.text.SimpleDateFormat( format );
-		Date date = new java.util.Date(); 
-		String strToDate = formater.format( date );
+		String strToDate = getToday();
 		
 		setPageTitleProperty(PAGE_TITLE_MANAGE_PRODUCT);
 
@@ -513,17 +510,14 @@ public class ShowJspBean extends AbstractJspBean {
 	 *            The HTTP request
 	 * @return redirection url
 	 */
-	public String doSaveProduct(HttpServletRequest request) {
-		if (null != request.getParameter(StockConstants.PARAMETER_BUTTON_CANCEL)) {
+	public String doSaveProduct(HttpServletRequest request) 
+	{
+		if (null != request.getParameter(StockConstants.PARAMETER_BUTTON_CANCEL)) 
+		{
 			return doGoBack(request);
 		}
-		
-		String format = "dd/MM/yyyy";
 
-		SimpleDateFormat formater = new java.text.SimpleDateFormat( format );
-		Date date = new java.util.Date(); 
-		
-		String strUpdateDate = formater.format( date );
+		String strUpdateDate = getToday();
 
 		ShowDTO product = new ShowDTO();
 		populate(product, request);
@@ -760,6 +754,10 @@ public class ShowJspBean extends AbstractJspBean {
 		return doGoBack(request);
 	}
 	
+	/**
+	 * Return the today date.
+	 * @return the html code message
+	 */
 	public String getToday()
 	{
 		String format = "dd/MM/yyyy";
