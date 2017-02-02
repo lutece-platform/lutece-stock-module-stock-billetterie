@@ -756,7 +756,7 @@ public class ShowJspBean extends AbstractJspBean {
 	
 	/**
 	 * Return the today date.
-	 * @return the html code message
+	 * @return the today date
 	 */
 	public String getToday()
 	{
