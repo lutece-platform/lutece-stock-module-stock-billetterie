@@ -41,7 +41,7 @@ import org.apache.commons.lang.StringUtils;
 
 import org.apache.log4j.Logger;
 
-import org.springframework.web.util.UriUtils;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 
@@ -263,6 +263,16 @@ public class BilletterieSolrSearch extends HttpServlet
 
         LOGGER.debug( "Requête SOLR de date, redirection vers " + sbReq.toString(  ) );
 
-        response.sendRedirect( UriUtils.encodeUri( sbReq.toString(  ), "UTF-8" ) );
+        response.sendRedirect( encodeUri( sbReq.toString( ) ) );
+    }
+
+    protected static String encodeUri(String strUri)
+    throws IOException
+    {
+        return UriComponentsBuilder
+            .fromUriString( strUri )
+            .build( )
+            .encode("UTF-8")
+            .toUriString( );
     }
 }
