@@ -15,5 +15,8 @@
     
     <tx:annotation-driven/>
 	<bean id="stock-billetterie.billetteriePortletDAO" class="fr.paris.lutece.plugins.stock.modules.billetterie.business.portlet.BilletteriePortletDAO" />  
-
+	
+	<bean id="stock-billetterie.BilletterieHomeSolrAddon" class="fr.paris.lutece.plugins.stock.modules.billetterie.service.BilletterieHomeSolrAddon" />
+	<!-- <bean id="stock-billetterie.BilletterieAfficheSolrAddon" class="fr.paris.lutece.plugins.stock.modules.billetterie.service.BilletterieAfficheSolrAddon" />
+	 -->
 </beans>

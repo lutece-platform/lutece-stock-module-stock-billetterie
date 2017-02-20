@@ -430,7 +430,12 @@ public class AbstractJspBean extends PluginAdminPageJspBean
         }
 
         request.getSession(  ).setAttribute( MARK_FILTER, filterToUse );
-        dataTableToUse.setItems( listAllBean, listAllBean.getTotalResult(  ) );
+        
+        if(listAllBean!=null)
+        {
+        	dataTableToUse.setItems( listAllBean, listAllBean.getTotalResult(  ) );
+        }
+        
 
         return dataTableToUse;
     }

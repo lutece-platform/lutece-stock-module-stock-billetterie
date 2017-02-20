@@ -321,14 +321,14 @@ public class OfferJspBean extends AbstractJspBean
         filter.setOrderAsc( true );
 
         DataTableManager<SeanceDTO> dataTableToUse = getDataTable( request, filter );
-
+        
         for ( SeanceDTO seance : dataTableToUse.getItems(  ) )
         {
             // Update quantity with quantity in session for this offer
             seance.setQuantity( _purchaseSessionManager.updateQuantityWithSession( seance.getQuantity(  ),
-                    seance.getId(  ) ) );
+                        seance.getId(  ) ) );
         }
-
+        
         model.put( MARK_DATA_TABLE_OFFER, dataTableToUse );
 
         // the paginator
