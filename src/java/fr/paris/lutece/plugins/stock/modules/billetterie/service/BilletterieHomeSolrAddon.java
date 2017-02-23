@@ -60,7 +60,7 @@ public class BilletterieHomeSolrAddon implements ISolrSearchAppAddOn
         List<String> orderList = new ArrayList<String>(  );
         orderList.add( ORDER_FILTER_DATE_END );
 
-        List<ShowDTO> currentListShow = showServiceHome.getCurrentProduct( orderList, null );
+        List<ShowDTO> currentListShow = aLafficheShows( showServiceHome.getCurrentProduct( orderList, null ) );
         //Map<String, Object> model = new HashMap<String, Object>(  );
         model.put( MARK_SHOW_LIST, currentListShow );
         model.put( MARK_TYPE_LIST, TYPE_A_LAFFICHE );
@@ -84,6 +84,18 @@ public class BilletterieHomeSolrAddon implements ISolrSearchAppAddOn
         }
         
         return user.getName( );        
+    }
+    
+    public List<ShowDTO> aLafficheShows( List<ShowDTO> listShows)
+    {
+    	List<ShowDTO> listShowsReturn = new ArrayList<ShowDTO> ();
+    	for(ShowDTO showDTO : listShows)
+    	{
+    		if(showDTO.getAlaffiche())
+    			listShowsReturn.add(showDTO);
+    	}
+    	
+    	return listShowsReturn;
     }
 
 }
