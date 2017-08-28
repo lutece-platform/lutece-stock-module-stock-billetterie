@@ -81,7 +81,7 @@
 							</div>
 							<div class="form-group">
 								<label for="idGenre" class="sr-only">#i18n{module.stock.billetterie.list_offres.filter.typeOffre} : </label>
-				      	<@comboStockWithParams additionalParameters="class=\"form-control\"" name="idGenre" default_value="${filter.idGenre!}" items=offerGenre_list! first_option="#i18n{module.stock.billetterie.list_offres.filter.typeOffre} " />
+				      	<@comboWithParams additionalParameters="class=\"form-control\"" name="idGenre" default_value="${filter.idGenre!}" items=offerGenre_list! />
 							</div>
 							<div class="form-group">
 								<div class="input-daterange inline">
