@@ -15,26 +15,22 @@
 			<div class="box-header">
 				<h3 class="box-title">#i18n{module.stock.billetterie.manage_category.title}</h3>
 				<div class="box-tools">
-          <span class="pull-right spaced">
 				  	<a class="btn btn-primary btn-sm" href="jsp/admin/plugins/stock/modules/billetterie/SaveCategory.jsp">
 			     		<i class="fa fa-plus" ></i> <span class="hidden-phone">#i18n{module.stock.billetterie.manage_category.buttonCreateCategory}</span>
 				  	</a>
-				  </span>
-          <form class="form-inline pull-right spaced" action="jsp/admin/plugins/stock/modules/billetterie/ManageCategories.jsp" method="post">
-            <input type="hidden" name="filter" value="filter">
-            <label for="filter_name">#i18n{module.stock.billetterie.manage_category.filter.name} : </label>
-            <div class="input-group">
-              <input class="form-control input-sm"  type="text" value="${filter.name!}" name="filter_name" id="filter_name">
-              <span class="input-group-btn">
-                <@showSearchButton />
-              <span>
-            </div>
-          </form>
-			  </div>
-			  <div class="box-body">
-				  <@dataTable dataTableManager=dataTableCategory />
-			  </div>
+				</div>
 			</div>
-	  </div>
-  </div>
+			<div class="box-body">
+       			<form class="form-inline" action="jsp/admin/plugins/stock/modules/billetterie/ManageCategories.jsp" method="post">
+		            <input type="hidden" name="filter" value="filter">
+		            <label for="filter_name">#i18n{module.stock.billetterie.manage_category.filter.name} : </label>
+		            <div class="form-group">
+		              	<input class="form-control input-sm"  type="text" value="${filter.name!}" name="filter_name" id="filter_name">
+	            	</div>
+	            	<@showSearchButton />
+	         	</form>
+				<@dataTable dataTableManager=dataTableCategory />
+			</div>
+		</div>
+	</div>
 </div>

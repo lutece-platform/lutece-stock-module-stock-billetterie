@@ -16,23 +16,20 @@
 			<div class="box-header">
 				<h3 class="box-title">#i18n{module.stock.billetterie.manage_partner.list.partners}</h3>
 				<div class="box-tools">
-					<form class="form-inline" action="jsp/admin/plugins/stock/modules/billetterie/ManagePartners.jsp" method="post" >
-						<input type="hidden" name="filter" value="filter">
+					<a  class="btn btn-primary btn-sm" href="jsp/admin/plugins/stock/modules/billetterie/SavePartner.jsp">
+						<i class="fa fa-plus" ></i><span class="hidden-xs"> #i18n{module.stock.billetterie.manage_partner.buttonCreatePartner}</span>
+					</a>
+				</div>
+			</div>
+			<div class="box-body">
+				<form class="form-inline" action="jsp/admin/plugins/stock/modules/billetterie/ManagePartners.jsp" method="post" >
+					<input type="hidden" name="filter" value="filter">
+						<div class="form-group">
 							<label class="sr-only" for="filter_name">#i18n{module.stock.billetterie.field.PartnerDTO.name} : </label>
-							<div class="input-group">
 							<input class="form-control input-sm" type="text" value="${filter.name!}" placeholder="#i18n{module.stock.billetterie.field.PartnerDTO.name}" name="name" id="filter_name">
-							<span class="input-group-btn">
-							<@showSearchButton />
-							</span>
-							</div>
-
-						<a  class="btn btn-primary btn-sm" href="jsp/admin/plugins/stock/modules/billetterie/SavePartner.jsp">
-							<i class="fa fa-plus" ></i><span class="hidden-xs"> #i18n{module.stock.billetterie.manage_partner.buttonCreatePartner}</span>
-						</a>
-					</form>
-        </div>
-      </div>
-      <div class="box-body">
+						</div>
+						<@showSearchButton />
+				</form>
 				<@dataTable dataTableManager=dataTablePartner />
 			</div>
 		</div>
