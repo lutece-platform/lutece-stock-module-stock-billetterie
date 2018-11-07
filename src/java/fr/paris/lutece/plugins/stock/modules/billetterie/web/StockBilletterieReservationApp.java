@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2014, Mairie de Paris
+ * Copyright (c) 2002-2018, Mairie de Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -88,7 +88,6 @@ import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-
 /**
  * Pages for billetterie front
  *
@@ -135,10 +134,9 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
     private static final String PARAMETER_DATE_SCEANCE = "date_sceance";
     private static final String PARAMETER_PAGE = "page";
     private static final String PARAMETER_PAGE_INDEX = "page_index";
-    private static final String PARAMETER_TIME_MAX = AppPropertiesService.getProperty( 
-            "daemon.lock.session.time.expiration" );
+    private static final String PARAMETER_TIME_MAX = AppPropertiesService.getProperty( "daemon.lock.session.time.expiration" );
     private static final String PARAMETER_SUBSCRIBE = "subscribe";
-    
+
     private static final String PARAMETER_TAB_ACTIVE = "tab_active";
     private static final String CONSTANT_RESERVATION_TAB_ACTIVE = "reservation";
     private static final String CONSTANT_SUBSCRIPTION_TAB_ACTIVE = "subscription";
@@ -151,7 +149,7 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
     private static final String ACTION_MODIFY_BOOKING = "modify-purchase";
     private static final String ACTION_SHOW_DETAILS = "fiche-spectacle";
     private static final String ACTION_DELETE_SUBSCRIPTION = "delete-subscription";
-    
+
     // Marks
     private static final String MARK_BASE_URL = "base_url";
     private static final String MARK_USER = "user";
@@ -170,28 +168,30 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
     private static final String TEMPLATE_NOTIFICATION_ADMIN_OFFER_QUANTITY = "notification_admin_offer_quantity.html";
 
     private static final String ENCODING_UTF_8 = "utf-8";
-    private final ISeanceService _offerService = SpringContextService.getContext(  ).getBean( ISeanceService.class );
-    private final IPurchaseService _purchaseService = SpringContextService.getContext(  ).getBean( IPurchaseService.class );
-    private final INotificationService _notificationService = SpringContextService.getContext(  )
-                                                                                  .getBean( INotificationService.class );
-    private final IPurchaseSessionManager _purchaseSessionManager = SpringContextService.getContext(  )
-                                                                                        .getBean( IPurchaseSessionManager.class );
+    private final ISeanceService _offerService = SpringContextService.getContext( ).getBean( ISeanceService.class );
+    private final IPurchaseService _purchaseService = SpringContextService.getContext( ).getBean( IPurchaseService.class );
+    private final INotificationService _notificationService = SpringContextService.getContext( ).getBean( INotificationService.class );
+    private final IPurchaseSessionManager _purchaseSessionManager = SpringContextService.getContext( ).getBean( IPurchaseSessionManager.class );
 
     /**
      * Return page with action specified.
      *
-     * @param request the request
-     * @param nMode the n mode
-     * @param plugin the plugin
+     * @param request
+     *            the request
+     * @param nMode
+     *            the n mode
+     * @param plugin
+     *            the plugin
      * @return the page
-     * @throws UserNotSignedException the user not signed exception
-     * @throws SiteMessageException the site message exception
+     * @throws UserNotSignedException
+     *             the user not signed exception
+     * @throws SiteMessageException
+     *             the site message exception
      */
-    public XPage getPage( HttpServletRequest request, int nMode, Plugin plugin )
-        throws UserNotSignedException, SiteMessageException
+    public XPage getPage( HttpServletRequest request, int nMode, Plugin plugin ) throws UserNotSignedException, SiteMessageException
     {
-        XPage page = new XPage(  );
-        Locale locale = request.getLocale(  );
+        XPage page = new XPage( );
+        Locale locale = request.getLocale( );
 
         String strAction = request.getParameter( PARAMETER_ACTION );
 
@@ -199,66 +199,72 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
         {
             page = getConfirmBooking( page, request, locale );
         }
-        else if ( ACTION_MY_BOOKINGS.equals( strAction ) )
-        {
-        	request.setAttribute(PARAMETER_TAB_ACTIVE, CONSTANT_RESERVATION_TAB_ACTIVE);
-            String strContent = getMyBookings( request, getUser( request ), locale );
-            page.setContent( strContent );
+        else
+            if ( ACTION_MY_BOOKINGS.equals( strAction ) )
+            {
+                request.setAttribute( PARAMETER_TAB_ACTIVE, CONSTANT_RESERVATION_TAB_ACTIVE );
+                String strContent = getMyBookings( request, getUser( request ), locale );
+                page.setContent( strContent );
 
-            String pageTitle = getMessage( TITLE_MY_BOOKINGS, request );
-            page.setPathLabel( pageTitle );
-            page.setTitle( pageTitle );
+                String pageTitle = getMessage( TITLE_MY_BOOKINGS, request );
+                page.setPathLabel( pageTitle );
+                page.setTitle( pageTitle );
 
-        }
-        else if ( ACTION_DELETE_BOOKING.equals( strAction ) )
-        {
-            page = getDeleteBooking( page, request, locale );
-        }
-        else if ( ACTION_DELETE_SUBSCRIPTION.equals( strAction ) )
-        {
-            deleteSubscription( page, request, locale );
-            
-            String strContent = getMyBookings( request, getUser( request ), locale );
-            page.setContent( strContent );
+            }
+            else
+                if ( ACTION_DELETE_BOOKING.equals( strAction ) )
+                {
+                    page = getDeleteBooking( page, request, locale );
+                }
+                else
+                    if ( ACTION_DELETE_SUBSCRIPTION.equals( strAction ) )
+                    {
+                        deleteSubscription( page, request, locale );
 
-            String pageTitle = getMessage( TITLE_MY_BOOKINGS, request );
-            page.setPathLabel( pageTitle );
-            page.setTitle( pageTitle );
-        }
-        else if ( ACTION_MODIFY_BOOKING.equals( strAction ) )
-        {
-            
-        }
-        
+                        String strContent = getMyBookings( request, getUser( request ), locale );
+                        page.setContent( strContent );
+
+                        String pageTitle = getMessage( TITLE_MY_BOOKINGS, request );
+                        page.setPathLabel( pageTitle );
+                        page.setTitle( pageTitle );
+                    }
+                    else
+                        if ( ACTION_MODIFY_BOOKING.equals( strAction ) )
+                        {
+
+                        }
+
         return page;
     }
 
     /**
      * Returns xpage for confirm booking.
      *
-     * @param page xpage
-     * @param request http request
-     * @param locale locale
+     * @param page
+     *            xpage
+     * @param request
+     *            http request
+     * @param locale
+     *            locale
      * @return xpage
-     * @throws SiteMessageException Confirm booking page cannot be shown
+     * @throws SiteMessageException
+     *             Confirm booking page cannot be shown
      */
-    private XPage getConfirmBooking( XPage page, HttpServletRequest request, Locale locale )
-        throws SiteMessageException
+    private XPage getConfirmBooking( XPage page, HttpServletRequest request, Locale locale ) throws SiteMessageException
     {
-        String[] seanceIdList = request.getParameterValues( PARAMETER_SEANCE_ID );
-        String[] seanceTypeNameList = request.getParameterValues( PARAMETER_SEANCE_TYPE_NAME );
-        String[] numberPlacesList = request.getParameterValues( PARAMETER_NB_PLACES );
+        String [ ] seanceIdList = request.getParameterValues( PARAMETER_SEANCE_ID );
+        String [ ] seanceTypeNameList = request.getParameterValues( PARAMETER_SEANCE_TYPE_NAME );
+        String [ ] numberPlacesList = request.getParameterValues( PARAMETER_NB_PLACES );
         String showId = request.getParameter( PARAMETER_SHOW_ID );
-        
+
         String strPurchaseId = request.getParameter( PARAMETER_PURCHASE_ID );
 
-        Map<String, Object> model = new HashMap<String, Object>(  );
+        Map<String, Object> model = new HashMap<String, Object>( );
         model.put( PARAMETER_SHOW_ID, showId );
 
         FunctionnalException fe = getErrorOnce( request );
 
-        List<ReservationDTO> bookingList = (List<ReservationDTO>) request.getSession(  )
-                                                                         .getAttribute( PARAMETER_BOOKING_LIST );
+        List<ReservationDTO> bookingList = (List<ReservationDTO>) request.getSession( ).getAttribute( PARAMETER_BOOKING_LIST );
 
         String bookingCheck;
         boolean bAuthentified = false;
@@ -271,7 +277,7 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
             {
                 for ( ReservationDTO reservation : bookingList )
                 {
-                    _purchaseSessionManager.release( request.getSession(  ).getId(  ), reservation );
+                    _purchaseSessionManager.release( request.getSession( ).getId( ), reservation );
                 }
             }
 
@@ -280,42 +286,43 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
 
             // Create booking list
             boolean bPlacesInvalid = true;
-            bookingList = new ArrayList<ReservationDTO>(  );
+            bookingList = new ArrayList<ReservationDTO>( );
             // Avoid mixing purchase session (with two opened tabs for example)
-            bookingCheck = UUID.randomUUID(  ).toString(  );
+            bookingCheck = UUID.randomUUID( ).toString( );
 
             try
             {
                 int i = 0;
                 ReservationDTO booking;
                 int nbPlaces;
-                
-                if(seanceIdList != null)
+
+                if ( seanceIdList != null )
                 {
-                	for ( String seanceId : seanceIdList )
+                    for ( String seanceId : seanceIdList )
                     {
                         // Check validity of parameter
-                        if ( StringUtils.isNumeric( numberPlacesList[i] ) && ( Integer.valueOf( numberPlacesList[i] ) > 0 ) )
+                        if ( StringUtils.isNumeric( numberPlacesList [i] ) && ( Integer.valueOf( numberPlacesList [i] ) > 0 ) )
                         {
                             bPlacesInvalid = false;
 
                             // Create booking object
-                            nbPlaces = Integer.valueOf( numberPlacesList[i] );
+                            nbPlaces = Integer.valueOf( numberPlacesList [i] );
 
                             if ( nbPlaces > 0 )
                             {
-                                booking = new ReservationDTO(  );
-                                booking.getOffer(  ).setId( Integer.valueOf( seanceId ) );
-                                booking.getOffer(  ).setTypeName( seanceTypeNameList[i] );
+                                booking = new ReservationDTO( );
+                                booking.getOffer( ).setId( Integer.valueOf( seanceId ) );
+                                booking.getOffer( ).setTypeName( seanceTypeNameList [i] );
                                 booking.setQuantity( nbPlaces );
-                                booking.setDate( DateUtils.getCurrentDateString(  ) );
-                                booking.setHeure( DateUtils.getHourFr( DateUtils.getCurrentDate(  ) ) );
+                                booking.setDate( DateUtils.getCurrentDateString( ) );
+                                booking.setHeure( DateUtils.getHourFr( DateUtils.getCurrentDate( ) ) );
 
                                 if ( user != null )
                                 {
-                                	String strEmail = !user.getUserInfo( LuteceUser.HOME_INFO_ONLINE_EMAIL ).equals("") ? user.getUserInfo( LuteceUser.HOME_INFO_ONLINE_EMAIL ) : user.getUserInfo( LuteceUser.BUSINESS_INFO_ONLINE_EMAIL );//BUSINESS_INFO_ONLINE_EMAIL
-                                    booking.setUserName( user.getName(  ) );
-                                    //booking.setUserName( strEmail );
+                                    String strEmail = !user.getUserInfo( LuteceUser.HOME_INFO_ONLINE_EMAIL ).equals( "" ) ? user
+                                            .getUserInfo( LuteceUser.HOME_INFO_ONLINE_EMAIL ) : user.getUserInfo( LuteceUser.BUSINESS_INFO_ONLINE_EMAIL );// BUSINESS_INFO_ONLINE_EMAIL
+                                    booking.setUserName( user.getName( ) );
+                                    // booking.setUserName( strEmail );
                                     booking.setEmailAgent( strEmail );
                                     booking.setFirstNameAgent( user.getUserInfo( LuteceUser.NAME_GIVEN ) );
                                     booking.setNameAgent( user.getUserInfo( LuteceUser.NAME_FAMILY ) );
@@ -325,9 +332,9 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
                                     // Reserve tickets
                                     try
                                     {
-                                        _purchaseSessionManager.reserve( request.getSession(  ).getId(  ), booking );
+                                        _purchaseSessionManager.reserve( request.getSession( ).getId( ), booking );
                                     }
-                                    catch ( PurchaseUnavailable e )
+                                    catch( PurchaseUnavailable e )
                                     {
                                         throw new BusinessException( null, MESSAGE_INSUFFICIENT_PLACE_REMAINING );
                                     }
@@ -339,18 +346,18 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
 
                         i++;
                     }
-                	
-                	if ( bPlacesInvalid )
+
+                    if ( bPlacesInvalid )
                     {
                         throw new BusinessException( null, MESSAGE_NB_PLACES_INVALID );
                     }
                 }
-                
+
                 // Save booking into session
-                request.getSession(  ).setAttribute( PARAMETER_BOOKING_LIST, bookingList );
-                request.getSession(  ).setAttribute( PARAMETER_BOOKING_CHECK, bookingCheck );
+                request.getSession( ).setAttribute( PARAMETER_BOOKING_LIST, bookingList );
+                request.getSession( ).setAttribute( PARAMETER_BOOKING_CHECK, bookingCheck );
             }
-            catch ( BusinessException e )
+            catch( BusinessException e )
             {
                 String htmlError = getHtmlError( e, request );
                 model.put( BilletterieConstants.ERROR, htmlError );
@@ -359,7 +366,7 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
                 targetUrl.addParameter( PARAMETER_PAGE, PAGE_TICKETING );
                 targetUrl.addParameter( PARAMETER_ACTION, ACTION_SHOW_DETAILS );
                 targetUrl.addParameter( PARAMETER_PRODUCT_ID, showId );
-                SiteMessageService.setMessage( request, e.getCode(  ), SiteMessage.TYPE_STOP, targetUrl.getUrl(  ) );
+                SiteMessageService.setMessage( request, e.getCode( ), SiteMessage.TYPE_STOP, targetUrl.getUrl( ) );
             }
         }
 
@@ -367,11 +374,11 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
         else
         {
             model.put( TicketsConstants.PARAMETER_ERROR, getHtmlError( fe, request ) );
-            bookingCheck = (String) request.getSession(  ).getAttribute( PARAMETER_BOOKING_CHECK );
-            bAuthentified = StringUtils.isNotBlank( bookingList.get( 0 ).getEmailAgent(  ) );
+            bookingCheck = (String) request.getSession( ).getAttribute( PARAMETER_BOOKING_CHECK );
+            bAuthentified = StringUtils.isNotBlank( bookingList.get( 0 ).getEmailAgent( ) );
 
             // try to retrieve DTO if unauthentied user
-            Object errorBean = fe.getBean(  );
+            Object errorBean = fe.getBean( );
 
             if ( !bAuthentified && ( errorBean != null ) && errorBean instanceof UnauthentifiedPurchaserDTO )
             {
@@ -394,25 +401,26 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
         {
             timeMax = Integer.parseInt( PARAMETER_TIME_MAX );
         }
-        catch ( NumberFormatException e )
+        catch( NumberFormatException e )
         {
             LOGGER.error( "Erreur de temps maximum avant suppression de la reservation en session : " + e );
         }
 
-        String localizedString = I18nService.getLocalizedString( ( timeMax > 1 ) ? MESSAGE_CAUTION_TIME_PURCHASE_PLURAL
-                                                                                 : MESSAGE_CAUTION_TIME_PURCHASE,
-                new String[] { PARAMETER_TIME_MAX }, locale );
+        String localizedString = I18nService.getLocalizedString( ( timeMax > 1 ) ? MESSAGE_CAUTION_TIME_PURCHASE_PLURAL : MESSAGE_CAUTION_TIME_PURCHASE,
+                new String [ ] {
+                    PARAMETER_TIME_MAX
+                }, locale );
         model.put( MARK_CAUTION_TIME_PURCHASE, localizedString );
 
         // Add DTO when unauthentified
         if ( !bAuthentified )
         {
-            model.put( MARK_PURCHASER, ( purchaser != null ) ? purchaser : new UnauthentifiedPurchaserDTO(  ) );
+            model.put( MARK_PURCHASER, ( purchaser != null ) ? purchaser : new UnauthentifiedPurchaserDTO( ) );
         }
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_DIR + TEMPLATE_CONFIRM_BOOKING, locale, model );
 
-        page.setContent( template.getHtml(  ) );
+        page.setContent( template.getHtml( ) );
 
         String pageTitle = getMessage( TITLE_CONFIRM_BOOKING, request, showName );
         page.setPathLabel( pageTitle );
@@ -424,59 +432,57 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
     /**
      * Action for saving booking. Called by JSP.
      *
-     * @param request http request
-     * @param response http response
+     * @param request
+     *            http request
+     * @param response
+     *            http response
      * @return url to go
-     * @throws SiteMessageException the site message exception
+     * @throws SiteMessageException
+     *             the site message exception
      */
-    public String doSaveReservation( HttpServletRequest request, HttpServletResponse response )
-        throws SiteMessageException
+    public String doSaveReservation( HttpServletRequest request, HttpServletResponse response ) throws SiteMessageException
     {
-    	String strPurchaseId = (String) request.getSession().getAttribute(PARAMETER_PURCHASE_ID);
-    	if( strPurchaseId != null)
-    	{
-    		_purchaseService.doDeletePurchase( Integer.valueOf( strPurchaseId ) );
-    	}
-    	
+        String strPurchaseId = (String) request.getSession( ).getAttribute( PARAMETER_PURCHASE_ID );
+        if ( strPurchaseId != null )
+        {
+            _purchaseService.doDeletePurchase( Integer.valueOf( strPurchaseId ) );
+        }
+
         String returnUrl = null;
 
         // Check mixing booking (with two tabs and two booking opened
-        if ( ( request.getParameter( PARAMETER_BOOKING_CHECK ) == null ) ||
-                !request.getParameter( PARAMETER_BOOKING_CHECK )
-                            .equals( request.getSession(  ).getAttribute( PARAMETER_BOOKING_CHECK ) ) )
+        if ( ( request.getParameter( PARAMETER_BOOKING_CHECK ) == null )
+                || !request.getParameter( PARAMETER_BOOKING_CHECK ).equals( request.getSession( ).getAttribute( PARAMETER_BOOKING_CHECK ) ) )
         {
-            SiteMessageService.setMessage( request, PurchaseService.MESSAGE_ERROR_PURCHASE_SESSION_EXPIRED,
-                SiteMessage.TYPE_ERROR, JSP_PORTAL );
+            SiteMessageService.setMessage( request, PurchaseService.MESSAGE_ERROR_PURCHASE_SESSION_EXPIRED, SiteMessage.TYPE_ERROR, JSP_PORTAL );
         }
         else
         {
-            List<ReservationDTO> bookingList = (List<ReservationDTO>) request.getSession(  )
-                                                                             .getAttribute( PARAMETER_BOOKING_LIST );
-            
-            //Check booked quantity is available
-            for ( ReservationDTO booking: bookingList )
+            List<ReservationDTO> bookingList = (List<ReservationDTO>) request.getSession( ).getAttribute( PARAMETER_BOOKING_LIST );
+
+            // Check booked quantity is available
+            for ( ReservationDTO booking : bookingList )
             {
-            	SeanceDTO seance = _offerService.findSeanceById( bookingList.get( 0 ).getOffer(  ).getId(  ) );
-            	
-            	if ( booking.getQuantity( ) > seance.getQuantity( ) )
-            	{
-            		UrlItem targetUrl = new UrlItem( AppPathService.getBaseUrl( request ) + JSP_PORTAL );
+                SeanceDTO seance = _offerService.findSeanceById( bookingList.get( 0 ).getOffer( ).getId( ) );
+
+                if ( booking.getQuantity( ) > seance.getQuantity( ) )
+                {
+                    UrlItem targetUrl = new UrlItem( AppPathService.getBaseUrl( request ) + JSP_PORTAL );
                     targetUrl.addParameter( PARAMETER_PAGE, PAGE_TICKETING );
                     targetUrl.addParameter( PARAMETER_ACTION, ACTION_SHOW_DETAILS );
-                    targetUrl.addParameter( PARAMETER_PRODUCT_ID, seance.getProduct(  ).getId(  ) );
+                    targetUrl.addParameter( PARAMETER_PRODUCT_ID, seance.getProduct( ).getId( ) );
 
-                    SiteMessageService.setMessage( request, PurchaseService.MESSAGE_ERROR_PURCHASE_QUANTITY_OFFER,
-                            SiteMessage.TYPE_ERROR, JSP_PORTAL );
-                    
+                    SiteMessageService.setMessage( request, PurchaseService.MESSAGE_ERROR_PURCHASE_QUANTITY_OFFER, SiteMessage.TYPE_ERROR, JSP_PORTAL );
+
                     return targetUrl.getUrl( );
-            	}
+                }
             }
-            
+
             if ( Boolean.valueOf( request.getParameter( PARAMETER_AUTHENTIFIED_USER ) ) )
             {
                 try
                 {
-                    bookingList = _purchaseService.doSavePurchaseList( bookingList, request.getSession(  ).getId(  ) );
+                    bookingList = _purchaseService.doSavePurchaseList( bookingList, request.getSession( ).getId( ) );
                     sendBookingNotification( bookingList, request );
 
                     for ( ReservationDTO booking : bookingList )
@@ -488,29 +494,28 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
                     UrlItem url = new UrlItem( AppPathService.getBaseUrl( request ) + JSP_PORTAL );
                     url.addParameter( PARAMETER_PAGE, PAGE_BOOKING );
                     url.addParameter( PARAMETER_ACTION, ACTION_MY_BOOKINGS );
-                    returnUrl = url.getUrl(  );
+                    returnUrl = url.getUrl( );
                 }
-                catch ( FunctionnalException e )
+                catch( FunctionnalException e )
                 {
                     if ( bookingList != null )
                     {
                         // If error we display show page
-                        SeanceDTO seance = _offerService.findSeanceById( bookingList.get( 0 ).getOffer(  ).getId(  ) );
+                        SeanceDTO seance = _offerService.findSeanceById( bookingList.get( 0 ).getOffer( ).getId( ) );
                         UrlItem targetUrl = new UrlItem( AppPathService.getBaseUrl( request ) + JSP_PORTAL );
                         targetUrl.addParameter( PARAMETER_PAGE, PAGE_TICKETING );
                         targetUrl.addParameter( PARAMETER_ACTION, ACTION_SHOW_DETAILS );
-                        targetUrl.addParameter( PARAMETER_PRODUCT_ID, seance.getProduct(  ).getId(  ) );
+                        targetUrl.addParameter( PARAMETER_PRODUCT_ID, seance.getProduct( ).getId( ) );
 
-                        return manageFunctionnalException( request, e, targetUrl.getUrl(  ) );
+                        return manageFunctionnalException( request, e, targetUrl.getUrl( ) );
                     }
 
-                    SiteMessageService.setMessage( request, PurchaseService.MESSAGE_ERROR_PURCHASE_SESSION_EXPIRED,
-                        SiteMessage.TYPE_ERROR, JSP_PORTAL );
+                    SiteMessageService.setMessage( request, PurchaseService.MESSAGE_ERROR_PURCHASE_SESSION_EXPIRED, SiteMessage.TYPE_ERROR, JSP_PORTAL );
                 }
             }
             else
             {
-                UnauthentifiedPurchaserDTO purchaser = new UnauthentifiedPurchaserDTO(  );
+                UnauthentifiedPurchaserDTO purchaser = new UnauthentifiedPurchaserDTO( );
                 populate( purchaser, request );
 
                 try
@@ -520,9 +525,9 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
 
                     // Go to portal
                     UrlItem url = new UrlItem( AppPathService.getBaseUrl( request ) + JSP_PORTAL );
-                    returnUrl = url.getUrl(  );
+                    returnUrl = url.getUrl( );
                 }
-                catch ( FunctionnalException e )
+                catch( FunctionnalException e )
                 {
                     UrlItem targetUrl = new UrlItem( AppPathService.getBaseUrl( request ) + JSP_PORTAL );
                     targetUrl.addParameter( PARAMETER_PAGE, PAGE_BOOKING );
@@ -531,7 +536,7 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
                     targetUrl.addParameter( PARAMETER_SHOW_NAME, request.getParameter( PARAMETER_SHOW_NAME ) );
                     targetUrl.addParameter( PARAMETER_SEANCE_DATE, request.getParameter( PARAMETER_SEANCE_DATE ) );
 
-                    return manageFunctionnalException( request, e, targetUrl.getUrl(  ) );
+                    return manageFunctionnalException( request, e, targetUrl.getUrl( ) );
                 }
             }
         }
@@ -540,37 +545,38 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
     }
 
     /**
-     * Send a notification to all the admins when all the tickets of an
-     * offer are booked
-     * @param request The HTTP request
+     * Send a notification to all the admins when all the tickets of an offer are booked
+     * 
+     * @param request
+     *            The HTTP request
      * @param purchase
      */
     private void sendNotificationToAdmins( HttpServletRequest request, ReservationDTO purchase )
     {
-        SeanceDTO seance = this._offerService.findSeanceById( purchase.getOffer(  ).getId(  ) );
+        SeanceDTO seance = this._offerService.findSeanceById( purchase.getOffer( ).getId( ) );
 
-        if ( seance != null && seance.getQuantity(  ) < seance.getMinTickets(  ) )
+        if ( seance != null && seance.getQuantity( ) < seance.getMinTickets( ) )
         {
-            //Generate mail content
-            Map<String, Object> model = new HashMap<String, Object>(  );
+            // Generate mail content
+            Map<String, Object> model = new HashMap<String, Object>( );
             model.put( MARK_SEANCE, seance );
             model.put( MARK_BASE_URL, AppPathService.getBaseUrl( request ) );
 
-            HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_NOTIFICATION_ADMIN_OFFER_QUANTITY, request.getLocale(  ),
-                    model );
+            HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_NOTIFICATION_ADMIN_OFFER_QUANTITY, request.getLocale( ), model );
 
-            Collection<AdminUser> listUsers = (List<AdminUser>) AdminUserHome.findUserList(  );
+            Collection<AdminUser> listUsers = (List<AdminUser>) AdminUserHome.findUserList( );
 
             for ( AdminUser adminUser : listUsers )
             {
                 // Create mail object
-                NotificationDTO notificationDTO = new NotificationDTO(  );
-                notificationDTO.setRecipientsTo( adminUser.getEmail(  ) );
+                NotificationDTO notificationDTO = new NotificationDTO( );
+                notificationDTO.setRecipientsTo( adminUser.getEmail( ) );
 
-                String[] args = new String[] { String.valueOf( seance.getId(  ) ) };
-                notificationDTO.setSubject( I18nService.getLocalizedString( MESSAGE_NOTIFICATION_ADMIN_OFFER_QUANTITY_SUBJECT, args,
-                        request.getLocale(  ) ) );
-                notificationDTO.setMessage( template.getHtml(  ) );
+                String [ ] args = new String [ ] {
+                    String.valueOf( seance.getId( ) )
+                };
+                notificationDTO.setSubject( I18nService.getLocalizedString( MESSAGE_NOTIFICATION_ADMIN_OFFER_QUANTITY_SUBJECT, args, request.getLocale( ) ) );
+                notificationDTO.setMessage( template.getHtml( ) );
 
                 // Send it
                 _notificationService.send( notificationDTO );
@@ -581,16 +587,17 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
     /**
      * Action for cancel saving booking. Called by JSP.
      *
-     * @param request http request
-     * @param response http response
+     * @param request
+     *            http request
+     * @param response
+     *            http response
      * @return url to go
-     * @throws UnsupportedEncodingException the unsupported encoding exception
+     * @throws UnsupportedEncodingException
+     *             the unsupported encoding exception
      */
-    public String doCancelSaveReservation( HttpServletRequest request, HttpServletResponse response )
-        throws UnsupportedEncodingException
+    public String doCancelSaveReservation( HttpServletRequest request, HttpServletResponse response ) throws UnsupportedEncodingException
     {
-        List<ReservationDTO> bookingList = (List<ReservationDTO>) request.getSession(  )
-                                                                         .getAttribute( PARAMETER_BOOKING_LIST );
+        List<ReservationDTO> bookingList = (List<ReservationDTO>) request.getSession( ).getAttribute( PARAMETER_BOOKING_LIST );
         String seanceDate = request.getParameter( PARAMETER_DATE_SEANCE );
         String showId = request.getParameter( PARAMETER_PRODUCT_ID );
         Integer nShowId;
@@ -599,7 +606,7 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
         {
             nShowId = Integer.valueOf( showId );
         }
-        catch ( NumberFormatException e )
+        catch( NumberFormatException e )
         {
             return AppPathService.getBaseUrl( request ) + JSP_PORTAL;
         }
@@ -610,81 +617,85 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
         targetUrl.addParameter( PARAMETER_PRODUCT_ID, nShowId );
         targetUrl.addParameter( PARAMETER_DATE_SCEANCE, URLEncoder.encode( seanceDate, ENCODING_UTF_8 ) );
 
-        if ( ( bookingList != null ) && !bookingList.isEmpty(  ) )
+        if ( ( bookingList != null ) && !bookingList.isEmpty( ) )
         {
             try
             {
-                _purchaseService.doCancelPurchaseList( bookingList, request.getSession(  ).getId(  ) );
+                _purchaseService.doCancelPurchaseList( bookingList, request.getSession( ).getId( ) );
             }
-            catch ( FunctionnalException e )
+            catch( FunctionnalException e )
             {
                 // If error we display show page
-                return manageFunctionnalException( request, e, targetUrl.getUrl(  ) );
+                return manageFunctionnalException( request, e, targetUrl.getUrl( ) );
             }
         }
 
-        return targetUrl.getUrl(  );
+        return targetUrl.getUrl( );
     }
 
     /**
      * Returns page for managing user bookings.
-     * @param request http request
-     * @param user The user
-     * @param locale local
+     * 
+     * @param request
+     *            http request
+     * @param user
+     *            The user
+     * @param locale
+     *            local
      * @return The content to display
-     * @throws UserNotSignedException If the user has not signed in
+     * @throws UserNotSignedException
+     *             If the user has not signed in
      */
-    public static String getMyBookings( HttpServletRequest request, LuteceUser user, Locale locale )
-            throws UserNotSignedException
+    public static String getMyBookings( HttpServletRequest request, LuteceUser user, Locale locale ) throws UserNotSignedException
     {
         if ( user == null )
         {
-            throw new UserNotSignedException(  );
+            throw new UserNotSignedException( );
         }
 
         // Get user bookings
-        Date today = new Date(  );
-        PurchaseFilter purchaseFilterUserName = new PurchaseFilter(  );
-        PurchaseFilter purchaseFilterEmail = new PurchaseFilter(  );
-        
-        String strEmail = !user.getUserInfo( LuteceUser.HOME_INFO_ONLINE_EMAIL ).equals("") ? user.getUserInfo( LuteceUser.HOME_INFO_ONLINE_EMAIL ) : user.getUserInfo( LuteceUser.BUSINESS_INFO_ONLINE_EMAIL );//BUSINESS_INFO_ONLINE_EMAIL
+        Date today = new Date( );
+        PurchaseFilter purchaseFilterUserName = new PurchaseFilter( );
+        PurchaseFilter purchaseFilterEmail = new PurchaseFilter( );
+
+        String strEmail = !user.getUserInfo( LuteceUser.HOME_INFO_ONLINE_EMAIL ).equals( "" ) ? user.getUserInfo( LuteceUser.HOME_INFO_ONLINE_EMAIL ) : user
+                .getUserInfo( LuteceUser.BUSINESS_INFO_ONLINE_EMAIL );// BUSINESS_INFO_ONLINE_EMAIL
         purchaseFilterEmail.setUserName( strEmail );
-        purchaseFilterEmail.setDateBeginOffer( new Timestamp( today.getTime(  ) ) );
-        
-        purchaseFilterUserName.setUserName( user.getName(  ) );
-        purchaseFilterUserName.setDateBeginOffer( new Timestamp( today.getTime(  ) ) );
+        purchaseFilterEmail.setDateBeginOffer( new Timestamp( today.getTime( ) ) );
+
+        purchaseFilterUserName.setUserName( user.getName( ) );
+        purchaseFilterUserName.setDateBeginOffer( new Timestamp( today.getTime( ) ) );
 
         IPurchaseService purchaseService = SpringContextService.getContext( ).getBean( IPurchaseService.class );
 
         // Dispatch booking list into two differents lists (old and to come)
         List<ReservationDTO> toComeBookingList = purchaseService.findByFilter( purchaseFilterUserName );
         List<ReservationDTO> toComeBookingListEmail = purchaseService.findByFilter( purchaseFilterEmail );
-        for(ReservationDTO reservationDTO : toComeBookingListEmail)
+        for ( ReservationDTO reservationDTO : toComeBookingListEmail )
         {
-        	if(!toComeBookingList.contains(reservationDTO))
-        	{
-        		toComeBookingList.add(reservationDTO);
-        	}
+            if ( !toComeBookingList.contains( reservationDTO ) )
+            {
+                toComeBookingList.add( reservationDTO );
+            }
         }
-        
-        SubscriptionProductJspBean jspBean = new SubscriptionProductJspBean(  );
-        List<Product> listProduct = jspBean.getProductsSubscribedByUser(user);
+
+        SubscriptionProductJspBean jspBean = new SubscriptionProductJspBean( );
+        List<Product> listProduct = jspBean.getProductsSubscribedByUser( user );
 
         purchaseFilterUserName.setDateBeginOffer( null );
-        purchaseFilterUserName.setDateEndOffer( new Timestamp( today.getTime(  ) ) );
+        purchaseFilterUserName.setDateEndOffer( new Timestamp( today.getTime( ) ) );
 
-        List<ReservationDTO> oldBookingList = purchaseService.findByFilter( purchaseFilterUserName,
-                getPaginationProperties( request ) );
+        List<ReservationDTO> oldBookingList = purchaseService.findByFilter( purchaseFilterUserName, getPaginationProperties( request ) );
 
         // Generates template
-        Map<String, Object> model = new HashMap<String, Object>(  );
+        Map<String, Object> model = new HashMap<String, Object>( );
         model.put( PARAMETER_NEXT_BOOKING_LIST, toComeBookingList );
         model.put( PARAMETER_PAST_BOOKING_LIST, oldBookingList );
 
         model.put( MARK_USER, user );
-        
+
         model.put( MARK_LIST_PRODUCT_SUBSCRIBED, listProduct );
-        model.put( PARAMETER_TAB_ACTIVE, (String)request.getAttribute(PARAMETER_TAB_ACTIVE) );
+        model.put( PARAMETER_TAB_ACTIVE, (String) request.getAttribute( PARAMETER_TAB_ACTIVE ) );
 
         String strNbItemPerPage = request.getParameter( PARAMETER_NB_ITEMS_PER_PAGE );
         String strDefaultNbItemPerPage = DEFAULT_RESULTS_PER_PAGE;
@@ -696,8 +707,8 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
 
         UrlItem url = new UrlItem( "jsp/site/Portal.jsp?page=reservation&action=mes-reservations" );
 
-        Paginator<ReservationDTO> paginator = new Paginator<ReservationDTO>( oldBookingList, nNbItemsPerPage,
-                url.getUrl(  ), PARAMETER_PAGE_INDEX, strCurrentPageIndex );
+        Paginator<ReservationDTO> paginator = new Paginator<ReservationDTO>( oldBookingList, nNbItemsPerPage, url.getUrl( ), PARAMETER_PAGE_INDEX,
+                strCurrentPageIndex );
 
         model.put( MARK_PAGINATOR, paginator );
 
@@ -709,14 +720,17 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
     /**
      * Returns page for deleting user booking.
      *
-     * @param page xpage
-     * @param request http request
-     * @param locale local
+     * @param page
+     *            xpage
+     * @param request
+     *            http request
+     * @param locale
+     *            local
      * @return xpage
-     * @throws SiteMessageException the site message exception
+     * @throws SiteMessageException
+     *             the site message exception
      */
-    public XPage getDeleteBooking( XPage page, HttpServletRequest request, Locale locale )
-        throws SiteMessageException
+    public XPage getDeleteBooking( XPage page, HttpServletRequest request, Locale locale ) throws SiteMessageException
     {
         String purchaseId = request.getParameter( PARAMETER_PURCHASE_ID );
 
@@ -725,19 +739,22 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
             throw new TechnicalException( "Paramètre " + PARAMETER_SEANCE_ID + " invalide   : " + purchaseId );
         }
 
-        Map<String, Object> model = new HashMap<String, Object>(  );
+        Map<String, Object> model = new HashMap<String, Object>( );
         model.put( PARAMETER_PURCHASE_ID, purchaseId );
 
-        SiteMessageService.setMessage( request, MESSAGE_CONFIRM_DELETE_PURCHASE, null,
-            MESSAGE_CONFIRM_DELETE_PURCHASE_TITLE, JSP_DO_DELETE_RESERVATION, null, SiteMessage.TYPE_CONFIRMATION, model );
+        SiteMessageService.setMessage( request, MESSAGE_CONFIRM_DELETE_PURCHASE, null, MESSAGE_CONFIRM_DELETE_PURCHASE_TITLE, JSP_DO_DELETE_RESERVATION, null,
+                SiteMessage.TYPE_CONFIRMATION, model );
 
         return null;
     }
 
     /**
      * Action for deleting booking. Called by JSP.
-     * @param request http request
-     * @param response http response
+     * 
+     * @param request
+     *            http request
+     * @param response
+     *            http response
      * @return url to go
      */
     public String doDeleteReservation( HttpServletRequest request, HttpServletResponse response )
@@ -755,33 +772,33 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
         returnUrl.addParameter( PARAMETER_PAGE, PAGE_BOOKING );
         returnUrl.addParameter( PARAMETER_ACTION, ACTION_MY_BOOKINGS );
 
-        return returnUrl.getUrl(  );
+        return returnUrl.getUrl( );
     }
 
     /**
      * Send booking notification.
      *
-     * @param bookingList the booking list
-     * @param request the request
+     * @param bookingList
+     *            the booking list
+     * @param request
+     *            the request
      * @return the notification dto
      */
     private NotificationDTO sendBookingNotification( List<ReservationDTO> bookingList, HttpServletRequest request )
     {
-        //Generate mail content
-        Map<String, Object> model = new HashMap<String, Object>(  );
+        // Generate mail content
+        Map<String, Object> model = new HashMap<String, Object>( );
         model.put( PARAMETER_BOOKING_LIST, bookingList );
         model.put( MARK_BASE_URL, AppPathService.getBaseUrl( request ) );
 
-        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_DIR + TEMPLATE_NOTIFICATION_BOOKING,
-                request.getLocale(  ), model );
+        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_DIR + TEMPLATE_NOTIFICATION_BOOKING, request.getLocale( ), model );
 
         // Create mail object
-        NotificationDTO notificationDTO = new NotificationDTO(  );
+        NotificationDTO notificationDTO = new NotificationDTO( );
         ReservationDTO reservation = bookingList.get( 0 );
-        notificationDTO.setRecipientsTo( reservation.getEmailAgent(  ) );
-        notificationDTO.setSubject( getMessage( MESSAGE_NOTIFICATION_BOOKING_SUBJECT, request,
-                reservation.getOffer(  ).getName(  ) ) );
-        notificationDTO.setMessage( template.getHtml(  ) );
+        notificationDTO.setRecipientsTo( reservation.getEmailAgent( ) );
+        notificationDTO.setSubject( getMessage( MESSAGE_NOTIFICATION_BOOKING_SUBJECT, request, reservation.getOffer( ).getName( ) ) );
+        notificationDTO.setMessage( template.getHtml( ) );
 
         // Send it
         _notificationService.send( notificationDTO );
@@ -792,16 +809,18 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
     /**
      * Send request notification
      *
-     * @param bookingList the booking list
-     * @param purchaser the purchaser
-     * @param request the request
+     * @param bookingList
+     *            the booking list
+     * @param purchaser
+     *            the purchaser
+     * @param request
+     *            the request
      * @return the notification dto
      */
-    private NotificationDTO sendRequestNotification( List<ReservationDTO> bookingList,
-        UnauthentifiedPurchaserDTO purchaser, HttpServletRequest request )
+    private NotificationDTO sendRequestNotification( List<ReservationDTO> bookingList, UnauthentifiedPurchaserDTO purchaser, HttpServletRequest request )
     {
-        //Generate mail content
-        Map<String, Object> model = new HashMap<String, Object>(  );
+        // Generate mail content
+        Map<String, Object> model = new HashMap<String, Object>( );
         model.put( PARAMETER_BOOKING_LIST, bookingList );
         model.put( MARK_PURCHASER, purchaser );
         model.put( MARK_BASE_URL, AppPathService.getBaseUrl( request ) );
@@ -810,46 +829,48 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
         String showName = request.getParameter( PARAMETER_SHOW_NAME );
         model.put( PARAMETER_SHOW_NAME, showName );
 
-        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_DIR + TEMPLATE_NOTIFICATION_REQUEST,
-                request.getLocale(  ), model );
+        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_DIR + TEMPLATE_NOTIFICATION_REQUEST, request.getLocale( ), model );
 
         // Create mail object
-        NotificationDTO notificationDTO = new NotificationDTO(  );
+        NotificationDTO notificationDTO = new NotificationDTO( );
         notificationDTO.setRecipientsTo( AppPropertiesService.getProperty( PROPERTY_NOTIFICATION_REQUEST_RECIPIENT ) );
         notificationDTO.setSubject( getMessage( MESSAGE_NOTIFICATION_REQUEST_SUBJECT, request, showName ) );
-        notificationDTO.setMessage( template.getHtml(  ) );
+        notificationDTO.setMessage( template.getHtml( ) );
 
         // Send it
         _notificationService.send( notificationDTO );
 
         return notificationDTO;
     }
-    
+
     /**
      * Returns page for deleting user booking.
      *
-     * @param page xpage
-     * @param request http request
-     * @param locale local
+     * @param page
+     *            xpage
+     * @param request
+     *            http request
+     * @param locale
+     *            local
      * @return xpage
-     * @throws SiteMessageException the site message exception
+     * @throws SiteMessageException
+     *             the site message exception
      */
-    public void  deleteSubscription( XPage page, HttpServletRequest request, Locale locale )
-        throws SiteMessageException
+    public void deleteSubscription( XPage page, HttpServletRequest request, Locale locale ) throws SiteMessageException
     {
-    	String strSubscribe = request.getParameter( PARAMETER_SUBSCRIBE );
-    	request.setAttribute(PARAMETER_TAB_ACTIVE, CONSTANT_SUBSCRIPTION_TAB_ACTIVE);
-       
-    	//Get the user
+        String strSubscribe = request.getParameter( PARAMETER_SUBSCRIBE );
+        request.setAttribute( PARAMETER_TAB_ACTIVE, CONSTANT_SUBSCRIPTION_TAB_ACTIVE );
+
+        // Get the user
         LuteceUser currentUser = getUser( request );
-        
-        SubscriptionProductJspBean jspBean = new SubscriptionProductJspBean(  );
-        
+
+        SubscriptionProductJspBean jspBean = new SubscriptionProductJspBean( );
+
         if ( strSubscribe != null )
         {
             if ( strSubscribe.equals( "false" ) )
             {
-            	jspBean.doUnsubscribeToProduct( request, currentUser );
+                jspBean.doUnsubscribeToProduct( request, currentUser );
             }
         }
 

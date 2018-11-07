@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2014, Mairie de Paris
+ * Copyright (c) 2002-2018, Mairie de Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -64,7 +64,6 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolation;
 
-
 /**
  * Abstract class for jsp bean
  *
@@ -87,20 +86,22 @@ public abstract class AbstractXPageApp
     /**
      * Populate a bean using parameters in http request
      *
-     * @param bean bean to populate
-     * @param request http request
+     * @param bean
+     *            bean to populate
+     * @param request
+     *            http request
      */
     protected static void populate( Object bean, HttpServletRequest request )
     {
         try
         {
-            BeanUtils.populate( bean, request.getParameterMap(  ) );
+            BeanUtils.populate( bean, request.getParameterMap( ) );
         }
-        catch ( IllegalAccessException e )
+        catch( IllegalAccessException e )
         {
             LOGGER.error( POPULATE_ERROR_MESSAGE, e );
         }
-        catch ( InvocationTargetException e )
+        catch( InvocationTargetException e )
         {
             LOGGER.error( POPULATE_ERROR_MESSAGE, e );
         }
@@ -109,16 +110,18 @@ public abstract class AbstractXPageApp
     /**
      * Validate a bean using jsr 303 specs.
      *
-     * @param <T> the generic type
-     * @param bean to validate
-     * @throws ValidationException exception containing informations about
-     *             errors and the bean
+     * @param <T>
+     *            the generic type
+     * @param bean
+     *            to validate
+     * @throws ValidationException
+     *             exception containing informations about errors and the bean
      */
     protected <T> void validate( T bean ) throws ValidationException
     {
         Set<ConstraintViolation<T>> constraintViolations = BeanValidationUtil.validate( bean );
 
-        if ( constraintViolations.size(  ) > 0 )
+        if ( constraintViolations.size( ) > 0 )
         {
             ValidationException ve = new ValidationException( bean );
 
@@ -132,73 +135,80 @@ public abstract class AbstractXPageApp
     }
 
     /**
-     * Return authified user and throw technical exception if no user auth
-     * found.
+     * Return authified user and throw technical exception if no user auth found.
      *
-     * @param request http request
+     * @param request
+     *            http request
      * @return user lutece
-     * @throws TechnicalException the technical exception
+     * @throws TechnicalException
+     *             the technical exception
      */
-    protected LuteceUser getUser( HttpServletRequest request )
-        throws TechnicalException
+    protected LuteceUser getUser( HttpServletRequest request ) throws TechnicalException
     {
         // CAS
         try
         {
-            return SecurityService.getInstance(  ).getRemoteUser( request );
+            return SecurityService.getInstance( ).getRemoteUser( request );
         }
-        catch ( UserNotSignedException e )
+        catch( UserNotSignedException e )
         {
             throw new TechnicalException( AUTHENTIFICATION_ERROR_MESSAGE, e );
         }
 
         // DEBUT BOUCHON
-        //		LuteceUser user = new BasicLuteceUser("abataille@sopragroup.com",
-        //				new MultiLuteceAuthentication());
-        //		user.setUserInfo(LuteceUser.NAME_GIVEN, "Alexis");
-        //		user.setUserInfo(LuteceUser.NAME_FAMILY, "Bataille");
-        //		user.setUserInfo(LuteceUser.HOME_INFO_ONLINE_EMAIL,
-        //				"abataille@sopragroup.com");
-        //		return user;
+        // LuteceUser user = new BasicLuteceUser("abataille@sopragroup.com",
+        // new MultiLuteceAuthentication());
+        // user.setUserInfo(LuteceUser.NAME_GIVEN, "Alexis");
+        // user.setUserInfo(LuteceUser.NAME_FAMILY, "Bataille");
+        // user.setUserInfo(LuteceUser.HOME_INFO_ONLINE_EMAIL,
+        // "abataille@sopragroup.com");
+        // return user;
         // FIN BOUCHON
     }
 
     /**
      * Return localized message.
      *
-     * @param key i18n key
-     * @param request the request
+     * @param key
+     *            i18n key
+     * @param request
+     *            the request
      * @return localized message
      */
     protected String getMessage( String key, HttpServletRequest request )
     {
-        return I18nService.getLocalizedString( key, request.getLocale(  ) );
+        return I18nService.getLocalizedString( key, request.getLocale( ) );
     }
 
     /**
      * Return localized message with args.
      *
-     * @param key i18n key
-     * @param request the request
-     * @param args args
+     * @param key
+     *            i18n key
+     * @param request
+     *            the request
+     * @param args
+     *            args
      * @return localized message
      */
     protected String getMessage( String key, HttpServletRequest request, String... args )
     {
-        return I18nService.getLocalizedString( key, args, request.getLocale(  ) );
+        return I18nService.getLocalizedString( key, args, request.getLocale( ) );
     }
 
     /**
      * Return html code for error message.
      *
-     * @param e the e
-     * @param request the request
+     * @param e
+     *            the e
+     * @param request
+     *            the request
      * @return html
      */
     protected String getHtmlError( FunctionnalException e, HttpServletRequest request )
     {
-        Map<String, Object> model = new HashMap<String, Object>(  );
-        List<String> messageList = new ArrayList<String>(  );
+        Map<String, Object> model = new HashMap<String, Object>( );
+        List<String> messageList = new ArrayList<String>( );
 
         try
         {
@@ -206,47 +216,48 @@ public abstract class AbstractXPageApp
         }
 
         // Validation error
-        catch ( ValidationException ve )
+        catch( ValidationException ve )
         {
-            String typeName = ve.getBean(  ).getClass(  ).getSimpleName(  );
+            String typeName = ve.getBean( ).getClass( ).getSimpleName( );
 
             // Add a validation error message using value, field name and
             // provided
             // message
-            for ( ConstraintViolation<?> constraintViolation : ve.getConstraintViolationList(  ) )
+            for ( ConstraintViolation<?> constraintViolation : ve.getConstraintViolationList( ) )
             {
-                String fieldName = getMessage( FIELD_MESSAGE_PREFIX + typeName + "." +
-                        constraintViolation.getPropertyPath(  ), request );
-                messageList.add( getMessage( ERROR_MESSAGE_KEY, request,
-                        String.valueOf( constraintViolation.getInvalidValue(  ) ), fieldName,
-                        constraintViolation.getMessage(  ) ) );
+                String fieldName = getMessage( FIELD_MESSAGE_PREFIX + typeName + "." + constraintViolation.getPropertyPath( ), request );
+                messageList.add( getMessage( ERROR_MESSAGE_KEY, request, String.valueOf( constraintViolation.getInvalidValue( ) ), fieldName,
+                        constraintViolation.getMessage( ) ) );
             }
         }
 
         // Business error
-        catch ( BusinessException be )
+        catch( BusinessException be )
         {
-            messageList.add( getMessage( be.getCode(  ), request, be.getArguments(  ) ) );
+            messageList.add( getMessage( be.getCode( ), request, be.getArguments( ) ) );
         }
 
         model.put( MARK_MESSAGE_LIST, messageList );
 
-        HtmlTemplate template = AppTemplateService.getTemplate( ERROR_TEMPLATE, request.getLocale(  ), model );
+        HtmlTemplate template = AppTemplateService.getTemplate( ERROR_TEMPLATE, request.getLocale( ), model );
 
-        return template.getHtml(  );
+        return template.getHtml( );
     }
 
     /**
      * Manage functionnal exception.
      *
-     * @param request the request
-     * @param e the e
-     * @param targetUrl the target url
+     * @param request
+     *            the request
+     * @param e
+     *            the e
+     * @param targetUrl
+     *            the target url
      * @return the string
      */
     protected String manageFunctionnalException( HttpServletRequest request, FunctionnalException e, String targetUrl )
     {
-        request.getSession(  ).setAttribute( TicketsConstants.PARAMETER_ERROR, e );
+        request.getSession( ).setAttribute( TicketsConstants.PARAMETER_ERROR, e );
 
         return targetUrl;
     }
@@ -254,27 +265,27 @@ public abstract class AbstractXPageApp
     /**
      * Get validation error from session and remove from it
      *
-     * @param request http request
+     * @param request
+     *            http request
      * @return validation exception
      */
     protected FunctionnalException getErrorOnce( HttpServletRequest request )
     {
-        FunctionnalException fe = (FunctionnalException) request.getSession(  )
-                                                                .getAttribute( TicketsConstants.PARAMETER_ERROR );
+        FunctionnalException fe = (FunctionnalException) request.getSession( ).getAttribute( TicketsConstants.PARAMETER_ERROR );
 
         if ( fe != null )
         {
-            request.getSession(  ).removeAttribute( TicketsConstants.PARAMETER_ERROR );
+            request.getSession( ).removeAttribute( TicketsConstants.PARAMETER_ERROR );
         }
 
         return fe;
     }
 
     /**
-     * Return a bean for pagination in service/dao using parameter in http
-     * request
+     * Return a bean for pagination in service/dao using parameter in http request
      *
-     * @param request http request
+     * @param request
+     *            http request
      * @return paginator the populate paginator
      */
     protected static PaginationProperties getPaginationProperties( HttpServletRequest request )
@@ -288,8 +299,7 @@ public abstract class AbstractXPageApp
         }
 
         String strNbItemPerPage = request.getParameter( PARAMETER_NB_ITEMS_PER_PAGE );
-        String strDefaultNbItemPerPage = AppPropertiesService.getProperty( PROPERTY_RESULTS_PER_PAGE,
-                DEFAULT_RESULTS_PER_PAGE );
+        String strDefaultNbItemPerPage = AppPropertiesService.getProperty( PROPERTY_RESULTS_PER_PAGE, DEFAULT_RESULTS_PER_PAGE );
         strNbItemPerPage = ( strNbItemPerPage != null ) ? strNbItemPerPage : strDefaultNbItemPerPage;
 
         int nItemsPerPage = Integer.valueOf( strNbItemPerPage );

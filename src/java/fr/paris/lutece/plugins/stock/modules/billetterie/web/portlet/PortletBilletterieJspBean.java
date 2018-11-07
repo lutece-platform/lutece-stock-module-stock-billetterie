@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2014, Mairie de Paris
+ * Copyright (c) 2002-2018, Mairie de Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -48,7 +48,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-
 /**
  * Portlet for "A l'affiche" and "A venir"
  */
@@ -79,15 +78,15 @@ public class PortletBilletterieJspBean extends PortletJspBean
     {
         String strPageId = request.getParameter( PARAMETER_PAGE_ID );
         String strPortletTypeId = request.getParameter( PARAMETER_PORTLET_TYPE_ID );
-        Map<String, Object> model = new HashMap<String, Object>(  );
+        Map<String, Object> model = new HashMap<String, Object>( );
         model.put( MARK_WEBAPP_URL, AppPathService.getBaseUrl( request ) );
-        model.put( MARK_LOCALE, AdminUserService.getLocale( request ).getLanguage(  ) );
+        model.put( MARK_LOCALE, AdminUserService.getLocale( request ).getLanguage( ) );
         model.put( PARAMETRE_NUMBER_SHOW, StringUtils.EMPTY );
         model.put( PARAMETRE_TYPE_CONTENT_PORTLET, StringUtils.EMPTY );
 
         HtmlTemplate template = getCreateTemplate( strPageId, strPortletTypeId, model );
 
-        return template.getHtml(  );
+        return template.getHtml( );
     }
 
     /**
@@ -96,7 +95,7 @@ public class PortletBilletterieJspBean extends PortletJspBean
     @Override
     public String doCreate( HttpServletRequest request )
     {
-        PortletBilletterie billetteriePortlet = new PortletBilletterie(  );
+        PortletBilletterie billetteriePortlet = new PortletBilletterie( );
 
         String strErrorUrl = setPortletCommonData( request, billetteriePortlet );
 
@@ -114,9 +113,9 @@ public class PortletBilletterieJspBean extends PortletJspBean
         String strTypeContentPortlet = request.getParameter( PARAMETRE_TYPE_CONTENT_PORTLET );
         billetteriePortlet.setnShow( nShow );
         billetteriePortlet.setTypeContentPortlet( strTypeContentPortlet );
-        BilletteriePortletHome.getInstance(  ).create( billetteriePortlet );
+        BilletteriePortletHome.getInstance( ).create( billetteriePortlet );
 
-        return COMPLEMENT_URL_ADMIN_SITE + getPageUrl( billetteriePortlet.getPageId(  ) );
+        return COMPLEMENT_URL_ADMIN_SITE + getPageUrl( billetteriePortlet.getPageId( ) );
     }
 
     /**
@@ -128,15 +127,15 @@ public class PortletBilletterieJspBean extends PortletJspBean
         String strPortletId = request.getParameter( PARAMETER_PORTLET_ID );
         int nPortletId = Integer.parseInt( strPortletId );
         PortletBilletterie portlet = (PortletBilletterie) PortletHome.findByPrimaryKey( nPortletId );
-        int nbrShow = portlet.getnShow(  );
-        Map<String, Object> model = new HashMap<String, Object>(  );
+        int nbrShow = portlet.getnShow( );
+        Map<String, Object> model = new HashMap<String, Object>( );
         model.put( MARK_WEBAPP_URL, AppPathService.getBaseUrl( request ) );
-        model.put( MARK_LOCALE, AdminUserService.getLocale( request ).getLanguage(  ) );
-        model.put( PARAMETRE_TYPE_CONTENT_PORTLET, portlet.getTypeContentPortlet(  ) );
+        model.put( MARK_LOCALE, AdminUserService.getLocale( request ).getLanguage( ) );
+        model.put( PARAMETRE_TYPE_CONTENT_PORTLET, portlet.getTypeContentPortlet( ) );
 
         if ( nbrShow != -1 )
         {
-            model.put( PARAMETRE_NUMBER_SHOW, portlet.getnShow(  ) );
+            model.put( PARAMETRE_NUMBER_SHOW, portlet.getnShow( ) );
         }
         else
         {
@@ -145,7 +144,7 @@ public class PortletBilletterieJspBean extends PortletJspBean
 
         HtmlTemplate template = getModifyTemplate( portlet, model );
 
-        return template.getHtml(  );
+        return template.getHtml( );
     }
 
     /**
@@ -170,15 +169,16 @@ public class PortletBilletterieJspBean extends PortletJspBean
         String strTypeContentPortlet = request.getParameter( PARAMETRE_TYPE_CONTENT_PORTLET );
         billetterielPortlet.setnShow( nShow );
         billetterielPortlet.setTypeContentPortlet( strTypeContentPortlet );
-        billetterielPortlet.update(  );
+        billetterielPortlet.update( );
 
-        return COMPLEMENT_URL_ADMIN_SITE + getPageUrl( billetterielPortlet.getPageId(  ) );
+        return COMPLEMENT_URL_ADMIN_SITE + getPageUrl( billetterielPortlet.getPageId( ) );
     }
 
     /**
      * Gets the number show.
      *
-     * @param strNumberShow the str number show
+     * @param strNumberShow
+     *            the str number show
      * @return the number show
      */
     private Integer getNumberShow( String strNumberShow )

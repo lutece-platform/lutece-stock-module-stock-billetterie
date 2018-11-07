@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2014, Mairie de Paris
+ * Copyright (c) 2002-2018, Mairie de Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -46,7 +46,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-
 @Service
 @Transactional
 public class DistrictService
@@ -56,7 +55,9 @@ public class DistrictService
 
     /**
      * Get district by id
-     * @param id the id of the district search
+     * 
+     * @param id
+     *            the id of the district search
      * @return the District
      */
     public District findById( Integer id )
@@ -66,17 +67,21 @@ public class DistrictService
 
     /**
      * Get all the district in database
+     * 
      * @return the list of the district
      */
-    public List<District> findAll(  )
+    public List<District> findAll( )
     {
-        return _daoQuartier.findAll(  );
+        return _daoQuartier.findAll( );
     }
 
     /**
      * Get district by filter
-     * @param filter the district filter
-     * @param pagination the pagination properties
+     * 
+     * @param filter
+     *            the district filter
+     * @param pagination
+     *            the pagination properties
      * @return the list of the district
      */
     public List<District> findByFilter( DistrictFilter filter, PaginationProperties pagination )

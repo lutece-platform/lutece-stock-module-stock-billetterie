@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2014, Mairie de Paris
+ * Copyright (c) 2002-2018, Mairie de Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -54,7 +54,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-
 /**
  * class PortletBilletterie
  *
@@ -73,7 +72,7 @@ public class PortletBilletterie extends Portlet
     private static final String TAG_SHOW_END_DATE = "date_fin";
     private static final String TAG_SHOW_POSTER_URL = "posterUrl";
 
-    //    private static final String TAG_SHOW_DESCRIPTION = "description";
+    // private static final String TAG_SHOW_DESCRIPTION = "description";
     private static final String TAG_SHOW_TYPE_PORTLET = "typePortlet";
     private static final String TAG_SHOW = "show";
     private static final String TAG_SHOW_URL = "url";
@@ -91,9 +90,9 @@ public class PortletBilletterie extends Portlet
     /**
      * Instantiates a new portlet billetterie.
      */
-    public PortletBilletterie(  )
+    public PortletBilletterie( )
     {
-        setPortletTypeId( BilletteriePortletHome.getInstance(  ).getPortletTypeId(  ) );
+        setPortletTypeId( BilletteriePortletHome.getInstance( ).getPortletTypeId( ) );
     }
 
     /**
@@ -101,7 +100,7 @@ public class PortletBilletterie extends Portlet
      *
      * @return the type content portlet
      */
-    public String getTypeContentPortlet(  )
+    public String getTypeContentPortlet( )
     {
         return _typeContentPortlet;
     }
@@ -109,7 +108,8 @@ public class PortletBilletterie extends Portlet
     /**
      * Sets the type content portlet.
      *
-     * @param typeContentPortlet the new type content portlet
+     * @param typeContentPortlet
+     *            the new type content portlet
      */
     public void setTypeContentPortlet( String typeContentPortlet )
     {
@@ -121,7 +121,7 @@ public class PortletBilletterie extends Portlet
      *
      * @return the n show
      */
-    public Integer getnShow(  )
+    public Integer getnShow( )
     {
         return _nShow;
     }
@@ -129,7 +129,8 @@ public class PortletBilletterie extends Portlet
     /**
      * Sets the n show.
      *
-     * @param nShow the new n show
+     * @param nShow
+     *            the new n show
      */
     public void setnShow( Integer nShow )
     {
@@ -139,35 +140,36 @@ public class PortletBilletterie extends Portlet
     /**
      * get xml document.
      *
-     * @param request the request
+     * @param request
+     *            the request
      * @return string
      */
     @Override
     public String getXml( HttpServletRequest request )
     {
-        StringBuffer strXml = new StringBuffer(  );
+        StringBuffer strXml = new StringBuffer( );
         PaginationProperties paginator;
         List<ShowDTO> listShow;
-        Integer intNbre = getnShow(  );
-        String strContentPortlet = getTypeContentPortlet(  );
+        Integer intNbre = getnShow( );
+        String strContentPortlet = getTypeContentPortlet( );
 
         if ( intNbre != -1 )
         {
-            paginator = new PaginationPropertiesImpl( 0, getnShow(  ) );
+            paginator = new PaginationPropertiesImpl( 0, getnShow( ) );
         }
         else
         {
             paginator = null;
         }
 
-        List<String> orders = new ArrayList<String>(  );
+        List<String> orders = new ArrayList<String>( );
 
         if ( strContentPortlet.equals( "a-laffiche" ) )
         {
-            Calendar calendar = new GregorianCalendar(  );
-            String today = DateUtils.getDate( calendar.getTime(  ), DateUtils.DATE_FR );
+            Calendar calendar = new GregorianCalendar( );
+            String today = DateUtils.getDate( calendar.getTime( ), DateUtils.DATE_FR );
 
-            ShowFilter filter = new ShowFilter(  );
+            ShowFilter filter = new ShowFilter( );
             filter.setAlaffiche( true );
             orders.add( "dateEnd" );
             filter.setOrders( orders );
@@ -182,30 +184,27 @@ public class PortletBilletterie extends Portlet
         }
 
         XmlUtil.beginElement( strXml, TAG_BILLETTERIE_PORTLET );
-        XmlUtil.addElement( strXml, TAG_SHOW_TYPE_PORTLET,
-            ( strContentPortlet.equals( "a-laffiche" ) ? "aLaffiche" : "aVenir" ) );
+        XmlUtil.addElement( strXml, TAG_SHOW_TYPE_PORTLET, ( strContentPortlet.equals( "a-laffiche" ) ? "aLaffiche" : "aVenir" ) );
 
         for ( ShowDTO showDTO : listShow )
         {
-            if ( strContentPortlet.equals( "a-venir" ) ||
-                    ( !strContentPortlet.equals( "a-venir" ) && showDTO.getAlaffiche(  ) ) )
+            if ( strContentPortlet.equals( "a-venir" ) || ( !strContentPortlet.equals( "a-venir" ) && showDTO.getAlaffiche( ) ) )
             {
                 XmlUtil.beginElement( strXml, TAG_SHOW );
-                XmlUtil.addElement( strXml, TAG_SHOW_ID, showDTO.getId(  ) );
-                XmlUtil.addElement( strXml, TAG_SHOW_NAME, showDTO.getName(  ) );
-                XmlUtil.addElement( strXml, TAG_SHOW_POSTER_URL,
-                    "<![CDATA[" + AppPropertiesService.getProperty( PROPERTY_POSTER_TB_PATH ) + showDTO.getId(  ) +
-                    "]]>" );
-                XmlUtil.addElement( strXml, TAG_SHOW_CATEGORY_NAME, showDTO.getCategoryName(  ) );
-                XmlUtil.addElement( strXml, TAG_SHOW_CATEGORY_COLOR, showDTO.getCategoryColor(  ) );
-                XmlUtil.addElement( strXml, TAG_SHOW_START_DATE, showDTO.getStartDate(  ) );
-                XmlUtil.addElement( strXml, TAG_SHOW_END_DATE, showDTO.getEndDate(  ) );
+                XmlUtil.addElement( strXml, TAG_SHOW_ID, showDTO.getId( ) );
+                XmlUtil.addElement( strXml, TAG_SHOW_NAME, showDTO.getName( ) );
+                XmlUtil.addElement( strXml, TAG_SHOW_POSTER_URL, "<![CDATA[" + AppPropertiesService.getProperty( PROPERTY_POSTER_TB_PATH ) + showDTO.getId( )
+                        + "]]>" );
+                XmlUtil.addElement( strXml, TAG_SHOW_CATEGORY_NAME, showDTO.getCategoryName( ) );
+                XmlUtil.addElement( strXml, TAG_SHOW_CATEGORY_COLOR, showDTO.getCategoryColor( ) );
+                XmlUtil.addElement( strXml, TAG_SHOW_START_DATE, showDTO.getStartDate( ) );
+                XmlUtil.addElement( strXml, TAG_SHOW_END_DATE, showDTO.getEndDate( ) );
 
                 // XmlUtil.addElement( strXml, TAG_SHOW_DESCRIPTION,
                 // showDTO.getDescription( ) );
                 UrlItem url = new UrlItem( URL_SHOW );
-                url.addParameter( PARAMETER_STOCK_ID, showDTO.getId(  ) );
-                XmlUtil.addElement( strXml, TAG_SHOW_URL, "<![CDATA[" + url.getUrl(  ) + "]]>" );
+                url.addParameter( PARAMETER_STOCK_ID, showDTO.getId( ) );
+                XmlUtil.addElement( strXml, TAG_SHOW_URL, "<![CDATA[" + url.getUrl( ) + "]]>" );
                 XmlUtil.endElement( strXml, TAG_SHOW );
             }
         }
@@ -219,26 +218,25 @@ public class PortletBilletterie extends Portlet
      * {@inheritDoc}
      */
     @Override
-    public String getXmlDocument( HttpServletRequest request )
-        throws SiteMessageException
+    public String getXmlDocument( HttpServletRequest request ) throws SiteMessageException
     {
-        return XmlUtil.getXmlHeader(  ) + getXml( request );
+        return XmlUtil.getXmlHeader( ) + getXml( request );
     }
 
     /**
      * Updates the current instance of the PortletBilletterie object
      */
-    public void update(  )
+    public void update( )
     {
-        BilletteriePortletHome.getInstance(  ).update( this );
+        BilletteriePortletHome.getInstance( ).update( this );
     }
 
     /**
      * Removes the current instance of the PortletBilletterie object
      */
     @Override
-    public void remove(  )
+    public void remove( )
     {
-        BilletteriePortletHome.getInstance(  ).remove( this );
+        BilletteriePortletHome.getInstance( ).remove( this );
     }
 }

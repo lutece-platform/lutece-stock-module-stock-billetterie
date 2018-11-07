@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2014, Mairie de Paris
+ * Copyright (c) 2002-2018, Mairie de Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -38,7 +38,6 @@ import fr.paris.lutece.portal.business.portlet.PortletHome;
 import fr.paris.lutece.portal.business.portlet.PortletTypeHome;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 
-
 /**
  * The Class BilletteriePortletHome.
  */
@@ -53,7 +52,7 @@ public class BilletteriePortletHome extends PortletHome
     /**
      * Constructor
      */
-    public BilletteriePortletHome(  )
+    public BilletteriePortletHome( )
     {
         // if ( _singleton == null )
         // {
@@ -65,9 +64,9 @@ public class BilletteriePortletHome extends PortletHome
      * {@inheritDoc}
      */
     @Override
-    public String getPortletTypeId(  )
+    public String getPortletTypeId( )
     {
-        String strCurrentClassName = this.getClass(  ).getName(  );
+        String strCurrentClassName = this.getClass( ).getName( );
         String strPortletTypeId = PortletTypeHome.getPortletTypeId( strCurrentClassName );
 
         return strPortletTypeId;
@@ -77,7 +76,7 @@ public class BilletteriePortletHome extends PortletHome
      * {@inheritDoc}
      */
     @Override
-    public IPortletInterfaceDAO getDAO(  )
+    public IPortletInterfaceDAO getDAO( )
     {
         return _dao;
     }
@@ -87,11 +86,11 @@ public class BilletteriePortletHome extends PortletHome
      *
      * @return single instance of BilletteriePortletHome
      */
-    public static PortletHome getInstance(  )
+    public static PortletHome getInstance( )
     {
         if ( _singleton == null )
         {
-            _singleton = new BilletteriePortletHome(  );
+            _singleton = new BilletteriePortletHome( );
         }
 
         return _singleton;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2014, Mairie de Paris
+ * Copyright (c) 2002-2018, Mairie de Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -49,7 +49,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-
 /**
  * Used for special solr queries
  *
@@ -75,22 +74,24 @@ public class PosterImageServlet extends HttpServlet
     /**
      * Returns poster image
      *
-     * @param request the request
-     * @param response the response
-     * @throws ServletException the servlet exception
-     * @throws IOException Signals that an I/O exception has occurred.
+     * @param request
+     *            the request
+     * @param response
+     *            the response
+     * @throws ServletException
+     *             the servlet exception
+     * @throws IOException
+     *             Signals that an I/O exception has occurred.
      */
-    protected void doGet( HttpServletRequest request, HttpServletResponse response )
-        throws ServletException, IOException
+    protected void doGet( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException
     {
         String sIdProduct = request.getParameter( PARAMETER_PRODUCT_ID );
 
         if ( StringUtils.isNotEmpty( sIdProduct ) )
         {
             Integer idProduct = Integer.parseInt( sIdProduct );
-            boolean isThumbnail = ( request.getParameter( PARAMETER_TB ) != null ) &&
-                request.getParameter( PARAMETER_TB ).equals( String.valueOf( true ) );
-            byte[] bImage;
+            boolean isThumbnail = ( request.getParameter( PARAMETER_TB ) != null ) && request.getParameter( PARAMETER_TB ).equals( String.valueOf( true ) );
+            byte [ ] bImage;
 
             if ( isThumbnail )
             {
@@ -104,10 +105,10 @@ public class PosterImageServlet extends HttpServlet
             response.setContentLength( bImage.length );
             response.setContentType( CONTENT_TYPE_IMAGE_JPEG );
 
-            ServletOutputStream os = response.getOutputStream(  );
+            ServletOutputStream os = response.getOutputStream( );
             IOUtils.write( bImage, os );
-            os.flush();
-            os.close(  );
+            os.flush( );
+            os.close( );
         }
         else
         {

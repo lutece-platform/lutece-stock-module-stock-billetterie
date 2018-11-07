@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2016, Mairie de Paris
+ * Copyright (c) 2002-2018, Mairie de Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,7 +31,6 @@
  *
  * License 1.0
  */
-
 package fr.paris.lutece.plugins.stock.modules.billetterie.web;
 
 import org.junit.Assert;
@@ -45,16 +44,23 @@ public class UriEncodingTest
 
     /**
      * test URI encoding
-     * @throws Exception e
+     * 
+     * @throws Exception
+     *             e
      */
     @Test
-    public void testEncodeUri( )
-    throws Exception
+    public void testEncodeUri( ) throws Exception
     {
         String req = "http://localhost:8080/lutece/jsp/site/Portal.jsp?page=search-solr&sort_name=title_string&sort_order=asc&query=(test AND categorie:(A OR B)))&fq=tarif_reduit_string:true&fq=end_date:[* TO 2009-05-14:12:12Z]&bar=*:*";
-        String out =  BilletterieSolrSearch.encodeUri( req );
-        String ref = "http://localhost:8080/lutece/jsp/site/Portal.jsp?page=search-solr&sort_name=title_string&sort_order=asc&query=(test%20AND%20categorie:(A%20OR%20B)))&fq=tarif_reduit_string:true&fq=end_date:%5B*%20TO%202009-05-14:12:12Z%5D&bar=*:*"; //ref generated with spring's 3.1.0.RELEASE  org.springframework.web.util.UriUtils:encodeUri(String, String)
-        Assert.assertEquals(ref, out);
+        String out = BilletterieSolrSearch.encodeUri( req );
+        String ref = "http://localhost:8080/lutece/jsp/site/Portal.jsp?page=search-solr&sort_name=title_string&sort_order=asc&query=(test%20AND%20categorie:(A%20OR%20B)))&fq=tarif_reduit_string:true&fq=end_date:%5B*%20TO%202009-05-14:12:12Z%5D&bar=*:*"; // ref
+                                                                                                                                                                                                                                                              // generated
+                                                                                                                                                                                                                                                              // with
+                                                                                                                                                                                                                                                              // spring's
+                                                                                                                                                                                                                                                              // 3.1.0.RELEASE
+                                                                                                                                                                                                                                                              // org.springframework.web.util.UriUtils:encodeUri(String,
+                                                                                                                                                                                                                                                              // String)
+        Assert.assertEquals( ref, out );
     }
 
 }

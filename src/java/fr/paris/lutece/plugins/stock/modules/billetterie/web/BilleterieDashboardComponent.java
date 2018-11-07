@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2014, Mairie de Paris
+ * Copyright (c) 2002-2018, Mairie de Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -45,7 +45,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-
 /**
  *
  * DatabaseAdminDashboardComponent
@@ -69,16 +68,16 @@ public class BilleterieDashboardComponent extends DashboardComponent
     public String getDashboardData( AdminUser user, HttpServletRequest request )
     {
         HtmlTemplate template;
-        IStatisticService statisticService = SpringContextService.getContext(  ).getBean( IStatisticService.class );
+        IStatisticService statisticService = SpringContextService.getContext( ).getBean( IStatisticService.class );
 
-        Integer nProductCountALAffiche = statisticService.getCountProductALAffiche(  );
-        Integer nProductCountAVenir = statisticService.getCountProductAVenir(  );
+        Integer nProductCountALAffiche = statisticService.getCountProductALAffiche( );
+        Integer nProductCountAVenir = statisticService.getCountProductAVenir( );
 
-        Integer nbPurchaseCountOfDay = statisticService.getCountPurchaseOfDay(  );
-        Integer nbPurchaseCountOfMonth = statisticService.getCountPurchaseOfMonth(  );
+        Integer nbPurchaseCountOfDay = statisticService.getCountPurchaseOfDay( );
+        Integer nbPurchaseCountOfMonth = statisticService.getCountPurchaseOfMonth( );
 
         // Fill the model
-        Map<String, Object> model = new HashMap<String, Object>(  );
+        Map<String, Object> model = new HashMap<String, Object>( );
 
         model.put( MARK_NB_PRODUCT_A_L_AFFICHE, nProductCountALAffiche );
         model.put( MARK_NB_PRODUCT_A_VENIR, nProductCountAVenir );
@@ -86,8 +85,8 @@ public class BilleterieDashboardComponent extends DashboardComponent
         model.put( MARK_NB_PURCHASE_COUNT_OF_DAY, nbPurchaseCountOfDay );
         model.put( MARK_NB_PURCHASE_COUNT_OF_MONTH, nbPurchaseCountOfMonth );
 
-        template = AppTemplateService.getTemplate( TEMPLATE_ADMIN_DASHBOARD, user.getLocale(  ), model );
+        template = AppTemplateService.getTemplate( TEMPLATE_ADMIN_DASHBOARD, user.getLocale( ), model );
 
-        return template.getHtml(  );
+        return template.getHtml( );
     }
 }

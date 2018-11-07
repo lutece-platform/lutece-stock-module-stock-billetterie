@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2014, Mairie de Paris
+ * Copyright (c) 2002-2018, Mairie de Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -45,10 +45,8 @@ import org.apache.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 
-
 /**
- * This class provides the user interface to manage form features ( manage,
- * create, modify, remove)
+ * This class provides the user interface to manage form features ( manage, create, modify, remove)
  */
 public class SubscriptionProductJspBean extends AbstractJspBean
 {
@@ -70,17 +68,20 @@ public class SubscriptionProductJspBean extends AbstractJspBean
     /**
      * Instantiates a new offer jsp bean.
      */
-    public SubscriptionProductJspBean(  )
+    public SubscriptionProductJspBean( )
     {
-        super(  );
+        super( );
 
-        _subscriptionProductService = SpringContextService.getContext(  ).getBean( ISubscriptionProductService.class );
+        _subscriptionProductService = SpringContextService.getContext( ).getBean( ISubscriptionProductService.class );
     }
 
     /**
      * Create the subscription for the user
-     * @param request the HTTP request
-     * @param currentUser the user who subscribe
+     * 
+     * @param request
+     *            the HTTP request
+     * @param currentUser
+     *            the user who subscribe
      * @return an error if occur, null otherwise
      */
     public String doSubscribeToProduct( HttpServletRequest request, LuteceUser currentUser )
@@ -89,10 +90,10 @@ public class SubscriptionProductJspBean extends AbstractJspBean
 
         if ( StringUtils.isNotEmpty( strIdProduct ) && StringUtils.isNumeric( strIdProduct ) )
         {
-        	String strEmailHome = currentUser.getUserInfo( LuteceUser.HOME_INFO_ONLINE_EMAIL );
-        	String strEmailBusiness = currentUser.getUserInfo( LuteceUser.BUSINESS_INFO_ONLINE_EMAIL );
-        	String strEmail = !strEmailHome.equals("") ? strEmailHome : strEmailBusiness;
-        	_subscriptionProductService.doSaveSubscriptionProduct( strEmail, strIdProduct );
+            String strEmailHome = currentUser.getUserInfo( LuteceUser.HOME_INFO_ONLINE_EMAIL );
+            String strEmailBusiness = currentUser.getUserInfo( LuteceUser.BUSINESS_INFO_ONLINE_EMAIL );
+            String strEmail = !strEmailHome.equals( "" ) ? strEmailHome : strEmailBusiness;
+            _subscriptionProductService.doSaveSubscriptionProduct( strEmail, strIdProduct );
         }
 
         return null;
@@ -100,8 +101,11 @@ public class SubscriptionProductJspBean extends AbstractJspBean
 
     /**
      * Create the subscription for the user
-     * @param request the HTTP request
-     * @param currentUser the user who subscribe
+     * 
+     * @param request
+     *            the HTTP request
+     * @param currentUser
+     *            the user who subscribe
      * @return an error if occur, null otherwise
      */
     public String doUnsubscribeToProduct( HttpServletRequest request, LuteceUser currentUser )
@@ -110,10 +114,10 @@ public class SubscriptionProductJspBean extends AbstractJspBean
 
         if ( StringUtils.isNotEmpty( strIdProduct ) && StringUtils.isNumeric( strIdProduct ) )
         {
-        	String strEmailHome = currentUser.getUserInfo( LuteceUser.HOME_INFO_ONLINE_EMAIL );
-        	String strEmailBusiness = currentUser.getUserInfo( LuteceUser.BUSINESS_INFO_ONLINE_EMAIL );
-        	String strEmail = !strEmailHome.equals("") ? strEmailHome : strEmailBusiness;
-        	_subscriptionProductService.doDeleteSubscriptionProduct( strEmail, strIdProduct );
+            String strEmailHome = currentUser.getUserInfo( LuteceUser.HOME_INFO_ONLINE_EMAIL );
+            String strEmailBusiness = currentUser.getUserInfo( LuteceUser.BUSINESS_INFO_ONLINE_EMAIL );
+            String strEmail = !strEmailHome.equals( "" ) ? strEmailHome : strEmailBusiness;
+            _subscriptionProductService.doDeleteSubscriptionProduct( strEmail, strIdProduct );
         }
 
         return null;
@@ -121,36 +125,41 @@ public class SubscriptionProductJspBean extends AbstractJspBean
 
     /**
      * Say if an user is subscribe to a product
-     * @param request the HTTP request
-     * @param currentUser the user
+     * 
+     * @param request
+     *            the HTTP request
+     * @param currentUser
+     *            the user
      * @return true if the user subscribe to the product
      */
     public boolean isSubscribeToProduct( HttpServletRequest request, LuteceUser currentUser )
     {
         String strIdProduct = request.getParameter( PARAMETER_PRODUCT_ID );
-        
+
         String strEmailHome = currentUser.getUserInfo( LuteceUser.HOME_INFO_ONLINE_EMAIL );
-    	String strEmailBusiness = currentUser.getUserInfo( LuteceUser.BUSINESS_INFO_ONLINE_EMAIL );
-    	String strEmail = !strEmailHome.equals("") ? strEmailHome : strEmailBusiness;
+        String strEmailBusiness = currentUser.getUserInfo( LuteceUser.BUSINESS_INFO_ONLINE_EMAIL );
+        String strEmail = !strEmailHome.equals( "" ) ? strEmailHome : strEmailBusiness;
 
         return _subscriptionProductService.hasUserSubscribedToProduct( strEmail, strIdProduct );
     }
 
     /**
      * Get all subscription to products for an user
-     * @param request the HTTP request
-     * @param currentUser the user
+     * 
+     * @param request
+     *            the HTTP request
+     * @param currentUser
+     *            the user
      * @return a page
      */
     public String getSubscriptionToProduct( HttpServletRequest request, LuteceUser currentUser )
     {
-        StringBuilder page = new StringBuilder(  );
+        StringBuilder page = new StringBuilder( );
         String strEmailHome = currentUser.getUserInfo( LuteceUser.HOME_INFO_ONLINE_EMAIL );
-    	String strEmailBusiness = currentUser.getUserInfo( LuteceUser.BUSINESS_INFO_ONLINE_EMAIL );
-    	
-    	String strEmail = !strEmailHome.equals("") ? strEmailHome : strEmailBusiness;
-    	
-       
+        String strEmailBusiness = currentUser.getUserInfo( LuteceUser.BUSINESS_INFO_ONLINE_EMAIL );
+
+        String strEmail = !strEmailHome.equals( "" ) ? strEmailHome : strEmailBusiness;
+
         for ( Product product : _subscriptionProductService.getProductsByUserSubscription( strEmail ) )
         {
             page.append( strEmail );
@@ -159,33 +168,33 @@ public class SubscriptionProductJspBean extends AbstractJspBean
             page.append( "\n" );
         }
 
-        return page.toString(  );
+        return page.toString( );
     }
-    
+
     /**
      * Get all subscription to products for an user
-     * @param request the HTTP request
-     * @param currentUser the user
+     * 
+     * @param request
+     *            the HTTP request
+     * @param currentUser
+     *            the user
      * @return a page
      */
     public List<Product> getProductsSubscribedByUser( LuteceUser currentUser )
     {
-        //StringBuilder page = new StringBuilder(  );
+        // StringBuilder page = new StringBuilder( );
         String strEmailHome = currentUser.getUserInfo( LuteceUser.HOME_INFO_ONLINE_EMAIL );
-    	String strEmailBusiness = currentUser.getUserInfo( LuteceUser.BUSINESS_INFO_ONLINE_EMAIL );
-    	
-    	String strEmail = !strEmailHome.equals("") ? strEmailHome : strEmailBusiness;
-       
-        /*for ( Product product : _subscriptionProductService.getProductsByUserSubscription( strEmail ) )
-        {
-            page.append( strEmail );
-            page.append( ":" );
-            page.append( product );
-            page.append( "\n" );
-        }
+        String strEmailBusiness = currentUser.getUserInfo( LuteceUser.BUSINESS_INFO_ONLINE_EMAIL );
 
-        return page.toString(  );*/
-    	
-    	return _subscriptionProductService.getProductsByUserSubscription( strEmail );
+        String strEmail = !strEmailHome.equals( "" ) ? strEmailHome : strEmailBusiness;
+
+        /*
+         * for ( Product product : _subscriptionProductService.getProductsByUserSubscription( strEmail ) ) { page.append( strEmail ); page.append( ":" );
+         * page.append( product ); page.append( "\n" ); }
+         * 
+         * return page.toString( );
+         */
+
+        return _subscriptionProductService.getProductsByUserSubscription( strEmail );
     }
 }

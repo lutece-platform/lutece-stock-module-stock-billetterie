@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2014, Mairie de Paris
+ * Copyright (c) 2002-2018, Mairie de Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -85,7 +85,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-
 /**
  * Pages for billetterie front
  *
@@ -111,7 +110,7 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
     private static final String PARAMETER_ACTION = "action";
     private static final String PARAMETER_SUBSCRIBE = "subscribe";
     private static final String PARAMETER_PURCHASE_ID = "purchase_id";
-    
+
     private static final String PARAMETER_USERNAME = "username";
 
     // Marks
@@ -156,37 +155,33 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
     // Constants
     private static final String TITLE_CURRENT_SHOW_LIST = "module.stock.billetterie.show_list.aLaffiche.title";
     private static final String TITLE_COME_SHOW_LIST = "module.stock.billetterie.show_list.aVenir.title";
-    
+
     private static final String STRING_TRUE = "true";
     private static final int BOOKING_OPENED = 0;
     private static final int BOOKING_TO_COME = 1;
     private static final int BOOKING_PASSED = -1;
     private static final String TYPE_A_VENIR = "aVenir";
     private static final String TYPE_A_LAFFICHE = "aLaffiche";
-    private IShowService _showService = (IShowService) SpringContextService.getContext(  )
-                                                                           .getBean( BEAN_STOCK_TICKETS_SHOW_SERVICE );
-    private IProviderService _providerService = SpringContextService.getContext(  ).getBean( IProviderService.class );
+    private IShowService _showService = (IShowService) SpringContextService.getContext( ).getBean( BEAN_STOCK_TICKETS_SHOW_SERVICE );
+    private IProviderService _providerService = SpringContextService.getContext( ).getBean( IProviderService.class );
 
-    //    private ISubscriptionProductService _subscriptionProductService = SpringContextService.getContext( ).getBean(
-    //            ISubscriptionProductService.class );
-    private ISeanceService _offerService = (ISeanceService) SpringContextService.getContext(  )
-                                                                                .getBean( BEAN_STOCK_TICKETS_SEANCE_SERVICE );
-    private final IPurchaseSessionManager _purchaseSessionManager = SpringContextService.getContext(  )
-                                                                                        .getBean( IPurchaseSessionManager.class );
-    private DistrictService _districtService = SpringContextService.getContext(  ).getBean( DistrictService.class );
+    // private ISubscriptionProductService _subscriptionProductService = SpringContextService.getContext( ).getBean(
+    // ISubscriptionProductService.class );
+    private ISeanceService _offerService = (ISeanceService) SpringContextService.getContext( ).getBean( BEAN_STOCK_TICKETS_SEANCE_SERVICE );
+    private final IPurchaseSessionManager _purchaseSessionManager = SpringContextService.getContext( ).getBean( IPurchaseSessionManager.class );
+    private DistrictService _districtService = SpringContextService.getContext( ).getBean( DistrictService.class );
     private final IUserService _serviceUser = SpringContextService.getBean( BEAN_USER_SERVICE );
-    
-    private final IPurchaseService _purchaseService = SpringContextService.getContext(  ).getBean( IPurchaseService.class );
+
+    private final IPurchaseService _purchaseService = SpringContextService.getContext( ).getBean( IPurchaseService.class );
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public XPage getPage( HttpServletRequest request, int nMode, Plugin plugin )
-        throws UserNotSignedException, SiteMessageException
+    public XPage getPage( HttpServletRequest request, int nMode, Plugin plugin ) throws UserNotSignedException, SiteMessageException
     {
-        XPage page = new XPage(  );
-        Locale locale = request.getLocale(  );
+        XPage page = new XPage( );
+        Locale locale = request.getLocale( );
 
         String strAction = request.getParameter( PARAMETER_ACTION );
 
@@ -211,74 +206,76 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
     /**
      * Page for the show
      *
-     * @param page xpage
-     * @param request http request
-     * @param locale locale
+     * @param page
+     *            xpage
+     * @param request
+     *            http request
+     * @param locale
+     *            locale
      * @return xpage
      */
     public XPage getShowPage( XPage page, HttpServletRequest request, Locale locale )
     {
         String sIdShow = request.getParameter( PARAMETER_PRODUCT_ID );
-        
+
         Integer idShow = -1;
 
         if ( StringUtils.isNotEmpty( sIdShow ) && StringUtils.isNumeric( sIdShow ) )
         {
             idShow = Integer.valueOf( sIdShow );
         }
-        
+
         String sSeanceDate = request.getParameter( PARAMETER_DATE_SEANCE );
         String strSubscribe = request.getParameter( PARAMETER_SUBSCRIBE );
-        
+
         String strPurchaseId = request.getParameter( PARAMETER_PURCHASE_ID );
-        request.getSession().setAttribute( PARAMETER_PURCHASE_ID, strPurchaseId);
-        
+        request.getSession( ).setAttribute( PARAMETER_PURCHASE_ID, strPurchaseId );
+
         Integer idPurchase = -1;
         String strNdPlaceBook = null;
-        
-        Map<String, Object> model = new HashMap<String, Object>(  );
-      
-        if( StringUtils.isNotEmpty( strPurchaseId ) && StringUtils.isNumeric( strPurchaseId ))
-        {
-        	idPurchase = Integer.valueOf( strPurchaseId );
-        	ReservationDTO booking = _purchaseService.findById(idPurchase);
-        	if( booking != null)
-            {
-            	final DateFormat sdfComboSeance = new SimpleDateFormat( TicketsConstants.FORMAT_COMBO_DATE_SEANCE, locale );
-            	
-            	Date today = new Date(  );
-            	
-            	SeanceDTO seance = booking.getOffer();
 
-                String sDateHour = sdfComboSeance.format( seance.getDateHour(  ) );
-                
-                if ( seance.getStatut(  ).equals( TicketsConstants.OFFER_STATUT_OPEN ) && seance.getDateHour(  ).after( today ) )
-            	{
-                	if ( seance.getQuantity(  ) == 0 )
+        Map<String, Object> model = new HashMap<String, Object>( );
+
+        if ( StringUtils.isNotEmpty( strPurchaseId ) && StringUtils.isNumeric( strPurchaseId ) )
+        {
+            idPurchase = Integer.valueOf( strPurchaseId );
+            ReservationDTO booking = _purchaseService.findById( idPurchase );
+            if ( booking != null )
+            {
+                final DateFormat sdfComboSeance = new SimpleDateFormat( TicketsConstants.FORMAT_COMBO_DATE_SEANCE, locale );
+
+                Date today = new Date( );
+
+                SeanceDTO seance = booking.getOffer( );
+
+                String sDateHour = sdfComboSeance.format( seance.getDateHour( ) );
+
+                if ( seance.getStatut( ).equals( TicketsConstants.OFFER_STATUT_OPEN ) && seance.getDateHour( ).after( today ) )
+                {
+                    if ( seance.getQuantity( ) == 0 )
                     {
-                		sSeanceDate = sDateHour + " - COMPLET" ;
-       
+                        sSeanceDate = sDateHour + " - COMPLET";
+
                     }
                     else
                     {
-                    	sSeanceDate = sDateHour;
+                        sSeanceDate = sDateHour;
                     }
                 }
-            	
+
             }
-        	
-        	strNdPlaceBook = "" + booking.getQuantity();
-        	
-        	request.getSession().setAttribute( PARAMETER_PURCHASE_ID, strPurchaseId);
-        	model.put( MARK_IS_MODIFY, idPurchase );
-        	
-        } 
+
+            strNdPlaceBook = "" + booking.getQuantity( );
+
+            request.getSession( ).setAttribute( PARAMETER_PURCHASE_ID, strPurchaseId );
+            model.put( MARK_IS_MODIFY, idPurchase );
+
+        }
 
         // Get the show
         ShowDTO show = _showService.getProduct( idShow );
 
         // Generates template
-        
 
         FunctionnalException fe = getErrorOnce( request );
 
@@ -289,11 +286,11 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
 
         model.put( MARK_SHOW, show );
 
-        PartnerDTO partner = _providerService.findByIdWithProducts( show.getIdProvider(  ) );
+        PartnerDTO partner = _providerService.findByIdWithProducts( show.getIdProvider( ) );
 
-        if ( ( partner != null ) && ( partner.getDistrict(  ) != null ) )
+        if ( ( partner != null ) && ( partner.getDistrict( ) != null ) )
         {
-            District district = _districtService.findById( partner.getDistrict(  ) );
+            District district = _districtService.findById( partner.getDistrict( ) );
             model.put( MARK_DISTRICT, district );
         }
 
@@ -304,29 +301,30 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
         model.put( MARK_BOOKING_OPENED, caculateBookingOpened( show ) );
 
         // Get seance list
-        SeanceFilter filter = new SeanceFilter(  );
+        SeanceFilter filter = new SeanceFilter( );
         filter.setOrderAsc( false );
 
-        List<String> orderList = new ArrayList<String>(  );
+        List<String> orderList = new ArrayList<String>( );
         orderList.add( ORDER_FILTER_DATE );
         filter.setOrders( orderList );
-        model.put( MARK_SEANCE_DATE_LIST, _offerService.findSeanceByShow( show.getId(  ), filter, locale ) );
+        model.put( MARK_SEANCE_DATE_LIST, _offerService.findSeanceByShow( show.getId( ), filter, locale ) );
 
-        //Get the user
+        // Get the user
         LuteceUser currentUser = getUser( request );
 
-        //check if the user is not ban, don't check for unregistred user
+        // check if the user is not ban, don't check for unregistred user
         if ( currentUser != null )
         {
-        	String strEmailHome = currentUser.getUserInfo( LuteceUser.HOME_INFO_ONLINE_EMAIL );
-        	String strEmailBusiness = currentUser.getUserInfo( LuteceUser.BUSINESS_INFO_ONLINE_EMAIL );
-        	String strEmail = !strEmailHome.equals("") ? strEmailHome : strEmailBusiness;
+            String strEmailHome = currentUser.getUserInfo( LuteceUser.HOME_INFO_ONLINE_EMAIL );
+            String strEmailBusiness = currentUser.getUserInfo( LuteceUser.BUSINESS_INFO_ONLINE_EMAIL );
+            String strEmail = !strEmailHome.equals( "" ) ? strEmailHome : strEmailBusiness;
             User userBan = _serviceUser.findByPrimaryKey( strEmail );
 
             if ( userBan != null )
             {
-                String banMessage = I18nService.getLocalizedString( MESSAGE_MESSAGE_USER_BAN,
-                        new String[] { userBan.getMotif(  ) }, locale );
+                String banMessage = I18nService.getLocalizedString( MESSAGE_MESSAGE_USER_BAN, new String [ ] {
+                    userBan.getMotif( )
+                }, locale );
                 model.put( MARK_MESSAGE_USER_BAN, banMessage );
             }
         }
@@ -335,19 +333,18 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
         model.put( MARK_USER, currentUser );
         model.put( MARK_BLOC_RESERVATION, getBookingBloc( show, sSeanceDate, locale, strNdPlaceBook ) );
         model.put( MARK_S_SEANCE_DATE, sSeanceDate );
-        
 
-        //if the user wants to subscribe to the show (get an email if a new representation is added)
+        // if the user wants to subscribe to the show (get an email if a new representation is added)
         if ( currentUser != null )
         {
-        	String strEmailHome = currentUser.getUserInfo( LuteceUser.HOME_INFO_ONLINE_EMAIL );
-        	String strEmailBusiness = currentUser.getUserInfo( LuteceUser.BUSINESS_INFO_ONLINE_EMAIL );
-        	String strEmail = !strEmailHome.equals("") ? strEmailHome : strEmailBusiness;
-        	
-            SubscriptionProductJspBean jspBean = new SubscriptionProductJspBean(  );
+            String strEmailHome = currentUser.getUserInfo( LuteceUser.HOME_INFO_ONLINE_EMAIL );
+            String strEmailBusiness = currentUser.getUserInfo( LuteceUser.BUSINESS_INFO_ONLINE_EMAIL );
+            String strEmail = !strEmailHome.equals( "" ) ? strEmailHome : strEmailBusiness;
+
+            SubscriptionProductJspBean jspBean = new SubscriptionProductJspBean( );
             boolean isSubscribe = false;
 
-            //if user want to subscribe or unsubscribe to the product
+            // if user want to subscribe or unsubscribe to the product
             if ( strSubscribe != null )
             {
                 if ( strSubscribe.equals( STRING_TRUE ) )
@@ -378,9 +375,9 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_DIR + TEMPLATE_SHOW_PAGE, locale, model );
 
-        page.setContent( template.getHtml(  ) );
-        page.setPathLabel( show.getName(  ) );
-        page.setTitle( show.getName(  ) );
+        page.setContent( template.getHtml( ) );
+        page.setPathLabel( show.getName( ) );
+        page.setTitle( show.getName( ) );
 
         return page;
     }
@@ -388,28 +385,30 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
     /**
      * Calculate if show is open to book.
      *
-     * @param show the show
+     * @param show
+     *            the show
      * @return 0 open, 1 to come, -1 passed
      */
     private int caculateBookingOpened( ShowDTO show )
     {
-        Date startDate = DateUtils.getDate( show.getStartDate(  ), true );
-        Date endDate = DateUtils.getDate( show.getEndDate(  ), false );
-        Date today = new Date(  );
+        Date startDate = DateUtils.getDate( show.getStartDate( ), true );
+        Date endDate = DateUtils.getDate( show.getEndDate( ), false );
+        Date today = new Date( );
         int seanceOpened;
 
         if ( today.before( startDate ) )
         {
             seanceOpened = BOOKING_TO_COME;
         }
-        else if ( today.after( endDate ) )
-        {
-            seanceOpened = BOOKING_PASSED;
-        }
         else
-        {
-            seanceOpened = BOOKING_OPENED;
-        }
+            if ( today.after( endDate ) )
+            {
+                seanceOpened = BOOKING_PASSED;
+            }
+            else
+            {
+                seanceOpened = BOOKING_OPENED;
+            }
 
         return seanceOpened;
     }
@@ -417,9 +416,12 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
     /**
      * Return html for booking bloc into show page.
      *
-     * @param show the show
-     * @param sDateSeance the s date seance
-     * @param locale locale
+     * @param show
+     *            the show
+     * @param sDateSeance
+     *            the s date seance
+     * @param locale
+     *            locale
      * @return xpage
      */
     private String getBookingBloc( ShowDTO show, String sDateSeance, Locale locale, String strNbPlace )
@@ -429,8 +431,7 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
             return StringUtils.EMPTY;
         }
 
-        DateFormat sdfComboSeance = new SimpleDateFormat( TicketsConstants.FORMAT_COMBO_DATE_SEANCE,
-                locale == null ? Locale.getDefault( ) : locale );
+        DateFormat sdfComboSeance = new SimpleDateFormat( TicketsConstants.FORMAT_COMBO_DATE_SEANCE, locale == null ? Locale.getDefault( ) : locale );
 
         Date dateSeance;
 
@@ -438,30 +439,29 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
         {
             dateSeance = sdfComboSeance.parse( sDateSeance );
         }
-        catch ( ParseException e )
+        catch( ParseException e )
         {
             throw new TechnicalException( MESSAGE_ERROR_PARSING_SHOW_DATE, e );
         }
 
-        List<SeanceDTO> seanceList = _offerService.findSeanceByDate( show.getId(  ), dateSeance );
+        List<SeanceDTO> seanceList = _offerService.findSeanceByDate( show.getId( ), dateSeance );
 
         for ( SeanceDTO seance : seanceList )
         {
             // Update quantity with quantity in session for this offer
-            seance.setQuantity( _purchaseSessionManager.updateQuantityWithSession( seance.getQuantity(  ),
-                    seance.getId(  ) ) );
+            seance.setQuantity( _purchaseSessionManager.updateQuantityWithSession( seance.getQuantity( ), seance.getId( ) ) );
         }
 
         // Generates template
-        Map<String, Object> model = new HashMap<String, Object>(  );
+        Map<String, Object> model = new HashMap<String, Object>( );
 
         model.put( MARK_SEANCE_LIST, seanceList );
-        
+
         SeanceDTO currentSeance = seanceList.get( 0 );
-        Integer nMaxPossibleTickets = Math.min( currentSeance.getMaxTickets(  ), currentSeance.getQuantity(  ) );
-        
+        Integer nMaxPossibleTickets = Math.min( currentSeance.getMaxTickets( ), currentSeance.getQuantity( ) );
+
         // Add nb of purchase per offer type
-        ReferenceList quantityList = getNumberList( currentSeance.getMinTickets(  ), nMaxPossibleTickets );
+        ReferenceList quantityList = getNumberList( currentSeance.getMinTickets( ), nMaxPossibleTickets );
         model.put( MARK_NB_RESERVATION_LIST, quantityList );
         model.put( MARK_NB_PLACE_SELECTED, strNbPlace );
 
@@ -470,46 +470,49 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_DIR + TEMPLATE_BOOKING_BLOC, locale, model );
 
-        return template.getHtml(  );
+        return template.getHtml( );
     }
 
     /**
      * Return a list of number from 0 to quantity
      *
-     * @param quantity the quantity
+     * @param quantity
+     *            the quantity
      * @return list of number
      */
     private ReferenceList getNumberList( Integer quantity )
     {
-        ReferenceList quantityList = new ReferenceList(  );
+        ReferenceList quantityList = new ReferenceList( );
 
         for ( Integer i = 0; i <= quantity; i++ )
         {
-            ReferenceItem refItem = new ReferenceItem(  );
-            refItem.setCode( i.toString(  ) );
-            refItem.setName( i.toString(  ) );
+            ReferenceItem refItem = new ReferenceItem( );
+            refItem.setCode( i.toString( ) );
+            refItem.setName( i.toString( ) );
             quantityList.add( refItem );
         }
 
         return quantityList;
     }
-    
+
     /**
      * Return a list of number from min to max
      *
-     * @param min the minimum
-     * @param max the maximum
+     * @param min
+     *            the minimum
+     * @param max
+     *            the maximum
      * @return list of number
      */
     private ReferenceList getNumberList( Integer min, Integer max )
     {
-        ReferenceList quantityList = new ReferenceList(  );
+        ReferenceList quantityList = new ReferenceList( );
 
         for ( Integer i = min; i <= max; i++ )
         {
-            ReferenceItem refItem = new ReferenceItem(  );
-            refItem.setCode( i.toString(  ) );
-            refItem.setName( i.toString(  ) );
+            ReferenceItem refItem = new ReferenceItem( );
+            refItem.setCode( i.toString( ) );
+            refItem.setName( i.toString( ) );
             quantityList.add( refItem );
         }
 
@@ -519,17 +522,20 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
     /**
      * Gets the current list show page.
      *
-     * @param page the page
-     * @param request the request
-     * @param locale the locale
+     * @param page
+     *            the page
+     * @param request
+     *            the request
+     * @param locale
+     *            the locale
      * @return the current list show page
-     * @throws UserNotSignedException 
+     * @throws UserNotSignedException
      */
     private XPage getCurrentListShowPage( XPage page, HttpServletRequest request, Locale locale ) throws UserNotSignedException
     {
-    	String strUserName = getUsername( request );
-    	
-    	List<RecommendedProduct> listProducts = null;
+        String strUserName = getUsername( request );
+
+        List<RecommendedProduct> listProducts = null;
         try
         {
             listProducts = StockRecommendationService.instance( ).getRecommendedProducts( strUserName );
@@ -537,22 +543,22 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
         catch( TasteException ex )
         {
             // User not found
-            //addError( "User not found" );
+            // addError( "User not found" );
             AppLogService.info( "Recommendation error : " + ex.getMessage( ) );
         }
-        
-        List<String> orderList = new ArrayList<String>(  );
+
+        List<String> orderList = new ArrayList<String>( );
         orderList.add( ORDER_FILTER_DATE_END );
 
         List<ShowDTO> currentListShow = _showService.getCurrentProduct( orderList, null );
-        Map<String, Object> model = new HashMap<String, Object>(  );
+        Map<String, Object> model = new HashMap<String, Object>( );
         model.put( MARK_SHOW_LIST, currentListShow );
         model.put( MARK_TYPE_LIST, TYPE_A_LAFFICHE );
         model.put( MARK_URL_POSTER, AppPropertiesService.getProperty( PROPERTY_POSTER_TB_PATH ) );
         model.put( MARK_PRODUCTS_LIST, listProducts );
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_DIR + TEMPLATE_LIST_SHOW_PAGE, locale, model );
-        page.setContent( template.getHtml(  ) );
+        page.setContent( template.getHtml( ) );
 
         String title = getMessage( TITLE_CURRENT_SHOW_LIST, request );
         page.setPathLabel( title );
@@ -564,24 +570,27 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
     /**
      * Gets the come list show page.
      *
-     * @param page the page
-     * @param request the request
-     * @param locale the locale
+     * @param page
+     *            the page
+     * @param request
+     *            the request
+     * @param locale
+     *            the locale
      * @return the come list show page
      */
     private XPage getComeListShowPage( XPage page, HttpServletRequest request, Locale locale )
     {
-        List<String> orderList = new ArrayList<String>(  );
+        List<String> orderList = new ArrayList<String>( );
         orderList.add( ORDER_FILTER_DATE_START );
 
         List<ShowDTO> comeListShow = _showService.getComeProduct( orderList, null );
-        Map<String, Object> model = new HashMap<String, Object>(  );
+        Map<String, Object> model = new HashMap<String, Object>( );
         model.put( MARK_SHOW_LIST, comeListShow );
         model.put( MARK_TYPE_LIST, TYPE_A_VENIR );
         model.put( MARK_URL_POSTER, AppPropertiesService.getProperty( PROPERTY_POSTER_TB_PATH ) );
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_DIR + TEMPLATE_LIST_SHOW_PAGE, locale, model );
-        page.setContent( template.getHtml(  ) );
+        page.setContent( template.getHtml( ) );
 
         String title = getMessage( TITLE_COME_SHOW_LIST, request );
         page.setPathLabel( title );
@@ -589,21 +598,23 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
 
         return page;
     }
-    
+
     /**
      * Gets the user name
-     * @param request The HTTP request
+     * 
+     * @param request
+     *            The HTTP request
      * @return the user name
-     * @throws UserNotSignedException 
+     * @throws UserNotSignedException
      */
     public static String getUsername( HttpServletRequest request ) throws UserNotSignedException
     {
         LuteceUser user = SecurityService.getInstance( ).getRegisteredUser( request );
         if ( user == null )
         {
-             throw new UserNotSignedException( );
+            throw new UserNotSignedException( );
         }
-        
-        return user.getName( );        
+
+        return user.getName( );
     }
 }

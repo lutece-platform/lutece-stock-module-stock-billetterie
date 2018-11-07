@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2014, Mairie de Paris
+ * Copyright (c) 2002-2018, Mairie de Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -36,7 +36,6 @@ package fr.paris.lutece.plugins.stock.modules.billetterie.business.portlet;
 import fr.paris.lutece.portal.business.portlet.Portlet;
 import fr.paris.lutece.util.sql.DAOUtil;
 
-
 /**
  * The Class BilletteriePortletDAO.
  */
@@ -64,8 +63,8 @@ public class BilletteriePortletDAO implements IBilletterieDAO
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE );
         daoUtil.setInt( 1, nPortletId );
 
-        daoUtil.executeUpdate(  );
-        daoUtil.free(  );
+        daoUtil.executeUpdate( );
+        daoUtil.free( );
     }
 
     /**
@@ -76,11 +75,11 @@ public class BilletteriePortletDAO implements IBilletterieDAO
     {
         PortletBilletterie p = (PortletBilletterie) portlet;
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT );
-        daoUtil.setInt( 1, p.getId(  ) );
-        daoUtil.setInt( 2, p.getnShow(  ) );
-        daoUtil.setString( 3, p.getTypeContentPortlet(  ) );
-        daoUtil.executeUpdate(  );
-        daoUtil.free(  );
+        daoUtil.setInt( 1, p.getId( ) );
+        daoUtil.setInt( 2, p.getnShow( ) );
+        daoUtil.setString( 3, p.getTypeContentPortlet( ) );
+        daoUtil.executeUpdate( );
+        daoUtil.free( );
     }
 
     /**
@@ -89,19 +88,19 @@ public class BilletteriePortletDAO implements IBilletterieDAO
     @Override
     public Portlet load( int nIdPortlet )
     {
-        PortletBilletterie portlet = new PortletBilletterie(  );
+        PortletBilletterie portlet = new PortletBilletterie( );
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT );
         daoUtil.setInt( 1, nIdPortlet );
-        daoUtil.executeQuery(  );
+        daoUtil.executeQuery( );
 
-        if ( daoUtil.next(  ) )
+        if ( daoUtil.next( ) )
         {
             portlet.setId( daoUtil.getInt( 1 ) );
             portlet.setnShow( daoUtil.getInt( 2 ) );
             portlet.setTypeContentPortlet( daoUtil.getString( 3 ) );
         }
 
-        daoUtil.free(  );
+        daoUtil.free( );
 
         return portlet;
     }
@@ -114,11 +113,11 @@ public class BilletteriePortletDAO implements IBilletterieDAO
     {
         PortletBilletterie portl = (PortletBilletterie) portlet;
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE );
-        daoUtil.setInt( 1, portl.getId(  ) );
-        daoUtil.setInt( 2, portl.getnShow(  ) );
-        daoUtil.setString( 3, portl.getTypeContentPortlet(  ) );
-        daoUtil.setInt( 4, portl.getId(  ) );
-        daoUtil.executeUpdate(  );
-        daoUtil.free(  );
+        daoUtil.setInt( 1, portl.getId( ) );
+        daoUtil.setInt( 2, portl.getnShow( ) );
+        daoUtil.setString( 3, portl.getTypeContentPortlet( ) );
+        daoUtil.setInt( 4, portl.getId( ) );
+        daoUtil.executeUpdate( );
+        daoUtil.free( );
     }
 }

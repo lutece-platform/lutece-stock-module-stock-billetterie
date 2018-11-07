@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2014, Mairie de Paris
+ * Copyright (c) 2002-2018, Mairie de Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -51,7 +51,6 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Root;
 
-
 /**
  *
  * @author jchaline
@@ -64,7 +63,7 @@ public class DistrictDAO extends AbstractStockDAO<Integer, District>
      * {@inheritDoc}
      */
     @Override
-    public String getPluginName(  )
+    public String getPluginName( )
     {
         return StockPlugin.PLUGIN_NAME;
     }
@@ -72,14 +71,16 @@ public class DistrictDAO extends AbstractStockDAO<Integer, District>
     /**
      * Find purchases by filter.
      *
-     * @param filter the filter
-     * @param paginationProperties the pagination properties
+     * @param filter
+     *            the filter
+     * @param paginationProperties
+     *            the pagination properties
      * @return list of purchases
      */
     public ResultList<District> findByFilter( DistrictFilter filter, PaginationProperties paginationProperties )
     {
-        EntityManager em = getEM(  );
-        CriteriaBuilder cb = em.getCriteriaBuilder(  );
+        EntityManager em = getEM( );
+        CriteriaBuilder cb = em.getCriteriaBuilder( );
 
         CriteriaQuery<District> cq = cb.createQuery( District.class );
 
@@ -88,28 +89,31 @@ public class DistrictDAO extends AbstractStockDAO<Integer, District>
         buildSortQuery( filter, root, cq, cb );
         cq.distinct( true );
 
-        return createPagedQuery( cq, paginationProperties ).getResultList(  );
+        return createPagedQuery( cq, paginationProperties ).getResultList( );
     }
 
     /**
      * Add the order by parameter to the query.
      *
-     * @param filter the filter
-     * @param root the entity root
-     * @param query the criteria query
-     * @param builder the criteria builder
+     * @param filter
+     *            the filter
+     * @param root
+     *            the entity root
+     * @param query
+     *            the criteria query
+     * @param builder
+     *            the criteria builder
      */
-    protected void buildSortQuery( DistrictFilter filter, Root<District> root, CriteriaQuery<District> query,
-        CriteriaBuilder builder )
+    protected void buildSortQuery( DistrictFilter filter, Root<District> root, CriteriaQuery<District> query, CriteriaBuilder builder )
     {
-        if ( ( filter.getOrders(  ) != null ) && !filter.getOrders(  ).isEmpty(  ) )
+        if ( ( filter.getOrders( ) != null ) && !filter.getOrders( ).isEmpty( ) )
         {
-            List<Order> orderList = new LinkedList<Order>(  );
+            List<Order> orderList = new LinkedList<Order>( );
 
             // get asc order
-            for ( String order : filter.getOrders(  ) )
+            for ( String order : filter.getOrders( ) )
             {
-                if ( filter.isOrderAsc(  ) )
+                if ( filter.isOrderAsc( ) )
                 {
                     orderList.add( builder.asc( root.get( order ) ) );
                 }
@@ -126,13 +130,16 @@ public class DistrictDAO extends AbstractStockDAO<Integer, District>
     /**
      * Build the criteria query used when entity are searched by filter.
      *
-     * @param filter the filter
-     * @param root the entity root
-     * @param query the criteria query
-     * @param builder the criteria builder
+     * @param filter
+     *            the filter
+     * @param root
+     *            the entity root
+     * @param query
+     *            the criteria query
+     * @param builder
+     *            the criteria builder
      */
-    protected void buildCriteriaQuery( Object filter, Root<District> root, CriteriaQuery<District> query,
-        CriteriaBuilder builder )
+    protected void buildCriteriaQuery( Object filter, Root<District> root, CriteriaQuery<District> query, CriteriaBuilder builder )
     {
     }
 }

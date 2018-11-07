@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2014, Mairie de Paris
+ * Copyright (c) 2002-2018, Mairie de Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -36,7 +36,6 @@ package fr.paris.lutece.plugins.stock.modules.billetterie.business.district;
 import java.util.ArrayList;
 import java.util.List;
 
-
 /**
  * The Class DistrictFilter.
  */
@@ -50,7 +49,7 @@ public class DistrictFilter
 
     // order
     /** The _orders. */
-    private List<String> _orders = new ArrayList<String>(  );
+    private List<String> _orders = new ArrayList<String>( );
 
     /** The _order asc. */
     private boolean _orderAsc = true;
@@ -58,13 +57,14 @@ public class DistrictFilter
     /**
      * @return the id
      */
-    public Integer getId(  )
+    public Integer getId( )
     {
         return _id;
     }
 
     /**
-     * @param id the id to set
+     * @param id
+     *            the id to set
      */
     public void setId( Integer id )
     {
@@ -74,13 +74,14 @@ public class DistrictFilter
     /**
      * @return the libelle
      */
-    public String getLibelle(  )
+    public String getLibelle( )
     {
         return _libelle;
     }
 
     /**
-     * @param libelle the libelle to set
+     * @param libelle
+     *            the libelle to set
      */
     public void setLibelle( String libelle )
     {
@@ -90,13 +91,14 @@ public class DistrictFilter
     /**
      * @return the orders
      */
-    public List<String> getOrders(  )
+    public List<String> getOrders( )
     {
         return _orders;
     }
 
     /**
-     * @param orders the orders to set
+     * @param orders
+     *            the orders to set
      */
     public void setOrders( List<String> orders )
     {
@@ -106,13 +108,14 @@ public class DistrictFilter
     /**
      * @return the orderAsc
      */
-    public boolean isOrderAsc(  )
+    public boolean isOrderAsc( )
     {
         return _orderAsc;
     }
 
     /**
-     * @param orderAsc the orderAsc to set
+     * @param orderAsc
+     *            the orderAsc to set
      */
     public void setOrderAsc( boolean orderAsc )
     {

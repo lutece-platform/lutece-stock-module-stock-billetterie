@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2014, Mairie de Paris
+ * Copyright (c) 2002-2018, Mairie de Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -43,7 +43,6 @@ import org.apache.commons.beanutils.ConvertUtils;
 
 import java.sql.Timestamp;
 
-
 /**
  *
  * TicketsPlugin
@@ -57,14 +56,14 @@ public class BilletteriePlugin extends TicketsPlugin
      * Initialize the module billetterie
      */
     @Override
-    public void init(  )
+    public void init( )
     {
-        super.init(  );
+        super.init( );
 
         // Initialize converters (beanutils)
         AppLogService.debug( "Initializing converters..." );
-        ConvertUtils.register( new TimestampConverter(  ), Timestamp.class );
-        ConvertUtils.register( new IntegerConverter(  ), Integer.class );
-        ConvertUtils.register( new FloatConverter(  ), Float.class );
+        ConvertUtils.register( new TimestampConverter( ), Timestamp.class );
+        ConvertUtils.register( new IntegerConverter( ), Integer.class );
+        ConvertUtils.register( new FloatConverter( ), Float.class );
     }
 }

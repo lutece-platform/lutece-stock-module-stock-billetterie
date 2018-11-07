@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2014, Mairie de Paris
+ * Copyright (c) 2002-2018, Mairie de Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -77,7 +77,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-
 /**
  * The Class PartnerJspBean.
  */
@@ -123,7 +122,7 @@ public class PartnerJspBean extends AbstractJspBean
     private static final String TEMPLATE_MANAGE_PARTNERS = "admin/plugins/stock/modules/billetterie/manage_partners.html";
     private static final String TEMPLATE_SAVE_PARTNER = "admin/plugins/stock/modules/billetterie/save_partner.html";
 
-    //MESSAGES
+    // MESSAGES
     private static final String MESSAGE_CONFIRMATION_DELETE_PARTNER = "module.stock.billetterie.message.deletePartner.confirmation";
     private static final String MESSAGE_DELETE_PARTNER_WITH_SHOW = "module.stock.billetterie.message.deletePartner.with.show";
     private static final String MESSAGE_ERROR_NO_COMMENT_IF_NOT_ACCESSIBLE = "module.stock.billetterie.message.noCommentIfNotAccessible";
@@ -137,20 +136,22 @@ public class PartnerJspBean extends AbstractJspBean
     /**
      * Instantiates a new partner jsp bean.
      */
-    public PartnerJspBean(  )
+    public PartnerJspBean( )
     {
-        super(  );
-        _providerFilter = new ProviderFilter(  );
-        _serviceProvider = SpringContextService.getContext(  ).getBean( IProviderService.class );
+        super( );
+        _providerFilter = new ProviderFilter( );
+        _serviceProvider = SpringContextService.getContext( ).getBean( IProviderService.class );
         _serviceShow = (IShowService) SpringContextService.getBean( BEAN_STOCK_TICKETS_SHOW_SERVICE );
-        _serviceDistrict = SpringContextService.getContext(  ).getBean( DistrictService.class );
+        _serviceDistrict = SpringContextService.getContext( ).getBean( DistrictService.class );
     }
 
     /**
      * Builds the filter.
      *
-     * @param filter the filter
-     * @param request the request
+     * @param filter
+     *            the filter
+     * @param request
+     *            the request
      */
     protected void buildFilter( ProviderFilter filter, HttpServletRequest request )
     {
@@ -160,7 +161,8 @@ public class PartnerJspBean extends AbstractJspBean
     /**
      * Gets the provider filter.
      *
-     * @param request the request
+     * @param request
+     *            the request
      * @return the provider filter
      */
     private ProviderFilter getProviderFilter( HttpServletRequest request )
@@ -168,14 +170,14 @@ public class PartnerJspBean extends AbstractJspBean
         // SORT
         String strSortedAttributeName = request.getParameter( Parameters.SORTED_ATTRIBUTE_NAME );
 
-        // "filter" in request  ==> new filter. use old one otherwise
-        ProviderFilter filter = new ProviderFilter(  );
+        // "filter" in request ==> new filter. use old one otherwise
+        ProviderFilter filter = new ProviderFilter( );
         buildFilter( filter, request );
         _providerFilter = filter;
 
         if ( strSortedAttributeName != null )
         {
-            _providerFilter.getOrders(  ).add( strSortedAttributeName );
+            _providerFilter.getOrders( ).add( strSortedAttributeName );
 
             String strAscSort = request.getParameter( Parameters.SORTED_ASC );
             boolean bIsAscSort = Boolean.parseBoolean( strAscSort );
@@ -187,7 +189,9 @@ public class PartnerJspBean extends AbstractJspBean
 
     /**
      * Generates a HTML form that displays all partners.
-     * @param request the Http request
+     * 
+     * @param request
+     *            the Http request
      * @return HTML
      */
     public String getManageProviders( HttpServletRequest request )
@@ -195,62 +199,63 @@ public class PartnerJspBean extends AbstractJspBean
         setPageTitleProperty( PAGE_TITLE_MANAGE_PARTNER );
 
         ProviderFilter filter = getProviderFilter( request );
-        List<String> orderList = new ArrayList<String>(  );
+        List<String> orderList = new ArrayList<String>( );
         orderList.add( BilletterieConstants.NAME );
         filter.setOrders( orderList );
         filter.setOrderAsc( true );
 
-        //si un objet est déjà présent en session, on l'utilise
+        // si un objet est déjà présent en session, on l'utilise
         DataTableManager<PartnerDTO> dataTableToUse = getDataTable( request, filter );
 
         // Fill the model
-        Map<String, Object> model = new HashMap<String, Object>(  );
+        Map<String, Object> model = new HashMap<String, Object>( );
 
         model.put( MARK_DATA_TABLE_PARTNER, dataTableToUse );
 
         // the filter
         model.put( TicketsConstants.MARK_FILTER, filter );
 
-        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_MANAGE_PARTNERS, getLocale(  ), model );
+        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_MANAGE_PARTNERS, getLocale( ), model );
 
-        //opération nécessaire pour eviter les fuites de mémoires
-        dataTableToUse.clearItems(  );
+        // opération nécessaire pour eviter les fuites de mémoires
+        dataTableToUse.clearItems( );
 
-        return getAdminPage( template.getHtml(  ) );
+        return getAdminPage( template.getHtml( ) );
     }
 
     /**
      * Get the DataTableManager object for the PartnerDTO bean
-     * @param request the http request
-     * @param filter the filter
-     * @param <T> the bean type of the data table manager
+     * 
+     * @param request
+     *            the http request
+     * @param filter
+     *            the filter
+     * @param <T>
+     *            the bean type of the data table manager
      * @return the data table to use
      */
     private <T> DataTableManager<T> getDataTable( HttpServletRequest request, ProviderFilter filter )
     {
-        //si un objet est déjà présent en session, on l'utilise
+        // si un objet est déjà présent en session, on l'utilise
         Method findMethod = null;
 
         try
         {
-            findMethod = _serviceProvider.getClass(  )
-                                         .getMethod( PARAMETER_FIND_BY_FILTER_NAME_METHOD, ProviderFilter.class,
-                    PaginationProperties.class );
+            findMethod = _serviceProvider.getClass( ).getMethod( PARAMETER_FIND_BY_FILTER_NAME_METHOD, ProviderFilter.class, PaginationProperties.class );
         }
-        catch ( Exception e )
+        catch( Exception e )
         {
             LOGGER.error( "Erreur lors de l'obtention du data table : ", e );
         }
 
-        DataTableManager<T> dataTableToUse = getAbstractDataTableManager( request, filter, MARK_DATA_TABLE_PARTNER,
-                JSP_MANAGE_PARTNERS, _serviceProvider, findMethod );
+        DataTableManager<T> dataTableToUse = getAbstractDataTableManager( request, filter, MARK_DATA_TABLE_PARTNER, JSP_MANAGE_PARTNERS, _serviceProvider,
+                findMethod );
 
-        //si pas d'objet en session, il faut ajouter les colonnes à afficher
-        if ( dataTableToUse.getListColumn(  ).isEmpty(  ) )
+        // si pas d'objet en session, il faut ajouter les colonnes à afficher
+        if ( dataTableToUse.getListColumn( ).isEmpty( ) )
         {
             dataTableToUse.addColumn( "module.stock.billetterie.manage_category.filter.name", "name", true );
-            dataTableToUse.addFreeColumn( "module.stock.billetterie.manage_category.actionsLabel",
-                MACRO_COLUMN_ACTIONS_PARTNER );
+            dataTableToUse.addFreeColumn( "module.stock.billetterie.manage_category.actionsLabel", MACRO_COLUMN_ACTIONS_PARTNER );
         }
 
         saveDataTableInSession( request, dataTableToUse, MARK_DATA_TABLE_PARTNER );
@@ -260,20 +265,22 @@ public class PartnerJspBean extends AbstractJspBean
 
     /**
      * Returns the form for partner creation and modification
-     * @param request The HTTP request
+     * 
+     * @param request
+     *            The HTTP request
      * @return HTML Form
      */
     public String getSavePartner( HttpServletRequest request )
     {
         PartnerDTO provider = null;
-        Map<String, Object> model = new HashMap<String, Object>(  );
+        Map<String, Object> model = new HashMap<String, Object>( );
 
         // Manage validation errors
         FunctionnalException ve = getErrorOnce( request );
 
         if ( ve != null )
         {
-            provider = (PartnerDTO) ve.getBean(  );
+            provider = (PartnerDTO) ve.getBean( );
             model.put( BilletterieConstants.ERROR, getHtmlError( ve ) );
         }
         else
@@ -287,29 +294,28 @@ public class PartnerJspBean extends AbstractJspBean
 
                 int nIdProvider = Integer.parseInt( strProviderId );
 
-                // Origin of the user : ManagePartner.jsp, so no provider attributs in the request, 
-                //                      SavePartner, so attributs present in the request and MUSTN'T be load with DAO
-                provider = ( request.getParameter( PARAMETER_NAME ) == null )
-                    ? _serviceProvider.findByIdWithProducts( nIdProvider ) : new PartnerDTO(  );
+                // Origin of the user : ManagePartner.jsp, so no provider attributs in the request,
+                // SavePartner, so attributs present in the request and MUSTN'T be load with DAO
+                provider = ( request.getParameter( PARAMETER_NAME ) == null ) ? _serviceProvider.findByIdWithProducts( nIdProvider ) : new PartnerDTO( );
             }
             else
             {
                 setPageTitleProperty( PAGE_TITLE_CREATE_PARTNER );
                 // Create new Partner
-                provider = new PartnerDTO(  );
+                provider = new PartnerDTO( );
 
                 // now, provider are set with input take in request (case of add or delete contact)
             }
 
-            //need to populate in case of add or remove contact
+            // need to populate in case of add or remove contact
             populate( provider, request );
 
-            //search if process must delete a contact
-            for ( Object requestParameter : request.getParameterMap(  ).keySet(  ) )
+            // search if process must delete a contact
+            for ( Object requestParameter : request.getParameterMap( ).keySet( ) )
             {
                 if ( ( (String) requestParameter ).startsWith( PARAMETER_DEL_CONTACT ) )
                 {
-                    String strIdContactToDelete = ( (String) requestParameter ).substring( PARAMETER_DEL_CONTACT.length(  ) );
+                    String strIdContactToDelete = ( (String) requestParameter ).substring( PARAMETER_DEL_CONTACT.length( ) );
                     int idContactToDelete = Integer.valueOf( strIdContactToDelete );
                     provider.removeContact( idContactToDelete );
 
@@ -317,46 +323,48 @@ public class PartnerJspBean extends AbstractJspBean
                 }
             }
 
-            //add an empty contact
+            // add an empty contact
             if ( request.getParameter( PartnerJspBean.PARAMETER_ADD_CONTACT ) != null )
             {
-                provider.addEmptyContact(  );
+                provider.addEmptyContact( );
             }
         }
 
         // Add the JSP which called this action
         model.put( StockConstants.MARK_JSP_BACK, request.getParameter( StockConstants.MARK_JSP_BACK ) );
 
-        //        String strNumberContact = request.getParameter( MARK_PARTNER_NUMBER_CONTACT );
-        //        int numberContact = strNumberContact == null ? 0 : Integer.valueOf( strNumberContact );
+        // String strNumberContact = request.getParameter( MARK_PARTNER_NUMBER_CONTACT );
+        // int numberContact = strNumberContact == null ? 0 : Integer.valueOf( strNumberContact );
         if ( request.getParameter( PARAMETER_ADD_CONTACT ) != null )
         {
-            //            numberContact++;
+            // numberContact++;
             populate( provider, request );
         }
 
         model.put( MARK_PARTNER, provider );
 
-        ArrayList<Contact> listContactOrderById = (ArrayList<Contact>) provider.getContactList(  );
+        ArrayList<Contact> listContactOrderById = (ArrayList<Contact>) provider.getContactList( );
         Collections.sort( listContactOrderById, Contact.COMPARATOR_USING_ID );
         model.put( MARK_LIST_CONTACT, listContactOrderById );
 
-        DistrictFilter districtFilter = new DistrictFilter(  );
-        List<String> order = new ArrayList<String>(  );
+        DistrictFilter districtFilter = new DistrictFilter( );
+        List<String> order = new ArrayList<String>( );
         order.add( "_libelle" );
         districtFilter.setOrders( order );
 
         List<District> listDistrict = _serviceDistrict.findByFilter( districtFilter, null );
         model.put( MARK_LIST_DISTRICT, listDistrict );
 
-        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_SAVE_PARTNER, getLocale(  ), model );
+        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_SAVE_PARTNER, getLocale( ), model );
 
-        return getAdminPage( template.getHtml(  ) );
+        return getAdminPage( template.getHtml( ) );
     }
 
     /**
      * Save a partner, use to add contact
-     * @param request The HTTP request
+     * 
+     * @param request
+     *            The HTTP request
      * @return redirection url
      */
     public String doSavePartner( HttpServletRequest request )
@@ -366,7 +374,7 @@ public class PartnerJspBean extends AbstractJspBean
             return doGoBack( request );
         }
 
-        PartnerDTO provider = new PartnerDTO(  );
+        PartnerDTO provider = new PartnerDTO( );
         populate( provider, request );
 
         try
@@ -376,19 +384,19 @@ public class PartnerJspBean extends AbstractJspBean
 
             List<ValidationError> errors = validate( provider, "" );
 
-            if ( errors.size(  ) > 0 )
+            if ( errors.size( ) > 0 )
             {
                 return AdminMessageService.getMessageUrl( request, Messages.MESSAGE_INVALID_ENTRY, errors );
             }
 
             _serviceProvider.doSaveProvider( provider );
 
-            if ( !provider.isAccessible(  ) && ( provider.getAccessibleComment(  ) != StringUtils.EMPTY ) )
+            if ( !provider.isAccessible( ) && ( provider.getAccessibleComment( ) != StringUtils.EMPTY ) )
             {
                 throw new BusinessException( provider, MESSAGE_ERROR_NO_COMMENT_IF_NOT_ACCESSIBLE );
             }
         }
-        catch ( FunctionnalException e )
+        catch( FunctionnalException e )
         {
             return manageFunctionnalException( request, e, JSP_SAVE_PARTNER );
         }
@@ -399,7 +407,8 @@ public class PartnerJspBean extends AbstractJspBean
     /**
      * Returns the confirmation message to delete a partner
      *
-     * @param request The Http request
+     * @param request
+     *            The Http request
      * @return the html code message
      */
     public String getDeletePartner( HttpServletRequest request )
@@ -412,17 +421,16 @@ public class PartnerJspBean extends AbstractJspBean
         {
             nIdProvider = Integer.parseInt( strProviderId );
         }
-        catch ( NumberFormatException e )
+        catch( NumberFormatException e )
         {
             AppLogService.debug( e );
 
-            return AdminMessageService.getMessageUrl( request, StockConstants.MESSAGE_ERROR_OCCUR,
-                AdminMessage.TYPE_STOP );
+            return AdminMessageService.getMessageUrl( request, StockConstants.MESSAGE_ERROR_OCCUR, AdminMessage.TYPE_STOP );
         }
 
         UrlItem url = new UrlItem( JSP_DO_DELETE_PARTNER );
 
-        Map<String, Object> urlParam = new HashMap<String, Object>(  );
+        Map<String, Object> urlParam = new HashMap<String, Object>( );
         urlParam.put( PARAMETER_PARTNER_ID, nIdProvider );
 
         String strJspBack = request.getParameter( StockConstants.MARK_JSP_BACK );
@@ -434,24 +442,24 @@ public class PartnerJspBean extends AbstractJspBean
 
         // BO-CU01-E02-RGE01 : Aucun spectacle ne doit être rattaché à la salle
         // sélectionnée
-        ShowFilter filter = new ShowFilter(  );
+        ShowFilter filter = new ShowFilter( );
         filter.setIdProvider( nIdProvider );
 
         ResultList<ShowDTO> bookingList = this._serviceShow.findByFilter( filter, null );
 
-        if ( ( bookingList != null ) && !bookingList.isEmpty(  ) )
+        if ( ( bookingList != null ) && !bookingList.isEmpty( ) )
         {
             return AdminMessageService.getMessageUrl( request, MESSAGE_DELETE_PARTNER_WITH_SHOW, AdminMessage.TYPE_STOP );
         }
 
-        return AdminMessageService.getMessageUrl( request, MESSAGE_CONFIRMATION_DELETE_PARTNER, url.getUrl(  ),
-            AdminMessage.TYPE_CONFIRMATION, urlParam );
+        return AdminMessageService.getMessageUrl( request, MESSAGE_CONFIRMATION_DELETE_PARTNER, url.getUrl( ), AdminMessage.TYPE_CONFIRMATION, urlParam );
     }
 
     /**
      * Delete a partner
      *
-     * @param request The Http request
+     * @param request
+     *            The Http request
      * @return the html code message
      */
     public String doDeletePartner( HttpServletRequest request )
@@ -464,12 +472,11 @@ public class PartnerJspBean extends AbstractJspBean
         {
             nIdProvider = Integer.parseInt( strProviderId );
         }
-        catch ( NumberFormatException e )
+        catch( NumberFormatException e )
         {
             AppLogService.debug( e );
 
-            return AdminMessageService.getMessageUrl( request, StockConstants.MESSAGE_ERROR_OCCUR,
-                AdminMessage.TYPE_STOP );
+            return AdminMessageService.getMessageUrl( request, StockConstants.MESSAGE_ERROR_OCCUR, AdminMessage.TYPE_STOP );
         }
 
         _serviceProvider.doDeleteProvider( nIdProvider );
@@ -479,7 +486,9 @@ public class PartnerJspBean extends AbstractJspBean
 
     /**
      * Return the url of the JSP which called the last action
-     * @param request The Http request
+     * 
+     * @param request
+     *            The Http request
      * @return The url of the last JSP
      */
     private String doGoBack( HttpServletRequest request )
@@ -487,6 +496,6 @@ public class PartnerJspBean extends AbstractJspBean
         String strJspBack = request.getParameter( StockConstants.MARK_JSP_BACK );
 
         return StringUtils.isNotBlank( strJspBack ) ? ( AppPathService.getBaseUrl( request ) + strJspBack )
-                                                    : ( AppPathService.getBaseUrl( request ) + JSP_MANAGE_PARTNERS );
+                : ( AppPathService.getBaseUrl( request ) + JSP_MANAGE_PARTNERS );
     }
 }

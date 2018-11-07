@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2014, Mairie de Paris
+ * Copyright (c) 2002-2018, Mairie de Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -66,7 +66,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-
 /**
  * This class provides the user interface to manage notifications
  */
@@ -122,38 +121,40 @@ public class NotificationJspBean extends AbstractJspBean
     /**
      * Instantiates a new notification jsp bean.
      */
-    public NotificationJspBean(  )
+    public NotificationJspBean( )
     {
-        super(  );
+        super( );
         _serviceOffer = (ISeanceService) SpringContextService.getBean( BEAN_STOCK_TICKETS_SEANCE_SERVICE );
-        _servicePurchase = SpringContextService.getContext(  ).getBean( IPurchaseService.class );
-        _serviceNotification = SpringContextService.getContext(  ).getBean( INotificationService.class );
-        _serviceProvider = SpringContextService.getContext(  ).getBean( IProviderService.class );
+        _servicePurchase = SpringContextService.getContext( ).getBean( IPurchaseService.class );
+        _serviceNotification = SpringContextService.getContext( ).getBean( INotificationService.class );
+        _serviceProvider = SpringContextService.getContext( ).getBean( IProviderService.class );
     }
 
     /**
      * Returns the form for notification creation
-     * @param request The HTTP request
+     * 
+     * @param request
+     *            The HTTP request
      * @return HTML Form
      */
     public String getSendNotification( HttpServletRequest request )
     {
         NotificationDTO notification;
-        Map<String, Object> model = new HashMap<String, Object>(  );
+        Map<String, Object> model = new HashMap<String, Object>( );
 
         // Manage validation errors
         FunctionnalException ve = getErrorOnce( request );
 
         if ( ve != null )
         {
-            notification = (NotificationDTO) ve.getBean(  );
+            notification = (NotificationDTO) ve.getBean( );
             model.put( BilletterieConstants.ERROR, getHtmlError( ve ) );
         }
         else
         {
             setPageTitleProperty( PROPERTY_PAGE_TITLE_SEND_NOTIFICATION );
             // Create new notification
-            notification = new NotificationDTO(  );
+            notification = new NotificationDTO( );
         }
 
         String strIdOffer = request.getParameter( MARK_OFFER_ID );
@@ -168,8 +169,8 @@ public class NotificationJspBean extends AbstractJspBean
             SeanceDTO seance = this._serviceOffer.findSeanceById( idOffer );
             notification.setIdOffer( idOffer );
 
-            List<String> orderList = new ArrayList<String>(  );
-            PurchaseFilter filter = new PurchaseFilter(  );
+            List<String> orderList = new ArrayList<String>( );
+            PurchaseFilter filter = new PurchaseFilter( );
             orderList.add( ORDER_FILTER_USER_NAME );
             filter.setOrders( orderList );
             filter.setOrderAsc( true );
@@ -178,9 +179,9 @@ public class NotificationJspBean extends AbstractJspBean
             List<ReservationDTO> listReservations = this._servicePurchase.findByFilter( filter, null );
 
             // If the action is to cancel the offer
-            if ( StringUtils.isNotEmpty( strCancel ) ||
-                    ( ( notification.getNotificationAction(  ) != null ) &&
-                    notification.getNotificationAction(  ).equals( TicketsConstants.OFFER_STATUT_CANCEL ) ) )
+            if ( StringUtils.isNotEmpty( strCancel )
+                    || ( ( notification.getNotificationAction( ) != null ) && notification.getNotificationAction( ).equals(
+                            TicketsConstants.OFFER_STATUT_CANCEL ) ) )
             {
                 notification.setNotificationAction( TicketsConstants.OFFER_STATUT_CANCEL );
 
@@ -189,145 +190,140 @@ public class NotificationJspBean extends AbstractJspBean
 
                 for ( ReservationDTO purchase : listReservations )
                 {
-                    recipientsTo.append( purchase.getEmailAgent(  ) )
-                                .append( AppPropertiesService.getProperty( PROPERTY_MAIL_SEPARATOR ) );
+                    recipientsTo.append( purchase.getEmailAgent( ) ).append( AppPropertiesService.getProperty( PROPERTY_MAIL_SEPARATOR ) );
                 }
 
-                notification.setRecipientsTo( recipientsTo.toString(  ) );
+                notification.setRecipientsTo( recipientsTo.toString( ) );
                 // Set the default subject
-                notification.setSubject( getMessage( MESSAGE_NOTIFICATION_CANCEL_SUBJECT,
-                        seance.getProduct(  ).getName(  ), seance.getDate(  ), seance.getHour(  ) ) );
+                notification
+                        .setSubject( getMessage( MESSAGE_NOTIFICATION_CANCEL_SUBJECT, seance.getProduct( ).getName( ), seance.getDate( ), seance.getHour( ) ) );
 
                 // Set the default message
-                Map<String, Object> modelMail = new HashMap<String, Object>(  );
+                Map<String, Object> modelMail = new HashMap<String, Object>( );
                 modelMail.put( MARK_BASE_URL, AppPathService.getBaseUrl( request ) );
                 modelMail.put( MARK_SEANCE, seance );
 
-                HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_MAIL_CANCEL, request.getLocale(  ),
-                        modelMail );
-                notification.setMessage( template.getHtml(  ) );
+                HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_MAIL_CANCEL, request.getLocale( ), modelMail );
+                notification.setMessage( template.getHtml( ) );
             }
 
             // Action to send notification to partner and lock the offer
-            else if ( StringUtils.isNotEmpty( strLock ) ||
-                    ( ( notification.getNotificationAction(  ) != null ) &&
-                    notification.getNotificationAction(  ).equals( TicketsConstants.OFFER_STATUT_LOCK ) ) )
-            {
-                ShowDTO product = seance.getProduct(  );
-
-                if ( product != null )
+            else
+                if ( StringUtils.isNotEmpty( strLock )
+                        || ( ( notification.getNotificationAction( ) != null ) && notification.getNotificationAction( ).equals(
+                                TicketsConstants.OFFER_STATUT_LOCK ) ) )
                 {
-                    Integer idSalle = product.getIdProvider(  );
+                    ShowDTO product = seance.getProduct( );
 
-                    if ( idSalle != null )
+                    if ( product != null )
                     {
-                        Integer[] arrayIdContact = seance.getIdContact(  );
+                        Integer idSalle = product.getIdProvider( );
 
-                        if ( ( arrayIdContact != null ) && ( arrayIdContact.length > 0 ) )
+                        if ( idSalle != null )
                         {
-                            PartnerDTO partner = _serviceProvider.findById( idSalle );
-                            StringBuilder contactMail = null;
+                            Integer [ ] arrayIdContact = seance.getIdContact( );
 
-                            for ( Integer idContact : arrayIdContact )
+                            if ( ( arrayIdContact != null ) && ( arrayIdContact.length > 0 ) )
                             {
-                            	// Hide empty contact in mailing list
-                            	if ( idContact >= 0) 
-                            	{
-	                                if ( contactMail == null )
-	                                {
-	                                    contactMail = new StringBuilder(  );
-	                                }
-	                                else
-	                                {
-	                                    contactMail.append( ";" );
-	                                }
-	
-	                                contactMail.append( partner.getContactMail( idContact ) );
-                            	}
-                            }
+                                PartnerDTO partner = _serviceProvider.findById( idSalle );
+                                StringBuilder contactMail = null;
 
-                            if ( contactMail != null )
-                            {
-                            	if ( contactMail.toString( ) != null )
-                            	{
-                            		notification.setRecipientsTo( contactMail.toString(  ) );
-                            	}
-                            	else
-                            	{
-                            		notification.setRecipientsTo( "" );
-                            	}
+                                for ( Integer idContact : arrayIdContact )
+                                {
+                                    // Hide empty contact in mailing list
+                                    if ( idContact >= 0 )
+                                    {
+                                        if ( contactMail == null )
+                                        {
+                                            contactMail = new StringBuilder( );
+                                        }
+                                        else
+                                        {
+                                            contactMail.append( ";" );
+                                        }
+
+                                        contactMail.append( partner.getContactMail( idContact ) );
+                                    }
+                                }
+
+                                if ( contactMail != null )
+                                {
+                                    if ( contactMail.toString( ) != null )
+                                    {
+                                        notification.setRecipientsTo( contactMail.toString( ) );
+                                    }
+                                    else
+                                    {
+                                        notification.setRecipientsTo( "" );
+                                    }
+                                }
                             }
                         }
                     }
+
+                    notification.setNotificationAction( TicketsConstants.OFFER_STATUT_LOCK );
+                    // Set the default recipientsTo
+                    // Set the default subject
+                    notification.setSubject( getMessage( MESSAGE_NOTIFICATION_BOOKING_LIST_SUBJECT, seance.getProduct( ).getName( ) + " " + seance.getDate( )
+                            + " - " + seance.getHour( ) ) );
+
+                    // Set the default message
+                    Map<String, Object> modelMail = new HashMap<String, Object>( );
+                    modelMail.put( MARK_BASE_URL, AppPathService.getBaseUrl( request ) );
+                    modelMail.put( MARK_SEANCE, seance );
+                    modelMail.put( MARK_TARIF_REDUIT_ID, TicketsConstants.OFFER_TYPE_REDUCT_ID );
+                    modelMail.put( MARK_LIST_RESERVATION, listReservations );
+
+                    HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_MAIL_LOCK, request.getLocale( ), modelMail );
+                    notification.setMessage( template.getHtml( ) );
                 }
 
-                notification.setNotificationAction( TicketsConstants.OFFER_STATUT_LOCK );
-                // Set the default recipientsTo
-                // Set the default subject
-                notification.setSubject( getMessage( MESSAGE_NOTIFICATION_BOOKING_LIST_SUBJECT,
-                        seance.getProduct(  ).getName(  ) + " " + seance.getDate(  ) + " - " + seance.getHour(  ) ) );
-
-                // Set the default message
-                Map<String, Object> modelMail = new HashMap<String, Object>(  );
-                modelMail.put( MARK_BASE_URL, AppPathService.getBaseUrl( request ) );
-                modelMail.put( MARK_SEANCE, seance );
-                modelMail.put( MARK_TARIF_REDUIT_ID, TicketsConstants.OFFER_TYPE_REDUCT_ID );
-                modelMail.put( MARK_LIST_RESERVATION, listReservations );
-
-                HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_MAIL_LOCK, request.getLocale(  ),
-                        modelMail );
-                notification.setMessage( template.getHtml(  ) );
-            }
-
-            // Else action to send notification
-            else
-            {
-                // Set the default recipientsTo
-                StringBuilder recipientsTo = new StringBuilder(  );
-
-                for ( ReservationDTO purchase : listReservations )
+                // Else action to send notification
+                else
                 {
-                    recipientsTo.append( purchase.getEmailAgent(  ) )
-                                .append( AppPropertiesService.getProperty( PROPERTY_MAIL_SEPARATOR ) );
-                }
+                    // Set the default recipientsTo
+                    StringBuilder recipientsTo = new StringBuilder( );
 
-                notification.setRecipientsTo( recipientsTo.toString(  ) );
-            }
+                    for ( ReservationDTO purchase : listReservations )
+                    {
+                        recipientsTo.append( purchase.getEmailAgent( ) ).append( AppPropertiesService.getProperty( PROPERTY_MAIL_SEPARATOR ) );
+                    }
+
+                    notification.setRecipientsTo( recipientsTo.toString( ) );
+                }
         }
 
         // If the action is to cancel the offer
-        if ( StringUtils.isNotEmpty( strCancel ) ||
-                ( ( notification.getNotificationAction(  ) != null ) &&
-                notification.getNotificationAction(  ).equals( TicketsConstants.OFFER_STATUT_CANCEL ) ) )
+        if ( StringUtils.isNotEmpty( strCancel )
+                || ( ( notification.getNotificationAction( ) != null ) && notification.getNotificationAction( ).equals( TicketsConstants.OFFER_STATUT_CANCEL ) ) )
         {
-            model.put( MARK_AVERTISSEMENT,
-                I18nService.getLocalizedString( MESSAGE_AVERTISSEMENT_CANCEL_OFFER, request.getLocale(  ) ) );
+            model.put( MARK_AVERTISSEMENT, I18nService.getLocalizedString( MESSAGE_AVERTISSEMENT_CANCEL_OFFER, request.getLocale( ) ) );
         }
 
         // Action to send notification to partner and lock the offer
-        else if ( StringUtils.isNotEmpty( strLock ) ||
-                ( ( notification.getNotificationAction(  ) != null ) &&
-                notification.getNotificationAction(  ).equals( TicketsConstants.OFFER_STATUT_LOCK ) ) )
-        {
-            model.put( MARK_AVERTISSEMENT,
-                I18nService.getLocalizedString( MESSAGE_AVERTISSEMENT_SEND_OFFER, request.getLocale(  ) ) );
-        }
+        else
+            if ( StringUtils.isNotEmpty( strLock )
+                    || ( ( notification.getNotificationAction( ) != null ) && notification.getNotificationAction( ).equals( TicketsConstants.OFFER_STATUT_LOCK ) ) )
+            {
+                model.put( MARK_AVERTISSEMENT, I18nService.getLocalizedString( MESSAGE_AVERTISSEMENT_SEND_OFFER, request.getLocale( ) ) );
+            }
 
         // Add the JSP wich called this action
         model.put( StockConstants.MARK_JSP_BACK, request.getParameter( StockConstants.MARK_JSP_BACK ) );
         model.put( MARK_NOTIFICATION, notification );
 
-        model.put( MARK_TITLE,
-            I18nService.getLocalizedString( PROPERTY_PAGE_TITLE_SEND_NOTIFICATION, Locale.getDefault(  ) ) );
+        model.put( MARK_TITLE, I18nService.getLocalizedString( PROPERTY_PAGE_TITLE_SEND_NOTIFICATION, Locale.getDefault( ) ) );
 
-        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_SEND_NOTIFICATION, getLocale(  ), model );
+        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_SEND_NOTIFICATION, getLocale( ), model );
 
-        return getAdminPage( template.getHtml(  ) );
+        return getAdminPage( template.getHtml( ) );
     }
 
     /**
      * Send a notification
-     * @param request The HTTP request
+     * 
+     * @param request
+     *            The HTTP request
      * @return redirection url
      */
     public String doSendNotification( HttpServletRequest request )
@@ -337,7 +333,7 @@ public class NotificationJspBean extends AbstractJspBean
             return doGoBack( request );
         }
 
-        NotificationDTO notification = new NotificationDTO(  );
+        NotificationDTO notification = new NotificationDTO( );
         populate( notification, request );
 
         try
@@ -345,25 +341,26 @@ public class NotificationJspBean extends AbstractJspBean
             // Controls mandatory fields
             validateBilletterie( notification );
 
-            if ( ( notification.getIdOffer(  ) != null ) && ( notification.getIdOffer(  ) > 0 ) )
+            if ( ( notification.getIdOffer( ) != null ) && ( notification.getIdOffer( ) > 0 ) )
             {
-                SeanceDTO seance = this._serviceOffer.findSeanceById( notification.getIdOffer(  ) );
+                SeanceDTO seance = this._serviceOffer.findSeanceById( notification.getIdOffer( ) );
 
-                if ( notification.getNotificationAction(  ).equals( TicketsConstants.OFFER_STATUT_LOCK ) )
+                if ( notification.getNotificationAction( ).equals( TicketsConstants.OFFER_STATUT_LOCK ) )
                 {
                     seance.setStatut( TicketsConstants.OFFER_STATUT_LOCK );
                     this._serviceOffer.update( seance );
                 }
-                else if ( notification.getNotificationAction(  ).equals( TicketsConstants.OFFER_STATUT_CANCEL ) )
-                {
-                    seance.setStatut( TicketsConstants.OFFER_STATUT_CANCEL );
-                    this._serviceOffer.update( seance );
-                }
+                else
+                    if ( notification.getNotificationAction( ).equals( TicketsConstants.OFFER_STATUT_CANCEL ) )
+                    {
+                        seance.setStatut( TicketsConstants.OFFER_STATUT_CANCEL );
+                        this._serviceOffer.update( seance );
+                    }
             }
 
             _serviceNotification.send( notification );
         }
-        catch ( FunctionnalException e )
+        catch( FunctionnalException e )
         {
             return manageFunctionnalException( request, e, JSP_SEND_NOTIFICATION );
         }
@@ -373,7 +370,9 @@ public class NotificationJspBean extends AbstractJspBean
 
     /**
      * Return the url of the JSP which called the last action
-     * @param request The Http request
+     * 
+     * @param request
+     *            The Http request
      * @return The url of the last JSP
      */
     private String doGoBack( HttpServletRequest request )
@@ -381,6 +380,6 @@ public class NotificationJspBean extends AbstractJspBean
         String strJspBack = request.getParameter( StockConstants.MARK_JSP_BACK );
 
         return StringUtils.isNotBlank( strJspBack ) ? ( AppPathService.getBaseUrl( request ) + strJspBack )
-                                                    : ( AppPathService.getBaseUrl( request ) + JSP_MANAGE_OFFERS );
+                : ( AppPathService.getBaseUrl( request ) + JSP_MANAGE_OFFERS );
     }
 }

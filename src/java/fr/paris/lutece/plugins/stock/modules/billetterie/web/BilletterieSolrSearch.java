@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2014, Mairie de Paris
+ * Copyright (c) 2002-2018, Mairie de Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -54,7 +54,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-
 /**
  * Used for special solr queries
  *
@@ -87,14 +86,17 @@ public class BilletterieSolrSearch extends HttpServlet
     /**
      * Get billetterie specific parameters and call Solr Module.
      *
-     * @param request the request
-     * @param response the response
-     * @throws ServletException the servlet exception
-     * @throws IOException Signals that an I/O exception has occurred.
+     * @param request
+     *            the request
+     * @param response
+     *            the response
+     * @throws ServletException
+     *             the servlet exception
+     * @throws IOException
+     *             Signals that an I/O exception has occurred.
      */
     @Override
-    protected void doGet( HttpServletRequest request, HttpServletResponse response )
-        throws ServletException, IOException
+    protected void doGet( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException
     {
         StringBuilder sbReq = new StringBuilder( "" );
         sbReq.append( AppPathService.getBaseUrl( request ) ).append( "jsp/site/Portal.jsp?page=search-solr" );
@@ -120,7 +122,7 @@ public class BilletterieSolrSearch extends HttpServlet
 
         if ( StringUtils.isEmpty( sTypeSearch ) || SEARCH_SIMPLE.equals( sTypeSearch ) )
         {
-            // simple search with facets 
+            // simple search with facets
             sTypeSearch = SEARCH_SIMPLE;
 
             String sQuoi = request.getParameter( MARK_QUOI );
@@ -147,132 +149,130 @@ public class BilletterieSolrSearch extends HttpServlet
                 sbFilter.append( sQuand );
             }
         }
-        else if ( SEARCH_AVANCEE.equals( sTypeSearch ) )
-        {
-            SimpleDateFormat sdfXml = new SimpleDateFormat( DateUtils.XML_DATE_FORMAT );
-            String sTarifReduit = request.getParameter( MARK_TARIF_REDUIT );
-            String sInvitation = request.getParameter( MARK_INVITATION );
-            String sInvitationEnfant = request.getParameter( MARK_INVITATION_ENFANT );
-            String sFullShow = request.getParameter( MARK_FULL_SHOW );
-            String[] categories = request.getParameterValues( MARK_CATEGORY );
-
-            String sShowDateStart = request.getParameter( "show_date_start" );
-            String sShowDateEnd = request.getParameter( "show_date_end" );
-
-            if ( CHECKBOX_ON.equals( sTarifReduit ) )
+        else
+            if ( SEARCH_AVANCEE.equals( sTypeSearch ) )
             {
-                sbFilter.append( "&fq=tarif_reduit_string:true" );
-            }
+                SimpleDateFormat sdfXml = new SimpleDateFormat( DateUtils.XML_DATE_FORMAT );
+                String sTarifReduit = request.getParameter( MARK_TARIF_REDUIT );
+                String sInvitation = request.getParameter( MARK_INVITATION );
+                String sInvitationEnfant = request.getParameter( MARK_INVITATION_ENFANT );
+                String sFullShow = request.getParameter( MARK_FULL_SHOW );
+                String [ ] categories = request.getParameterValues( MARK_CATEGORY );
 
-            if ( CHECKBOX_ON.equals( sInvitation ) )
-            {
-                sbFilter.append( "&fq=invitation_string:true" );
-            }
+                String sShowDateStart = request.getParameter( "show_date_start" );
+                String sShowDateEnd = request.getParameter( "show_date_end" );
 
-            if ( CHECKBOX_ON.equals( sInvitationEnfant ) )
-            {
-                sbFilter.append( "&fq=invitation_enfant_string:true" );
-            }
-
-            if ( CHECKBOX_ON.equals( sFullShow ) )
-            {
-                sbFilter.append( "&fq=full_string:false" );
-            }
-
-            if ( StringUtils.isNotEmpty( sQuery ) && ArrayUtils.isEmpty( categories ) )
-            {
-                sbReq.append( "&query=" + sQuery );
-            }
-            else if ( StringUtils.isNotEmpty( sQuery ) && !ArrayUtils.isEmpty( categories ) )
-            {
-                sbReq.append( "&query=(" + sQuery );
-
-                sbFilter.append( " AND categorie:(" );
-
-                int i = 1;
-
-                for ( String categorie : categories )
+                if ( CHECKBOX_ON.equals( sTarifReduit ) )
                 {
-                    if ( i < categories.length )
-                    {
-                        sbFilter.append( categorie.replace( " ", "*" ) ).append( " OR " );
-                    }
-                    else
-                    {
-                        sbFilter.append( categorie.replace( " ", "*" ) );
-                    }
-
-                    i++;
+                    sbFilter.append( "&fq=tarif_reduit_string:true" );
                 }
 
-                sbFilter.append( "))" );
-            }
-            else if ( !ArrayUtils.isEmpty( categories ) )
-            {
-                sbFilter.append( "&query=categorie:(" );
-
-                int i = 1;
-
-                for ( String categorie : categories )
+                if ( CHECKBOX_ON.equals( sInvitation ) )
                 {
-                    if ( i < categories.length )
-                    {
-                        sbFilter.append( categorie.replace( " ", "*" ) ).append( " OR " );
-                    }
-                    else
-                    {
-                        sbFilter.append( categorie.replace( " ", "*" ) );
-                    }
-
-                    i++;
+                    sbFilter.append( "&fq=invitation_string:true" );
                 }
 
-                sbFilter.append( ")" );
-            }
+                if ( CHECKBOX_ON.equals( sInvitationEnfant ) )
+                {
+                    sbFilter.append( "&fq=invitation_enfant_string:true" );
+                }
 
-            if ( StringUtils.isNotEmpty( sShowDateStart ) )
-            {
-                Timestamp showDateStart = DateUtils.getDate( sShowDateStart, true );
-                String sXmlShowDateStart = sdfXml.format( showDateStart );
-                sbFilter.append( "&fq=end_date:[" ).append( sXmlShowDateStart ).append( " TO *]" );
-            }
+                if ( CHECKBOX_ON.equals( sFullShow ) )
+                {
+                    sbFilter.append( "&fq=full_string:false" );
+                }
 
-            if ( StringUtils.isNotEmpty( sShowDateEnd ) )
-            {
-                Timestamp showDateEnd = DateUtils.getDate( sShowDateEnd, true );
-                String sXmlShowDateEnd = sdfXml.format( showDateEnd );
+                if ( StringUtils.isNotEmpty( sQuery ) && ArrayUtils.isEmpty( categories ) )
+                {
+                    sbReq.append( "&query=" + sQuery );
+                }
+                else
+                    if ( StringUtils.isNotEmpty( sQuery ) && !ArrayUtils.isEmpty( categories ) )
+                    {
+                        sbReq.append( "&query=(" + sQuery );
 
-                sbFilter.append( "&fq=start_date:[* TO " ).append( sXmlShowDateEnd ).append( "]" );
+                        sbFilter.append( " AND categorie:(" );
+
+                        int i = 1;
+
+                        for ( String categorie : categories )
+                        {
+                            if ( i < categories.length )
+                            {
+                                sbFilter.append( categorie.replace( " ", "*" ) ).append( " OR " );
+                            }
+                            else
+                            {
+                                sbFilter.append( categorie.replace( " ", "*" ) );
+                            }
+
+                            i++;
+                        }
+
+                        sbFilter.append( "))" );
+                    }
+                    else
+                        if ( !ArrayUtils.isEmpty( categories ) )
+                        {
+                            sbFilter.append( "&query=categorie:(" );
+
+                            int i = 1;
+
+                            for ( String categorie : categories )
+                            {
+                                if ( i < categories.length )
+                                {
+                                    sbFilter.append( categorie.replace( " ", "*" ) ).append( " OR " );
+                                }
+                                else
+                                {
+                                    sbFilter.append( categorie.replace( " ", "*" ) );
+                                }
+
+                                i++;
+                            }
+
+                            sbFilter.append( ")" );
+                        }
+
+                if ( StringUtils.isNotEmpty( sShowDateStart ) )
+                {
+                    Timestamp showDateStart = DateUtils.getDate( sShowDateStart, true );
+                    String sXmlShowDateStart = sdfXml.format( showDateStart );
+                    sbFilter.append( "&fq=end_date:[" ).append( sXmlShowDateStart ).append( " TO *]" );
+                }
+
+                if ( StringUtils.isNotEmpty( sShowDateEnd ) )
+                {
+                    Timestamp showDateEnd = DateUtils.getDate( sShowDateEnd, true );
+                    String sXmlShowDateEnd = sdfXml.format( showDateEnd );
+
+                    sbFilter.append( "&fq=start_date:[* TO " ).append( sXmlShowDateEnd ).append( "]" );
+                }
             }
-        }
 
         StringBuilder sbType = new StringBuilder( "&type_search=" + sTypeSearch );
 
-        if ( sbFilter.toString(  ).isEmpty(  ) && StringUtils.isEmpty( sQuery ) )
+        if ( sbFilter.toString( ).isEmpty( ) && StringUtils.isEmpty( sQuery ) )
         {
             // Create default filter
             sbReq.append( "&query=*:*" );
         }
         else
         {
-            sbReq.append( sbFilter.toString(  ) );
+            sbReq.append( sbFilter.toString( ) );
         }
 
-        sbReq.append( sbSort.toString(  ) );
-        sbReq.append( sbType.toString(  ) );
+        sbReq.append( sbSort.toString( ) );
+        sbReq.append( sbType.toString( ) );
 
-        LOGGER.debug( "Requête SOLR de date, redirection vers " + sbReq.toString(  ) );
+        LOGGER.debug( "Requête SOLR de date, redirection vers " + sbReq.toString( ) );
 
         response.sendRedirect( encodeUri( sbReq.toString( ) ) );
     }
 
-    protected static String encodeUri(String strUri)
-    throws IOException
+    protected static String encodeUri( String strUri ) throws IOException
     {
-        return UriComponentsBuilder
-            .fromUriString( strUri )
-            .build( )
-            .encode("UTF-8")
-            .toUriString( );
+        return UriComponentsBuilder.fromUriString( strUri ).build( ).encode( "UTF-8" ).toUriString( );
     }
 }

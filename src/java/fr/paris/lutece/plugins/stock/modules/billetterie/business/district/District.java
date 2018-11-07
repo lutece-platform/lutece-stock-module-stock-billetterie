@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2014, Mairie de Paris
+ * Copyright (c) 2002-2018, Mairie de Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -43,9 +43,9 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
-
 /**
  * Bean class the district of the partners (salles)
+ * 
  * @author jchaline
  *
  */
@@ -69,13 +69,14 @@ public class District
     /**
      * @return the id
      */
-    public Integer getId(  )
+    public Integer getId( )
     {
         return _id;
     }
 
     /**
-     * @param id the id to set
+     * @param id
+     *            the id to set
      */
     public void setId( Integer id )
     {
@@ -85,13 +86,14 @@ public class District
     /**
      * @return the libelle
      */
-    public String getLibelle(  )
+    public String getLibelle( )
     {
         return _libelle;
     }
 
     /**
-     * @param libelle the libelle to set
+     * @param libelle
+     *            the libelle to set
      */
     public void setLibelle( String libelle )
     {

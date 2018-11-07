@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2014, Mairie de Paris
+ * Copyright (c) 2002-2018, Mairie de Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -49,7 +49,6 @@ import javax.inject.Named;
 
 import javax.servlet.http.HttpServletRequest;
 
-
 /**
  *
  * @author jchaline
@@ -95,7 +94,7 @@ public class ProductExtendableResourceService implements IExtendableResourceServ
      * {@inheritDoc}
      */
     @Override
-    public String getResourceType(  )
+    public String getResourceType( )
     {
         return ShowDTO.PROPERTY_RESOURCE_TYPE;
     }
