@@ -2,6 +2,11 @@
 <document>
     <body>
         <section name="Module stock billeterie">
+            <subsection name="Introduction">
+                <p>
+                    This module aggregates the different stock plugins for the site billetterie.
+                </p>
+            </subsection>
         </section>
     </body>
 </document>
