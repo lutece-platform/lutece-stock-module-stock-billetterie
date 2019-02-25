@@ -78,6 +78,7 @@ public class BilletterieSolrSearch extends HttpServlet
     private static final String MARK_SORT_ALPHABETIQUE = "alpha";
     private static final String MARK_SORT_DATE = "date";
     private static final String MARK_TYPE_SEARCH = "type_search";
+    private static final String MARK_CONF = "conf";
     private static final String CHECKBOX_ON = "on";
     private static final String SEARCH_SIMPLE = "simple";
     private static final String SEARCH_AVANCEE = "avancee";
@@ -265,7 +266,12 @@ public class BilletterieSolrSearch extends HttpServlet
 
         sbReq.append( sbSort.toString( ) );
         sbReq.append( sbType.toString( ) );
-
+        
+        String sConf = request.getParameter( MARK_CONF );
+        if ( StringUtils.isNotEmpty( sConf ) )
+        {
+        	sbReq.append("&conf=").append(sConf);
+        }
         LOGGER.debug( "Requête SOLR de date, redirection vers " + sbReq.toString( ) );
 
         response.sendRedirect( encodeUri( sbReq.toString( ) ) );
