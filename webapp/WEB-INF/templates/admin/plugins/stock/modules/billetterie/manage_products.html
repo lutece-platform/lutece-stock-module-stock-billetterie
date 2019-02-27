@@ -21,58 +21,68 @@
 		<div class="box box-primary">
 			<div class="box-header">
 				<h3 class="box-title">#i18n{module.stock.billetterie.manage_product.title}</h3>
-        <div class="box-tools">
-          <a class="btn btn-xs btn-primary" href="jsp/admin/plugins/stock/modules/billetterie/SaveProduct.jsp?partnerId=${(filter.idProvider)!}&categoryId=${(filter.idCategory)!}" >
-            <i class="fa fa-plus" ></i>
-            <span class="hidden-xs"> #i18n{module.stock.billetterie.manage_product.buttonCreateProduct}</span>
-          </a>
-          <a class="btn btn-xs btn-primary" href="jsp/admin/plugins/stock/modules/billetterie/ManageCategories.jsp" >
-						<i class="fa fa-cog" ></i>
-						<span class="hidden-xs"> #i18n{module.stock.billetterie.manage_product.buttonGererListeCategories}</span>
+				<div class="box-tools">
+					<a class="btn btn-xs btn-primary"
+						href="jsp/admin/plugins/stock/modules/billetterie/SaveProduct.jsp?partnerId=${(filter.idProvider)!}&categoryId=${(filter.idCategory)!}">
+						<i class="fa fa-plus"></i> <span class="hidden-xs">
+							#i18n{module.stock.billetterie.manage_product.buttonCreateProduct}</span>
+					</a> <a class="btn btn-xs btn-primary"
+						href="jsp/admin/plugins/stock/modules/billetterie/ManageCategories.jsp">
+						<i class="fa fa-cog"></i> <span class="hidden-xs">
+							#i18n{module.stock.billetterie.manage_product.buttonGererListeCategories}</span>
 					</a>
-					<a class="btn btn-xs btn-primary" href="jsp/admin/plugins/extend/ViewExtenderInfo.jsp?extenderType=comment&idExtendableResource=*&extendableResourceType=stock-product&from_url=jsp/admin/plugins/stock/modules/billetterie/ManageProducts.jsp" >
-            <i class="fa fa-comments" ></i>
-            <span class="hidden-xs"> #i18n{module.stock.billetterie.manage_product.buttonSeeAllComments}</span>
-          </a>
 				</div>
 			</div>
-      <div class="box-body">
-        <form class="form-inline" action="jsp/admin/plugins/stock/modules/billetterie/ManageProducts.jsp" method="post">
-				  <input type="hidden" name="filter" value="${filter!}">
-					<@showFilterInput id="filter_name" name="name" value="${filter.name!}" size="50" label="#i18n{module.stock.billetterie.manage_product.filter.name}" />
-					<@showFilterSelect list=provider_list id="filter_salle" name="idProvider" value="${filter.idProvider!}" label="#i18n{module.stock.billetterie.manage_product.filter.salle}" option="#i18n{module.stock.billetterie.manage_product.filter.salle}" />
-					<@showFilterSelect list=category_list id="filter_category" name="idCategory" value="${filter.idCategory!}" label="#i18n{module.stock.billetterie.manage_product.filter.category}" option="#i18n{module.stock.billetterie.manage_product.filter.category}" />
+			<div class="box-body">
+				<form class="form-inline"
+					action="jsp/admin/plugins/stock/modules/billetterie/ManageProducts.jsp"
+					method="post">
+					<input type="hidden" name="filter" value="${filter!}">
+					<@showFilterInput id="filter_name" name="name"
+					value="${filter.name!}" size="50"
+					label="#i18n{module.stock.billetterie.manage_product.filter.name}"
+					/> <@showFilterSelect list=provider_list id="filter_salle"
+					name="idProvider" value="${filter.idProvider!}"
+					label="#i18n{module.stock.billetterie.manage_product.filter.salle}"
+					option="#i18n{module.stock.billetterie.manage_product.filter.salle}"
+					/> <@showFilterSelect list=category_list id="filter_category"
+					name="idCategory" value="${filter.idCategory!}"
+					label="#i18n{module.stock.billetterie.manage_product.filter.category}"
+					option="#i18n{module.stock.billetterie.manage_product.filter.category}"
+					/>
 					<div class="input-daterange inline">
-						<label for="date_from" class="sr-only">#i18n{module.stock.billetterie.manage_product.filter.date_from} : </label>
-  						<div class="input-group">
-  							<span class="input-group-addon">
-  								<i class="fa fa-calendar"></i>
-  							</span>
-  							<input class="form-control" type="text" name="dateFrom" placeholder="Date résa début" id="date_from" maxlength="10" value="${filter.dateFrom!}">
-  						</div>
-  						#i18n{module.stock.billetterie.manage_product.filter.date_to} :
-  						<div class="input-group">
-  							<span class="input-group-addon">
-  								<i class="fa fa-calendar"></i>
-  							</span>
-  							<input class="form-control" type="text" name="dateTo" id="date_to" placeholder="Date résa fin" maxlength="10" value="${filter.dateTo!}">
-  						</div>
+						<label for="date_from" class="sr-only">#i18n{module.stock.billetterie.manage_product.filter.date_from}
+							: </label>
+						<div class="input-group">
+							<span class="input-group-addon"> <i class="fa fa-calendar"></i>
+							</span> <input class="form-control" type="text" name="dateFrom"
+								placeholder="Date résa début" id="date_from" maxlength="10"
+								value="${filter.dateFrom!}">
+						</div>
+						#i18n{module.stock.billetterie.manage_product.filter.date_to} :
+						<div class="input-group">
+							<span class="input-group-addon"> <i class="fa fa-calendar"></i>
+							</span> <input class="form-control" type="text" name="dateTo"
+								id="date_to" placeholder="Date résa fin" maxlength="10"
+								value="${filter.dateTo!}">
+						</div>
 					</div>
 					<div class="checkbox">
-					  <label for="show_aLaffiche"/>#i18n{module.stock.billetterie.manage_product.filter.alaffiche} :
-						  <input type="checkbox" id="show_aLaffiche" name="aLaffiche" value="on" <#if filter.alaffiche?has_content && filter.alaffiche>checked="checked"</#if>/>
-					  </label>
+						<label for="show_aLaffiche" />#i18n{module.stock.billetterie.manage_product.filter.alaffiche}
+						: <input type="checkbox" id="show_aLaffiche" name="aLaffiche"
+							value="on"
+						<#if filter.alaffiche?has_content && filter.alaffiche>checked="checked"</#if>
+						/> </label>
 					</div>
 
-				<@showSearchButton />
+					<@showSearchButton />
 				</form>
 				<div class="row">
-    		  <div class="col-xs-12 col-sm-12">
-    		    <@dataTableBilletterie dataTableManager=dataTableProduct masseDeleteLabel=""/>
-    		  </div>
-  			</div>
-  		</div>
-	  </div>
+					<div class="col-xs-12 col-sm-12"><@dataTableBilletterie
+						dataTableManager=dataTableProduct masseDeleteLabel=""/></div>
+				</div>
+			</div>
+		</div>
 	</div>
 </div>
 <@getDatePickerRangeBootstrap language="${locale!}" />
