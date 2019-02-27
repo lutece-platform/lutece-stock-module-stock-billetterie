@@ -65,8 +65,6 @@ import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.portal.web.xpages.XPage;
 import fr.paris.lutece.portal.web.xpages.XPageApplication;
-import fr.paris.lutece.util.ReferenceItem;
-import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.html.HtmlTemplate;
 
 import org.apache.commons.lang.StringUtils;
@@ -83,7 +81,6 @@ import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 /**
  * Pages for billetterie front
@@ -111,8 +108,6 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
     private static final String PARAMETER_SUBSCRIBE = "subscribe";
     private static final String PARAMETER_PURCHASE_ID = "purchase_id";
 
-    private static final String PARAMETER_USERNAME = "username";
-
     // Marks
     private static final String MARK_TYPE_LIST = "type_list";
     private static final String MARK_SHOW_LIST = "show_list";
@@ -132,7 +127,6 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
     private static final String MARK_USER_EMAIL = "user_email";
     private static final String MARK_DISTRICT = "district";
     private static final String MARK_MESSAGE_USER_BAN = "messageUserBan";
-    private static final String MARK_NB_RESERVATION_LIST = "nb_reservation_list";
     public static final String MARK_PRODUCTS_LIST = "products_list";
 
     // Actions
@@ -456,13 +450,6 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
         Map<String, Object> model = new HashMap<String, Object>( );
 
         model.put( MARK_SEANCE_LIST, seanceList );
-
-        SeanceDTO currentSeance = seanceList.get( 0 );
-        Integer nMaxPossibleTickets = Math.min( currentSeance.getMaxTickets( ), currentSeance.getQuantity( ) );
-
-        // Add nb of purchase per offer type
-        ReferenceList quantityList = getNumberList( currentSeance.getMinTickets( ), nMaxPossibleTickets );
-        model.put( MARK_NB_RESERVATION_LIST, quantityList );
         model.put( MARK_NB_PLACE_SELECTED, strNbPlace );
 
         model.put( MARK_SEANCE_DATE, sDateSeance );
@@ -471,52 +458,6 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_DIR + TEMPLATE_BOOKING_BLOC, locale, model );
 
         return template.getHtml( );
-    }
-
-    /**
-     * Return a list of number from 0 to quantity
-     *
-     * @param quantity
-     *            the quantity
-     * @return list of number
-     */
-    private ReferenceList getNumberList( Integer quantity )
-    {
-        ReferenceList quantityList = new ReferenceList( );
-
-        for ( Integer i = 0; i <= quantity; i++ )
-        {
-            ReferenceItem refItem = new ReferenceItem( );
-            refItem.setCode( i.toString( ) );
-            refItem.setName( i.toString( ) );
-            quantityList.add( refItem );
-        }
-
-        return quantityList;
-    }
-
-    /**
-     * Return a list of number from min to max
-     *
-     * @param min
-     *            the minimum
-     * @param max
-     *            the maximum
-     * @return list of number
-     */
-    private ReferenceList getNumberList( Integer min, Integer max )
-    {
-        ReferenceList quantityList = new ReferenceList( );
-
-        for ( Integer i = min; i <= max; i++ )
-        {
-            ReferenceItem refItem = new ReferenceItem( );
-            refItem.setCode( i.toString( ) );
-            refItem.setName( i.toString( ) );
-            quantityList.add( refItem );
-        }
-
-        return quantityList;
     }
 
     /**

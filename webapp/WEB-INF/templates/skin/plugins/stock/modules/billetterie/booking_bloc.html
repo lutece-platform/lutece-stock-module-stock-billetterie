@@ -1,8 +1,9 @@
-<#macro placesNumberChooser idType idSeance>
+<#macro placesNumberChooser idType idSeance minTickets maxTickets>
 	<#if (idType >= 1) && (idType <=3) >
-		<select class="" name="nb_places">
-			<#list nb_reservation_list as nb>
-				<option>${nb.code!}</option>
+		<select class="form-control" style="width:70px" name="nb_places">
+			<option <#if nbSelected?? && '0' == nbSelected >selected="selected"</#if> >0</option>
+			<#list minTickets..maxTickets as n>
+				<option <#if nbSelected?? && '${n}' == nbSelected >selected="selected"</#if> >${n}</option>
 			</#list>
 		</select>
 	</#if>
@@ -34,11 +35,21 @@
 					<input type="hidden" name="seance_id" value="${seance.id}" />
 					<input type="hidden" name="seance_type_name" value="${seance.typeName}" />
 					<td>
-						<#if seance.quantity &gt; 0 && seance.minTickets &lt;= seance.quantity>
-							<@placesNumberChooser idType=seance.idGenre idSeance=seance.id />
-						<#else>
-							<input type="hidden" name="nb_places" value="0" />
-						</#if>
+						<#list seanceList as seance>
+						<input type="hidden" name="seance_id" value="${seance.id}">
+						<input type="hidden" name="seance_type_name" value="${seance.typeName}">
+						<td >
+							<#if seance.quantity &gt; 0 && seance.minTickets &lt;= seance.quantity>
+								<#if seance.quantity &gt; seance.maxTickets>
+									<@placesNumberChooser idType=seance.idGenre idSeance=seance.id minTickets=seance.minTickets maxTickets=seance.maxTickets/>
+								<#else>
+									<@placesNumberChooser idType=seance.idGenre idSeance=seance.id minTickets=seance.minTickets maxTickets=seance.quantity/>
+								</#if>
+							<#else>
+								<input type="hidden" name="nb_places" value="0">
+							</#if>
+						</td>
+					</#list>
 					</td>
 				</#list>
 			</tr>
