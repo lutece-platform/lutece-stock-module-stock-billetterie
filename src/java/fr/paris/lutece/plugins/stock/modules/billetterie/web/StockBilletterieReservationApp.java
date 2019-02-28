@@ -572,7 +572,9 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
                 notificationDTO.setRecipientsTo( adminUser.getEmail( ) );
 
                 String [ ] args = new String [ ] {
-                    String.valueOf( seance.getId( ) )
+                    String.valueOf( seance.getId( ) ),
+                    seance.getProduct().getName(),
+                    seance.getDate() + " " + seance.getHour()
                 };
                 notificationDTO.setSubject( I18nService.getLocalizedString( MESSAGE_NOTIFICATION_ADMIN_OFFER_QUANTITY_SUBJECT, args, request.getLocale( ) ) );
                 notificationDTO.setMessage( template.getHtml( ) );
