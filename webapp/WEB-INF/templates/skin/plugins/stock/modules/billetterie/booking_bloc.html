@@ -1,9 +1,15 @@
 <#macro placesNumberChooser idType idSeance minTickets maxTickets>
 	<#if (idType >= 1) && (idType <=3) >
+		<#assign nbKey = "nbSelected" + idSeance />
+		<#if .vars[nbKey]??>
+			<#assign nbSelected = .vars[nbKey] />
+		<#else>
+			<#assign nbSelected = '0' />
+		</#if>
 		<select class="form-control" style="width:70px;display:inline-block;" name="nb_places">
-			<option <#if nbSelected?? && '0' == nbSelected >selected="selected"</#if> >0</option>
+			<option <#if '0' == nbSelected >selected="selected"</#if> >0</option>
 			<#list minTickets..maxTickets as n>
-				<option <#if nbSelected?? && '${n}' == nbSelected >selected="selected"</#if> >${n}</option>
+				<option <#if '${n}' == nbSelected >selected="selected"</#if> >${n}</option>
 			</#list>
 		</select>
 	</#if>

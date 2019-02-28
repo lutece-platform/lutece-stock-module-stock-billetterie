@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.stock.modules.billetterie.web;
 
+import fr.paris.lutece.plugins.stock.business.purchase.PurchaseFilter;
 import fr.paris.lutece.plugins.stock.commons.exception.FunctionnalException;
 import fr.paris.lutece.plugins.stock.commons.exception.TechnicalException;
 import fr.paris.lutece.plugins.stock.modules.billetterie.business.district.District;
@@ -79,6 +80,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -210,6 +212,9 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
      */
     public XPage getShowPage( XPage page, HttpServletRequest request, Locale locale )
     {
+    	// Get the user
+        LuteceUser currentUser = getUser( request );
+    	
         String sIdShow = request.getParameter( PARAMETER_PRODUCT_ID );
 
         Integer idShow = -1;
@@ -226,21 +231,26 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
         request.getSession( ).setAttribute( PARAMETER_PURCHASE_ID, strPurchaseId );
 
         Integer idPurchase = -1;
-        String strNdPlaceBook = null;
 
         Map<String, Object> model = new HashMap<String, Object>( );
+        
+        Map<Integer, String> nbPlaceBookMap = new HashMap<>();
+        List<String> purchaseList = new ArrayList<>();
 
         if ( StringUtils.isNotEmpty( strPurchaseId ) && StringUtils.isNumeric( strPurchaseId ) )
         {
             idPurchase = Integer.valueOf( strPurchaseId );
+            purchaseList.add(strPurchaseId);
             ReservationDTO booking = _purchaseService.findById( idPurchase );
             if ( booking != null )
             {
+            	
                 final DateFormat sdfComboSeance = new SimpleDateFormat( TicketsConstants.FORMAT_COMBO_DATE_SEANCE, locale );
 
                 Date today = new Date( );
 
                 SeanceDTO seance = booking.getOffer( );
+                nbPlaceBookMap.put(seance.getId(), String.valueOf(booking.getQuantity()));
 
                 String sDateHour = sdfComboSeance.format( seance.getDateHour( ) );
 
@@ -256,14 +266,29 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
                         sSeanceDate = sDateHour;
                     }
                 }
-
+                
+                // Get other bookings for same show
+                PurchaseFilter filter = new PurchaseFilter();
+                filter.setIdProduct(idShow);
+                filter.setUserName(Optional.ofNullable(currentUser).map(LuteceUser::getName).orElse(null));
+                
+                List<ReservationDTO> bookings = _purchaseService.findByFilter(filter);
+                
+                for (ReservationDTO book : bookings) {
+	            	if (book.getId().equals(booking.getId())) {
+	            		continue;
+	            	}
+                	SeanceDTO otherSeance = book.getOffer();
+                	
+                	if (otherSeance.getDate().equals(seance.getDate()) 
+                			&& otherSeance.getHour().equals(seance.getHour())) {
+                		nbPlaceBookMap.put(otherSeance.getId(), String.valueOf(book.getQuantity()));
+                		purchaseList.add(String.valueOf(book.getId()));
+                	}
+	                }
             }
-
-            strNdPlaceBook = "" + booking.getQuantity( );
-
-            request.getSession( ).setAttribute( PARAMETER_PURCHASE_ID, strPurchaseId );
+            request.getSession( ).setAttribute( PARAMETER_PURCHASE_ID, purchaseList );
             model.put( MARK_IS_MODIFY, idPurchase );
-
         }
 
         // Get the show
@@ -303,9 +328,6 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
         filter.setOrders( orderList );
         model.put( MARK_SEANCE_DATE_LIST, _offerService.findSeanceByShow( show.getId( ), filter, locale ) );
 
-        // Get the user
-        LuteceUser currentUser = getUser( request );
-
         // check if the user is not ban, don't check for unregistred user
         if ( currentUser != null )
         {
@@ -325,7 +347,7 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
 
         // If user authenticated, display booking bloc
         model.put( MARK_USER, currentUser );
-        model.put( MARK_BLOC_RESERVATION, getBookingBloc( show, sSeanceDate, locale, strNdPlaceBook ) );
+        model.put( MARK_BLOC_RESERVATION, getBookingBloc( show, sSeanceDate, locale, nbPlaceBookMap ) );
         model.put( MARK_S_SEANCE_DATE, sSeanceDate );
 
         // if the user wants to subscribe to the show (get an email if a new representation is added)
@@ -418,7 +440,7 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
      *            locale
      * @return xpage
      */
-    private String getBookingBloc( ShowDTO show, String sDateSeance, Locale locale, String strNbPlace )
+    private String getBookingBloc( ShowDTO show, String sDateSeance, Locale locale, Map<Integer, String> nbPlaceBookMap )
     {
         if ( sDateSeance == null )
         {
@@ -450,7 +472,9 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
         Map<String, Object> model = new HashMap<String, Object>( );
 
         model.put( MARK_SEANCE_LIST, seanceList );
-        model.put( MARK_NB_PLACE_SELECTED, strNbPlace );
+        for (Integer key : nbPlaceBookMap.keySet()) {
+        	model.put( MARK_NB_PLACE_SELECTED + key, nbPlaceBookMap.get(key) );
+        }
 
         model.put( MARK_SEANCE_DATE, sDateSeance );
         model.put( MARK_SHOW, show );

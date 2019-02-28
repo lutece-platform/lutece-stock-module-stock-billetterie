@@ -70,6 +70,7 @@ import fr.paris.lutece.util.html.HtmlTemplate;
 import fr.paris.lutece.util.html.Paginator;
 import fr.paris.lutece.util.url.UrlItem;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
@@ -257,8 +258,6 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
         String [ ] numberPlacesList = request.getParameterValues( PARAMETER_NB_PLACES );
         String showId = request.getParameter( PARAMETER_SHOW_ID );
 
-        String strPurchaseId = request.getParameter( PARAMETER_PURCHASE_ID );
-
         Map<String, Object> model = new HashMap<String, Object>( );
         model.put( PARAMETER_SHOW_ID, showId );
 
@@ -442,10 +441,10 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
      */
     public String doSaveReservation( HttpServletRequest request, HttpServletResponse response ) throws SiteMessageException
     {
-        String strPurchaseId = (String) request.getSession( ).getAttribute( PARAMETER_PURCHASE_ID );
-        if ( strPurchaseId != null )
+        List<String> strPurchaseId = (List<String>) request.getSession( ).getAttribute( PARAMETER_PURCHASE_ID );
+        if ( CollectionUtils.isNotEmpty(strPurchaseId) )
         {
-            _purchaseService.doDeletePurchase( Integer.valueOf( strPurchaseId ) );
+        	strPurchaseId.stream().map(Integer::valueOf).forEach(_purchaseService::doDeletePurchase);
         }
 
         String returnUrl = null;
