@@ -4,11 +4,8 @@
 	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
 </head>
 <body>
-	<strong>Bonjour </strong>,<br /><br />Une nouvelle représentation : <i>${product.name!} est disponible</i><br />Vous pouvez dès maintenant effectuer une réservation.<br />
-	<h3>Récapitulatif de l'offre:</h3><strong>Spectacle :</strong> <i>${product.name!} - ${offer.name!}</i> <br /><strong>Date :</strong> ${offer.date!} à ${offer.hour!}<br />
-	<strong>Nombre de place :</strong> ${offer.initialQuantity!}<br />
-	<br />
-	Bon spectacle !<br />
-	<br />
-	Pour tout renseignement, merci de contacter resatheatre.mci@paris.fr<br />
+	<strong>Bonjour </strong>,<br />
+	Une nouvelle représentation vient d'être ajoutée : <i>${product.name!}</i><br />
+	Vous pouvez dès maintenant effectuer une réservation sur le site <a href="${base_url}">${base_url}</a><br />
+	Pour tout renseignement, merci de contacter <a href="mailto:resatheatre.mci@paris.fr" >resatheatre.mci@paris.fr</a><br /> 
 </body>

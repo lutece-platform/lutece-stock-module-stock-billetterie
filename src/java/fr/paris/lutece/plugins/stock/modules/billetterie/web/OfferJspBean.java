@@ -557,6 +557,7 @@ public class OfferJspBean extends AbstractJspBean
 
         SeanceDTO offer = new SeanceDTO( );
         populate( offer, request );
+        boolean isNewOffer = offer.getId() == null;
 
         // make sur you set the initial quantity only in the first save offer, not in modify offer
         try
@@ -575,7 +576,7 @@ public class OfferJspBean extends AbstractJspBean
             return manageFunctionnalException( request, e, JSP_SAVE_OFFER );
         }
 
-        if ( StringUtils.isBlank( request.getParameter( PARAMETER_OFFER_ID ) ) )
+        if ( isNewOffer )
         {
             doNotifyCreateOffer( request, offer );
         }
