@@ -86,6 +86,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -122,6 +123,7 @@ public class OfferJspBean extends AbstractJspBean
     public static final String PARAMETER_FILTER = "filter";
     public static final String PARAMETER_PRODUCT_ID = "product_id";
     public static final String PARAMETER_REFRESH_CONTACT = "refresh_contact";
+    public static final String PARAMETER_OLD_QUANTITY = "old_quantity";
     public static final String RIGHT_MANAGE_OFFERS = "OFFERS_MANAGEMENT";
     public static final String RESOURCE_TYPE = "STOCK";
 
@@ -162,6 +164,7 @@ public class OfferJspBean extends AbstractJspBean
     private static final String TEMPLATE_MANAGE_OFFERS = "admin/plugins/stock/modules/billetterie/manage_offers.html";
     private static final String TEMPLATE_SAVE_OFFER = "admin/plugins/stock/modules/billetterie/save_offer.html";
     private static final String TEMPLATE_NOTIFICATION_CREATE_OFFER = "admin/plugins/stock/modules/billetterie/notification_create_offer.html";
+    private static final String TEMPLATE_NOTIFICATION_NEW_TICKETS = "admin/plugins/stock/modules/billetterie/notification_new_tickets.html";
 
     // PAGE TITLES
     private static final String PROPERTY_PAGE_TITLE_MANAGE_OFFER = "module.stock.billetterie.list_offres.title";
@@ -558,6 +561,7 @@ public class OfferJspBean extends AbstractJspBean
         SeanceDTO offer = new SeanceDTO( );
         populate( offer, request );
         boolean isNewOffer = offer.getId() == null;
+        int oldQuantity = Optional.ofNullable(request.getParameter(PARAMETER_OLD_QUANTITY)).map(Integer::valueOf).orElse(0);
 
         // make sur you set the initial quantity only in the first save offer, not in modify offer
         try
@@ -579,6 +583,8 @@ public class OfferJspBean extends AbstractJspBean
         if ( isNewOffer )
         {
             doNotifyCreateOffer( request, offer );
+        } else if (offer.getQuantity() > oldQuantity) {
+        	doNotifyNewTickets(request, offer);
         }
 
         return doGoBack( request );
@@ -613,6 +619,50 @@ public class OfferJspBean extends AbstractJspBean
         {
             model.put( MARK_USER_NAME, strUserEmail );
             template = AppTemplateService.getTemplate( TEMPLATE_NOTIFICATION_CREATE_OFFER, request.getLocale( ), model );
+
+            notificationDTO = new NotificationDTO( );
+            notificationDTO.setRecipientsTo( strUserEmail );
+
+            String [ ] args = new String [ ] {
+                product.getName( ),
+            };
+            notificationDTO.setSubject( I18nService.getLocalizedString( MESSAGE_NOTIFICATION_OFFER_PRODUCT, args, request.getLocale( ) ) );
+            notificationDTO.setMessage( template.getHtml( ) );
+
+            // Send it
+            _serviceNotification.send( notificationDTO );
+        }
+    }
+    
+    /**
+     * Send notification for user who subscribed to the product link with an offer.
+     * 
+     * @param offer
+     *            the offer create
+     * @param request
+     *            The Http request
+     */
+    public void doNotifyNewTickets( HttpServletRequest request, SeanceDTO offer )
+    {
+        // get all subscription for product
+        Product product = _serviceProduct.findById( offer.getProduct( ).getId( ) ).convert( );
+
+        List<String> listUserEmail = _subscriptionProductService.getListEmailSubscriber( Integer.toString( offer.getProduct( ).getId( ) ) );
+
+        // Generate mail content
+        Map<String, Object> model = new HashMap<String, Object>( );
+        model.put( MARK_OFFER, offer );
+        model.put( MARK_PRODUCT, product );
+        model.put( MARK_BASE_URL, AppPathService.getBaseUrl( request ) );
+
+        // Create mail object
+        HtmlTemplate template;
+        NotificationDTO notificationDTO;
+
+        for ( String strUserEmail : listUserEmail )
+        {
+            model.put( MARK_USER_NAME, strUserEmail );
+            template = AppTemplateService.getTemplate( TEMPLATE_NOTIFICATION_NEW_TICKETS, request.getLocale( ), model );
 
             notificationDTO = new NotificationDTO( );
             notificationDTO.setRecipientsTo( strUserEmail );
