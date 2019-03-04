@@ -283,10 +283,12 @@ public class OfferJspBean extends AbstractJspBean
 
         SeanceFilter filter = (SeanceFilter) getOfferFilter( request );
 
+        boolean forceNewFilter = false;
         if ( ( filter.getProductId( ) != null ) && ( filter.getProductId( ) > 0 ) )
         {
             ShowDTO show = this._serviceProduct.findById( filter.getProductId( ) );
             filter.setProductName( show.getName( ) );
+            forceNewFilter = true;
         }
 
         if ( StringUtils.isNotEmpty( filter.getProductName( ) ) )
@@ -323,7 +325,7 @@ public class OfferJspBean extends AbstractJspBean
         filter.setOrders( orderList );
         filter.setOrderAsc( true );
 
-        DataTableManager<SeanceDTO> dataTableToUse = getDataTable( request, filter );
+        DataTableManager<SeanceDTO> dataTableToUse = getDataTable( request, filter, forceNewFilter );
 
         for ( SeanceDTO seance : dataTableToUse.getItems( ) )
         {
@@ -365,7 +367,7 @@ public class OfferJspBean extends AbstractJspBean
      *            the filter
      * @return the data table to use
      */
-    private <T> DataTableManager<T> getDataTable( HttpServletRequest request, SeanceFilter filter )
+    private <T> DataTableManager<T> getDataTable( HttpServletRequest request, SeanceFilter filter, boolean forceNewFilter)
     {
         // si un objet est déjà présent en session, on l'utilise
         Method findMethod = null;
@@ -379,7 +381,8 @@ public class OfferJspBean extends AbstractJspBean
             LOGGER.error( "Erreur lors de l'obtention du data table : ", e );
         }
 
-        DataTableManager<T> dataTableToUse = getAbstractDataTableManager( request, filter, MARK_DATA_TABLE_OFFER, JSP_MANAGE_OFFERS, _serviceOffer, findMethod );
+        DataTableManager<T> dataTableToUse = getAbstractDataTableManager( request, filter, MARK_DATA_TABLE_OFFER, JSP_MANAGE_OFFERS, _serviceOffer, findMethod,
+        		forceNewFilter);
 
         // si pas d'objet en session, il faut ajouter les colonnes à afficher
         if ( dataTableToUse.getListColumn( ).isEmpty( ) )
