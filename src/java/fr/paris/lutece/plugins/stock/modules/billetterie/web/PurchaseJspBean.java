@@ -371,6 +371,8 @@ public class PurchaseJspBean extends AbstractJspBean
 
         String strOfferId = request.getParameter( MARK_OFFER_ID );
         String purchaseId = request.getParameter( MARK_PURCHASSE_ID );
+        boolean forceNewFilter = false;
+        
 
         if ( strOfferId != null )
         {
@@ -387,10 +389,12 @@ public class PurchaseJspBean extends AbstractJspBean
             filter.setIdGenre( seance.getIdGenre( ) );
             filter.setDateBeginOffer( DateUtils.getDate( seance.getDate( ), false ) );
             filter.setDateEndOffer( DateUtils.getDate( seance.getDate( ), false ) );
+            
+            forceNewFilter = true;
         }
 
         // Obtention des objets sauvegardés en session
-        DataTableManager<ReservationDTO> dataTableToUse = getDataTable( request, filter );
+        DataTableManager<ReservationDTO> dataTableToUse = getDataTable( request, filter , forceNewFilter);
         model.put( MARK_DATA_TABLE_PURCHASE, dataTableToUse );
 
         // Fill the model
@@ -423,7 +427,7 @@ public class PurchaseJspBean extends AbstractJspBean
      *            the type of the bean
      * @return the data table to use
      */
-    private <T> DataTableManager<T> getDataTable( HttpServletRequest request, PurchaseFilter filter )
+    private <T> DataTableManager<T> getDataTable( HttpServletRequest request, PurchaseFilter filter, boolean forceNewFilter )
     {
         // si un objet est déjà présent en session, on l'utilise
         Method findMethod = null;
@@ -438,7 +442,7 @@ public class PurchaseJspBean extends AbstractJspBean
         }
 
         DataTableManager<T> dataTableToUse = getAbstractDataTableManager( request, filter, MARK_DATA_TABLE_PURCHASE, JSP_MANAGE_PURCHASES, _servicePurchase,
-                findMethod );
+                findMethod, forceNewFilter );
 
         // si pas d'objet en session, il faut ajouter les colonnes à afficher
         if ( dataTableToUse.getListColumn( ).isEmpty( ) )
