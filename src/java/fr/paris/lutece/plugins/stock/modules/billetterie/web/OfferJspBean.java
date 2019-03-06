@@ -564,8 +564,11 @@ public class OfferJspBean extends AbstractJspBean
         SeanceDTO offer = new SeanceDTO( );
         populate( offer, request );
         boolean isNewOffer = offer.getId() == null;
-        int oldQuantity = Optional.ofNullable(request.getParameter(PARAMETER_OLD_QUANTITY)).map(Integer::valueOf).orElse(0);
-
+        int oldQuantity = 0;
+        if (StringUtils.isNotEmpty(request.getParameter(PARAMETER_OLD_QUANTITY))) {
+        	oldQuantity = Integer.valueOf(request.getParameter(PARAMETER_OLD_QUANTITY));
+        }
+        
         // make sur you set the initial quantity only in the first save offer, not in modify offer
         try
         {
