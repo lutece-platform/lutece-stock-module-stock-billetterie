@@ -325,6 +325,21 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
 
         List<String> orderList = new ArrayList<String>( );
         orderList.add( ORDER_FILTER_DATE );
+
+        // Get recommended Product
+        List<RecommendedProduct> listProducts = null;
+        try
+        {
+            listProducts = StockRecommendationService.instance( ).getRecommendedProducts( currentUser.getName() );
+        }
+        catch( TasteException ex )
+        {
+            // User not found
+            // addError( "User not found" );
+            AppLogService.info( "Recommendation error : " + ex.getMessage( ) );
+        }
+        model.put( MARK_PRODUCTS_LIST, listProducts );
+
         filter.setOrders( orderList );
         model.put( MARK_SEANCE_DATE_LIST, _offerService.findSeanceByShow( show.getId( ), filter, locale ) );
 
