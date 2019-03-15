@@ -1,0 +1,19 @@
+<script type="text/javascript" src="${webapp_url}js/editors/tinymce/tinymce.min.js"></script>
+<script type="text/javascript" src="${webapp_url}js/editors/tinymce/init.tiny.js"></script>
+<link rel="stylesheet" type="text/css" href="${webapp_url}css/page_template_styles.css" />
+<#macro initEditor editorWidth=450 cssFiles="" type='' 
+>
+<#assign editorLocale="" />
+<#-- We only have the language pack for French (France) installed in webapp/js/editors/tinymce/langs -->
+<#-- Some lutece plugins pass locale.getLanguage() (="fr"), some pass the locale object (toString="fr_FR", or more complicated...) -->
+<#-- Force it here because if it is a wrong value, tinyMCE does not load -->
+<#if locale?? && (2 <= locale?string?length) && (locale?string?substring(0,2) == "fr")>
+	<#assign editorLocale="fr_FR" />
+</#if>
+<#if cssFiles=="">
+	<#assign cssFiles="editor.css, page_template_styles.css" />
+</#if>
+<script type="text/javascript">
+init_tiny_mce('${type}', '${editorLocale}');
+</script>
+</#macro>
