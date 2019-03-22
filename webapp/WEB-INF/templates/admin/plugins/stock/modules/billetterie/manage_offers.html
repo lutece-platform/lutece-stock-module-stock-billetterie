@@ -67,7 +67,7 @@
       <div class="box-body">
 		    <div class="row">
           <div class="col-xs-12 col-sm-12">
-						<form class="form-inline" action="jsp/admin/plugins/stock/modules/billetterie/ManageOffers.jsp" method="post">
+						<form id="addForm" class="form-inline" action="jsp/admin/plugins/stock/modules/billetterie/ManageOffers.jsp" method="post">
 							<input type="hidden" name="filter" value="${filter!}">
 							<input class="form-control"  type="hidden" name="name" id="filter_name" value="${(filter.name)!}">
 							<div class="form-group">
@@ -109,7 +109,8 @@
 								</div>
 							</div>
 							<@showSearchButton />
-					</div>
+							<@resetCriteriaButton/>
+			</div>
 				</div>
 				<div class="row">
 					<div class="col-xs-12 col-sm-12">
@@ -123,3 +124,15 @@
 </div>
 <@getDatePickerRangeBootstrap language="${locale!}" />
 <@getDatePickerBootstrap idField="filter_date_or" language="${locale!}" />
+
+<script>
+	$(function() {
+		$('#reset').click(function() {
+			$(':input','#addForm')
+					.not(':button, :submit, :reset, :hidden')
+					.val('')
+					.removeAttr('checked')
+					.removeAttr('selected');
+		});
+	});
+</script>

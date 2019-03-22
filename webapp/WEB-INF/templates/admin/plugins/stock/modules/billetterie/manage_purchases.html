@@ -42,7 +42,7 @@
 				</div>
 			</div>
       <div class="box-body">
-				<form class="form-inline" action="jsp/admin/plugins/stock/modules/billetterie/ManagePurchase.jsp" method="post" style="padding-top: 0;margin-top: -30px;">
+				<form id="addForm" class="form-inline" action="jsp/admin/plugins/stock/modules/billetterie/ManagePurchase.jsp" method="post" style="padding-top: 0;margin-top: -30px;">
 					<input type="hidden" name="filter" value="${filter!}">
 					<div class="form-group">
 						<#list errors as error>
@@ -64,6 +64,7 @@
 								<input class="form-control"  type="text" name="agentName" id="filter_userName" value="${(filter.agentName)!}">
 								</div>
 								<@showSearchButton />
+							<@resetCriteriaButton/>
 							</div>
 						</div>
 						<div class="row">
@@ -117,3 +118,15 @@
 	</div>
 </div>
 <@getDatePickerRangeBootstrap language="${locale!}" />
+
+<script>
+	$(function() {
+		$('#reset').click(function() {
+			$(':input','#addForm')
+					.not(':button, :submit, :reset, :hidden')
+					.val('')
+					.removeAttr('checked')
+					.removeAttr('selected');
+		});
+	});
+</script>

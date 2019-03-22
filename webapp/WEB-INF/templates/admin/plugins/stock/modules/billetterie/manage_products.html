@@ -34,7 +34,7 @@
 				</div>
 			</div>
 			<div class="box-body">
-				<form class="form-inline"
+				<form id="addForm" class="form-inline"
 					action="jsp/admin/plugins/stock/modules/billetterie/ManageProducts.jsp"
 					method="post">
 					<input type="hidden" name="filter" value="${filter!}">
@@ -76,7 +76,8 @@
 					</div>
 
 					<@showSearchButton />
-				</form>
+					<@resetCriteriaButton/>
+			</form>
 				<div class="row">
 					<div class="col-xs-12 col-sm-12"><@dataTableBilletterie
 						dataTableManager=dataTableProduct masseDeleteLabel=""/></div>
@@ -86,3 +87,14 @@
 	</div>
 </div>
 <@getDatePickerRangeBootstrap language="${locale!}" />
+<script>
+	$(function() {
+		$('#reset').click(function() {
+			$(':input','#addForm')
+					.not(':button, :submit, :reset, :hidden')
+					.val('')
+					.removeAttr('checked')
+					.removeAttr('selected');
+		});
+	});
+</script>
