@@ -33,6 +33,23 @@
  */
 package fr.paris.lutece.plugins.stock.modules.billetterie.web;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.mahout.cf.taste.common.TasteException;
+
+import fr.paris.lutece.plugins.stock.business.offer.OfferFilter;
 import fr.paris.lutece.plugins.stock.business.purchase.PurchaseFilter;
 import fr.paris.lutece.plugins.stock.commons.exception.FunctionnalException;
 import fr.paris.lutece.plugins.stock.commons.exception.TechnicalException;
@@ -67,22 +84,6 @@ import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.portal.web.xpages.XPage;
 import fr.paris.lutece.portal.web.xpages.XPageApplication;
 import fr.paris.lutece.util.html.HtmlTemplate;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.mahout.cf.taste.common.TasteException;
-
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
-
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * Pages for billetterie front
@@ -302,6 +303,37 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
         {
             model.put( TicketsConstants.PARAMETER_ERROR, getHtmlError( fe, request ) );
         }
+        
+        // check the type of available offers
+        OfferFilter offerFilter = new OfferFilter( );
+        offerFilter.setProductId( idShow );
+        List<SeanceDTO> offerList = _offerService.findByFilter( offerFilter, null );
+        
+        boolean availableInvitation = false;
+        boolean availableChildInvitation = false;
+        boolean availableReducedPrice = false;
+        for ( SeanceDTO dto : offerList ) 
+        {
+        	if ( dto.getQuantity( ) > 0 ) 
+        	{
+        		switch ( dto.getIdGenre( ) ) {
+				case 1:
+					availableReducedPrice = true;
+					break;
+				case 2:
+					availableInvitation = true;		
+					break;
+				case 3:
+					availableChildInvitation = true;
+					break;
+				default:
+					break;
+				}
+        	}
+        }
+        show.setAvailableChildInvitation( availableChildInvitation );
+        show.setAvailableInvitation( availableInvitation );
+        show.setAvailableReducedPrice( availableReducedPrice );
 
         model.put( MARK_SHOW, show );
 
@@ -364,7 +396,7 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
         model.put( MARK_USER, currentUser );
         model.put( MARK_BLOC_RESERVATION, getBookingBloc( show, sSeanceDate, locale, nbPlaceBookMap ) );
         model.put( MARK_S_SEANCE_DATE, sSeanceDate );
-
+        
         // if the user wants to subscribe to the show (get an email if a new representation is added)
         if ( currentUser != null )
         {
