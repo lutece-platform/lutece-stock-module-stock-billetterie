@@ -22,8 +22,8 @@ function init_tiny_mce(type, editorLocale) {
 	}
 	
 	 var colorMap =  [
-		"FFFFFF", "Noir",
-		"000000", "Blanc",
+		"FFFFFF", "Blanc",
+		"000000", "Noir",
 		"DF225A", "Rose",
 		"157FEC", "Bleu",
 		"7FAD53", "Vert",
