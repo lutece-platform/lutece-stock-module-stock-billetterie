@@ -599,20 +599,25 @@ public class ShowJspBean extends AbstractJspBean
             if ( ( fileItem != null ) && ( fileItem.getSize( ) > 0 ) )
             {
                 InputStream fisPoster = null;
+                InputStream realFisPoster = null;
 
                 try
                 {
                     fisPoster = fileItem.getInputStream( );
+                    realFisPoster = fileItem.getInputStream( );
 
                     // File fPoster = new File( new File( posterFolderPath ),
                     // fileItem.getName( ) );
                     File fPoster = File.createTempFile( FilenameUtils.getBaseName( fileItem.getName( ) ), null );
+                    File realPoster = File.createTempFile( FilenameUtils.getBaseName( fileItem.getName( ) ), null );
 
                     // Generate unique name
                     fPoster = fr.paris.lutece.plugins.stock.utils.FileUtils.getUniqueFile( fPoster );
+                    realPoster = fr.paris.lutece.plugins.stock.utils.FileUtils.getUniqueFile( realPoster );
 
                     // Store poster picture
                     fr.paris.lutece.plugins.stock.utils.FileUtils.writeInputStreamToFile( fisPoster, fPoster );
+                    fr.paris.lutece.plugins.stock.utils.FileUtils.writeInputStreamToFile( realFisPoster, realPoster );
 
                     File fPosterResize = ImageUtils.resizeImage( fPoster,
                             AppPropertiesService.getPropertyInt( PROPERTY_POSTER_MAX_WIDTH, PROPERTY_POSTER_MAX_WIDTH_DEFAULT ),
@@ -627,7 +632,7 @@ public class ShowJspBean extends AbstractJspBean
                     fileGotten = true;
 
                     filePosterArray = new File [ ] {
-                            fTbPoster, fPosterResize
+                            fTbPoster, fPosterResize, realPoster
                     };
                 }
                 catch( IOException e )

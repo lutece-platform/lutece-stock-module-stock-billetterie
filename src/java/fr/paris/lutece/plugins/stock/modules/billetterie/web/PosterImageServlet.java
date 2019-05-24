@@ -59,6 +59,7 @@ public class PosterImageServlet extends HttpServlet
     private static final String ERROR_MESSAGE = "Appel de PosterImageServlet avec un id de produit null";
     private static final String CONTENT_TYPE_IMAGE_JPEG = "image/jpeg";
     private static final String PARAMETER_TB = "tb";
+    private static final String PARAMETER_REAL_IMAGE = "img_real";
     private static final String PARAMETER_PRODUCT_ID = "product_id";
     private static final String BEAN_STOCK_TICKETS_SHOW_SERVICE = "stock-tickets.showService";
 
@@ -91,17 +92,23 @@ public class PosterImageServlet extends HttpServlet
         {
             Integer idProduct = Integer.parseInt( sIdProduct );
             boolean isThumbnail = ( request.getParameter( PARAMETER_TB ) != null ) && request.getParameter( PARAMETER_TB ).equals( String.valueOf( true ) );
+            boolean isImageReal = ( request.getParameter( PARAMETER_REAL_IMAGE ) != null ) && request.getParameter( PARAMETER_REAL_IMAGE ).equals( String.valueOf( true ) );
             byte [ ] bImage;
 
-            if ( isThumbnail )
-            {
-                bImage = _productService.getTbImage( idProduct );
+            if (isImageReal){
+                bImage = _productService.getRealImage( idProduct );
             }
             else
             {
-                bImage = _productService.getImage( idProduct );
+                if ( isThumbnail )
+                {
+                    bImage = _productService.getTbImage( idProduct );
+                }
+                else
+                {
+                    bImage = _productService.getImage( idProduct );
+                }
             }
-
             response.setContentLength( bImage.length );
             response.setContentType( CONTENT_TYPE_IMAGE_JPEG );
 

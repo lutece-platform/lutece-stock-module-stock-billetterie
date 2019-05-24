@@ -124,6 +124,7 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
     private static final String MARK_SEANCE_DATE_LIST = "seance_date_list";
     private static final String MARK_BOOKING_OPENED = "booking_opened";
     private static final String MARK_URL_POSTER = "url_poster";
+    private static final String MARK_URL_REAL_POSTER = "url_real_poster";
     private static final String MARK_PARTNER = "partner";
     private static final String MARK_SHOW = "show";
     private static final String MARK_SUBSCRIBE = "subscribe";
@@ -144,6 +145,7 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
     // Properties
     private static final String PROPERTY_POSTER_PATH = "stock-billetterie.poster.path";
     private static final String PROPERTY_POSTER_TB_PATH = "stock-billetterie.poster.tb.path";
+    private static final String PROPERTY_POSTER_RIMG_PATH = "stock-billetterie.poster.rimg.path";
     // Order filters
     private static final String ORDER_FILTER_DATE = "date";
     private static final String ORDER_FILTER_DATE_END = "dateEnd";
@@ -347,6 +349,7 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
 
         model.put( MARK_PARTNER, partner );
         model.put( MARK_URL_POSTER, AppPropertiesService.getProperty( PROPERTY_POSTER_PATH ) );
+        model.put( MARK_URL_REAL_POSTER, AppPropertiesService.getProperty( PROPERTY_POSTER_RIMG_PATH) );
 
         // Calculate if show is open to book
         model.put( MARK_BOOKING_OPENED, caculateBookingOpened( show ) );
