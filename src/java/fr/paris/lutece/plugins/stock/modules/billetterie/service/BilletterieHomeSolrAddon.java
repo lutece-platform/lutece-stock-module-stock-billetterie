@@ -33,13 +33,13 @@
  */
 package fr.paris.lutece.plugins.stock.modules.billetterie.service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
 
+import fr.paris.lutece.plugins.htmlpage.business.HtmlPage;
+import fr.paris.lutece.plugins.htmlpage.business.HtmlPageHome;
+import fr.paris.lutece.portal.service.plugin.Plugin;
 import org.apache.mahout.cf.taste.common.TasteException;
 
 import fr.paris.lutece.plugins.search.solr.service.ISolrSearchAppAddOn;
@@ -54,6 +54,8 @@ import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 
+import static java.util.Optional.ofNullable;
+
 public class BilletterieHomeSolrAddon implements ISolrSearchAppAddOn
 {
     private static final String ORDER_FILTER_DATE_END = "dateEnd";
@@ -64,6 +66,10 @@ public class BilletterieHomeSolrAddon implements ISolrSearchAppAddOn
     private static final String PROPERTY_POSTER_TB_PATH = "stock-billetterie.poster.tb.path";
     public static final String MARK_PRODUCTS_LIST = "products_list";
     private static final String BEAN_STOCK_TICKETS_SHOW_SERVICE = "stock-tickets.showService";
+    private static final String MARK_HTMLPAGE = "htmlpage";
+
+    // private fields
+    private Plugin _plugin;
 
     @Override
     public void buildPageAddOn( Map<String, Object> model, HttpServletRequest request )
@@ -95,12 +101,18 @@ public class BilletterieHomeSolrAddon implements ISolrSearchAppAddOn
         List<String> orderList = new ArrayList<String>( );
         orderList.add( ORDER_FILTER_DATE_END );
 
+        HtmlPage htmlpage = HtmlPageHome.findByPrimaryKey( 1, _plugin );
+
+        Integer statusHtmlPage = ofNullable(htmlpage).map(HtmlPage::getStatus).orElse(1);
+
         List<ShowDTO> currentListShow = aLafficheShows( showServiceHome.getCurrentProduct( orderList, null ) );
         // Map<String, Object> model = new HashMap<String, Object>( );
         model.put( MARK_SHOW_LIST, currentListShow );
         model.put( MARK_TYPE_LIST, TYPE_A_LAFFICHE );
         model.put( MARK_URL_POSTER, AppPropertiesService.getProperty( PROPERTY_POSTER_TB_PATH ) );
         model.put( MARK_PRODUCTS_LIST, listProducts );
+
+        model.put( MARK_HTMLPAGE, statusHtmlPage==1 ? null : htmlpage );
     }
 
     /**
