@@ -91,6 +91,8 @@ import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import static java.util.Optional.ofNullable;
+
 /**
  * This class provides the user interface to manage form features ( manage, create, modify, remove)
  */
@@ -126,6 +128,8 @@ public class OfferJspBean extends AbstractJspBean
     public static final String PARAMETER_OLD_QUANTITY = "old_quantity";
     public static final String RIGHT_MANAGE_OFFERS = "OFFERS_MANAGEMENT";
     public static final String RESOURCE_TYPE = "STOCK";
+
+    public static final String QUERY_SPECIFIC_PRODUCT = "page=billetterie&action=fiche-spectacle&product_id=";
 
     // MARKS
     public static final String MARK_OFFER = "offer";
@@ -615,7 +619,10 @@ public class OfferJspBean extends AbstractJspBean
         Map<String, Object> model = new HashMap<String, Object>( );
         model.put( MARK_OFFER, offer );
         model.put( MARK_PRODUCT, product );
-        model.put( MARK_BASE_URL, AppPathService.getBaseUrl( request ) );
+        model.put( MARK_BASE_URL, AppPathService.getBaseUrl(request)
+                + AppPathService.getPortalUrl()
+                + "?"
+                + QUERY_SPECIFIC_PRODUCT + product.getId());
 
         // Create mail object
         HtmlTemplate template;
@@ -659,7 +666,10 @@ public class OfferJspBean extends AbstractJspBean
         Map<String, Object> model = new HashMap<String, Object>( );
         model.put( MARK_OFFER, offer );
         model.put( MARK_PRODUCT, product );
-        model.put( MARK_BASE_URL, AppPathService.getBaseUrl( request ) );
+        model.put( MARK_BASE_URL, AppPathService.getBaseUrl(request)
+                + AppPathService.getPortalUrl()
+                + "?"
+                + QUERY_SPECIFIC_PRODUCT + product.getId());
 
         // Create mail object
         HtmlTemplate template;
