@@ -169,6 +169,7 @@ public class ShowJspBean extends AbstractJspBean
     private static final int PROPERTY_POSTER_MAX_HEIGHT_DEFAULT = 400;
     private static final int PROPERTY_POSTER_MAX_WIDTH_DEFAULT = 400;
     private static final String PROPERTY_POSTER_PATH = "stock-billetterie.poster.path";
+    private static final String PROPERTY_RIMG_POSTER_PATH = "stock-billetterie.poster.rimg.path";
 
     /** The Constant PROPERTY_STOCK_BILLETTERIE_SHOW_PUBLIC. */
     private static final String PROPERTY_STOCK_BILLETTERIE_SHOW_PUBLIC = "stock-billetterie.show.public";
@@ -504,7 +505,7 @@ public class ShowJspBean extends AbstractJspBean
 
         model.put( StockConstants.MARK_JSP_BACK, request.getParameter( StockConstants.MARK_JSP_BACK ) );
         model.put( MARK_PRODUCT, product );
-        model.put( MARK_URL_POSTER, AppPropertiesService.getProperty( PROPERTY_POSTER_PATH ) );
+        model.put( MARK_URL_POSTER, AppPropertiesService.getProperty( PROPERTY_RIMG_POSTER_PATH ) );
 
         // Richtext editor parameters
         model.put( MARK_WEBAPP_URL, AppPathService.getBaseUrl( request ) );

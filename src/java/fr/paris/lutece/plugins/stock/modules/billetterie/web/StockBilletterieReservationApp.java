@@ -394,7 +394,7 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
         model.put( PARAMETER_BOOKING_CHECK, bookingCheck );
         model.put( PARAMETER_AUTHENTIFIED_USER, bAuthentified );
 
-        int timeMax = 2;
+        int timeMax=0;
 
         try
         {
@@ -405,7 +405,7 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
             LOGGER.error( "Erreur de temps maximum avant suppression de la reservation en session : " + e );
         }
 
-        String localizedString = I18nService.getLocalizedString( ( timeMax > 2 ) ? MESSAGE_CAUTION_TIME_PURCHASE_PLURAL : MESSAGE_CAUTION_TIME_PURCHASE,
+        String localizedString = I18nService.getLocalizedString( ( timeMax >= 2 ) ? MESSAGE_CAUTION_TIME_PURCHASE_PLURAL : MESSAGE_CAUTION_TIME_PURCHASE,
                 new String [ ] {
                     PARAMETER_TIME_MAX
                 }, locale );
