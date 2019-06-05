@@ -102,6 +102,7 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
     private static final String JSP_DO_DELETE_RESERVATION = "jsp/site/plugins/stock/modules/billetterie/DoDeleteReservation.jsp";
     private static final String JSP_PORTAL = "jsp/site/Portal.jsp";
     private static final String PROPERTY_NOTIFICATION_REQUEST_RECIPIENT = "stock-billetterie.mail.senderEmail";
+    private static final String PROPERTY_DISABLE_ACTION_MODIFY_BOOKING = "stock-billetterie.disable.modify.booking";
 
     // I18n
     private static final String TITLE_MY_BOOKINGS = "module.stock.billetterie.my_bookings.title";
@@ -158,6 +159,7 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
     private static final String MARK_PAGINATOR = "paginator";
     private static final String MARK_CAUTION_TIME_PURCHASE = "cautionTimePurchase";
     private static final String MARK_SEANCE = "seance";
+    private static final String MARK_DISABLE_ACTION_MODIFY_BOOKING = "disable_modify_booking";
 
     // Templates
     private static final String TEMPLATE_DIR = "skin/plugins/stock/modules/billetterie/";
@@ -712,6 +714,7 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
                 strCurrentPageIndex );
 
         model.put( MARK_PAGINATOR, paginator );
+        model.put(MARK_DISABLE_ACTION_MODIFY_BOOKING,  AppPropertiesService.getProperty(PROPERTY_DISABLE_ACTION_MODIFY_BOOKING) );
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_DIR + TEMPLATE_MY_BOOKINGS, locale, model );
 
