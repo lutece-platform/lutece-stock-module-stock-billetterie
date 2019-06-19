@@ -33,19 +33,22 @@
  */
 package fr.paris.lutece.plugins.stock.modules.billetterie.web;
 
+import fr.paris.lutece.plugins.stock.business.attribute.AbstractAttributeNum;
+import fr.paris.lutece.plugins.stock.business.attribute.product.ProductAttributeNum;
+import fr.paris.lutece.plugins.stock.business.offer.Offer;
+import fr.paris.lutece.plugins.stock.business.product.Product;
+import fr.paris.lutece.plugins.stock.business.product.ProductFilter;
+import fr.paris.lutece.plugins.stock.business.provider.Provider;
+import fr.paris.lutece.plugins.stock.business.provider.ProviderFilter;
 import fr.paris.lutece.plugins.stock.business.purchase.PurchaseFilter;
+import fr.paris.lutece.plugins.stock.commons.ResultList;
 import fr.paris.lutece.plugins.stock.commons.exception.FunctionnalException;
 import fr.paris.lutece.plugins.stock.modules.billetterie.utils.constants.BilletterieConstants;
-import fr.paris.lutece.plugins.stock.modules.tickets.business.NotificationDTO;
-import fr.paris.lutece.plugins.stock.modules.tickets.business.PartnerDTO;
-import fr.paris.lutece.plugins.stock.modules.tickets.business.ReservationDTO;
-import fr.paris.lutece.plugins.stock.modules.tickets.business.SeanceDTO;
-import fr.paris.lutece.plugins.stock.modules.tickets.business.ShowDTO;
-import fr.paris.lutece.plugins.stock.modules.tickets.service.INotificationService;
-import fr.paris.lutece.plugins.stock.modules.tickets.service.IProviderService;
-import fr.paris.lutece.plugins.stock.modules.tickets.service.IPurchaseService;
-import fr.paris.lutece.plugins.stock.modules.tickets.service.ISeanceService;
+import fr.paris.lutece.plugins.stock.modules.tickets.business.*;
+import fr.paris.lutece.plugins.stock.modules.tickets.service.*;
 import fr.paris.lutece.plugins.stock.modules.tickets.utils.constants.TicketsConstants;
+
+import fr.paris.lutece.plugins.stock.service.IProductService;
 import fr.paris.lutece.plugins.stock.utils.constants.StockConstants;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
@@ -58,13 +61,11 @@ import org.apache.commons.lang.StringUtils;
 
 import org.apache.log4j.Logger;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
+
+import static java.util.Optional.ofNullable;
 
 /**
  * This class provides the user interface to manage notifications
@@ -117,6 +118,7 @@ public class NotificationJspBean extends AbstractJspBean
     private IPurchaseService _servicePurchase;
     private INotificationService _serviceNotification;
     private IProviderService _serviceProvider;
+    private IShowService _serviceShow;
 
     /**
      * Instantiates a new notification jsp bean.
@@ -128,6 +130,7 @@ public class NotificationJspBean extends AbstractJspBean
         _servicePurchase = SpringContextService.getContext( ).getBean( IPurchaseService.class );
         _serviceNotification = SpringContextService.getContext( ).getBean( INotificationService.class );
         _serviceProvider = SpringContextService.getContext( ).getBean( IProviderService.class );
+        _serviceShow = SpringContextService.getContext( ).getBean( IShowService.class );
     }
 
     /**
@@ -160,12 +163,16 @@ public class NotificationJspBean extends AbstractJspBean
         String strIdOffer = request.getParameter( MARK_OFFER_ID );
         String strCancel = request.getParameter( MARK_CANCEL );
         String strLock = request.getParameter( MARK_LOCK );
+        Integer idOffer = Integer.parseInt( strIdOffer );
+
+        SeanceDTO seanceDto = new SeanceDTO();
+        seanceDto = ofNullable(idOffer).map(e ->  _serviceOffer.findSeanceById(e)).orElse(null);
+        ShowDTO showDto = ofNullable(seanceDto).map(e-> e.getProduct()).orElse(null);
+        Product productById = _serviceShow.getProductById(ofNullable(showDto).map(e -> e.getId()).orElse(null));
 
         // If the notification is about an offer
         if ( StringUtils.isNotEmpty( strIdOffer ) )
         {
-            Integer idOffer = Integer.parseInt( strIdOffer );
-
             SeanceDTO seance = this._serviceOffer.findSeanceById( idOffer );
             notification.setIdOffer( idOffer );
 
@@ -313,6 +320,21 @@ public class NotificationJspBean extends AbstractJspBean
         model.put( MARK_NOTIFICATION, notification );
 
         model.put( MARK_TITLE, I18nService.getLocalizedString( PROPERTY_PAGE_TITLE_SEND_NOTIFICATION, Locale.getDefault( ) ) );
+
+        List<String> listContact = new ArrayList<>();
+        List<Contact> lstContact =ofNullable(showDto).map(e-> _serviceProvider.findById(e.getIdProvider()).getContactList()).orElse(null);
+
+        if (lstContact != null && productById != null) {
+            for (Contact c : lstContact) {
+                for (AbstractAttributeNum sh : productById.getAttributeNumList()){
+                    if (sh.getValue().intValueExact() == c.getId() && sh.getKey().contains("idContact")){
+                        listContact.add(c.getMail());
+                    }
+                }
+            }
+        }
+
+        model.put(MARK_PARTNER_CONTACT_MAIL, listContact);
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_SEND_NOTIFICATION, getLocale( ), model );
 
