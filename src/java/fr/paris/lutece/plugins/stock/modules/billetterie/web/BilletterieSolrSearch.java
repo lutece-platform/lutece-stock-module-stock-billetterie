@@ -83,6 +83,8 @@ public class BilletterieSolrSearch extends HttpServlet
     private static final String SEARCH_SIMPLE = "simple";
     private static final String SEARCH_AVANCEE = "avancee";
     private static final Logger LOGGER = Logger.getLogger( BilletterieSolrSearch.class );
+    public static final String FQ_END_DATE_NOW_TO = "&fq=end_date:[NOW TO *]";
+    public static final String FQ_TYPE_PRODUCT = "&fq=type:PRODUCT";
 
     /**
      * Get billetterie specific parameters and call Solr Module.
@@ -266,7 +268,9 @@ public class BilletterieSolrSearch extends HttpServlet
 
         sbReq.append( sbSort.toString( ) );
         sbReq.append( sbType.toString( ) );
-        
+        sbReq.append(FQ_END_DATE_NOW_TO);
+        sbReq.append(FQ_TYPE_PRODUCT);
+
         String sConf = request.getParameter( MARK_CONF );
         if ( StringUtils.isNotEmpty( sConf ) )
         {

@@ -33,7 +33,11 @@
  */
 package fr.paris.lutece.plugins.stock.modules.billetterie.service;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -67,6 +71,8 @@ public class BilletterieHomeSolrAddon implements ISolrSearchAppAddOn
     public static final String MARK_PRODUCTS_LIST = "products_list";
     private static final String BEAN_STOCK_TICKETS_SHOW_SERVICE = "stock-tickets.showService";
     private static final String MARK_HTMLPAGE = "htmlpage";
+
+    private static final DateFormat DATE_FORMAT = new SimpleDateFormat("dd/MM/yyyy");
 
     // private fields
     private Plugin _plugin;
@@ -106,6 +112,9 @@ public class BilletterieHomeSolrAddon implements ISolrSearchAppAddOn
         Integer statusHtmlPage = ofNullable(htmlpage).map(HtmlPage::getStatus).orElse(1);
 
         List<ShowDTO> currentListShow = aLafficheShows( showServiceHome.getCurrentProduct( orderList, null ) );
+        currentListShow = currentListShow.stream().filter(e -> formatStringToDate(e.getEndDate()).getTime() > new Date().getTime() && e.getEndDate() != "" && e.getEndDate() != null)
+                .collect(Collectors.toList());
+
         // Map<String, Object> model = new HashMap<String, Object>( );
         model.put( MARK_SHOW_LIST, currentListShow );
         model.put( MARK_TYPE_LIST, TYPE_A_LAFFICHE );
@@ -115,9 +124,21 @@ public class BilletterieHomeSolrAddon implements ISolrSearchAppAddOn
         model.put( MARK_HTMLPAGE, statusHtmlPage==1 ? null : htmlpage );
     }
 
+    public Date formatStringToDate(String strDate){
+
+        Date date = new Date();
+        try {
+            date = DATE_FORMAT.parse(strDate);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return date;
+    }
+
+
     /**
      * Gets the user name
-     * 
+     *
      * @param request
      *            The HTTP request
      * @return the user name
@@ -139,7 +160,7 @@ public class BilletterieHomeSolrAddon implements ISolrSearchAppAddOn
         List<ShowDTO> listShowsReturn = new ArrayList<ShowDTO>( );
         for ( ShowDTO showDTO : listShows )
         {
-            if ( showDTO.getAlaffiche( ) )
+            if ( showDTO.getAlaffiche( ) && formatStringToDate(showDTO.getEndDate()).getTime() > new Date().getTime() )
                 listShowsReturn.add( showDTO );
         }
 
