@@ -78,6 +78,12 @@
             <version>4.1.2-SNAPSHOT</version>
             <type>lutece-plugin</type>
         </dependency>
+        <dependency>
+            <groupId>fr.paris.lutece.plugins</groupId>
+            <artifactId>module-extend-rating</artifactId>
+            <version>1.1.7-SNAPSHOT</version>
+            <type>lutece-plugin</type>
+        </dependency>
     </dependencies>
     
     <properties>
