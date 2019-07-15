@@ -275,7 +275,7 @@ public class ShowJspBean extends AbstractJspBean
      */
     public String getManageProducts( HttpServletRequest request )
     {
-        String strToDate = getToday( );
+        // String strToDate = getToday( );
 
         setPageTitleProperty( PAGE_TITLE_MANAGE_PRODUCT );
 
@@ -292,10 +292,12 @@ public class ShowJspBean extends AbstractJspBean
             filter.setOrders( orderList );
         }
 
+/*
         if ( filter.getDateFrom( ) == null )
         {
             filter.setDateFrom( strToDate );
         }
+*/
 
         DataTableManager<ShowDTO> dataTableToUse = getDataTable( request, filter );
 
