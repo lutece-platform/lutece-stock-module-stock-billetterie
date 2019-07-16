@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.stock.modules.billetterie.web;
 
+import fr.paris.lutece.plugins.stock.business.attribute.AbstractAttributeNum;
 import fr.paris.lutece.plugins.stock.business.offer.OfferFilter;
 import fr.paris.lutece.plugins.stock.business.product.Product;
 import fr.paris.lutece.plugins.stock.business.product.ProductFilter;
@@ -144,6 +145,8 @@ public class OfferJspBean extends AbstractJspBean
     public static final String MARK_PURCHASE = "purchase";
     public static final String MARK_BASE_URL = "base_url";
     public static final String MARK_USER_NAME = "userName";
+    public static final String MARK_OFFER_ID = "offer_id";
+    public static final String MARK_PRODUCT_ID = "pruductId";
 
     /** The constants for DataTableManager */
     public static final String MARK_DATA_TABLE_OFFER = "dataTableOffer";
@@ -364,7 +367,7 @@ public class OfferJspBean extends AbstractJspBean
 
     /**
      * Get the DataTableManager object for the ShowDTO bean
-     * 
+     *
      * @param request
      *            the http request
      * @param filter
@@ -409,7 +412,7 @@ public class OfferJspBean extends AbstractJspBean
 
     /**
      * Returns the form for offer creation and modification
-     * 
+     *
      * @param request
      *            The HTTP request
      * @return HTML Form
@@ -470,7 +473,9 @@ public class OfferJspBean extends AbstractJspBean
                 }
                 idProvider = selectedProduct.getIdProvider( );
 
-                model.put( MARK_CONTACT_LIST, getContactComboList( idProvider ) );
+                Integer idOffer = Integer.parseInt( strOfferId );
+
+                model.put( MARK_CONTACT_LIST, getContactList(idOffer) );
 
                 // Duplicate offer, set id to 0 to create a new offer
                 if ( StringUtils.isNotEmpty( strDuplicate ) )
@@ -503,7 +508,22 @@ public class OfferJspBean extends AbstractJspBean
                     ShowDTO productChoose = _serviceProduct.findById( idProduct );
                     int idProvider = productChoose.getIdProvider( );
 
-                    model.put( MARK_CONTACT_LIST, getContactComboList( idProvider ) );
+                    Product productById = _serviceProduct.getProductById(idProduct);
+
+                    List<String> listContact = new ArrayList<>();
+                    List<Contact> lstContact = _servicePartner.findById(idProvider).getContactList();
+
+                    if (lstContact != null && productById != null) {
+                        for (Contact c : lstContact) {
+                            for (AbstractAttributeNum sh : productById.getAttributeNumList()){
+                                if (sh.getValue().intValueExact() == c.getId() && sh.getKey().contains("idContact")){
+                                    listContact.add(c.getName() +", email : "+c.getMail());
+                                }
+                            }
+                        }
+                    }
+
+                    model.put( MARK_CONTACT_LIST, listContact );
                 }
             }
         }
@@ -535,6 +555,28 @@ public class OfferJspBean extends AbstractJspBean
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_SAVE_OFFER, getLocale( ), model );
 
         return getAdminPage( template.getHtml( ) );
+    }
+
+    private List<String> getContactList(Integer idOfferProduct) {
+        SeanceDTO seanceDto = new SeanceDTO();
+        seanceDto = ofNullable(idOfferProduct).map(e ->  _serviceOffer.findSeanceById(e)).orElse(null);
+        ShowDTO showDto = ofNullable(seanceDto).map(e-> e.getProduct()).orElse(null);
+        Product productById = _serviceProduct.getProductById(ofNullable(showDto).map(e -> e.getId()).orElse(null));
+
+
+        List<String> listContact = new ArrayList<>();
+        List<Contact> lstContact =ofNullable(showDto).map(e-> _servicePartner.findById(e.getIdProvider()).getContactList()).orElse(null);
+
+        if (lstContact != null && productById != null) {
+            for (Contact c : lstContact) {
+                for (AbstractAttributeNum sh : productById.getAttributeNumList()){
+                    if (sh.getValue().intValueExact() == c.getId() && sh.getKey().contains("idContact")){
+                        listContact.add(c.getName() +", email : "+c.getMail());
+                    }
+                }
+            }
+        }
+        return listContact;
     }
 
     /**

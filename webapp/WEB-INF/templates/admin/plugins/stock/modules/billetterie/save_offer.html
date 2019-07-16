@@ -27,20 +27,18 @@
 					</div>
 				</div>
 				<#if contact_list?has_content>
-					<div class="form-group">
-			     	<label class="control-label col-xs-12 col-sm-3">#i18n{module.stock.billetterie.save_offer.contact} :</label>
-			     	<div class="col-xs-12 col-sm-6">
-				     	<select class="form-control" name="idContact" <#if contact_list?size &gt; 2 >multiple="multiple"</#if>>
-				   		<#list contact_list as contact>
-				 				<option value="${contact.code}"	<#if offer?has_content && offer.idContact?has_content><#list offer.idContact as selectedContact><#if selectedContact?string == contact.code>selected="selected"<#break></#if></#list></#if>>${contact.name}</option>
-				      </#list>
-					    </select>
-					    <#if contact_list?size &gt; 2 >
-					    	<span class="help-block">#i18n{module.stock.billetterie.save_offer.contact.help}</span>
-					    </#if>
-			      	</div>
-			      </div>
-		      </#if>
+				<div class="form-group">
+					<label class="control-label col-xs-12 col-sm-3">#i18n{module.stock.billetterie.save_offer.contact} :</label>
+
+					<div class="col-xs-12 col-sm-3">
+						<ul style="list-style-type:square;">
+							<#list contact_list as contact>
+							<li>${contact}</li>
+						</#list>
+						</ul>
+					</div>
+				</div>
+			</#if>
 					<div class="form-group">
 		      	<label class="control-label col-xs-12 col-sm-3">#i18n{module.stock.billetterie.save_offer.offerType} * :</label>
 		      	<div class="col-xs-12 col-sm-2">
