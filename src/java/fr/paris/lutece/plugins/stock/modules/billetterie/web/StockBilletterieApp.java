@@ -33,9 +33,12 @@
  */
 package fr.paris.lutece.plugins.stock.modules.billetterie.web;
 
+import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -43,6 +46,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -309,7 +313,8 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
         // check the type of available offers
         OfferFilter offerFilter = new OfferFilter( );
         offerFilter.setProductId( idShow );
-        List<SeanceDTO> offerList = _offerService.findByFilter( offerFilter, null );
+        List<SeanceDTO> offerList = _offerService.findByFilter( offerFilter, null )
+                .stream().filter(e -> convertStringToTimestamp(e.getDate() + " " + e.getHour()) ).collect(Collectors.toList());
         
         boolean availableInvitation = false;
         boolean availableChildInvitation = false;
@@ -631,5 +636,15 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
         }
 
         return user.getName( );
+    }
+
+    public static boolean convertStringToTimestamp(String strDate) {
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+        LocalDateTime ldt = LocalDateTime.parse(strDate, dateTimeFormatter);
+        boolean gtDateNow = true;
+        if ( Timestamp.valueOf(ldt).getTime() < Timestamp.valueOf(LocalDateTime.now()).getTime()) {
+            gtDateNow =false;
+        }
+        return gtDateNow;
     }
 }
