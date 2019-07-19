@@ -35,11 +35,13 @@ package fr.paris.lutece.plugins.stock.modules.billetterie.web;
 
 import fr.paris.lutece.plugins.stock.business.attribute.AbstractAttributeNum;
 import fr.paris.lutece.plugins.stock.business.attribute.product.ProductAttributeNum;
+import fr.paris.lutece.plugins.stock.business.attribute.purchase.PurchaseAttribute;
 import fr.paris.lutece.plugins.stock.business.offer.Offer;
 import fr.paris.lutece.plugins.stock.business.product.Product;
 import fr.paris.lutece.plugins.stock.business.product.ProductFilter;
 import fr.paris.lutece.plugins.stock.business.provider.Provider;
 import fr.paris.lutece.plugins.stock.business.provider.ProviderFilter;
+import fr.paris.lutece.plugins.stock.business.purchase.Purchase;
 import fr.paris.lutece.plugins.stock.business.purchase.PurchaseFilter;
 import fr.paris.lutece.plugins.stock.commons.ResultList;
 import fr.paris.lutece.plugins.stock.commons.exception.FunctionnalException;
@@ -62,7 +64,10 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 
 import static java.util.Optional.ofNullable;
@@ -92,6 +97,7 @@ public class NotificationJspBean extends AbstractJspBean
 
     // BEAN
     private static final String BEAN_STOCK_TICKETS_SEANCE_SERVICE = "stock-tickets.seanceService";
+    private static final String BEAN_STOCK_TICKETS_RESERVATION_DAO = "stock-tickets.reservationDAO";
 
     // JSP
     private static final String JSP_MANAGE_OFFERS = "jsp/admin/plugins/stock/modules/billetterie/ManageOffers.jsp";
@@ -120,6 +126,9 @@ public class NotificationJspBean extends AbstractJspBean
     private IProviderService _serviceProvider;
     private IShowService _serviceShow;
 
+    /** The _dao purchase. */
+    private IReservationDAO _daoPurchase;
+
     /**
      * Instantiates a new notification jsp bean.
      */
@@ -131,6 +140,7 @@ public class NotificationJspBean extends AbstractJspBean
         _serviceNotification = SpringContextService.getContext( ).getBean( INotificationService.class );
         _serviceProvider = SpringContextService.getContext( ).getBean( IProviderService.class );
         _serviceShow = SpringContextService.getContext( ).getBean( IShowService.class );
+        _daoPurchase = (IReservationDAO) SpringContextService.getContext().getBean(BEAN_STOCK_TICKETS_RESERVATION_DAO);
     }
 
     /**
@@ -169,6 +179,12 @@ public class NotificationJspBean extends AbstractJspBean
         seanceDto = ofNullable(idOffer).map(e ->  _serviceOffer.findSeanceById(e)).orElse(null);
         ShowDTO showDto = ofNullable(seanceDto).map(e-> e.getProduct()).orElse(null);
         Product productById = _serviceShow.getProductById(ofNullable(showDto).map(e -> e.getId()).orElse(null));
+        PurchaseFilter filter = new PurchaseFilter( );
+
+        List<ReservationDTO> listReservationsPurchase = new ArrayList<>();
+        List<ReservationDTO> reservationDTOList = new ArrayList<>();
+
+        List<String> listContact = new ArrayList<>();
 
         // If the notification is about an offer
         if ( StringUtils.isNotEmpty( strIdOffer ) )
@@ -177,7 +193,6 @@ public class NotificationJspBean extends AbstractJspBean
             notification.setIdOffer( idOffer );
 
             List<String> orderList = new ArrayList<String>( );
-            PurchaseFilter filter = new PurchaseFilter( );
             orderList.add( ORDER_FILTER_USER_NAME );
             filter.setOrders( orderList );
             filter.setOrderAsc( true );
@@ -190,14 +205,18 @@ public class NotificationJspBean extends AbstractJspBean
                     || ( ( notification.getNotificationAction( ) != null ) && notification.getNotificationAction( ).equals(
                             TicketsConstants.OFFER_STATUT_CANCEL ) ) )
             {
+
+                listReservationsPurchase = this._servicePurchase.findByFilter( filter, null );
                 notification.setNotificationAction( TicketsConstants.OFFER_STATUT_CANCEL );
 
                 // Set the default recipientsTo
                 StringBuilder recipientsTo = new StringBuilder( 100 );
 
-                for ( ReservationDTO purchase : listReservations )
+                for ( ReservationDTO reservationDTO : listReservationsPurchase )
                 {
-                    recipientsTo.append( purchase.getEmailAgent( ) ).append( AppPropertiesService.getProperty( PROPERTY_MAIL_SEPARATOR ) );
+                        recipientsTo.append( reservationDTO.getEmailAgent() ).append( AppPropertiesService.getProperty( PROPERTY_MAIL_SEPARATOR ) );
+
+
                 }
 
                 notification.setRecipientsTo( recipientsTo.toString( ) );
@@ -291,7 +310,7 @@ public class NotificationJspBean extends AbstractJspBean
                     // Set the default recipientsTo
                     StringBuilder recipientsTo = new StringBuilder( );
 
-                    for ( ReservationDTO purchase : listReservations )
+                    for ( ReservationDTO purchase : listReservationsPurchase )
                     {
                         recipientsTo.append( purchase.getEmailAgent( ) ).append( AppPropertiesService.getProperty( PROPERTY_MAIL_SEPARATOR ) );
                     }
@@ -321,14 +340,23 @@ public class NotificationJspBean extends AbstractJspBean
 
         model.put( MARK_TITLE, I18nService.getLocalizedString( PROPERTY_PAGE_TITLE_SEND_NOTIFICATION, Locale.getDefault( ) ) );
 
-        List<String> listContact = new ArrayList<>();
-        List<Contact> lstContact =ofNullable(showDto).map(e-> _serviceProvider.findById(e.getIdProvider()).getContactList()).orElse(null);
 
-        if (lstContact != null && productById != null) {
-            for (Contact c : lstContact) {
-                for (AbstractAttributeNum sh : productById.getAttributeNumList()){
-                    if (sh.getValue().intValueExact() == c.getId() && sh.getKey().contains("idContact")){
-                        listContact.add(c.getMail());
+        if ( StringUtils.isNotEmpty( strCancel ) ){
+
+            for ( ReservationDTO reservationDTO : listReservationsPurchase )
+            {
+                    listContact.add(reservationDTO.getEmailAgent());
+            }
+    }
+        else {
+            List<Contact> lstContact =ofNullable(showDto).map(e-> _serviceProvider.findById(e.getIdProvider()).getContactList()).orElse(null);
+
+            if (lstContact != null && productById != null) {
+                for (Contact c : lstContact) {
+                    for (AbstractAttributeNum sh : productById.getAttributeNumList()) {
+                        if (sh.getValue().intValueExact() == c.getId() && sh.getKey().contains("idContact")) {
+                            listContact.add(c.getMail());
+                        }
                     }
                 }
             }

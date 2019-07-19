@@ -314,12 +314,19 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
         OfferFilter offerFilter = new OfferFilter( );
         offerFilter.setProductId( idShow );
         List<SeanceDTO> offerList = _offerService.findByFilter( offerFilter, null )
-                .stream().filter(e -> convertStringToTimestamp(e.getDate() + " " + e.getHour()) ).collect(Collectors.toList());
-        
+                .stream().filter(e -> convertStringToTimestamp(e.getDate() + " " + e.getHour())).collect(Collectors.toList());
+
+        List<SeanceDTO> offerListFinal = new ArrayList<>();
+        for (SeanceDTO seanceDTO : offerList) {
+            if (!("annule").equals(seanceDTO.getStatut())) {
+                offerListFinal.add(seanceDTO);
+            }
+        }
+
         boolean availableInvitation = false;
         boolean availableChildInvitation = false;
         boolean availableReducedPrice = false;
-        for ( SeanceDTO dto : offerList ) 
+        for ( SeanceDTO dto : offerListFinal )
         {
         	if ( dto.getQuantity( ) > 0 ) 
         	{
