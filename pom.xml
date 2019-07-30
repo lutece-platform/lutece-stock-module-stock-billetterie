@@ -10,7 +10,7 @@
     <groupId>fr.paris.lutece.plugins</groupId>
     <artifactId>module-stock-billetterie</artifactId>
     <packaging>lutece-plugin</packaging>
-    <version>1.1.2-SNAPSHOT</version>
+    <version>1.1.2</version>
     <name>Lutece stock billetterie module</name>
 	
     <repositories>
@@ -96,6 +96,7 @@
         <connection>scm:git:https://github.com/lutece-platform/lutece-stock-module-stock-billetterie.git</connection>
         <developerConnection>scm:git:https://github.com/lutece-platform/lutece-stock-module-stock-billetterie.git</developerConnection>
         <url>https://github.com/lutece-platform/lutece-stock-module-stock-billetterie.git</url>
-    </scm> 
+      <tag>module-stock-billetterie-1.1.2</tag>
+  </scm> 
 	
 </project>
