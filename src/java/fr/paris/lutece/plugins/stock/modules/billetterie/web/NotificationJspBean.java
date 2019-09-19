@@ -86,6 +86,7 @@ public class NotificationJspBean extends AbstractJspBean
     public static final String MARK_TITLE = "title";
     public static final String MARK_OFFER_ID = "offer_id";
     public static final String MARK_CANCEL = "cancel";
+    public static final String MARK_NOTIFY = "notify";
     public static final String MARK_LOCK = "lock";
     public static final String MARK_NOTIFICATION_ACTION = "notificationAction";
     public static final String MARK_AVERTISSEMENT = "avertissement";
@@ -172,6 +173,7 @@ public class NotificationJspBean extends AbstractJspBean
 
         String strIdOffer = request.getParameter( MARK_OFFER_ID );
         String strCancel = request.getParameter( MARK_CANCEL );
+        String strNotify = request.getParameter( MARK_NOTIFY );
         String strLock = request.getParameter( MARK_LOCK );
         Integer idOffer = Integer.parseInt( strIdOffer );
 
@@ -198,7 +200,8 @@ public class NotificationJspBean extends AbstractJspBean
             filter.setOrderAsc( true );
             filter.setIdOffer( idOffer );
 
-            List<ReservationDTO> listReservations = this._servicePurchase.findByFilter( filter, null );
+            //List<ReservationDTO> listReservations = this._servicePurchase.findByFilter( filter, null );
+            listReservationsPurchase = this._servicePurchase.findByFilter( filter, null );
 
             // If the action is to cancel the offer
             if ( StringUtils.isNotEmpty( strCancel )
@@ -206,7 +209,7 @@ public class NotificationJspBean extends AbstractJspBean
                             TicketsConstants.OFFER_STATUT_CANCEL ) ) )
             {
 
-                listReservationsPurchase = this._servicePurchase.findByFilter( filter, null );
+
                 notification.setNotificationAction( TicketsConstants.OFFER_STATUT_CANCEL );
 
                 // Set the default recipientsTo
@@ -298,7 +301,7 @@ public class NotificationJspBean extends AbstractJspBean
                     modelMail.put( MARK_BASE_URL, AppPathService.getBaseUrl( request ) );
                     modelMail.put( MARK_SEANCE, seance );
                     modelMail.put( MARK_TARIF_REDUIT_ID, TicketsConstants.OFFER_TYPE_REDUCT_ID );
-                    modelMail.put( MARK_LIST_RESERVATION, listReservations );
+                    modelMail.put( MARK_LIST_RESERVATION, listReservationsPurchase );
 
                     HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_MAIL_LOCK, request.getLocale( ), modelMail );
                     notification.setMessage( template.getHtml( ) );
@@ -341,7 +344,7 @@ public class NotificationJspBean extends AbstractJspBean
         model.put( MARK_TITLE, I18nService.getLocalizedString( PROPERTY_PAGE_TITLE_SEND_NOTIFICATION, Locale.getDefault( ) ) );
 
 
-        if ( StringUtils.isNotEmpty( strCancel ) ){
+        if ( StringUtils.isNotEmpty( strCancel ) || StringUtils.isNotEmpty( strNotify )){
 
             for ( ReservationDTO reservationDTO : listReservationsPurchase )
             {
