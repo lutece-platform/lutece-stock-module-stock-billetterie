@@ -107,6 +107,7 @@ public class OfferJspBean extends AbstractJspBean
     public static final String PARAMETER_OFFER_DUPLICATE = "duplicate";
     public static final String PARAMETER_OFFER_PRODUCT_ID = "productId";
     public static final String PARAMETER_OFFER_ID_PRODUCT = "product.id";
+    public static final String PARAMETER_SUP_TICKETS = "offer_sup_tickets";
     public static final String PARAMETER_OFFER_GENRE_LIST = "offer_genre_list";
     public static final String PARAMETER_OFFER_GENRE_LIST_DEFAULT = "offer_genre_list_default";
     public static final String PARAMETER_BUTTON_DELETE = "delete";
@@ -400,7 +401,8 @@ public class OfferJspBean extends AbstractJspBean
             dataTableToUse.addColumn( "module.stock.billetterie.list_offres.filter.product", "product.name", true );
             dataTableToUse.addColumn( "module.stock.billetterie.list_offres.type", "typeName", true );
             dataTableToUse.addFreeColumn( "module.stock.billetterie.save_offer.date", MACRO_COLUMN_DATES_OFFER );
-            dataTableToUse.addFreeColumn( "module.stock.billetterie.save_offer.initialQuantity", "columnInitialQuantityOffer" );
+            /*dataTableToUse.addFreeColumn( "module.stock.billetterie.save_offer.initialQuantity", "columnInitialQuantityOffer" );*/
+            dataTableToUse.addFreeColumn( "module.stock.billetterie.save_offer.totalQuantity", "columnTotalQuantityOffer" );
             dataTableToUse.addColumn( "module.stock.billetterie.save_offer.quantity", "quantity", false );
             dataTableToUse.addFreeColumn( "module.stock.billetterie.save_offer.sessions.actions", MACRO_COLUMN_ACTIONS_OFFER );
         }
@@ -600,16 +602,46 @@ public class OfferJspBean extends AbstractJspBean
      *            The HTTP request
      * @return redirection url
      */
-    public String doSaveOffer( HttpServletRequest request )
-    {
-        if ( request.getParameter( StockConstants.PARAMETER_BUTTON_CANCEL ) != null )
-        {
-            return doGoBack( request );
+    public String doSaveOffer( HttpServletRequest request ) {
+        if (request.getParameter(StockConstants.PARAMETER_BUTTON_CANCEL) != null) {
+            return doGoBack(request);
+        }
+        Integer nSuppTickets = 0;
+        String strSuppTickets = request.getParameter(PARAMETER_SUP_TICKETS);
+        if (StringUtils.isNotBlank(strSuppTickets)) {
+            nSuppTickets = Integer.parseInt(strSuppTickets);
         }
 
-        SeanceDTO offer = new SeanceDTO( );
-        populate( offer, request );
+        SeanceDTO offer = new SeanceDTO();
+        SeanceDTO offerInBdd = new SeanceDTO();
+        populate(offer, request);
         boolean isNewOffer = offer.getId() == null;
+
+        if ( !isNewOffer )
+        {
+            offerInBdd = _serviceOffer.findSeanceById( offer.getId() );
+        }
+
+        if (offer.getTotalQuantity() != null ){
+            if (nSuppTickets > 0) {
+                if(offerInBdd.getTotalQuantity().equals(offer.getTotalQuantity())) {
+                    offer.setTotalQuantity(offer.getTotalQuantity() + nSuppTickets);
+                }else {
+                    offer.setTotalQuantity(offerInBdd.getTotalQuantity() + nSuppTickets);
+                }
+
+                if(offerInBdd.getQuantity()==offer.getQuantity()) {
+                    offer.setQuantity(offer.getQuantity() + nSuppTickets);
+                }else {
+                    offer.setQuantity(offerInBdd.getQuantity() + nSuppTickets);
+                }
+            }
+        }
+        else
+        {
+                offer.setTotalQuantity(offer.getQuantity());
+        }
+
         int oldQuantity = 0;
         if (StringUtils.isNotEmpty(request.getParameter(PARAMETER_OLD_QUANTITY))) {
         	oldQuantity = Integer.valueOf(request.getParameter(PARAMETER_OLD_QUANTITY));

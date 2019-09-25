@@ -62,16 +62,32 @@
 							<input type="text" id="offer_hour" name="hour" class="form-control" maxlength="5"  value="${offer.hour!}"/>
 						</div>
 					</div>
+		  			<#if offer.totalQuantity?? >
+						<div class="form-group">
+							 <label class="control-label col-xs-12 col-sm-3" for="offer_total_quantity" >#i18n{module.stock.billetterie.save_offer.totalQuantity}  :</label>
+							 <div class="col-xs-12 col-sm-1">
+								 <input type="text" id="offer_total_quantity" name="totalQuantity" class="form-control" maxlength="2"  value="${offer.totalQuantity!}" readonly="readonly"/>
+							 </div>
+						</div>
+	  				</#if>
 					<div class="form-group">
-						<label class="control-label col-xs-12 col-sm-3" for="offer_quantity" >#i18n{module.stock.billetterie.save_offer.quantity} * :</label>
+						<label class="control-label col-xs-12 col-sm-3" for="offer_quantity" >#i18n{module.stock.billetterie.save_offer.quantity} <#if !offer.totalQuantity?? >* </#if>:</label>
 						<div class="col-xs-12 col-sm-1">
-							<input type="text" id="offer_quantity" name="quantity" class="form-control" maxlength="6"  value="${offer.quantity!}">
+							<input type="text" id="offer_quantity" name="quantity" class="form-control" maxlength="6"  value="${offer.quantity!}" <#if offer.totalQuantity?? >readonly="readonly"</#if> >
 							<#if offer.initialQuantity?exists >
 								<input type="hidden" id="offer_initialQuantity" name="initialQuantity" class="form-control" maxlength="6"  value="${offer.initialQuantity!}">
-							(${offer.initialQuantity!} #i18n{module.stock.billetterie.message.placesAvailableInitially})
+
 							</#if>
 						</div>
 					</div>
+					<#if offer.totalQuantity??>
+						<div class="form-group">
+							<label class="control-label col-xs-12 col-sm-3" for="offer_sup_tickets" >#i18n{module.stock.billetterie.save_offer.supTickets}  :</label>
+							<div class="col-xs-12 col-sm-1">
+								<input type="text" id="offer_sup_tickets" name="offer_sup_tickets" class="form-control" maxlength="2"/>
+							</div>
+						</div>
+					</#if>
 					<div class="form-group">
 						<label class="control-label col-xs-12 col-sm-3" for="offer_reductPrice" >#i18n{module.stock.billetterie.save_offer.reductPrice} :</label>
 						<div class="col-xs-12 col-sm-1">
