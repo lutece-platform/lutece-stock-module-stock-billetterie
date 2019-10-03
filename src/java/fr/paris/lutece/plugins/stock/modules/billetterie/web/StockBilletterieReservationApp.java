@@ -396,7 +396,7 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
         model.put( PARAMETER_BOOKING_CHECK, bookingCheck );
         model.put( PARAMETER_AUTHENTIFIED_USER, bAuthentified );
 
-        int timeMax=0;
+        int timeMax = 0;
 
         try
         {
@@ -444,9 +444,9 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
     public String doSaveReservation( HttpServletRequest request, HttpServletResponse response ) throws SiteMessageException
     {
         List<String> strPurchaseId = (List<String>) request.getSession( ).getAttribute( PARAMETER_PURCHASE_ID );
-        if ( CollectionUtils.isNotEmpty(strPurchaseId) )
+        if ( CollectionUtils.isNotEmpty( strPurchaseId ) )
         {
-        	strPurchaseId.stream().map(Integer::valueOf).forEach(_purchaseService::doDeletePurchase);
+            strPurchaseId.stream( ).map( Integer::valueOf ).forEach( _purchaseService::doDeletePurchase );
         }
 
         String returnUrl = null;
@@ -574,9 +574,7 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
                 notificationDTO.setRecipientsTo( adminUser.getEmail( ) );
 
                 String [ ] args = new String [ ] {
-                    String.valueOf( seance.getId( ) ),
-                    seance.getProduct().getName(),
-                    seance.getDate() + " " + seance.getHour()
+                        String.valueOf( seance.getId( ) ), seance.getProduct( ).getName( ), seance.getDate( ) + " " + seance.getHour( )
                 };
                 notificationDTO.setSubject( I18nService.getLocalizedString( MESSAGE_NOTIFICATION_ADMIN_OFFER_QUANTITY_SUBJECT, args, request.getLocale( ) ) );
                 notificationDTO.setMessage( template.getHtml( ) );
@@ -714,7 +712,7 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
                 strCurrentPageIndex );
 
         model.put( MARK_PAGINATOR, paginator );
-        model.put(MARK_DISABLE_ACTION_MODIFY_BOOKING,  AppPropertiesService.getProperty(PROPERTY_DISABLE_ACTION_MODIFY_BOOKING) );
+        model.put( MARK_DISABLE_ACTION_MODIFY_BOOKING, AppPropertiesService.getProperty( PROPERTY_DISABLE_ACTION_MODIFY_BOOKING ) );
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_DIR + TEMPLATE_MY_BOOKINGS, locale, model );
 

@@ -92,10 +92,12 @@ public class PosterImageServlet extends HttpServlet
         {
             Integer idProduct = Integer.parseInt( sIdProduct );
             boolean isThumbnail = ( request.getParameter( PARAMETER_TB ) != null ) && request.getParameter( PARAMETER_TB ).equals( String.valueOf( true ) );
-            boolean isImageReal = ( request.getParameter( PARAMETER_REAL_IMAGE ) != null ) && request.getParameter( PARAMETER_REAL_IMAGE ).equals( String.valueOf( true ) );
+            boolean isImageReal = ( request.getParameter( PARAMETER_REAL_IMAGE ) != null )
+                    && request.getParameter( PARAMETER_REAL_IMAGE ).equals( String.valueOf( true ) );
             byte [ ] bImage;
 
-            if (isImageReal){
+            if ( isImageReal )
+            {
                 bImage = _productService.getRealImage( idProduct );
             }
             else

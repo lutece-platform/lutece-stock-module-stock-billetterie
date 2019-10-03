@@ -141,7 +141,7 @@ public class NotificationJspBean extends AbstractJspBean
         _serviceNotification = SpringContextService.getContext( ).getBean( INotificationService.class );
         _serviceProvider = SpringContextService.getContext( ).getBean( IProviderService.class );
         _serviceShow = SpringContextService.getContext( ).getBean( IShowService.class );
-        _daoPurchase = (IReservationDAO) SpringContextService.getContext().getBean(BEAN_STOCK_TICKETS_RESERVATION_DAO);
+        _daoPurchase = (IReservationDAO) SpringContextService.getContext( ).getBean( BEAN_STOCK_TICKETS_RESERVATION_DAO );
     }
 
     /**
@@ -177,16 +177,16 @@ public class NotificationJspBean extends AbstractJspBean
         String strLock = request.getParameter( MARK_LOCK );
         Integer idOffer = Integer.parseInt( strIdOffer );
 
-        SeanceDTO seanceDto = new SeanceDTO();
-        seanceDto = ofNullable(idOffer).map(e ->  _serviceOffer.findSeanceById(e)).orElse(null);
-        ShowDTO showDto = ofNullable(seanceDto).map(e-> e.getProduct()).orElse(null);
-        Product productById = _serviceShow.getProductById(ofNullable(showDto).map(e -> e.getId()).orElse(null));
+        SeanceDTO seanceDto = new SeanceDTO( );
+        seanceDto = ofNullable( idOffer ).map( e -> _serviceOffer.findSeanceById( e ) ).orElse( null );
+        ShowDTO showDto = ofNullable( seanceDto ).map( e -> e.getProduct( ) ).orElse( null );
+        Product productById = _serviceShow.getProductById( ofNullable( showDto ).map( e -> e.getId( ) ).orElse( null ) );
         PurchaseFilter filter = new PurchaseFilter( );
 
-        List<ReservationDTO> listReservationsPurchase = new ArrayList<>();
-        List<ReservationDTO> reservationDTOList = new ArrayList<>();
+        List<ReservationDTO> listReservationsPurchase = new ArrayList<>( );
+        List<ReservationDTO> reservationDTOList = new ArrayList<>( );
 
-        List<String> listContact = new ArrayList<>();
+        List<String> listContact = new ArrayList<>( );
 
         // If the notification is about an offer
         if ( StringUtils.isNotEmpty( strIdOffer ) )
@@ -200,7 +200,7 @@ public class NotificationJspBean extends AbstractJspBean
             filter.setOrderAsc( true );
             filter.setIdOffer( idOffer );
 
-            //List<ReservationDTO> listReservations = this._servicePurchase.findByFilter( filter, null );
+            // List<ReservationDTO> listReservations = this._servicePurchase.findByFilter( filter, null );
             listReservationsPurchase = this._servicePurchase.findByFilter( filter, null );
 
             // If the action is to cancel the offer
@@ -209,7 +209,6 @@ public class NotificationJspBean extends AbstractJspBean
                             TicketsConstants.OFFER_STATUT_CANCEL ) ) )
             {
 
-
                 notification.setNotificationAction( TicketsConstants.OFFER_STATUT_CANCEL );
 
                 // Set the default recipientsTo
@@ -217,8 +216,7 @@ public class NotificationJspBean extends AbstractJspBean
 
                 for ( ReservationDTO reservationDTO : listReservationsPurchase )
                 {
-                        recipientsTo.append( reservationDTO.getEmailAgent() ).append( AppPropertiesService.getProperty( PROPERTY_MAIL_SEPARATOR ) );
-
+                    recipientsTo.append( reservationDTO.getEmailAgent( ) ).append( AppPropertiesService.getProperty( PROPERTY_MAIL_SEPARATOR ) );
 
                 }
 
@@ -343,29 +341,34 @@ public class NotificationJspBean extends AbstractJspBean
 
         model.put( MARK_TITLE, I18nService.getLocalizedString( PROPERTY_PAGE_TITLE_SEND_NOTIFICATION, Locale.getDefault( ) ) );
 
-
-        if ( StringUtils.isNotEmpty( strCancel ) || StringUtils.isNotEmpty( strNotify )){
+        if ( StringUtils.isNotEmpty( strCancel ) || StringUtils.isNotEmpty( strNotify ) )
+        {
 
             for ( ReservationDTO reservationDTO : listReservationsPurchase )
             {
-                    listContact.add(reservationDTO.getEmailAgent());
+                listContact.add( reservationDTO.getEmailAgent( ) );
             }
-    }
-        else {
-            List<Contact> lstContact =ofNullable(showDto).map(e-> _serviceProvider.findById(e.getIdProvider()).getContactList()).orElse(null);
+        }
+        else
+        {
+            List<Contact> lstContact = ofNullable( showDto ).map( e -> _serviceProvider.findById( e.getIdProvider( ) ).getContactList( ) ).orElse( null );
 
-            if (lstContact != null && productById != null) {
-                for (Contact c : lstContact) {
-                    for (AbstractAttributeNum sh : productById.getAttributeNumList()) {
-                        if (sh.getValue().intValueExact() == c.getId() && sh.getKey().contains("idContact")) {
-                            listContact.add(c.getMail());
+            if ( lstContact != null && productById != null )
+            {
+                for ( Contact c : lstContact )
+                {
+                    for ( AbstractAttributeNum sh : productById.getAttributeNumList( ) )
+                    {
+                        if ( sh.getValue( ).intValueExact( ) == c.getId( ) && sh.getKey( ).contains( "idContact" ) )
+                        {
+                            listContact.add( c.getMail( ) );
                         }
                     }
                 }
             }
         }
 
-        model.put(MARK_PARTNER_CONTACT_MAIL, listContact);
+        model.put( MARK_PARTNER_CONTACT_MAIL, listContact );
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_SEND_NOTIFICATION, getLocale( ), model );
 

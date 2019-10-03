@@ -219,9 +219,9 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
      */
     public XPage getShowPage( XPage page, HttpServletRequest request, Locale locale )
     {
-    	// Get the user
+        // Get the user
         LuteceUser currentUser = getUser( request );
-    	
+
         String sIdShow = request.getParameter( PARAMETER_PRODUCT_ID );
 
         Integer idShow = -1;
@@ -240,24 +240,24 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
         Integer idPurchase = -1;
 
         Map<String, Object> model = new HashMap<String, Object>( );
-        
-        Map<Integer, String> nbPlaceBookMap = new HashMap<>();
-        List<String> purchaseList = new ArrayList<>();
+
+        Map<Integer, String> nbPlaceBookMap = new HashMap<>( );
+        List<String> purchaseList = new ArrayList<>( );
 
         if ( StringUtils.isNotEmpty( strPurchaseId ) && StringUtils.isNumeric( strPurchaseId ) )
         {
             idPurchase = Integer.valueOf( strPurchaseId );
-            purchaseList.add(strPurchaseId);
+            purchaseList.add( strPurchaseId );
             ReservationDTO booking = _purchaseService.findById( idPurchase );
             if ( booking != null )
             {
-            	
+
                 final DateFormat sdfComboSeance = new SimpleDateFormat( TicketsConstants.FORMAT_COMBO_DATE_SEANCE, locale );
 
                 Date today = new Date( );
 
                 SeanceDTO seance = booking.getOffer( );
-                nbPlaceBookMap.put(seance.getId(), String.valueOf(booking.getQuantity()));
+                nbPlaceBookMap.put( seance.getId( ), String.valueOf( booking.getQuantity( ) ) );
 
                 String sDateHour = sdfComboSeance.format( seance.getDateHour( ) );
 
@@ -273,26 +273,28 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
                         sSeanceDate = sDateHour;
                     }
                 }
-                
+
                 // Get other bookings for same show
-                PurchaseFilter filter = new PurchaseFilter();
-                filter.setIdProduct(idShow);
-                filter.setUserName(Optional.ofNullable(currentUser).map(LuteceUser::getName).orElse(null));
-                
-                List<ReservationDTO> bookings = _purchaseService.findByFilter(filter);
-                
-                for (ReservationDTO book : bookings) {
-	            	if (book.getId().equals(booking.getId())) {
-	            		continue;
-	            	}
-                	SeanceDTO otherSeance = book.getOffer();
-                	
-                	if (otherSeance.getDate().equals(seance.getDate()) 
-                			&& otherSeance.getHour().equals(seance.getHour())) {
-                		nbPlaceBookMap.put(otherSeance.getId(), String.valueOf(book.getQuantity()));
-                		purchaseList.add(String.valueOf(book.getId()));
-                	}
-	                }
+                PurchaseFilter filter = new PurchaseFilter( );
+                filter.setIdProduct( idShow );
+                filter.setUserName( Optional.ofNullable( currentUser ).map( LuteceUser::getName ).orElse( null ) );
+
+                List<ReservationDTO> bookings = _purchaseService.findByFilter( filter );
+
+                for ( ReservationDTO book : bookings )
+                {
+                    if ( book.getId( ).equals( booking.getId( ) ) )
+                    {
+                        continue;
+                    }
+                    SeanceDTO otherSeance = book.getOffer( );
+
+                    if ( otherSeance.getDate( ).equals( seance.getDate( ) ) && otherSeance.getHour( ).equals( seance.getHour( ) ) )
+                    {
+                        nbPlaceBookMap.put( otherSeance.getId( ), String.valueOf( book.getQuantity( ) ) );
+                        purchaseList.add( String.valueOf( book.getId( ) ) );
+                    }
+                }
             }
             request.getSession( ).setAttribute( PARAMETER_PURCHASE_ID, purchaseList );
             model.put( MARK_IS_MODIFY, idPurchase );
@@ -309,17 +311,19 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
         {
             model.put( TicketsConstants.PARAMETER_ERROR, getHtmlError( fe, request ) );
         }
-        
+
         // check the type of available offers
         OfferFilter offerFilter = new OfferFilter( );
         offerFilter.setProductId( idShow );
-        List<SeanceDTO> offerList = _offerService.findByFilter( offerFilter, null )
-                .stream().filter(e -> convertStringToTimestamp(e.getDate() + " " + e.getHour())).collect(Collectors.toList());
+        List<SeanceDTO> offerList = _offerService.findByFilter( offerFilter, null ).stream( )
+                .filter( e -> convertStringToTimestamp( e.getDate( ) + " " + e.getHour( ) ) ).collect( Collectors.toList( ) );
 
-        List<SeanceDTO> offerListFinal = new ArrayList<>();
-        for (SeanceDTO seanceDTO : offerList) {
-            if (!("annule").equals(seanceDTO.getStatut())) {
-                offerListFinal.add(seanceDTO);
+        List<SeanceDTO> offerListFinal = new ArrayList<>( );
+        for ( SeanceDTO seanceDTO : offerList )
+        {
+            if ( !( "annule" ).equals( seanceDTO.getStatut( ) ) )
+            {
+                offerListFinal.add( seanceDTO );
             }
         }
 
@@ -328,22 +332,23 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
         boolean availableReducedPrice = false;
         for ( SeanceDTO dto : offerListFinal )
         {
-        	if ( dto.getQuantity( ) > 0 ) 
-        	{
-        		switch ( dto.getIdGenre( ) ) {
-				case 1:
-					availableReducedPrice = true;
-					break;
-				case 2:
-					availableInvitation = true;		
-					break;
-				case 3:
-					availableChildInvitation = true;
-					break;
-				default:
-					break;
-				}
-        	}
+            if ( dto.getQuantity( ) > 0 )
+            {
+                switch( dto.getIdGenre( ) )
+                {
+                    case 1:
+                        availableReducedPrice = true;
+                        break;
+                    case 2:
+                        availableInvitation = true;
+                        break;
+                    case 3:
+                        availableChildInvitation = true;
+                        break;
+                    default:
+                        break;
+                }
+            }
         }
         show.setAvailableChildInvitation( availableChildInvitation );
         show.setAvailableInvitation( availableInvitation );
@@ -361,7 +366,7 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
 
         model.put( MARK_PARTNER, partner );
         model.put( MARK_URL_POSTER, AppPropertiesService.getProperty( PROPERTY_POSTER_PATH ) );
-        model.put( MARK_URL_REAL_POSTER, AppPropertiesService.getProperty( PROPERTY_POSTER_RIMG_PATH) );
+        model.put( MARK_URL_REAL_POSTER, AppPropertiesService.getProperty( PROPERTY_POSTER_RIMG_PATH ) );
 
         // Calculate if show is open to book
         model.put( MARK_BOOKING_OPENED, caculateBookingOpened( show ) );
@@ -377,7 +382,7 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
         List<RecommendedProduct> listProducts = null;
         try
         {
-            listProducts = StockRecommendationService.instance( ).getRecommendedProducts( currentUser.getName() );
+            listProducts = StockRecommendationService.instance( ).getRecommendedProducts( currentUser.getName( ) );
         }
         catch( TasteException ex )
         {
@@ -411,7 +416,7 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
         model.put( MARK_USER, currentUser );
         model.put( MARK_BLOC_RESERVATION, getBookingBloc( show, sSeanceDate, locale, nbPlaceBookMap ) );
         model.put( MARK_S_SEANCE_DATE, sSeanceDate );
-        
+
         // if the user wants to subscribe to the show (get an email if a new representation is added)
         if ( currentUser != null )
         {
@@ -534,8 +539,9 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
         Map<String, Object> model = new HashMap<String, Object>( );
 
         model.put( MARK_SEANCE_LIST, seanceList );
-        for (Integer key : nbPlaceBookMap.keySet()) {
-        	model.put( MARK_NB_PLACE_SELECTED + key, nbPlaceBookMap.get(key) );
+        for ( Integer key : nbPlaceBookMap.keySet( ) )
+        {
+            model.put( MARK_NB_PLACE_SELECTED + key, nbPlaceBookMap.get( key ) );
         }
 
         model.put( MARK_SEANCE_DATE, sDateSeance );
@@ -645,12 +651,14 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
         return user.getName( );
     }
 
-    public static boolean convertStringToTimestamp(String strDate) {
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
-        LocalDateTime ldt = LocalDateTime.parse(strDate, dateTimeFormatter);
+    public static boolean convertStringToTimestamp( String strDate )
+    {
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern( "dd/MM/yyyy HH:mm" );
+        LocalDateTime ldt = LocalDateTime.parse( strDate, dateTimeFormatter );
         boolean gtDateNow = true;
-        if ( Timestamp.valueOf(ldt).getTime() < Timestamp.valueOf(LocalDateTime.now()).getTime()) {
-            gtDateNow =false;
+        if ( Timestamp.valueOf( ldt ).getTime( ) < Timestamp.valueOf( LocalDateTime.now( ) ).getTime( ) )
+        {
+            gtDateNow = false;
         }
         return gtDateNow;
     }

@@ -292,12 +292,9 @@ public class ShowJspBean extends AbstractJspBean
             filter.setOrders( orderList );
         }
 
-/*
-        if ( filter.getDateFrom( ) == null )
-        {
-            filter.setDateFrom( strToDate );
-        }
-*/
+        /*
+         * if ( filter.getDateFrom( ) == null ) { filter.setDateFrom( strToDate ); }
+         */
 
         DataTableManager<ShowDTO> dataTableToUse = getDataTable( request, filter );
 

@@ -61,9 +61,9 @@ public class BilleterieDashboardComponent extends DashboardComponent
     private static final String MARK_NB_PURCHASE_COUNT_OF_DAY = "nbPurchaseCountDuJour";
     private static final String MARK_NB_PRODUCT_A_VENIR = "nbProductAVenir";
     private static final String MARK_NB_PRODUCT_A_L_AFFICHE = "nbProductALAffiche";
-    private static final String MARK_LIST_RATING_FOR_PRODUCT= "list_product_with_rating_note";
-    private static final String MARK_NUMBER_OF_ITEM_PER_PAGE= "nItem_per_page";
-    private static final String MARK_SIZE_LIST_RATING_PRODUCT= "size_list_rp";
+    private static final String MARK_LIST_RATING_FOR_PRODUCT = "list_product_with_rating_note";
+    private static final String MARK_NUMBER_OF_ITEM_PER_PAGE = "nItem_per_page";
+    private static final String MARK_SIZE_LIST_RATING_PRODUCT = "size_list_rp";
 
     private static final String BEAN_STOCK_TICKETS_SHOW_SERVICE = "stock-tickets.showService";
     public static final String BEAN_RATING_PRODUCT_SERVICE = "stock-billetterie.RatingProductService";
@@ -77,8 +77,8 @@ public class BilleterieDashboardComponent extends DashboardComponent
     // TEMPLATES
     private static final String TEMPLATE_ADMIN_DASHBOARD = "admin/plugins/stock/modules/billetterie/billeterie_dashboard.html";
 
-    //Variables
-    private IRatingProductService _ratingProductService = SpringContextService.getBean(BEAN_RATING_PRODUCT_SERVICE);
+    // Variables
+    private IRatingProductService _ratingProductService = SpringContextService.getBean( BEAN_RATING_PRODUCT_SERVICE );
 
     /**
      *
@@ -96,20 +96,20 @@ public class BilleterieDashboardComponent extends DashboardComponent
         Integer nbPurchaseCountOfDay = statisticService.getCountPurchaseOfDay( );
         Integer nbPurchaseCountOfMonth = statisticService.getCountPurchaseOfMonth( );
 
-        List<RatingProductDTO> ratingProductDTOList = new ArrayList<>();
-        ratingProductDTOList = _ratingProductService.getAllRatingProduct();
+        List<RatingProductDTO> ratingProductDTOList = new ArrayList<>( );
+        ratingProductDTOList = _ratingProductService.getAllRatingProduct( );
 
         Paginator<RatingProductDTO> paginator = null;
         int nItemPerPage = 5;
 
-        if (ratingProductDTOList != null) {
-            ratingProductDTOList.sort(Comparator.comparing(RatingProductDTO::getRating).reversed());
+        if ( ratingProductDTOList != null )
+        {
+            ratingProductDTOList.sort( Comparator.comparing( RatingProductDTO::getRating ).reversed( ) );
 
-        UrlItem urlItem = new UrlItem( AppPathService.getAdminMenuUrl( ) );
-        String strCurrentPageIndex = Paginator.getPageIndex( request, Paginator.PARAMETER_PAGE_INDEX, DEFAULT_PAGE_INDEX );
+            UrlItem urlItem = new UrlItem( AppPathService.getAdminMenuUrl( ) );
+            String strCurrentPageIndex = Paginator.getPageIndex( request, Paginator.PARAMETER_PAGE_INDEX, DEFAULT_PAGE_INDEX );
 
-        paginator = new Paginator<RatingProductDTO>( ratingProductDTOList, nItemPerPage, urlItem.getUrl( ),
-                PARAMETER_PAGE_INDEX, strCurrentPageIndex );
+            paginator = new Paginator<RatingProductDTO>( ratingProductDTOList, nItemPerPage, urlItem.getUrl( ), PARAMETER_PAGE_INDEX, strCurrentPageIndex );
         }
 
         // Fill the model
@@ -123,13 +123,13 @@ public class BilleterieDashboardComponent extends DashboardComponent
 
         model.put( MARK_PAGINATOR, paginator );
 
-        if (paginator != null){
+        if ( paginator != null )
+        {
             model.put( MARK_LIST_RATING_FOR_PRODUCT, paginator.getPageItems( ) );
         }
 
-        model.put( MARK_NUMBER_OF_ITEM_PER_PAGE, nItemPerPage);
-        model.put( MARK_SIZE_LIST_RATING_PRODUCT, ofNullable(ratingProductDTOList).map(List::size).orElse(0));
-
+        model.put( MARK_NUMBER_OF_ITEM_PER_PAGE, nItemPerPage );
+        model.put( MARK_SIZE_LIST_RATING_PRODUCT, ofNullable( ratingProductDTOList ).map( List::size ).orElse( 0 ) );
 
         template = AppTemplateService.getTemplate( TEMPLATE_ADMIN_DASHBOARD, user.getLocale( ), model );
 

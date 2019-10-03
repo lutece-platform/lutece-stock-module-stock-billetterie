@@ -72,7 +72,7 @@ public class BilletterieHomeSolrAddon implements ISolrSearchAppAddOn
     private static final String BEAN_STOCK_TICKETS_SHOW_SERVICE = "stock-tickets.showService";
     private static final String MARK_HTMLPAGE = "htmlpage";
 
-    private static final DateFormat DATE_FORMAT = new SimpleDateFormat("dd/MM/yyyy");
+    private static final DateFormat DATE_FORMAT = new SimpleDateFormat( "dd/MM/yyyy" );
 
     // private fields
     private Plugin _plugin;
@@ -109,11 +109,12 @@ public class BilletterieHomeSolrAddon implements ISolrSearchAppAddOn
 
         HtmlPage htmlpage = HtmlPageHome.findByPrimaryKey( 1, _plugin );
 
-        Integer statusHtmlPage = ofNullable(htmlpage).map(HtmlPage::getStatus).orElse(1);
+        Integer statusHtmlPage = ofNullable( htmlpage ).map( HtmlPage::getStatus ).orElse( 1 );
 
         List<ShowDTO> currentListShow = aLafficheShows( showServiceHome.getCurrentProduct( orderList, null ) );
-        currentListShow = currentListShow.stream().filter(e -> formatStringToDate(e.getEndDate()).getTime() > new Date().getTime() && e.getEndDate() != "" && e.getEndDate() != null)
-                .collect(Collectors.toList());
+        currentListShow = currentListShow.stream( )
+                .filter( e -> formatStringToDate( e.getEndDate( ) ).getTime( ) > new Date( ).getTime( ) && e.getEndDate( ) != "" && e.getEndDate( ) != null )
+                .collect( Collectors.toList( ) );
 
         // Map<String, Object> model = new HashMap<String, Object>( );
         model.put( MARK_SHOW_LIST, currentListShow );
@@ -121,20 +122,23 @@ public class BilletterieHomeSolrAddon implements ISolrSearchAppAddOn
         model.put( MARK_URL_POSTER, AppPropertiesService.getProperty( PROPERTY_POSTER_TB_PATH ) );
         model.put( MARK_PRODUCTS_LIST, listProducts );
 
-        model.put( MARK_HTMLPAGE, statusHtmlPage==1 ? null : htmlpage );
+        model.put( MARK_HTMLPAGE, statusHtmlPage == 1 ? null : htmlpage );
     }
 
-    public Date formatStringToDate(String strDate){
+    public Date formatStringToDate( String strDate )
+    {
 
-        Date date = new Date();
-        try {
-            date = DATE_FORMAT.parse(strDate);
-        } catch (ParseException e) {
-            e.printStackTrace();
+        Date date = new Date( );
+        try
+        {
+            date = DATE_FORMAT.parse( strDate );
+        }
+        catch( ParseException e )
+        {
+            e.printStackTrace( );
         }
         return date;
     }
-
 
     /**
      * Gets the user name
@@ -160,7 +164,7 @@ public class BilletterieHomeSolrAddon implements ISolrSearchAppAddOn
         List<ShowDTO> listShowsReturn = new ArrayList<ShowDTO>( );
         for ( ShowDTO showDTO : listShows )
         {
-            if ( showDTO.getAlaffiche( ) && formatStringToDate(showDTO.getEndDate()).getTime() > new Date().getTime() )
+            if ( showDTO.getAlaffiche( ) && formatStringToDate( showDTO.getEndDate( ) ).getTime( ) > new Date( ).getTime( ) )
                 listShowsReturn.add( showDTO );
         }
 

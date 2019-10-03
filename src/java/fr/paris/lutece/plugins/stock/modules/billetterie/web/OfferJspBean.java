@@ -375,7 +375,7 @@ public class OfferJspBean extends AbstractJspBean
      *            the filter
      * @return the data table to use
      */
-    private <T> DataTableManager<T> getDataTable( HttpServletRequest request, SeanceFilter filter, boolean forceNewFilter)
+    private <T> DataTableManager<T> getDataTable( HttpServletRequest request, SeanceFilter filter, boolean forceNewFilter )
     {
         // si un objet est déjà présent en session, on l'utilise
         Method findMethod = null;
@@ -390,7 +390,7 @@ public class OfferJspBean extends AbstractJspBean
         }
 
         DataTableManager<T> dataTableToUse = getAbstractDataTableManager( request, filter, MARK_DATA_TABLE_OFFER, JSP_MANAGE_OFFERS, _serviceOffer, findMethod,
-        		forceNewFilter);
+                forceNewFilter );
 
         // si pas d'objet en session, il faut ajouter les colonnes à afficher
         if ( dataTableToUse.getListColumn( ).isEmpty( ) )
@@ -401,7 +401,7 @@ public class OfferJspBean extends AbstractJspBean
             dataTableToUse.addColumn( "module.stock.billetterie.list_offres.filter.product", "product.name", true );
             dataTableToUse.addColumn( "module.stock.billetterie.list_offres.type", "typeName", true );
             dataTableToUse.addFreeColumn( "module.stock.billetterie.save_offer.date", MACRO_COLUMN_DATES_OFFER );
-            /*dataTableToUse.addFreeColumn( "module.stock.billetterie.save_offer.initialQuantity", "columnInitialQuantityOffer" );*/
+            /* dataTableToUse.addFreeColumn( "module.stock.billetterie.save_offer.initialQuantity", "columnInitialQuantityOffer" ); */
             dataTableToUse.addFreeColumn( "module.stock.billetterie.save_offer.totalQuantity", "columnTotalQuantityOffer" );
             dataTableToUse.addColumn( "module.stock.billetterie.save_offer.quantity", "quantity", false );
             dataTableToUse.addFreeColumn( "module.stock.billetterie.save_offer.sessions.actions", MACRO_COLUMN_ACTIONS_OFFER );
@@ -477,7 +477,7 @@ public class OfferJspBean extends AbstractJspBean
 
                 Integer idOffer = Integer.parseInt( strOfferId );
 
-                model.put( MARK_CONTACT_LIST, getContactList(idOffer) );
+                model.put( MARK_CONTACT_LIST, getContactList( idOffer ) );
 
                 // Duplicate offer, set id to 0 to create a new offer
                 if ( StringUtils.isNotEmpty( strDuplicate ) )
@@ -510,16 +510,20 @@ public class OfferJspBean extends AbstractJspBean
                     ShowDTO productChoose = _serviceProduct.findById( idProduct );
                     int idProvider = productChoose.getIdProvider( );
 
-                    Product productById = _serviceProduct.getProductById(idProduct);
+                    Product productById = _serviceProduct.getProductById( idProduct );
 
-                    List<String> listContact = new ArrayList<>();
-                    List<Contact> lstContact = _servicePartner.findById(idProvider).getContactList();
+                    List<String> listContact = new ArrayList<>( );
+                    List<Contact> lstContact = _servicePartner.findById( idProvider ).getContactList( );
 
-                    if (lstContact != null && productById != null) {
-                        for (Contact c : lstContact) {
-                            for (AbstractAttributeNum sh : productById.getAttributeNumList()){
-                                if (sh.getValue().intValueExact() == c.getId() && sh.getKey().contains("idContact")){
-                                    listContact.add(c.getName() +", email : "+c.getMail());
+                    if ( lstContact != null && productById != null )
+                    {
+                        for ( Contact c : lstContact )
+                        {
+                            for ( AbstractAttributeNum sh : productById.getAttributeNumList( ) )
+                            {
+                                if ( sh.getValue( ).intValueExact( ) == c.getId( ) && sh.getKey( ).contains( "idContact" ) )
+                                {
+                                    listContact.add( c.getName( ) + ", email : " + c.getMail( ) );
                                 }
                             }
                         }
@@ -559,21 +563,25 @@ public class OfferJspBean extends AbstractJspBean
         return getAdminPage( template.getHtml( ) );
     }
 
-    private List<String> getContactList(Integer idOfferProduct) {
-        SeanceDTO seanceDto = new SeanceDTO();
-        seanceDto = ofNullable(idOfferProduct).map(e ->  _serviceOffer.findSeanceById(e)).orElse(null);
-        ShowDTO showDto = ofNullable(seanceDto).map(e-> e.getProduct()).orElse(null);
-        Product productById = _serviceProduct.getProductById(ofNullable(showDto).map(e -> e.getId()).orElse(null));
+    private List<String> getContactList( Integer idOfferProduct )
+    {
+        SeanceDTO seanceDto = new SeanceDTO( );
+        seanceDto = ofNullable( idOfferProduct ).map( e -> _serviceOffer.findSeanceById( e ) ).orElse( null );
+        ShowDTO showDto = ofNullable( seanceDto ).map( e -> e.getProduct( ) ).orElse( null );
+        Product productById = _serviceProduct.getProductById( ofNullable( showDto ).map( e -> e.getId( ) ).orElse( null ) );
 
+        List<String> listContact = new ArrayList<>( );
+        List<Contact> lstContact = ofNullable( showDto ).map( e -> _servicePartner.findById( e.getIdProvider( ) ).getContactList( ) ).orElse( null );
 
-        List<String> listContact = new ArrayList<>();
-        List<Contact> lstContact =ofNullable(showDto).map(e-> _servicePartner.findById(e.getIdProvider()).getContactList()).orElse(null);
-
-        if (lstContact != null && productById != null) {
-            for (Contact c : lstContact) {
-                for (AbstractAttributeNum sh : productById.getAttributeNumList()){
-                    if (sh.getValue().intValueExact() == c.getId() && sh.getKey().contains("idContact")){
-                        listContact.add(c.getName() +", email : "+c.getMail());
+        if ( lstContact != null && productById != null )
+        {
+            for ( Contact c : lstContact )
+            {
+                for ( AbstractAttributeNum sh : productById.getAttributeNumList( ) )
+                {
+                    if ( sh.getValue( ).intValueExact( ) == c.getId( ) && sh.getKey( ).contains( "idContact" ) )
+                    {
+                        listContact.add( c.getName( ) + ", email : " + c.getMail( ) );
                     }
                 }
             }
@@ -602,51 +610,63 @@ public class OfferJspBean extends AbstractJspBean
      *            The HTTP request
      * @return redirection url
      */
-    public String doSaveOffer( HttpServletRequest request ) {
-        if (request.getParameter(StockConstants.PARAMETER_BUTTON_CANCEL) != null) {
-            return doGoBack(request);
+    public String doSaveOffer( HttpServletRequest request )
+    {
+        if ( request.getParameter( StockConstants.PARAMETER_BUTTON_CANCEL ) != null )
+        {
+            return doGoBack( request );
         }
         Integer nSuppTickets = 0;
-        String strSuppTickets = request.getParameter(PARAMETER_SUP_TICKETS);
-        if (StringUtils.isNotBlank(strSuppTickets)) {
-            nSuppTickets = Integer.parseInt(strSuppTickets);
+        String strSuppTickets = request.getParameter( PARAMETER_SUP_TICKETS );
+        if ( StringUtils.isNotBlank( strSuppTickets ) )
+        {
+            nSuppTickets = Integer.parseInt( strSuppTickets );
         }
 
-        SeanceDTO offer = new SeanceDTO();
-        SeanceDTO offerInBdd = new SeanceDTO();
-        populate(offer, request);
-        boolean isNewOffer = offer.getId() == null;
+        SeanceDTO offer = new SeanceDTO( );
+        SeanceDTO offerInBdd = new SeanceDTO( );
+        populate( offer, request );
+        boolean isNewOffer = offer.getId( ) == null;
 
         if ( !isNewOffer )
         {
-            offerInBdd = _serviceOffer.findSeanceById( offer.getId() );
+            offerInBdd = _serviceOffer.findSeanceById( offer.getId( ) );
         }
 
-        if (offer.getTotalQuantity() != null ){
-            if (nSuppTickets > 0) {
-                if(offerInBdd.getTotalQuantity().equals(offer.getTotalQuantity())) {
-                    offer.setTotalQuantity(offer.getTotalQuantity() + nSuppTickets);
-                }else {
-                    offer.setTotalQuantity(offerInBdd.getTotalQuantity() + nSuppTickets);
+        if ( offer.getTotalQuantity( ) != null )
+        {
+            if ( nSuppTickets > 0 )
+            {
+                if ( offerInBdd.getTotalQuantity( ).equals( offer.getTotalQuantity( ) ) )
+                {
+                    offer.setTotalQuantity( offer.getTotalQuantity( ) + nSuppTickets );
+                }
+                else
+                {
+                    offer.setTotalQuantity( offerInBdd.getTotalQuantity( ) + nSuppTickets );
                 }
 
-                if(offerInBdd.getQuantity()==offer.getQuantity()) {
-                    offer.setQuantity(offer.getQuantity() + nSuppTickets);
-                }else {
-                    offer.setQuantity(offerInBdd.getQuantity() + nSuppTickets);
+                if ( offerInBdd.getQuantity( ) == offer.getQuantity( ) )
+                {
+                    offer.setQuantity( offer.getQuantity( ) + nSuppTickets );
+                }
+                else
+                {
+                    offer.setQuantity( offerInBdd.getQuantity( ) + nSuppTickets );
                 }
             }
         }
         else
         {
-                offer.setTotalQuantity(offer.getQuantity());
+            offer.setTotalQuantity( offer.getQuantity( ) );
         }
 
         int oldQuantity = 0;
-        if (StringUtils.isNotEmpty(request.getParameter(PARAMETER_OLD_QUANTITY))) {
-        	oldQuantity = Integer.valueOf(request.getParameter(PARAMETER_OLD_QUANTITY));
+        if ( StringUtils.isNotEmpty( request.getParameter( PARAMETER_OLD_QUANTITY ) ) )
+        {
+            oldQuantity = Integer.valueOf( request.getParameter( PARAMETER_OLD_QUANTITY ) );
         }
-        
+
         // make sur you set the initial quantity only in the first save offer, not in modify offer
         try
         {
@@ -667,9 +687,12 @@ public class OfferJspBean extends AbstractJspBean
         if ( isNewOffer )
         {
             doNotifyCreateOffer( request, offer );
-        } else if (offer.getQuantity() > oldQuantity) {
-        	doNotifyNewTickets(request, offer);
         }
+        else
+            if ( offer.getQuantity( ) > oldQuantity )
+            {
+                doNotifyNewTickets( request, offer );
+            }
 
         return doGoBack( request );
     }
@@ -693,10 +716,7 @@ public class OfferJspBean extends AbstractJspBean
         Map<String, Object> model = new HashMap<String, Object>( );
         model.put( MARK_OFFER, offer );
         model.put( MARK_PRODUCT, product );
-        model.put( MARK_BASE_URL, AppPathService.getBaseUrl(request)
-                + AppPathService.getPortalUrl()
-                + "?"
-                + QUERY_SPECIFIC_PRODUCT + product.getId());
+        model.put( MARK_BASE_URL, AppPathService.getBaseUrl( request ) + AppPathService.getPortalUrl( ) + "?" + QUERY_SPECIFIC_PRODUCT + product.getId( ) );
 
         // Create mail object
         HtmlTemplate template;
@@ -720,7 +740,7 @@ public class OfferJspBean extends AbstractJspBean
             _serviceNotification.send( notificationDTO );
         }
     }
-    
+
     /**
      * Send notification for user who subscribed to the product link with an offer.
      * 
@@ -740,10 +760,7 @@ public class OfferJspBean extends AbstractJspBean
         Map<String, Object> model = new HashMap<String, Object>( );
         model.put( MARK_OFFER, offer );
         model.put( MARK_PRODUCT, product );
-        model.put( MARK_BASE_URL, AppPathService.getBaseUrl(request)
-                + AppPathService.getPortalUrl()
-                + "?"
-                + QUERY_SPECIFIC_PRODUCT + product.getId());
+        model.put( MARK_BASE_URL, AppPathService.getBaseUrl( request ) + AppPathService.getPortalUrl( ) + "?" + QUERY_SPECIFIC_PRODUCT + product.getId( ) );
 
         // Create mail object
         HtmlTemplate template;

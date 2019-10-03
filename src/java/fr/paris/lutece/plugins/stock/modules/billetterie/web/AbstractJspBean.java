@@ -369,66 +369,67 @@ public class AbstractJspBean extends PluginAdminPageJspBean
         return dataTablePartner;
     }
 
-    
     /**
-    *
-    * @param request
-    *            the http request
-    * @param filter
-    *            the filter
-    * @param keyDataTable
-    *            the key to store data table manager
-    * @param jspManage
-    *            the url to the manage page
-    * @param service
-    *            the bean service
-    * @param findByFilter
-    *            the method which give the method to find beans
-    * @return the data table to use
-    */
-   protected <T> DataTableManager<T> getAbstractDataTableManager( HttpServletRequest request, Object filter, String keyDataTable, String jspManage,
-           Object service, Method findByFilter, boolean forceNewFilter )
-   {
-	// si un objet est déjà présent en session, on l'utilise
-       DataTableManager<T> dataTableToUse = getDataTableToUse( request, keyDataTable, jspManage );
+     *
+     * @param request
+     *            the http request
+     * @param filter
+     *            the filter
+     * @param keyDataTable
+     *            the key to store data table manager
+     * @param jspManage
+     *            the url to the manage page
+     * @param service
+     *            the bean service
+     * @param findByFilter
+     *            the method which give the method to find beans
+     * @return the data table to use
+     */
+    protected <T> DataTableManager<T> getAbstractDataTableManager( HttpServletRequest request, Object filter, String keyDataTable, String jspManage,
+            Object service, Method findByFilter, boolean forceNewFilter )
+    {
+        // si un objet est déjà présent en session, on l'utilise
+        DataTableManager<T> dataTableToUse = getDataTableToUse( request, keyDataTable, jspManage );
 
-       // determination de l'utilisation d'un nouveau filtre (recherche) ou de
-       // celui présent en session (changement de page)
-       Object filterToUse = filter;
-       if (!forceNewFilter) {
-    	   filterToUse = getFilterToUse( request, filter, MARK_FILTER, dataTableToUse );
-       }
-       BeanUtils.copyProperties( filterToUse, filter );
+        // determination de l'utilisation d'un nouveau filtre (recherche) ou de
+        // celui présent en session (changement de page)
+        Object filterToUse = filter;
+        if ( !forceNewFilter )
+        {
+            filterToUse = getFilterToUse( request, filter, MARK_FILTER, dataTableToUse );
+        }
+        BeanUtils.copyProperties( filterToUse, filter );
 
-       sortFilter( request, filterToUse );
+        sortFilter( request, filterToUse );
 
-       // mise à jour de la pagination dans le data table pour l'affichage de
-       // la page courante et du nombre d'items
-       DataTablePaginationProperties updatePaginator = dataTableToUse.getAndUpdatePaginator( request );
+        // mise à jour de la pagination dans le data table pour l'affichage de
+        // la page courante et du nombre d'items
+        DataTablePaginationProperties updatePaginator = dataTableToUse.getAndUpdatePaginator( request );
 
-       // obtention manuel des beans à afficher
-       PaginationPropertiesAdapterDataTable paginationProperties = new PaginationPropertiesAdapterDataTable( updatePaginator );
+        // obtention manuel des beans à afficher
+        PaginationPropertiesAdapterDataTable paginationProperties = new PaginationPropertiesAdapterDataTable( updatePaginator );
 
-       ResultList<T> listAllBean = null;
+        ResultList<T> listAllBean = null;
 
-       try
-       {
-           listAllBean = (ResultList<T>) findByFilter.invoke( service, filterToUse, paginationProperties );
-       }
-       catch( Exception e )
-       {
-           LOGGER.error( "Erreur lors de l'obtention de la liste des beans : " + e );
-       }
+        try
+        {
+            listAllBean = (ResultList<T>) findByFilter.invoke( service, filterToUse, paginationProperties );
+        }
+        catch( Exception e )
+        {
+            LOGGER.error( "Erreur lors de l'obtention de la liste des beans : " + e );
+        }
 
-       request.getSession( ).setAttribute( MARK_FILTER, filterToUse );
+        request.getSession( ).setAttribute( MARK_FILTER, filterToUse );
 
-       if ( listAllBean != null )
-       {
-           dataTableToUse.setItems( listAllBean, listAllBean.getTotalResult( ) );
-       }
+        if ( listAllBean != null )
+        {
+            dataTableToUse.setItems( listAllBean, listAllBean.getTotalResult( ) );
+        }
 
-       return dataTableToUse;
-   }
+        return dataTableToUse;
+    }
+
     /**
      *
      * @param request
@@ -448,7 +449,7 @@ public class AbstractJspBean extends PluginAdminPageJspBean
     protected <T> DataTableManager<T> getAbstractDataTableManager( HttpServletRequest request, Object filter, String keyDataTable, String jspManage,
             Object service, Method findByFilter )
     {
-       return getAbstractDataTableManager(request, filter, keyDataTable, jspManage, service, findByFilter, false);
+        return getAbstractDataTableManager( request, filter, keyDataTable, jspManage, service, findByFilter, false );
     }
 
     private void sortFilter( HttpServletRequest request, Object filter )

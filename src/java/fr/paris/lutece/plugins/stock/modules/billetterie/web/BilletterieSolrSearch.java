@@ -87,29 +87,29 @@ public class BilletterieSolrSearch extends HttpServlet
         StringBuilder sbFilter = new StringBuilder( "" );
         String sQuery = request.getParameter( MARK_QUERY );
 
-		String sQuoi = request.getParameter( MARK_QUOI );
-		String sOu = request.getParameter( MARK_OU );
-		String sQuand = request.getParameter( MARK_QUAND );
+        String sQuoi = request.getParameter( MARK_QUOI );
+        String sOu = request.getParameter( MARK_OU );
+        String sQuand = request.getParameter( MARK_QUAND );
 
-		if ( StringUtils.isNotEmpty( sQuery ) )
-		{
-			sbReq.append( "&query=" + sQuery );
-		}
+        if ( StringUtils.isNotEmpty( sQuery ) )
+        {
+            sbReq.append( "&query=" + sQuery );
+        }
 
-		if ( StringUtils.isNotEmpty( sQuoi ) )
-		{
-			sbFilter.append( sQuoi );
-		}
+        if ( StringUtils.isNotEmpty( sQuoi ) )
+        {
+            sbFilter.append( sQuoi );
+        }
 
-		if ( StringUtils.isNotEmpty( sOu ) )
-		{
-			sbFilter.append( sOu );
-		}
+        if ( StringUtils.isNotEmpty( sOu ) )
+        {
+            sbFilter.append( sOu );
+        }
 
-		if ( StringUtils.isNotEmpty( sQuand ) )
-		{
-			sbFilter.append( sQuand );
-		}
+        if ( StringUtils.isNotEmpty( sQuand ) )
+        {
+            sbFilter.append( sQuand );
+        }
 
         if ( sbFilter.toString( ).isEmpty( ) && StringUtils.isEmpty( sQuery ) )
         {
@@ -120,13 +120,13 @@ public class BilletterieSolrSearch extends HttpServlet
         {
             sbReq.append( sbFilter.toString( ) );
         }
-        sbReq.append(FQ_END_DATE_NOW_TO);
-        sbReq.append(FQ_TYPE_PRODUCT);
+        sbReq.append( FQ_END_DATE_NOW_TO );
+        sbReq.append( FQ_TYPE_PRODUCT );
 
         String sConf = request.getParameter( MARK_CONF );
         if ( StringUtils.isNotEmpty( sConf ) )
         {
-        	sbReq.append("&conf=").append(sConf);
+            sbReq.append( "&conf=" ).append( sConf );
         }
         LOGGER.debug( "Requête SOLR de date, redirection vers " + sbReq.toString( ) );
 

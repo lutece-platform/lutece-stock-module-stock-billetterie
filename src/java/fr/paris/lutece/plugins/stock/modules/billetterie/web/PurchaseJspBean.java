@@ -372,7 +372,6 @@ public class PurchaseJspBean extends AbstractJspBean
         String strOfferId = request.getParameter( MARK_OFFER_ID );
         String purchaseId = request.getParameter( MARK_PURCHASSE_ID );
         boolean forceNewFilter = false;
-        
 
         if ( strOfferId != null )
         {
@@ -389,12 +388,12 @@ public class PurchaseJspBean extends AbstractJspBean
             filter.setIdGenre( seance.getIdGenre( ) );
             filter.setDateBeginOffer( DateUtils.getDate( seance.getDate( ), false ) );
             filter.setDateEndOffer( DateUtils.getDate( seance.getDate( ), false ) );
-            
+
             forceNewFilter = true;
         }
 
         // Obtention des objets sauvegardés en session
-        DataTableManager<ReservationDTO> dataTableToUse = getDataTable( request, filter , forceNewFilter);
+        DataTableManager<ReservationDTO> dataTableToUse = getDataTable( request, filter, forceNewFilter );
         model.put( MARK_DATA_TABLE_PURCHASE, dataTableToUse );
 
         // Fill the model

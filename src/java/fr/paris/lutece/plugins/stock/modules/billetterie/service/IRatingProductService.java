@@ -4,7 +4,8 @@ import fr.paris.lutece.plugins.stock.modules.billetterie.business.RatingProductD
 
 import java.util.List;
 
-public interface IRatingProductService {
+public interface IRatingProductService
+{
 
-    List<RatingProductDTO> getAllRatingProduct();
+    List<RatingProductDTO> getAllRatingProduct( );
 }
