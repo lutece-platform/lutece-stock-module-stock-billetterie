@@ -88,8 +88,7 @@ public class BilletterieHomeSolrAddon implements ISolrSearchAppAddOn
         }
         catch( UserNotSignedException e )
         {
-            // TODO Auto-generated catch block
-            e.printStackTrace( );
+            AppLogService.info( "User not signed : " + e.getMessage( ) );
         }
 
         List<RecommendedProduct> listProducts = null;
