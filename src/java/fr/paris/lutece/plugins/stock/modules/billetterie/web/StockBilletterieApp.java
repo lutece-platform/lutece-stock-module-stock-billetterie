@@ -79,7 +79,6 @@ import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.message.SiteMessageException;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.security.LuteceUser;
-import fr.paris.lutece.portal.service.security.SecurityService;
 import fr.paris.lutece.portal.service.security.UserNotSignedException;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
@@ -107,6 +106,7 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
     private static final String TEMPLATE_BOOKING_BLOC = "booking_bloc.html";
     private static final String TEMPLATE_LIST_SHOW_PAGE = "list_show_page.html";
     private static final String TEMPLATE_SHOW_PAGE = "show_page.html";
+
 
     // Parameters
     private static final String PARAMETER_DATE_SEANCE = "date_seance";
@@ -217,10 +217,9 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
      *            locale
      * @return xpage
      */
-    public XPage getShowPage( XPage page, HttpServletRequest request, Locale locale )
-    {
+    public XPage getShowPage( XPage page, HttpServletRequest request, Locale locale ) throws SiteMessageException {
         // Get the user
-        LuteceUser currentUser = getUser( request );
+        LuteceUser currentUser = getLuteceUserAuthentication( request );
 
         String sIdShow = request.getParameter( PARAMETER_PRODUCT_ID );
 
@@ -564,14 +563,14 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
      * @return the current list show page
      * @throws UserNotSignedException
      */
-    private XPage getCurrentListShowPage( XPage page, HttpServletRequest request, Locale locale ) throws UserNotSignedException
+    private XPage getCurrentListShowPage( XPage page, HttpServletRequest request, Locale locale ) throws SiteMessageException
     {
-        String strUserName = getUsername( request );
+        LuteceUser user = getLuteceUserAuthentication( request );
 
         List<RecommendedProduct> listProducts = null;
         try
         {
-            listProducts = StockRecommendationService.instance( ).getRecommendedProducts( strUserName );
+            listProducts = StockRecommendationService.instance( ).getRecommendedProducts( user.getName() );
         }
         catch( TasteException ex )
         {
@@ -640,16 +639,7 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
      * @return the user name
      * @throws UserNotSignedException
      */
-    public static String getUsername( HttpServletRequest request ) throws UserNotSignedException
-    {
-        LuteceUser user = SecurityService.getInstance( ).getRegisteredUser( request );
-        if ( user == null )
-        {
-            throw new UserNotSignedException( );
-        }
 
-        return user.getName( );
-    }
 
     public static boolean convertStringToTimestamp( String strDate )
     {

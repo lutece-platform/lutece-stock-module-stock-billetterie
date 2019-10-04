@@ -43,6 +43,9 @@ import javax.servlet.http.HttpServletRequest;
 
 import fr.paris.lutece.plugins.htmlpage.business.HtmlPage;
 import fr.paris.lutece.plugins.htmlpage.business.HtmlPageHome;
+import fr.paris.lutece.portal.service.message.SiteMessage;
+import fr.paris.lutece.portal.service.message.SiteMessageException;
+import fr.paris.lutece.portal.service.message.SiteMessageService;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import org.apache.mahout.cf.taste.common.TasteException;
 
@@ -62,6 +65,7 @@ import static java.util.Optional.ofNullable;
 
 public class BilletterieHomeSolrAddon implements ISolrSearchAppAddOn
 {
+    private static final String PROPERTY_NOT_AUTHORIZED = "module.stock.billetterie.messages.notAuthorized";
     private static final String ORDER_FILTER_DATE_END = "dateEnd";
     private static final String MARK_SHOW_LIST = "show_list";
     private static final String MARK_TYPE_LIST = "type_list";
@@ -78,15 +82,14 @@ public class BilletterieHomeSolrAddon implements ISolrSearchAppAddOn
     private Plugin _plugin;
 
     @Override
-    public void buildPageAddOn( Map<String, Object> model, HttpServletRequest request )
-    {
+    public void buildPageAddOn( Map<String, Object> model, HttpServletRequest request ) {
         IShowService showServiceHome = (IShowService) SpringContextService.getContext( ).getBean( BEAN_STOCK_TICKETS_SHOW_SERVICE );
         String strUserName = "guid";
         try
         {
             strUserName = getUsername( request );
         }
-        catch( UserNotSignedException e )
+        catch( SiteMessageException e )
         {
             AppLogService.info( "User not signed : " + e.getMessage( ) );
         }
@@ -147,15 +150,25 @@ public class BilletterieHomeSolrAddon implements ISolrSearchAppAddOn
      * @return the user name
      * @throws UserNotSignedException
      */
-    public static String getUsername( HttpServletRequest request ) throws UserNotSignedException
+    public static String getUsername( HttpServletRequest request ) throws SiteMessageException
     {
-        LuteceUser user = SecurityService.getInstance( ).getRegisteredUser( request );
-        if ( user == null )
-        {
-            throw new UserNotSignedException( );
-        }
+            LuteceUser user = null;
 
-        return user.getName( );
+            if ( SecurityService.isAuthenticationEnable( ) )
+            { // myLutece not installed or disabled
+                user = SecurityService.getInstance( ).getRegisteredUser( request );
+
+                if ( user == null ) // user is not logged
+                {
+                    SiteMessageService.setMessage( request, PROPERTY_NOT_AUTHORIZED, SiteMessage.TYPE_STOP );
+                }
+            }
+            else
+            {
+                SiteMessageService.setMessage( request, PROPERTY_NOT_AUTHORIZED, SiteMessage.TYPE_STOP );
+            }
+
+            return user.getName();
     }
 
     public List<ShowDTO> aLafficheShows( List<ShowDTO> listShows )

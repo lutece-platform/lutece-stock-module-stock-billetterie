@@ -206,7 +206,7 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
             if ( ACTION_MY_BOOKINGS.equals( strAction ) )
             {
                 request.setAttribute( PARAMETER_TAB_ACTIVE, CONSTANT_RESERVATION_TAB_ACTIVE );
-                String strContent = getMyBookings( request, getUser( request ), locale );
+                String strContent = getMyBookings( request, locale );
                 page.setContent( strContent );
 
                 String pageTitle = getMessage( TITLE_MY_BOOKINGS, request );
@@ -224,7 +224,7 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
                     {
                         deleteSubscription( page, request, locale );
 
-                        String strContent = getMyBookings( request, getUser( request ), locale );
+                        String strContent = getMyBookings( request, locale );
                         page.setContent( strContent );
 
                         String pageTitle = getMessage( TITLE_MY_BOOKINGS, request );
@@ -647,12 +647,10 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
      * @throws UserNotSignedException
      *             If the user has not signed in
      */
-    public static String getMyBookings( HttpServletRequest request, LuteceUser user, Locale locale ) throws UserNotSignedException
+    public static String getMyBookings( HttpServletRequest request,  Locale locale ) throws SiteMessageException
     {
-        if ( user == null )
-        {
-            throw new UserNotSignedException( );
-        }
+
+        LuteceUser user = getLuteceUserAuthentication( request );
 
         // Get user bookings
         Date today = new Date( );

@@ -41,6 +41,9 @@ import fr.paris.lutece.plugins.stock.commons.exception.TechnicalException;
 import fr.paris.lutece.plugins.stock.commons.exception.ValidationException;
 import fr.paris.lutece.plugins.stock.modules.tickets.utils.constants.TicketsConstants;
 import fr.paris.lutece.portal.service.i18n.I18nService;
+import fr.paris.lutece.portal.service.message.SiteMessage;
+import fr.paris.lutece.portal.service.message.SiteMessageException;
+import fr.paris.lutece.portal.service.message.SiteMessageService;
 import fr.paris.lutece.portal.service.security.LuteceUser;
 import fr.paris.lutece.portal.service.security.SecurityService;
 import fr.paris.lutece.portal.service.security.UserNotSignedException;
@@ -71,6 +74,8 @@ import javax.validation.ConstraintViolation;
  */
 public abstract class AbstractXPageApp
 {
+    //Properties
+    private static final String PROPERTY_NOT_AUTHORIZED = "module.stock.billetterie.messages.notAuthorized";
     public static final String PARAMETER_NB_ITEMS_PER_PAGE = "items_per_page";
     public static final String DEFAULT_RESULTS_PER_PAGE = "10";
     public static final String DEFAULT_PAGE_INDEX = "1";
@@ -279,6 +284,29 @@ public abstract class AbstractXPageApp
         }
 
         return fe;
+    }
+
+
+    public static LuteceUser getLuteceUserAuthentication(HttpServletRequest request ) throws SiteMessageException
+    {
+
+        LuteceUser user = null;
+
+        if ( SecurityService.isAuthenticationEnable( ) )
+        { // myLutece not installed or disabled
+            user = SecurityService.getInstance( ).getRegisteredUser( request );
+
+            if ( user == null ) // user is not logged
+            {
+                SiteMessageService.setMessage( request, PROPERTY_NOT_AUTHORIZED, SiteMessage.TYPE_STOP );
+            }
+        }
+        else
+        {
+            SiteMessageService.setMessage( request, PROPERTY_NOT_AUTHORIZED, SiteMessage.TYPE_STOP );
+        }
+
+        return user;
     }
 
     /**
