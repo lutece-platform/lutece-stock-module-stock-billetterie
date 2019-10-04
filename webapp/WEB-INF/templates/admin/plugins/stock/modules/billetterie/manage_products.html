@@ -39,13 +39,15 @@
 					method="post">
 					<input type="hidden" name="filter" value="${filter!}">
 					<@showFilterInput id="filter_name" name="name"
-					value="${filter.name!}" size="50"
+					value="${filter.name!}"
 					label="#i18n{module.stock.billetterie.manage_product.filter.name}"
-					/> <@showFilterSelect list=provider_list id="filter_salle"
+					/>
+					<@showFilterSelect list=provider_list id="filter_salle"
 					name="idProvider" value="${filter.idProvider!}"
 					label="#i18n{module.stock.billetterie.manage_product.filter.salle}"
 					option="#i18n{module.stock.billetterie.manage_product.filter.salle}"
-					/> <@showFilterSelect list=category_list id="filter_category"
+					/>
+					<@showFilterSelect list=category_list id="filter_category"
 					name="idCategory" value="${filter.idCategory!}"
 					label="#i18n{module.stock.billetterie.manage_product.filter.category}"
 					option="#i18n{module.stock.billetterie.manage_product.filter.category}"
