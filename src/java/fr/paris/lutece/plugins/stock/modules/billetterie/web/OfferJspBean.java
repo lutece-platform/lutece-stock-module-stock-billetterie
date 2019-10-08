@@ -299,7 +299,7 @@ public class OfferJspBean extends AbstractJspBean
             forceNewFilter = true;
         }
 
-        if ( StringUtils.isNotEmpty( filter.getProductName( ) ) )
+        /*if ( StringUtils.isNotEmpty( filter.getProductName( ) ) )
         {
             ProductFilter productFilter = new ProductFilter( );
             productFilter.setName( filter.getProductName( ) );
@@ -310,7 +310,7 @@ public class OfferJspBean extends AbstractJspBean
             {
                 filter.setProductId( listShow.get( 0 ).getId( ) );
             }
-        }
+        }*/
 
         // Fill the model
         Map<String, Object> model = new HashMap<String, Object>( );
