@@ -77,6 +77,7 @@ public class BilletterieHomeSolrAddon implements ISolrSearchAppAddOn
     private static final String MARK_HTMLPAGE = "htmlpage";
 
     private static final DateFormat DATE_FORMAT = new SimpleDateFormat( "dd/MM/yyyy" );
+    public static final String FORMATTER_DATE = "dd/MM/yyyy";
 
     // private fields
     private Plugin _plugin;
@@ -115,7 +116,7 @@ public class BilletterieHomeSolrAddon implements ISolrSearchAppAddOn
 
         List<ShowDTO> currentListShow = aLafficheShows( showServiceHome.getCurrentProduct( orderList, null ) );
         currentListShow = currentListShow.stream( )
-                .filter( e -> formatStringToDate( e.getEndDate( ) ).getTime( ) > new Date( ).getTime( ) && e.getEndDate( ) != "" && e.getEndDate( ) != null )
+                .filter( e -> (formatStringToDate( e.getEndDate( ) ).getTime( ) >= formatStringToDate(new SimpleDateFormat(FORMATTER_DATE).format(new Date())).getTime( )) && e.getEndDate( ) != "" && e.getEndDate( ) != null )
                 .collect( Collectors.toList( ) );
 
         // Map<String, Object> model = new HashMap<String, Object>( );
@@ -130,7 +131,7 @@ public class BilletterieHomeSolrAddon implements ISolrSearchAppAddOn
     public Date formatStringToDate( String strDate )
     {
 
-        Date date = new Date( );
+        Date date = null;
         try
         {
             date = DATE_FORMAT.parse( strDate );
@@ -176,7 +177,7 @@ public class BilletterieHomeSolrAddon implements ISolrSearchAppAddOn
         List<ShowDTO> listShowsReturn = new ArrayList<ShowDTO>( );
         for ( ShowDTO showDTO : listShows )
         {
-            if ( showDTO.getAlaffiche( ) && formatStringToDate( showDTO.getEndDate( ) ).getTime( ) > new Date( ).getTime( ) )
+            if ( showDTO.getAlaffiche( ) )
                 listShowsReturn.add( showDTO );
         }
 
