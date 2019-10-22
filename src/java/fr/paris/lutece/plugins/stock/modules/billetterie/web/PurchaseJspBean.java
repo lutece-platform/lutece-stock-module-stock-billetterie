@@ -758,8 +758,7 @@ public class PurchaseJspBean extends AbstractJspBean
 
         String strJspBack = request.getParameter( StockConstants.MARK_JSP_BACK );
 
-        return StringUtils.isNotBlank( strJspBack ) ? ( AppPathService.getBaseUrl( request ) + strJspBack )
-                : ( AppPathService.getBaseUrl( request ) + JSP_MANAGE_PURCHASES );
+        return  ( AppPathService.getBaseUrl( request ) + JSP_MANAGE_PURCHASES );
     }
 
     /**

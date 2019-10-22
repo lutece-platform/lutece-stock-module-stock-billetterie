@@ -183,11 +183,10 @@ public class NotificationJspBean extends AbstractJspBean
         Product productById = _serviceShow.getProductById( ofNullable( showDto ).map( e -> e.getId( ) ).orElse( null ) );
         PurchaseFilter filter = new PurchaseFilter( );
 
-        List<ReservationDTO> listReservationsPurchase = new ArrayList<>( );
-        List<ReservationDTO> reservationDTOList = new ArrayList<>( );
+        List<ReservationDTO> listReservations = new ArrayList<>( );
+        Set<ReservationDTO> listReservationsPurchase = new HashSet<>();
 
         List<String> listContact = new ArrayList<>( );
-
         // If the notification is about an offer
         if ( StringUtils.isNotEmpty( strIdOffer ) )
         {
@@ -200,8 +199,11 @@ public class NotificationJspBean extends AbstractJspBean
             filter.setOrderAsc( true );
             filter.setIdOffer( idOffer );
 
-            // List<ReservationDTO> listReservations = this._servicePurchase.findByFilter( filter, null );
-            listReservationsPurchase = this._servicePurchase.findByFilter( filter, null );
+            listReservations = this._servicePurchase.findByFilter( filter, null );
+
+            listReservationsPurchase = listReservations.stream()
+                    .collect(Collectors.toCollection(() ->
+                            new TreeSet<>(Comparator.comparing(ReservationDTO::getUserName))));
 
             // If the action is to cancel the offer
             if ( StringUtils.isNotEmpty( strCancel )
@@ -343,10 +345,11 @@ public class NotificationJspBean extends AbstractJspBean
 
         if ( StringUtils.isNotEmpty( strCancel ) || StringUtils.isNotEmpty( strNotify ) )
         {
-
-            for ( ReservationDTO reservationDTO : listReservationsPurchase )
-            {
-                listContact.add( reservationDTO.getEmailAgent( ) );
+            if (listReservationsPurchase !=null){
+                for ( ReservationDTO reservationDTO : listReservationsPurchase )
+                {
+                    listContact.add( reservationDTO.getEmailAgent( ) );
+                }
             }
         }
         else
