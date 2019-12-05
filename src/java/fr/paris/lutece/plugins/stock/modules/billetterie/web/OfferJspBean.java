@@ -637,22 +637,30 @@ public class OfferJspBean extends AbstractJspBean
         {
             if ( nSuppTickets > 0 )
             {
-                if ( offerInBdd.getTotalQuantity( ).equals( offer.getTotalQuantity( ) ) )
-                {
-                    offer.setTotalQuantity( offer.getTotalQuantity( ) + nSuppTickets );
-                }
-                else
-                {
-                    offer.setTotalQuantity( offerInBdd.getTotalQuantity( ) + nSuppTickets );
-                }
+                if (offerInBdd.getTotalQuantity()!= null){
 
-                if ( offerInBdd.getQuantity( ) == offer.getQuantity( ) )
-                {
-                    offer.setQuantity( offer.getQuantity( ) + nSuppTickets );
+
+                    if ( offerInBdd.getTotalQuantity( ).equals( offer.getTotalQuantity( ) ) )
+                    {
+                        offer.setTotalQuantity( offer.getTotalQuantity( ) + nSuppTickets );
+                    }
+                    else
+                    {
+                        offer.setTotalQuantity( offerInBdd.getTotalQuantity( ) + nSuppTickets );
+                    }
+
+                    if ( offerInBdd.getQuantity( ) == offer.getQuantity( ) )
+                    {
+                        offer.setQuantity( offer.getQuantity( ) + nSuppTickets );
+                    }
+                    else
+                    {
+                        offer.setQuantity( offerInBdd.getQuantity( ) + nSuppTickets );
+                    }
                 }
-                else
-                {
-                    offer.setQuantity( offerInBdd.getQuantity( ) + nSuppTickets );
+                else {
+                    offer.setTotalQuantity( offer.getTotalQuantity( ) + nSuppTickets );
+                    offer.setQuantity( offer.getQuantity( ) + nSuppTickets );
                 }
             }
         }
