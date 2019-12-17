@@ -660,7 +660,22 @@ public class OfferJspBean extends AbstractJspBean
                 }
                 else {
                     offer.setTotalQuantity( offer.getTotalQuantity( ) + nSuppTickets );
-                    offer.setQuantity( offer.getQuantity( ) + nSuppTickets );
+                    if ( !isNewOffer )
+                    {
+                        offer.setQuantity( offer.getQuantity( ) + nSuppTickets );
+                    }
+                    else
+                    {
+                        offer.setQuantity( offer.getTotalQuantity( )  );
+                    }
+
+                }
+            }
+            else
+            {
+                if ( isNewOffer )
+                {
+                    offer.setQuantity( offer.getTotalQuantity( ) );
                 }
             }
         }
