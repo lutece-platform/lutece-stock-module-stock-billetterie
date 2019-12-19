@@ -190,6 +190,7 @@ public class OfferJspBean extends AbstractJspBean
     private static final String MESSAGE_SEARCH_PURCHASE_DATE = "module.stock.billetterie.message.search.purchase.date";
     private static final String MESSAGE_NOTIFICATION_OFFER_PRODUCT = "module.stock.billetterie.notification.offer.product";
     private static final String MESSAGE_ERROR_TICKETS_RANGE = "module.stock.billetterie.message.error.tickets.range";
+    private static final String MESSAGE_ERROR_SUPP_TICKETS = "module.stock.billetterie.message.error.supp.tickets";
     // BEANS
     private static final String BEAN_STOCK_TICKETS_SHOW_SERVICE = "stock-tickets.showService";
     private static final String BEAN_STOCK_TICKETS_SEANCE_SERVICE = "stock-tickets.seanceService";
@@ -484,6 +485,7 @@ public class OfferJspBean extends AbstractJspBean
                 {
                     offer.setId( null );
                     offer.setStatut( StringUtils.EMPTY );
+                    offer.setQuantity(offer.getTotalQuantity());
                 }
             } // Create a new offer
             else
@@ -632,50 +634,67 @@ public class OfferJspBean extends AbstractJspBean
         {
             offerInBdd = _serviceOffer.findSeanceById( offer.getId( ) );
         }
-
+        Integer nSuppSign = nSuppTickets;
+        if (nSuppTickets<0){
+            nSuppSign = nSuppTickets*(-1);
+        }
+        Integer restQuantity = null;
         if ( offer.getTotalQuantity( ) != null )
         {
-            if ( nSuppTickets > 0 )
-            {
-                if (offerInBdd.getTotalQuantity()!= null){
+            restQuantity = offer.getQuantity( );
+            if (nSuppTickets>0) {
+                    if (offerInBdd.getTotalQuantity() != null) {
 
-
-                    if ( offerInBdd.getTotalQuantity( ).equals( offer.getTotalQuantity( ) ) )
-                    {
-                        offer.setTotalQuantity( offer.getTotalQuantity( ) + nSuppTickets );
+                        if (offerInBdd.getTotalQuantity().equals(offer.getTotalQuantity())) {
+                            offer.setTotalQuantity(offer.getTotalQuantity() + nSuppTickets);
+                        } else {
+                            offer.setTotalQuantity(offerInBdd.getTotalQuantity() + nSuppTickets);
+                        }
+                        if (offerInBdd.getQuantity() == offer.getQuantity()) {
+                             offer.setQuantity(offer.getQuantity() + nSuppTickets);
+                         } else {
+                                offer.setQuantity(offer.getQuantity()+nSuppTickets);
+                        }
+                    } else {
+                        offer.setTotalQuantity(offer.getTotalQuantity() + nSuppTickets);
+                        if (!isNewOffer) {
+                            offer.setQuantity(offer.getQuantity()+nSuppTickets);
+                        } else {
+                            offer.setQuantity(offer.getTotalQuantity());
+                        }
                     }
-                    else
-                    {
-                        offer.setTotalQuantity( offerInBdd.getTotalQuantity( ) + nSuppTickets );
-                    }
-
-                    if ( offerInBdd.getQuantity( ) == offer.getQuantity( ) )
-                    {
-                        offer.setQuantity( offer.getQuantity( ) + nSuppTickets );
-                    }
-                    else
-                    {
-                        offer.setQuantity( offerInBdd.getQuantity( ) + nSuppTickets );
-                    }
-                }
-                else {
-                    offer.setTotalQuantity( offer.getTotalQuantity( ) + nSuppTickets );
-                    if ( !isNewOffer )
-                    {
-                        offer.setQuantity( offer.getQuantity( ) + nSuppTickets );
-                    }
-                    else
-                    {
-                        offer.setQuantity( offer.getTotalQuantity( )  );
-                    }
-
-                }
             }
             else
             {
-                if ( isNewOffer )
-                {
-                    offer.setQuantity( offer.getTotalQuantity( ) );
+                if (nSuppTickets<0) {
+                    if (offer.getQuantity() - nSuppSign >=0) {
+                        if (offerInBdd.getTotalQuantity() != null) {
+
+                            if (offerInBdd.getTotalQuantity().equals(offer.getTotalQuantity())) {
+                                offer.setTotalQuantity(offer.getTotalQuantity() + nSuppTickets);
+                            } else {
+                                offer.setTotalQuantity(offerInBdd.getTotalQuantity() + nSuppTickets);
+                            }
+                            if (offerInBdd.getQuantity() == offer.getQuantity()) {
+                                    offer.setQuantity(offer.getQuantity()+nSuppTickets);
+                            } else {
+                                offer.setQuantity(offer.getQuantity()+nSuppTickets);
+                            }
+                        } else {
+                            offer.setTotalQuantity(offer.getTotalQuantity() + nSuppTickets);
+                            if (!isNewOffer) {
+                                offer.setQuantity(offer.getQuantity()+nSuppTickets);
+                            } else {
+                                offer.setQuantity(offer.getTotalQuantity());
+                            }
+                        }
+                    }
+                }
+                else {
+                    if ( isNewOffer )
+                    {
+                        offer.setQuantity( offer.getTotalQuantity( ) );
+                    }
                 }
             }
         }
@@ -695,6 +714,13 @@ public class OfferJspBean extends AbstractJspBean
         {
             // Controls mandatory fields
             validateBilletterie( offer );
+            if (restQuantity != null){
+                if ( restQuantity < nSuppSign && nSuppTickets < 0)
+                {
+                    throw new BusinessException( offer, MESSAGE_ERROR_SUPP_TICKETS );
+                }
+            }
+
             if ( offer.getMinTickets( ) > offer.getMaxTickets( ) )
             {
                 throw new BusinessException( offer, MESSAGE_ERROR_TICKETS_RANGE );
