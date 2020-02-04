@@ -71,6 +71,8 @@ import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 
 import static java.util.Optional.ofNullable;
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.mapping;
 
 /**
  * This class provides the user interface to manage notifications
@@ -180,10 +182,11 @@ public class NotificationJspBean extends AbstractJspBean
         SeanceDTO seanceDto = new SeanceDTO( );
         seanceDto = ofNullable( idOffer ).map( e -> _serviceOffer.findSeanceById( e ) ).orElse( null );
         ShowDTO showDto = ofNullable( seanceDto ).map( e -> e.getProduct( ) ).orElse( null );
-        Product productById = _serviceShow.getProductById( ofNullable( showDto ).map( e -> e.getId( ) ).orElse( null ) );
+        Product productById = ofNullable(showDto).map( e ->_serviceShow.getProductById(e.getId()) ).orElse(null);
         PurchaseFilter filter = new PurchaseFilter( );
 
         List<ReservationDTO> listReservations = new ArrayList<>( );
+        Set<ReservationDTO> listReservationsPurchaseByUsername = new HashSet<>();
         Set<ReservationDTO> listReservationsPurchase = new HashSet<>();
 
         List<String> listContact = new ArrayList<>( );
@@ -201,9 +204,20 @@ public class NotificationJspBean extends AbstractJspBean
 
             listReservations = this._servicePurchase.findByFilter( filter, null );
 
-            listReservationsPurchase = listReservations.stream()
+            Map<String, Integer> reservationDtoByUsername = listReservations.stream()
+                    .collect(groupingBy(ReservationDTO::getUserName, Collectors.summingInt(ReservationDTO::getQuantity)
+                    ));
+
+            listReservationsPurchaseByUsername = listReservations.stream()
                     .collect(Collectors.toCollection(() ->
                             new TreeSet<>(Comparator.comparing(ReservationDTO::getUserName))));
+
+            if (reservationDtoByUsername != null) {
+                for (ReservationDTO reservationDTO:listReservationsPurchaseByUsername) {
+                    reservationDTO.setQuantity(reservationDtoByUsername.get(reservationDTO.getUserName()));
+                    listReservationsPurchase.add(reservationDTO);
+                }
+            }
 
             // If the action is to cancel the offer
             if ( StringUtils.isNotEmpty( strCancel )
