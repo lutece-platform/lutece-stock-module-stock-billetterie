@@ -60,11 +60,12 @@ public class BilletteriePortletDAO implements IBilletterieDAO
     @Override
     public void delete( int nPortletId )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE );
-        daoUtil.setInt( 1, nPortletId );
-
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+        try( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE ) )
+        {
+            daoUtil.setInt( 1, nPortletId );
+    
+            daoUtil.executeUpdate( );
+        }
     }
 
     /**
@@ -74,12 +75,13 @@ public class BilletteriePortletDAO implements IBilletterieDAO
     public void insert( Portlet portlet )
     {
         PortletBilletterie p = (PortletBilletterie) portlet;
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT );
-        daoUtil.setInt( 1, p.getId( ) );
-        daoUtil.setInt( 2, p.getnShow( ) );
-        daoUtil.setString( 3, p.getTypeContentPortlet( ) );
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+        try( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT ) )
+        {
+            daoUtil.setInt( 1, p.getId( ) );
+            daoUtil.setInt( 2, p.getnShow( ) );
+            daoUtil.setString( 3, p.getTypeContentPortlet( ) );
+            daoUtil.executeUpdate( );
+        }
     }
 
     /**
@@ -89,18 +91,19 @@ public class BilletteriePortletDAO implements IBilletterieDAO
     public Portlet load( int nIdPortlet )
     {
         PortletBilletterie portlet = new PortletBilletterie( );
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT );
-        daoUtil.setInt( 1, nIdPortlet );
-        daoUtil.executeQuery( );
-
-        if ( daoUtil.next( ) )
+        try( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT ) )
         {
-            portlet.setId( daoUtil.getInt( 1 ) );
-            portlet.setnShow( daoUtil.getInt( 2 ) );
-            portlet.setTypeContentPortlet( daoUtil.getString( 3 ) );
-        }
+            daoUtil.setInt( 1, nIdPortlet );
+            daoUtil.executeQuery( );
+    
+            if ( daoUtil.next( ) )
+            {
+                portlet.setId( daoUtil.getInt( 1 ) );
+                portlet.setnShow( daoUtil.getInt( 2 ) );
+                portlet.setTypeContentPortlet( daoUtil.getString( 3 ) );
+            }
 
-        daoUtil.free( );
+        }
 
         return portlet;
     }
@@ -112,12 +115,13 @@ public class BilletteriePortletDAO implements IBilletterieDAO
     public void store( Portlet portlet )
     {
         PortletBilletterie portl = (PortletBilletterie) portlet;
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE );
-        daoUtil.setInt( 1, portl.getId( ) );
-        daoUtil.setInt( 2, portl.getnShow( ) );
-        daoUtil.setString( 3, portl.getTypeContentPortlet( ) );
-        daoUtil.setInt( 4, portl.getId( ) );
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+        try( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE ) )
+        {
+            daoUtil.setInt( 1, portl.getId( ) );
+            daoUtil.setInt( 2, portl.getnShow( ) );
+            daoUtil.setString( 3, portl.getTypeContentPortlet( ) );
+            daoUtil.setInt( 4, portl.getId( ) );
+            daoUtil.executeUpdate( );
+        }
     }
 }

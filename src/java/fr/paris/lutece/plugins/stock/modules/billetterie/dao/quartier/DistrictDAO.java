@@ -108,7 +108,7 @@ public class DistrictDAO extends AbstractStockDAO<Integer, District>
     {
         if ( ( filter.getOrders( ) != null ) && !filter.getOrders( ).isEmpty( ) )
         {
-            List<Order> orderList = new LinkedList<Order>( );
+            List<Order> orderList = new LinkedList<>( );
 
             // get asc order
             for ( String order : filter.getOrders( ) )

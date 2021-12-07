@@ -21,32 +21,33 @@ public class RatingProductDAO implements IRatingProductDAO
         RatingProductDTO ratingProductDTO = null;
 
         int nIndex = 1;
-        DAOUtil daoUtil = new DAOUtil( SQL_ALL_PRODUCT_HAVE_RATING );
-        daoUtil.executeQuery( );
-
-        while ( daoUtil.next( ) )
+        try( DAOUtil daoUtil = new DAOUtil( SQL_ALL_PRODUCT_HAVE_RATING ) )
         {
-            nIndex = 1;
-
-            ratingProductDTO = new RatingProductDTO( );
-            ratingProductDTO.setName( daoUtil.getString( nIndex++ ) );
-
-            rating = new Rating( );
-            rating.setIdRating( daoUtil.getInt( nIndex++ ) );
-            rating.setIdExtendableResource( daoUtil.getString( nIndex++ ) );
-            rating.setExtendableResourceType( daoUtil.getString( nIndex++ ) );
-            rating.setVoteCount( daoUtil.getInt( nIndex++ ) );
-            rating.setScoreValue( daoUtil.getDouble( nIndex++ ) );
-            rating.setScorePositifsVotes( daoUtil.getInt( nIndex++ ) );
-            rating.setScoreNegativesVotes( daoUtil.getInt( nIndex ) );
-
-            ratingProductDTO.setVoteCount( rating.getVoteCount( ) );
-            ratingProductDTO.setRating( rating.getAverageScoreRoundToHalf( ) );
-
-            lstRatingProductDTO.add( ratingProductDTO );
+            daoUtil.executeQuery( );
+    
+            while ( daoUtil.next( ) )
+            {
+                nIndex = 1;
+    
+                ratingProductDTO = new RatingProductDTO( );
+                ratingProductDTO.setName( daoUtil.getString( nIndex++ ) );
+    
+                rating = new Rating( );
+                rating.setIdRating( daoUtil.getInt( nIndex++ ) );
+                rating.setIdExtendableResource( daoUtil.getString( nIndex++ ) );
+                rating.setExtendableResourceType( daoUtil.getString( nIndex++ ) );
+                rating.setVoteCount( daoUtil.getInt( nIndex++ ) );
+                rating.setScoreValue( daoUtil.getDouble( nIndex++ ) );
+                rating.setScorePositifsVotes( daoUtil.getInt( nIndex++ ) );
+                rating.setScoreNegativesVotes( daoUtil.getInt( nIndex ) );
+    
+                ratingProductDTO.setVoteCount( rating.getVoteCount( ) );
+                ratingProductDTO.setRating( rating.getAverageScoreRoundToHalf( ) );
+    
+                lstRatingProductDTO.add( ratingProductDTO );
+            }
+    
         }
-
-        daoUtil.free( );
 
         return lstRatingProductDTO;
     }
