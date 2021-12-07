@@ -238,7 +238,7 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
 
         Integer idPurchase = -1;
 
-        Map<String, Object> model = new HashMap<String, Object>( );
+        Map<String, Object> model = new HashMap<>( );
 
         Map<Integer, String> nbPlaceBookMap = new HashMap<>( );
         List<String> purchaseList = new ArrayList<>( );
@@ -374,7 +374,7 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
         SeanceFilter filter = new SeanceFilter( );
         filter.setOrderAsc( false );
 
-        List<String> orderList = new ArrayList<String>( );
+        List<String> orderList = new ArrayList<>( );
         orderList.add( ORDER_FILTER_DATE );
 
         // Get recommended Product
@@ -534,7 +534,7 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
         }
 
         // Generates template
-        Map<String, Object> model = new HashMap<String, Object>( );
+        Map<String, Object> model = new HashMap<>( );
 
         model.put( MARK_SEANCE_LIST, seanceList );
         for ( Integer key : nbPlaceBookMap.keySet( ) )
@@ -610,11 +610,11 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
      */
     private XPage getComeListShowPage( XPage page, HttpServletRequest request, Locale locale )
     {
-        List<String> orderList = new ArrayList<String>( );
+        List<String> orderList = new ArrayList<>( );
         orderList.add( ORDER_FILTER_DATE_START );
 
         List<ShowDTO> comeListShow = _showService.getComeProduct( orderList, null );
-        Map<String, Object> model = new HashMap<String, Object>( );
+        Map<String, Object> model = new HashMap<>( );
         model.put( MARK_SHOW_LIST, comeListShow );
         model.put( MARK_TYPE_LIST, TYPE_A_VENIR );
         model.put( MARK_URL_POSTER, AppPropertiesService.getProperty( PROPERTY_POSTER_TB_PATH ) );

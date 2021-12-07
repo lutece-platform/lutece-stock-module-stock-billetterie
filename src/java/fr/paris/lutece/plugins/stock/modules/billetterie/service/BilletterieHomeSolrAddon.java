@@ -119,7 +119,6 @@ public class BilletterieHomeSolrAddon implements ISolrSearchAppAddOn
                 .filter( e -> (formatStringToDate( e.getEndDate( ) ).getTime( ) >= formatStringToDate(new SimpleDateFormat(FORMATTER_DATE).format(new Date())).getTime( )) && e.getEndDate( ) != "" && e.getEndDate( ) != null )
                 .collect( Collectors.toList( ) );
 
-        // Map<String, Object> model = new HashMap<String, Object>( );
         model.put( MARK_SHOW_LIST, currentListShow );
         model.put( MARK_TYPE_LIST, TYPE_A_LAFFICHE );
         model.put( MARK_URL_POSTER, AppPropertiesService.getProperty( PROPERTY_POSTER_TB_PATH ) );
@@ -174,7 +173,7 @@ public class BilletterieHomeSolrAddon implements ISolrSearchAppAddOn
 
     public List<ShowDTO> aLafficheShows( List<ShowDTO> listShows )
     {
-        List<ShowDTO> listShowsReturn = new ArrayList<ShowDTO>( );
+        List<ShowDTO> listShowsReturn = new ArrayList<>( );
         for ( ShowDTO showDTO : listShows )
         {
             if ( showDTO.getAlaffiche( ) )

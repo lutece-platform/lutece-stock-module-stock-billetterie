@@ -65,7 +65,6 @@ public class BilleterieDashboardComponent extends DashboardComponent
     private static final String MARK_NUMBER_OF_ITEM_PER_PAGE = "nItem_per_page";
     private static final String MARK_SIZE_LIST_RATING_PRODUCT = "size_list_rp";
 
-    private static final String BEAN_STOCK_TICKETS_SHOW_SERVICE = "stock-tickets.showService";
     public static final String BEAN_RATING_PRODUCT_SERVICE = "stock-billetterie.RatingProductService";
 
     private static final String PARAMETER_PAGE_INDEX = "page_index";
@@ -109,11 +108,11 @@ public class BilleterieDashboardComponent extends DashboardComponent
             UrlItem urlItem = new UrlItem( AppPathService.getAdminMenuUrl( ) );
             String strCurrentPageIndex = Paginator.getPageIndex( request, Paginator.PARAMETER_PAGE_INDEX, DEFAULT_PAGE_INDEX );
 
-            paginator = new Paginator<RatingProductDTO>( ratingProductDTOList, nItemPerPage, urlItem.getUrl( ), PARAMETER_PAGE_INDEX, strCurrentPageIndex );
+            paginator = new Paginator<>( ratingProductDTOList, nItemPerPage, urlItem.getUrl( ), PARAMETER_PAGE_INDEX, strCurrentPageIndex );
         }
 
         // Fill the model
-        Map<String, Object> model = new HashMap<String, Object>( );
+        Map<String, Object> model = new HashMap<>( );
 
         model.put( MARK_NB_PRODUCT_A_L_AFFICHE, nProductCountALAffiche );
         model.put( MARK_NB_PRODUCT_A_VENIR, nProductCountAVenir );

@@ -107,7 +107,7 @@ public class AbstractJspBean extends PluginAdminPageJspBean
 
         Object object = request.getSession( ).getAttribute( StringUtils.isNotBlank( key ) ? key : MARK_DATA_TABLE_MANAGER );
 
-        if ( ( object != null ) && object instanceof DataTableManager<?> )
+        if ( object instanceof DataTableManager<?> )
         {
             try
             {
@@ -153,7 +153,7 @@ public class AbstractJspBean extends PluginAdminPageJspBean
     {
         Set<ConstraintViolation<T>> constraintViolations = BeanValidationUtil.validate( bean );
 
-        if ( constraintViolations.size( ) > 0 )
+        if ( !constraintViolations.isEmpty( ) )
         {
             ValidationException ve = new ValidationException( bean );
 
@@ -220,8 +220,8 @@ public class AbstractJspBean extends PluginAdminPageJspBean
      */
     protected String getHtmlError( FunctionnalException e )
     {
-        Map<String, Object> model = new HashMap<String, Object>( );
-        List<String> messageList = new ArrayList<String>( );
+        Map<String, Object> model = new HashMap<>( );
+        List<String> messageList = new ArrayList<>( );
 
         try
         {
@@ -328,10 +328,8 @@ public class AbstractJspBean extends PluginAdminPageJspBean
         // 1) est-ce qu'une recherche vient d'être faite ? 2) est-ce qu'un
         // filtre existe en session ? 3) est-ce que le filtre en session est
         // d'un type héritant du fitre fournit en parametre ?
-        T filterToUse = ( ( request.getParameter( TicketsConstants.MARK_FILTER ) != null ) || ( filterFromSession == null ) || !filterFromSession.getClass( )
+        return ( ( request.getParameter( TicketsConstants.MARK_FILTER ) != null ) || ( filterFromSession == null ) || !filterFromSession.getClass( )
                 .isAssignableFrom( filter.getClass( ) ) ) ? dataTable.getAndUpdateFilter( request, filter ) : filterFromSession;
-
-        return filterToUse;
     }
 
     /**
@@ -361,10 +359,8 @@ public class AbstractJspBean extends PluginAdminPageJspBean
         }
 
         DataTableManager<T> dataTableFromSession = loadDataTableFromSession( request, markFilter );
-        DataTableManager<T> dataTablePartner = ( dataTableFromSession != null ) ? dataTableFromSession : new DataTableManager<T>( jspManage, StringUtils.EMPTY,
+        return ( dataTableFromSession != null ) ? dataTableFromSession : new DataTableManager<>( jspManage, StringUtils.EMPTY,
                 nDefaultPagination != null ? nDefaultPagination : 10, true );
-
-        return dataTablePartner;
     }
 
     /**
@@ -454,17 +450,15 @@ public class AbstractJspBean extends PluginAdminPageJspBean
     {
         String ascSort = request.getParameter( MARK_ASC_SORT );
         String sortedAttribute = request.getParameter( "sorted_attribute_name" );
-        List<String> orders = new ArrayList<String>( );
+        List<String> orders = new ArrayList<>( );
 
-        if ( StringUtils.isNotBlank( ascSort ) && StringUtils.isNotBlank( sortedAttribute ) )
+        if ( StringUtils.isNotBlank( ascSort ) && StringUtils.isNotBlank( sortedAttribute ) && filter instanceof BeanFilter)
         {
-            if ( filter instanceof BeanFilter )
-            {
-                orders.add( sortedAttribute );
-                ( (BeanFilter) filter ).setOrders( orders );
 
-                ( (BeanFilter) filter ).setOrderAsc( PARAMETER_TRUE.equals( ascSort ) );
-            }
+            orders.add( sortedAttribute );
+            ( (BeanFilter) filter ).setOrders( orders );
+
+            ( (BeanFilter) filter ).setOrderAsc( PARAMETER_TRUE.equals( ascSort ) );
         }
     }
 }

@@ -121,7 +121,7 @@ public abstract class AbstractXPageApp
     {
         Set<ConstraintViolation<T>> constraintViolations = BeanValidationUtil.validate( bean );
 
-        if ( constraintViolations.size( ) > 0 )
+        if ( !constraintViolations.isEmpty( ) )
         {
             ValidationException ve = new ValidationException( bean );
 
@@ -207,8 +207,8 @@ public abstract class AbstractXPageApp
      */
     protected String getHtmlError( FunctionnalException e, HttpServletRequest request )
     {
-        Map<String, Object> model = new HashMap<String, Object>( );
-        List<String> messageList = new ArrayList<String>( );
+        Map<String, Object> model = new HashMap<>( );
+        List<String> messageList = new ArrayList<>( );
 
         try
         {
@@ -325,7 +325,7 @@ public abstract class AbstractXPageApp
         String strDefaultNbItemPerPage = AppPropertiesService.getProperty( PROPERTY_RESULTS_PER_PAGE, DEFAULT_RESULTS_PER_PAGE );
         strNbItemPerPage = ( strNbItemPerPage != null ) ? strNbItemPerPage : strDefaultNbItemPerPage;
 
-        int nItemsPerPage = Integer.valueOf( strNbItemPerPage );
+        int nItemsPerPage = Integer.parseInt( strNbItemPerPage );
 
         return new PaginationPropertiesImpl( ( nCurrentPageIndex - 1 ) * nItemsPerPage, nItemsPerPage );
     }

@@ -75,6 +75,11 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class CategoryJspBean extends AbstractJspBean
 {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+
     public static final Logger LOGGER = Logger.getLogger( CategoryJspBean.class );
 
     /** The Constant PARAMETER_CATEGORY_ID. */
@@ -190,13 +195,13 @@ public class CategoryJspBean extends AbstractJspBean
         setPageTitleProperty( PAGE_TITLE_MANAGE_CATEGORY );
 
         CategoryFilter filter = getCategoryFilter( request );
-        List<String> orderList = new ArrayList<String>( );
+        List<String> orderList = new ArrayList<>( );
         orderList.add( BilletterieConstants.NAME );
         filter.setOrders( orderList );
         filter.setOrderAsc( true );
 
         // Fill the model
-        Map<String, Object> model = new HashMap<String, Object>( );
+        Map<String, Object> model = new HashMap<>( );
 
         // Obtention des objets sauvegardés en session
         DataTableManager<ShowCategoryDTO> dataTableToUse = getDataTable( request, filter );
@@ -265,7 +270,7 @@ public class CategoryJspBean extends AbstractJspBean
     public String getSaveCategory( HttpServletRequest request, String strCategoryClassName )
     {
         ShowCategoryDTO category = null;
-        Map<String, Object> model = new HashMap<String, Object>( );
+        Map<String, Object> model = new HashMap<>( );
 
         FunctionnalException fe = getErrorOnce( request );
 

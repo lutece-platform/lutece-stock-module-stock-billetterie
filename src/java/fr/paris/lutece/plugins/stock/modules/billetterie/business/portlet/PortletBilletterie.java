@@ -71,8 +71,6 @@ public class PortletBilletterie extends Portlet
     private static final String TAG_SHOW_START_DATE = "date_debut";
     private static final String TAG_SHOW_END_DATE = "date_fin";
     private static final String TAG_SHOW_POSTER_URL = "posterUrl";
-
-    // private static final String TAG_SHOW_DESCRIPTION = "description";
     private static final String TAG_SHOW_TYPE_PORTLET = "typePortlet";
     private static final String TAG_SHOW = "show";
     private static final String TAG_SHOW_URL = "url";
@@ -162,7 +160,7 @@ public class PortletBilletterie extends Portlet
             paginator = null;
         }
 
-        List<String> orders = new ArrayList<String>( );
+        List<String> orders = new ArrayList<>( );
 
         if ( strContentPortlet.equals( "a-laffiche" ) )
         {
@@ -200,8 +198,6 @@ public class PortletBilletterie extends Portlet
                 XmlUtil.addElement( strXml, TAG_SHOW_START_DATE, showDTO.getStartDate( ) );
                 XmlUtil.addElement( strXml, TAG_SHOW_END_DATE, showDTO.getEndDate( ) );
 
-                // XmlUtil.addElement( strXml, TAG_SHOW_DESCRIPTION,
-                // showDTO.getDescription( ) );
                 UrlItem url = new UrlItem( URL_SHOW );
                 url.addParameter( PARAMETER_STOCK_ID, showDTO.getId( ) );
                 XmlUtil.addElement( strXml, TAG_SHOW_URL, "<![CDATA[" + url.getUrl( ) + "]]>" );

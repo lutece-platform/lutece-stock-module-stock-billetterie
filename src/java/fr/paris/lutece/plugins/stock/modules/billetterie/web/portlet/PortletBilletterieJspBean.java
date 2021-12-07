@@ -78,7 +78,7 @@ public class PortletBilletterieJspBean extends PortletJspBean
     {
         String strPageId = request.getParameter( PARAMETER_PAGE_ID );
         String strPortletTypeId = request.getParameter( PARAMETER_PORTLET_TYPE_ID );
-        Map<String, Object> model = new HashMap<String, Object>( );
+        Map<String, Object> model = new HashMap<>( );
         model.put( MARK_WEBAPP_URL, AppPathService.getBaseUrl( request ) );
         model.put( MARK_LOCALE, AdminUserService.getLocale( request ).getLanguage( ) );
         model.put( PARAMETRE_NUMBER_SHOW, StringUtils.EMPTY );
@@ -128,7 +128,7 @@ public class PortletBilletterieJspBean extends PortletJspBean
         int nPortletId = Integer.parseInt( strPortletId );
         PortletBilletterie portlet = (PortletBilletterie) PortletHome.findByPrimaryKey( nPortletId );
         int nbrShow = portlet.getnShow( );
-        Map<String, Object> model = new HashMap<String, Object>( );
+        Map<String, Object> model = new HashMap<>( );
         model.put( MARK_WEBAPP_URL, AppPathService.getBaseUrl( request ) );
         model.put( MARK_LOCALE, AdminUserService.getLocale( request ).getLanguage( ) );
         model.put( PARAMETRE_TYPE_CONTENT_PORTLET, portlet.getTypeContentPortlet( ) );

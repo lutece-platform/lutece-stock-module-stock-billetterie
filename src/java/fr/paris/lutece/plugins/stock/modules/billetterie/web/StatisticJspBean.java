@@ -163,7 +163,7 @@ public class StatisticJspBean extends AbstractJspBean
     {
         setPageTitleProperty( StockConstants.EMPTY_STRING );
 
-        Map<String, Object> model = new HashMap<String, Object>( );
+        Map<String, Object> model = new HashMap<>( );
         HtmlTemplate t = AppTemplateService.getTemplate( TEMPLATE_MANAGE_STATISTICS, getLocale( ), model );
 
         return getAdminPage( t.getHtml( ) );
@@ -181,7 +181,7 @@ public class StatisticJspBean extends AbstractJspBean
         Locale locale = getLocale( );
         HtmlTemplate template;
         int nNumberResponse = 0;
-        Map<String, Object> model = new HashMap<String, Object>( );
+        Map<String, Object> model = new HashMap<>( );
 
         String strFistResponseDateFilter = request.getParameter( PARAMETER_FIRST_RESPONSE_DATE_FILTER );
         String strLastResponseDateFilter = request.getParameter( PARAMETER_LAST_RESPONSE_DATE_FILTER );
@@ -222,7 +222,6 @@ public class StatisticJspBean extends AbstractJspBean
         model.put( MARK_FIRST_RESPONSE_DATE_FILTER, ( tFistResponseDateFilter == null ) ? null : new Date( tFistResponseDateFilter.getTime( ) ) );
         model.put( MARK_LAST_RESPONSE_DATE_FILTER, ( tLastResponseDateFilter == null ) ? null : new Date( tLastResponseDateFilter.getTime( ) ) );
         model.put( MARK_TIMES_UNIT, strTimesUnit );
-        // model.put( MARK_EXPORT_FORMAT_REF_LIST, ExportFormatHome.getListExport( plugin ) );
         model.put( "beanName", "product" );
         setPageTitleProperty( PAGE_TITLE_MANAGE_PRODUCTS );
         template = AppTemplateService.getTemplate( TEMPLATE_MANAGE_PRODUCTS_STATISTICS, locale, model );
@@ -242,7 +241,7 @@ public class StatisticJspBean extends AbstractJspBean
         Locale locale = getLocale( );
         HtmlTemplate template;
         int nNumberResponse = 0;
-        Map<String, Object> model = new HashMap<String, Object>( );
+        Map<String, Object> model = new HashMap<>( );
 
         String strFistResponseDateFilter = request.getParameter( PARAMETER_FIRST_RESPONSE_DATE_FILTER );
         String strLastResponseDateFilter = request.getParameter( PARAMETER_LAST_RESPONSE_DATE_FILTER );
@@ -283,7 +282,6 @@ public class StatisticJspBean extends AbstractJspBean
         model.put( MARK_FIRST_RESPONSE_DATE_FILTER, ( tFistResponseDateFilter == null ) ? null : new Date( tFistResponseDateFilter.getTime( ) ) );
         model.put( MARK_LAST_RESPONSE_DATE_FILTER, ( tLastResponseDateFilter == null ) ? null : new Date( tLastResponseDateFilter.getTime( ) ) );
         model.put( MARK_TIMES_UNIT, strTimesUnit );
-        // model.put( MARK_EXPORT_FORMAT_REF_LIST, ExportFormatHome.getListExport( plugin ) );
         setPageTitleProperty( PAGE_TITLE_MANAGE_PURCHASE );
         template = AppTemplateService.getTemplate( TEMPLATE_MANAGE_PURCHASE_STATISTICS, locale, model );
 
@@ -417,17 +415,6 @@ public class StatisticJspBean extends AbstractJspBean
 
         List<String [ ]> listToCSVWriter = StatisticService.buildListToCSVWriter( listeResultStatistic, strTimesUnit, getLocale( ) );
 
-        // if ( listToCSVWriter == null )
-        // {
-        // if ( strTypeData.equals( CONSTANT_PRODUCT_TYPE ) )
-        // {
-        // return getManageProducts( request );
-        // }
-        // else
-        // {
-        // return getManagePurchases( request );
-        // }
-        // }
         String strCsvSeparator = AppPropertiesService.getProperty( TicketsConstants.PROPERTY_CSV_SEPARATOR );
         StringWriter strWriter = new StringWriter( );
         CSVWriter csvWriter = new CSVWriter( strWriter, strCsvSeparator.toCharArray( ) [0] );

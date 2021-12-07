@@ -182,18 +182,10 @@ public class SubscriptionProductJspBean extends AbstractJspBean
      */
     public List<Product> getProductsSubscribedByUser( LuteceUser currentUser )
     {
-        // StringBuilder page = new StringBuilder( );
         String strEmailHome = currentUser.getUserInfo( LuteceUser.HOME_INFO_ONLINE_EMAIL );
         String strEmailBusiness = currentUser.getUserInfo( LuteceUser.BUSINESS_INFO_ONLINE_EMAIL );
 
         String strEmail = !strEmailHome.equals( "" ) ? strEmailHome : strEmailBusiness;
-
-        /*
-         * for ( Product product : _subscriptionProductService.getProductsByUserSubscription( strEmail ) ) { page.append( strEmail ); page.append( ":" );
-         * page.append( product ); page.append( "\n" ); }
-         * 
-         * return page.toString( );
-         */
 
         return _subscriptionProductService.getProductsByUserSubscription( strEmail );
     }

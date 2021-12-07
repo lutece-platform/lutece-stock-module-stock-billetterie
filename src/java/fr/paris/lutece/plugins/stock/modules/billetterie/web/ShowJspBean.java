@@ -275,15 +275,13 @@ public class ShowJspBean extends AbstractJspBean
      */
     public String getManageProducts( HttpServletRequest request )
     {
-        // String strToDate = getToday( );
-
         setPageTitleProperty( PAGE_TITLE_MANAGE_PRODUCT );
 
         ProductFilter filter = getProductFilter( request );
-        List<String> orderList = new ArrayList<String>( );
+        List<String> orderList = new ArrayList<>( );
         orderList.add( BilletterieConstants.NAME );
         filter.setOrderAsc( true );
-        if ( filter.getOrders( ) != null && filter.getOrders( ).size( ) > 0 )
+        if ( filter.getOrders( ) != null && !filter.getOrders( ).isEmpty( ) )
         {
             filter.setOrders( filter.getOrders( ) );
         }
@@ -292,13 +290,10 @@ public class ShowJspBean extends AbstractJspBean
             filter.setOrders( orderList );
         }
 
-        /*
-         * if ( filter.getDateFrom( ) == null ) { filter.setDateFrom( strToDate ); }
-         */
 
         DataTableManager<ShowDTO> dataTableToUse = getDataTable( request, filter );
 
-        Map<String, Object> model = new HashMap<String, Object>( );
+        Map<String, Object> model = new HashMap<>( );
 
         model.put( MARK_DATA_TABLE_PRODUCT, dataTableToUse );
 
@@ -363,8 +358,6 @@ public class ShowJspBean extends AbstractJspBean
             dataTableToUse.addColumn( "module.stock.billetterie.manage_product.filter.name", "name", true );
             dataTableToUse.addColumn( "module.stock.billetterie.manage_product.filter.provider", "providerName", true );
             dataTableToUse.addColumn( "module.stock.billetterie.manage_product.filter.category", "categoryName", true );
-            // dataTableToUse.addColumn("module.stock.billetterie.manage_product.filter.date_from", "startDate", true);
-            // dataTableToUse.addColumn("module.stock.billetterie.manage_product.filter.date_to", "endDate", true);
             dataTableToUse.addFreeColumn( "module.stock.billetterie.manage_product.dates", MACRO_COLUMN_DATES_PRODUCT );
             dataTableToUse.addFreeColumn( "module.stock.billetterie.manage_product.actionsLabel", MACRO_COLUMN_ACTIONS_PRODUCT );
         }
@@ -377,9 +370,8 @@ public class ShowJspBean extends AbstractJspBean
     private ReferenceList getContactComboList( int idProvider )
     {
         PartnerDTO findById = _serviceProvider.findById( idProvider );
-        ReferenceList contactComboList = ListUtils.toReferenceList( findById.getContactList( ), BilletterieConstants.ID, BilletterieConstants.NAME,
+        return ListUtils.toReferenceList( findById.getContactList( ), BilletterieConstants.ID, BilletterieConstants.NAME,
                 StockConstants.EMPTY_STRING );
-        return contactComboList;
     }
 
     /**
@@ -395,7 +387,7 @@ public class ShowJspBean extends AbstractJspBean
     public String getSaveProduct( HttpServletRequest request, String strProductClassName )
     {
         ShowDTO product = null;
-        Map<String, Object> model = new HashMap<String, Object>( );
+        Map<String, Object> model = new HashMap<>( );
 
         FunctionnalException fe = getErrorOnce( request );
 
@@ -425,7 +417,7 @@ public class ShowJspBean extends AbstractJspBean
                     // the product
                     populate( product, request );
                     String strIdProvider = request.getParameter( PARAMETER_PRODUCT_ID_PROVIDER );
-                    int nIdSelectedProvider = Integer.valueOf( strIdProvider );
+                    int nIdSelectedProvider = Integer.parseInt( strIdProvider );
 
                     if ( nIdSelectedProvider >= 0 )
                     {
@@ -476,14 +468,13 @@ public class ShowJspBean extends AbstractJspBean
 
             if ( ( fileItem != null ) && ( fileItem.getSize( ) > 0 ) )
             {
-                // writePoster( request, product );
                 product.setPosterName( fileItem.getName( ) );
                 populate( product, request );
             }
         }
 
         // Combo
-        List<String> orderList = new ArrayList<String>( );
+        List<String> orderList = new ArrayList<>( );
         orderList.add( BilletterieConstants.NAME );
 
         ProviderFilter providerFilter = new ProviderFilter( );
@@ -606,8 +597,6 @@ public class ShowJspBean extends AbstractJspBean
                     fisPoster = fileItem.getInputStream( );
                     realFisPoster = fileItem.getInputStream( );
 
-                    // File fPoster = new File( new File( posterFolderPath ),
-                    // fileItem.getName( ) );
                     File fPoster = File.createTempFile( FilenameUtils.getBaseName( fileItem.getName( ) ), null );
                     File realPoster = File.createTempFile( FilenameUtils.getBaseName( fileItem.getName( ) ), null );
 
@@ -656,13 +645,10 @@ public class ShowJspBean extends AbstractJspBean
             }
         }
 
-        if ( !fileGotten )
+        if ( !fileGotten && StringUtils.isEmpty( product.getPosterName( ) ))
         {
             // Error mandatory poster
-            if ( StringUtils.isEmpty( product.getPosterName( ) ) )
-            {
-                throw new BusinessException( product, MESSAGE_ERROR_MANDATORY_POSTER );
-            }
+            throw new BusinessException( product, MESSAGE_ERROR_MANDATORY_POSTER );
         }
 
         return filePosterArray;
@@ -696,9 +682,6 @@ public class ShowJspBean extends AbstractJspBean
         String strSortedAttributeName = request.getParameter( Parameters.SORTED_ATTRIBUTE_NAME );
 
         // "filter" in request ==> new filter. use old one otherwise
-        // if ( request.getParameter( TicketsConstants.PARAMETER_FILTER ) !=
-        // null )
-        // {
         ProductFilter filter = new ShowFilter( );
         populate( filter, request );
 
@@ -709,7 +692,6 @@ public class ShowJspBean extends AbstractJspBean
 
         _productFilter = filter;
 
-        // }
         if ( strSortedAttributeName != null )
         {
             _productFilter.getOrders( ).add( strSortedAttributeName );
@@ -746,7 +728,7 @@ public class ShowJspBean extends AbstractJspBean
             return AdminMessageService.getMessageUrl( request, StockConstants.MESSAGE_ERROR_OCCUR, AdminMessage.TYPE_STOP );
         }
 
-        Map<String, Object> urlParam = new HashMap<String, Object>( );
+        Map<String, Object> urlParam = new HashMap<>( );
         urlParam.put( PARAMETER_CATEGORY_ID, nIdProduct );
 
         String strJspBack = request.getParameter( StockConstants.MARK_JSP_BACK );

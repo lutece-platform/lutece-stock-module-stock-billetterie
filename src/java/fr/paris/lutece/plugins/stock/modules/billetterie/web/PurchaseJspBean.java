@@ -63,7 +63,6 @@ import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPathService;
-import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.portal.web.constants.Parameters;
 import fr.paris.lutece.util.ReferenceItem;
 import fr.paris.lutece.util.ReferenceList;
@@ -92,8 +91,10 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class PurchaseJspBean extends AbstractJspBean
 {
-    /** The logger for this jspBean */
-    public static final Logger LOGGER = Logger.getLogger( PurchaseJspBean.class );
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
 
     /** The constant String RESOURCE_TYPE */
     public static final String RESOURCE_TYPE = "STOCK";
@@ -310,9 +311,7 @@ public class PurchaseJspBean extends AbstractJspBean
         // "filter" in request ==> new filter. use old one otherwise
         if ( request.getParameter( TicketsConstants.PARAMETER_FILTER ) != null )
         {
-            // ReservationFilter filter = new ReservationFilter( );
             buildFilter( filter, request );
-            // _purchaseFilter = filter;
         }
 
         _purchaseFilter = filter;
@@ -340,11 +339,11 @@ public class PurchaseJspBean extends AbstractJspBean
     {
         setPageTitleProperty( PROPERTY_PAGE_TITLE_MANAGE_PURCHASE );
 
-        Map<String, Object> model = new HashMap<String, Object>( );
+        Map<String, Object> model = new HashMap<>( );
         ReservationFilter filter = getPurchaseFilter( request );
 
         // if date begin is after date end, add error
-        List<String> error = new ArrayList<String>( );
+        List<String> error = new ArrayList<>( );
 
         if ( ( filter.getDateBeginOffer( ) != null ) && ( filter.getDateEndOffer( ) != null ) && filter.getDateBeginOffer( ).after( filter.getDateEndOffer( ) ) )
         {
@@ -359,7 +358,7 @@ public class PurchaseJspBean extends AbstractJspBean
         model.put( MARK_ERRORS, error );
 
         // OrderList for purchase list
-        List<String> orderList = new ArrayList<String>( );
+        List<String> orderList = new ArrayList<>( );
         orderList.add( ORDER_FILTER_DATE );
         orderList.add( ORDER_FILTER_OFFER_PRODUCT_NAME );
         orderList.add( ORDER_FILTER_OFFER_DATE );
@@ -445,10 +444,10 @@ public class PurchaseJspBean extends AbstractJspBean
         if ( dataTableToUse.getListColumn( ).isEmpty( ) )
         {
             dataTableToUse.addFreeColumn( StringUtils.EMPTY, MACRO_COLUMN_CHECKBOX_DELETE_PURCHASE );
-            dataTableToUse.addColumn( "module.stock.billetterie.list_purchase.table.product", "offer.product.name", true );
+            dataTableToUse.addColumn( "module.stock.billetterie.list_purchase.table.product", ORDER_FILTER_OFFER_PRODUCT_NAME, true );
             dataTableToUse.addFreeColumn( "module.stock.billetterie.list_purchase.table.dateOffer", MACRO_COLUMN_DATE_PURCHASE );
             dataTableToUse.addColumn( "module.stock.billetterie.list_purchase.table.datePurchase", "date", false );
-            dataTableToUse.addColumn( "module.stock.billetterie.list_purchase.table.typeOffer", "offer.typeName", true );
+            dataTableToUse.addColumn( "module.stock.billetterie.list_purchase.table.typeOffer", ORDER_FILTER_OFFER_TYPE_NAME, true );
             dataTableToUse.addFreeColumn( "module.stock.billetterie.list_purchase.table.userName", MACRO_COLUMN_AGENT_PURCHASE );
             dataTableToUse.addColumn( "module.stock.billetterie.list_purchase.table.quantity", "quantity", false );
             dataTableToUse.addFreeColumn( "module.stock.billetterie.list_purchase.table.actions", MACRO_COLUMN_ACTIONS_PURCHASE );
@@ -471,7 +470,7 @@ public class PurchaseJspBean extends AbstractJspBean
     public String getSavePurchase( HttpServletRequest request, HttpServletResponse response )
     {
         ReservationDTO purchase = null;
-        Map<String, Object> model = new HashMap<String, Object>( );
+        Map<String, Object> model = new HashMap<>( );
         model.put( MARK_LOCALE, getLocale( ) );
 
         String strIdOffer;
@@ -714,13 +713,13 @@ public class PurchaseJspBean extends AbstractJspBean
         if ( seance != null && seance.getQuantity( ) < seance.getMinTickets( ) )
         {
             // Generate mail content
-            Map<String, Object> model = new HashMap<String, Object>( );
+            Map<String, Object> model = new HashMap<>( );
             model.put( MARK_SEANCE, seance );
             model.put( MARK_BASE_URL, AppPathService.getBaseUrl( request ) );
 
             HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_NOTIFICATION_ADMIN_OFFER_QUANTITY, request.getLocale( ), model );
 
-            Collection<AdminUser> listUsers = (List<AdminUser>) AdminUserHome.findUserList( );
+            Collection<AdminUser> listUsers = AdminUserHome.findUserList( );
 
             for ( AdminUser adminUser : listUsers )
             {
@@ -753,8 +752,6 @@ public class PurchaseJspBean extends AbstractJspBean
     {
         // Libère la réservation prévue sur la page de réservation
         _purchaseSessionManager.release( request.getSession( ).getId( ), purchase );
-
-        String strJspBack = request.getParameter( StockConstants.MARK_JSP_BACK );
 
         return  ( AppPathService.getBaseUrl( request ) + JSP_MANAGE_PURCHASES );
     }
@@ -890,7 +887,7 @@ public class PurchaseJspBean extends AbstractJspBean
                 purchase.getOffer( ).getTypeName( ), purchase.getQuantity( ),
         };
 
-        Map<String, Object> urlParam = new HashMap<String, Object>( );
+        Map<String, Object> urlParam = new HashMap<>( );
         urlParam.put( PARAMETER_PURCHASE_ID, nIdPurchase );
 
         String strJspBack = JSP_MANAGE_PURCHASES;
@@ -926,7 +923,7 @@ public class PurchaseJspBean extends AbstractJspBean
         ReservationDTO purchase = _servicePurchase.findById( nIdPurchase );
 
         // Generate mail content
-        Map<String, Object> model = new HashMap<String, Object>( );
+        Map<String, Object> model = new HashMap<>( );
         model.put( MARK_PURCHASE, purchase );
         model.put( MARK_BASE_URL, AppPathService.getBaseUrl( request ) );
 
@@ -965,7 +962,7 @@ public class PurchaseJspBean extends AbstractJspBean
             return AdminMessageService.getMessageUrl( request, MESSAGE_DELETE_MASSE_PURCHASE_NO_CHECK, AdminMessage.TYPE_STOP );
         }
 
-        Map<String, Object> urlParam = new HashMap<String, Object>( );
+        Map<String, Object> urlParam = new HashMap<>( );
 
         try
         {

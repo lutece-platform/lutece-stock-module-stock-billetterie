@@ -87,7 +87,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -258,15 +257,10 @@ public class OfferJspBean extends AbstractJspBean
         // SORT
         String strSortedAttributeName = request.getParameter( Parameters.SORTED_ATTRIBUTE_NAME );
 
-        // "filter" in request ==> new filter. use old one otherwise
-        // if ( request.getParameter( TicketsConstants.PARAMETER_FILTER ) !=
-        // null )
-        // {
         SeanceFilter filter = new SeanceFilter( );
         buildFilter( filter, request );
         _offerFilter = filter;
 
-        // }
         if ( strSortedAttributeName != null )
         {
             _offerFilter.getOrders( ).add( strSortedAttributeName );
@@ -300,25 +294,12 @@ public class OfferJspBean extends AbstractJspBean
             forceNewFilter = true;
         }
 
-        /*if ( StringUtils.isNotEmpty( filter.getProductName( ) ) )
-        {
-            ProductFilter productFilter = new ProductFilter( );
-            productFilter.setName( filter.getProductName( ) );
-
-            List<ShowDTO> listShow = this._serviceProduct.findByFilter( productFilter );
-
-            if ( !listShow.isEmpty( ) )
-            {
-                filter.setProductId( listShow.get( 0 ).getId( ) );
-            }
-        }*/
-
         // Fill the model
-        Map<String, Object> model = new HashMap<String, Object>( );
+        Map<String, Object> model = new HashMap<>( );
         model.put( MARK_LOCALE, getLocale( ) );
 
         // if date begin is after date end, add error
-        List<String> errors = new ArrayList<String>( );
+        List<String> errors = new ArrayList<>( );
 
         if ( ( filter.getDateBegin( ) != null ) && ( filter.getDateEnd( ) != null ) && filter.getDateBegin( ).after( filter.getDateEnd( ) ) )
         {
@@ -327,7 +308,7 @@ public class OfferJspBean extends AbstractJspBean
 
         model.put( MARK_ERRORS, errors );
 
-        List<String> orderList = new ArrayList<String>( );
+        List<String> orderList = new ArrayList<>( );
         orderList.add( ORDER_FILTER_DATE );
         orderList.add( ORDER_FILTER_PRODUCT_NAME );
         orderList.add( ORDER_FILTER_TYPE_NAME );
@@ -399,10 +380,9 @@ public class OfferJspBean extends AbstractJspBean
             dataTableToUse.addFreeColumn( StringUtils.EMPTY, MACRO_COLUMN_STATUT_OFFER );
             dataTableToUse.addFreeColumn( StringUtils.EMPTY, MACRO_COLUMN_CHECKBOX_DELETE_OFFER );
             dataTableToUse.addColumn( "module.stock.billetterie.list_offres.filter.name", "name", true );
-            dataTableToUse.addColumn( "module.stock.billetterie.list_offres.filter.product", "product.name", true );
-            dataTableToUse.addColumn( "module.stock.billetterie.list_offres.type", "typeName", true );
+            dataTableToUse.addColumn( "module.stock.billetterie.list_offres.filter.product", ORDER_FILTER_PRODUCT_NAME, true );
+            dataTableToUse.addColumn( "module.stock.billetterie.list_offres.type", ORDER_FILTER_TYPE_NAME, true );
             dataTableToUse.addFreeColumn( "module.stock.billetterie.save_offer.date", MACRO_COLUMN_DATES_OFFER );
-            /* dataTableToUse.addFreeColumn( "module.stock.billetterie.save_offer.initialQuantity", "columnInitialQuantityOffer" ); */
             dataTableToUse.addFreeColumn( "module.stock.billetterie.save_offer.totalQuantity", "columnTotalQuantityOffer" );
             dataTableToUse.addColumn( "module.stock.billetterie.save_offer.quantity", "quantity", false );
             dataTableToUse.addFreeColumn( "module.stock.billetterie.save_offer.sessions.actions", MACRO_COLUMN_ACTIONS_OFFER );
@@ -423,7 +403,7 @@ public class OfferJspBean extends AbstractJspBean
     public String getSaveOffer( HttpServletRequest request )
     {
         SeanceDTO offer = null;
-        Map<String, Object> model = new HashMap<String, Object>( );
+        Map<String, Object> model = new HashMap<>( );
         model.put( MARK_LOCALE, getLocale( ) );
 
         // Manage validation errors
@@ -458,7 +438,7 @@ public class OfferJspBean extends AbstractJspBean
                     populate( offer, request );
 
                     String strIdProduct = request.getParameter( PARAMETER_OFFER_ID_PRODUCT );
-                    int nIdSelectedProvider = Integer.valueOf( strIdProduct );
+                    int nIdSelectedProvider = Integer.parseInt( strIdProduct );
 
                     if ( nIdSelectedProvider >= 0 )
                     {
@@ -537,7 +517,7 @@ public class OfferJspBean extends AbstractJspBean
         }
 
         // Combo
-        List<String> orderList = new ArrayList<String>( );
+        List<String> orderList = new ArrayList<>( );
         orderList.add( BilletterieConstants.NAME );
 
         ReferenceList productComboList = ListUtils.toReferenceList( _serviceProduct.getCurrentAndComeProduct( orderList ), BilletterieConstants.ID,
@@ -600,9 +580,8 @@ public class OfferJspBean extends AbstractJspBean
     private ReferenceList getContactComboList( int idProvider )
     {
         PartnerDTO findById = _servicePartner.findById( idProvider );
-        ReferenceList contactComboList = ListUtils.toReferenceList( findById.getContactList( ), BilletterieConstants.ID, BilletterieConstants.NAME,
+        return ListUtils.toReferenceList( findById.getContactList( ), BilletterieConstants.ID, BilletterieConstants.NAME,
                 StockConstants.EMPTY_STRING );
-        return contactComboList;
     }
 
     /**
@@ -642,25 +621,36 @@ public class OfferJspBean extends AbstractJspBean
         if ( offer.getTotalQuantity( ) != null )
         {
             restQuantity = offer.getQuantity( );
-            if (nSuppTickets>0) {
-                    if (offerInBdd.getTotalQuantity() != null) {
+            if ( nSuppTickets > 0 ) {
+                    if ( offerInBdd.getTotalQuantity( ) != null ) {
 
-                        if (offerInBdd.getTotalQuantity().equals(offer.getTotalQuantity())) {
-                            offer.setTotalQuantity(offer.getTotalQuantity() + nSuppTickets);
-                        } else {
-                            offer.setTotalQuantity(offerInBdd.getTotalQuantity() + nSuppTickets);
+                        if (offerInBdd.getTotalQuantity( ).equals(offer.getTotalQuantity( ) ) )
+                        {
+                            offer.setTotalQuantity( offer.getTotalQuantity( ) + nSuppTickets );
                         }
-                        if (offerInBdd.getQuantity() == offer.getQuantity()) {
-                             offer.setQuantity(offer.getQuantity() + nSuppTickets);
-                         } else {
-                                offer.setQuantity(offer.getQuantity()+nSuppTickets);
+                        else
+                        {
+                            offer.setTotalQuantity( offerInBdd.getTotalQuantity( ) + nSuppTickets );
                         }
-                    } else {
-                        offer.setTotalQuantity(offer.getTotalQuantity() + nSuppTickets);
-                        if (!isNewOffer) {
-                            offer.setQuantity(offer.getQuantity()+nSuppTickets);
-                        } else {
-                            offer.setQuantity(offer.getTotalQuantity());
+                        if ( offerInBdd.getQuantity( ).equals( offer.getQuantity( ) ) )
+                        {
+                            offer.setQuantity( offer.getQuantity( ) + nSuppTickets );
+                        }
+                        else
+                        {
+                             offer.setQuantity( offer.getQuantity( )+nSuppTickets );
+                        }
+                    }
+                    else
+                    {
+                        offer.setTotalQuantity( offer.getTotalQuantity( ) + nSuppTickets );
+                        if ( !isNewOffer )
+                        {
+                            offer.setQuantity( offer.getQuantity( )+nSuppTickets );
+                        }
+                        else
+                        {
+                            offer.setQuantity(offer.getTotalQuantity( ) );
                         }
                     }
             }
@@ -670,21 +660,28 @@ public class OfferJspBean extends AbstractJspBean
                     if (offer.getQuantity() - nSuppSign >=0) {
                         if (offerInBdd.getTotalQuantity() != null) {
 
-                            if (offerInBdd.getTotalQuantity().equals(offer.getTotalQuantity())) {
+                            if (offerInBdd.getTotalQuantity().equals(offer.getTotalQuantity()))
+                            {
                                 offer.setTotalQuantity(offer.getTotalQuantity() + nSuppTickets);
                             } else {
                                 offer.setTotalQuantity(offerInBdd.getTotalQuantity() + nSuppTickets);
                             }
-                            if (offerInBdd.getQuantity() == offer.getQuantity()) {
+                            if ( offerInBdd.getQuantity( ).equals( offer.getQuantity( ) ) )
+                            {
                                     offer.setQuantity(offer.getQuantity()+nSuppTickets);
                             } else {
                                 offer.setQuantity(offer.getQuantity()+nSuppTickets);
                             }
-                        } else {
+                        }
+                        else 
+                        {
                             offer.setTotalQuantity(offer.getTotalQuantity() + nSuppTickets);
-                            if (!isNewOffer) {
+                            if (!isNewOffer)
+                            {
                                 offer.setQuantity(offer.getQuantity()+nSuppTickets);
-                            } else {
+                            }
+                            else
+                            {
                                 offer.setQuantity(offer.getTotalQuantity());
                             }
                         }
@@ -714,11 +711,9 @@ public class OfferJspBean extends AbstractJspBean
         {
             // Controls mandatory fields
             validateBilletterie( offer );
-            if (restQuantity != null){
-                if ( restQuantity < nSuppSign && nSuppTickets < 0)
-                {
-                    throw new BusinessException( offer, MESSAGE_ERROR_SUPP_TICKETS );
-                }
+            if (restQuantity != null && restQuantity < nSuppSign && nSuppTickets < 0)
+            {
+                throw new BusinessException( offer, MESSAGE_ERROR_SUPP_TICKETS );
             }
 
             if ( offer.getMinTickets( ) > offer.getMaxTickets( ) )
@@ -762,7 +757,7 @@ public class OfferJspBean extends AbstractJspBean
         List<String> listUserEmail = _subscriptionProductService.getListEmailSubscriber( Integer.toString( offer.getProduct( ).getId( ) ) );
 
         // Generate mail content
-        Map<String, Object> model = new HashMap<String, Object>( );
+        Map<String, Object> model = new HashMap<>( );
         model.put( MARK_OFFER, offer );
         model.put( MARK_PRODUCT, product );
         model.put( MARK_BASE_URL, AppPathService.getBaseUrl( request ) + AppPathService.getPortalUrl( ) + "?" + QUERY_SPECIFIC_PRODUCT + product.getId( ) );
@@ -806,7 +801,7 @@ public class OfferJspBean extends AbstractJspBean
         List<String> listUserEmail = _subscriptionProductService.getListEmailSubscriber( Integer.toString( offer.getProduct( ).getId( ) ) );
 
         // Generate mail content
-        Map<String, Object> model = new HashMap<String, Object>( );
+        Map<String, Object> model = new HashMap<>( );
         model.put( MARK_OFFER, offer );
         model.put( MARK_PRODUCT, product );
         model.put( MARK_BASE_URL, AppPathService.getBaseUrl( request ) + AppPathService.getPortalUrl( ) + "?" + QUERY_SPECIFIC_PRODUCT + product.getId( ) );
@@ -873,11 +868,11 @@ public class OfferJspBean extends AbstractJspBean
             return AdminMessageService.getMessageUrl( request, StockConstants.MESSAGE_ERROR_OCCUR, AdminMessage.TYPE_STOP );
         }
 
-        Map<String, Object> urlParam = new HashMap<String, Object>( );
+        Map<String, Object> urlParam = new HashMap<>( );
 
         String strJspBack = JSP_MANAGE_OFFERS;
 
-        ArrayList<Integer> offersIdToDelete = new ArrayList<Integer>( );
+        ArrayList<Integer> offersIdToDelete = new ArrayList<>( );
         offersIdToDelete.add( nIdOffer );
 
         String error = errorWithDeleteOffer( request, urlParam, offersIdToDelete );
@@ -929,7 +924,7 @@ public class OfferJspBean extends AbstractJspBean
      */
     public String getMasseDeleteOffer( HttpServletRequest request )
     {
-        ArrayList<Integer> offersIdToDelete = new ArrayList<Integer>( );
+        ArrayList<Integer> offersIdToDelete = new ArrayList<>( );
         String [ ] parameterValues = request.getParameterValues( PARAMETER_OFFERS_ID );
 
         // if no case checked
@@ -956,7 +951,7 @@ public class OfferJspBean extends AbstractJspBean
 
         String strJspBack = JSP_MANAGE_OFFERS;
 
-        Map<String, Object> urlParam = new HashMap<String, Object>( );
+        Map<String, Object> urlParam = new HashMap<>( );
         String error = errorWithDeleteOffer( request, urlParam, offersIdToDelete );
 
         if ( error != null )
@@ -978,7 +973,7 @@ public class OfferJspBean extends AbstractJspBean
      */
     public String doMasseDeleteOffer( HttpServletRequest request )
     {
-        ArrayList<Integer> listOffer = new ArrayList<Integer>( );
+        ArrayList<Integer> listOffer = new ArrayList<>( );
 
         try
         {
@@ -1046,10 +1041,10 @@ public class OfferJspBean extends AbstractJspBean
 
     public void doExportPurchase( HttpServletRequest request, HttpServletResponse response )
     {
-        ResultList<ReservationDTO> reservationModel = new ResultList<ReservationDTO>( );
+        ResultList<ReservationDTO> reservationModel = new ResultList<>( );
         PurchaseFilter filter = new PurchaseFilter( );
         String parameter = request.getParameter( PARAMETER_OFFER_ID );
-        int idOffer = Integer.valueOf( parameter );
+        int idOffer = Integer.parseInt( parameter );
         filter.setIdOffer( idOffer );
         reservationModel.addAll( _servicePurchase.findByFilter( filter ) );
 

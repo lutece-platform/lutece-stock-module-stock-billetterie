@@ -148,7 +148,6 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
     private static final String ACTION_MY_BOOKINGS = "mes-reservations";
     private static final String ACTION_BOOK = "reserver";
     private static final String ACTION_DELETE_BOOKING = "delete-purchase";
-    private static final String ACTION_MODIFY_BOOKING = "modify-purchase";
     private static final String ACTION_SHOW_DETAILS = "fiche-spectacle";
     private static final String ACTION_DELETE_SUBSCRIPTION = "delete-subscription";
 
@@ -165,7 +164,6 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
     private static final String TEMPLATE_DIR = "skin/plugins/stock/modules/billetterie/";
     private static final String TEMPLATE_NOTIFICATION_BOOKING = "notification_booking.html";
     private static final String TEMPLATE_MY_BOOKINGS = "my_bookings.html";
-    private static final String TEMPLATE_MODIFY_BOOK = "modify_book.html";
     private static final String TEMPLATE_CONFIRM_BOOKING = "confirm_booking.html";
     private static final String TEMPLATE_NOTIFICATION_REQUEST = "notification_request.html";
     private static final String TEMPLATE_NOTIFICATION_ADMIN_OFFER_QUANTITY = "notification_admin_offer_quantity.html";
@@ -231,11 +229,6 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
                         page.setPathLabel( pageTitle );
                         page.setTitle( pageTitle );
                     }
-                    else
-                        if ( ACTION_MODIFY_BOOKING.equals( strAction ) )
-                        {
-
-                        }
 
         return page;
     }
@@ -260,7 +253,7 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
         String [ ] numberPlacesList = request.getParameterValues( PARAMETER_NB_PLACES );
         String showId = request.getParameter( PARAMETER_SHOW_ID );
 
-        Map<String, Object> model = new HashMap<String, Object>( );
+        Map<String, Object> model = new HashMap<>( );
         model.put( PARAMETER_SHOW_ID, showId );
 
         FunctionnalException fe = getErrorOnce( request );
@@ -287,7 +280,7 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
 
             // Create booking list
             boolean bPlacesInvalid = true;
-            bookingList = new ArrayList<ReservationDTO>( );
+            bookingList = new ArrayList<>( );
             // Avoid mixing purchase session (with two opened tabs for example)
             bookingCheck = UUID.randomUUID( ).toString( );
 
@@ -323,7 +316,6 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
                                     String strEmail = !user.getUserInfo( LuteceUser.HOME_INFO_ONLINE_EMAIL ).equals( "" ) ? user
                                             .getUserInfo( LuteceUser.HOME_INFO_ONLINE_EMAIL ) : user.getUserInfo( LuteceUser.BUSINESS_INFO_ONLINE_EMAIL );// BUSINESS_INFO_ONLINE_EMAIL
                                     booking.setUserName( user.getName( ) );
-                                    // booking.setUserName( strEmail );
                                     booking.setEmailAgent( strEmail );
                                     booking.setFirstNameAgent( user.getUserInfo( LuteceUser.NAME_GIVEN ) );
                                     booking.setNameAgent( user.getUserInfo( LuteceUser.NAME_FAMILY ) );
@@ -559,13 +551,13 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
         if ( seance != null && seance.getQuantity( ) < seance.getMinTickets( ) )
         {
             // Generate mail content
-            Map<String, Object> model = new HashMap<String, Object>( );
+            Map<String, Object> model = new HashMap<>( );
             model.put( MARK_SEANCE, seance );
             model.put( MARK_BASE_URL, AppPathService.getBaseUrl( request ) );
 
             HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_NOTIFICATION_ADMIN_OFFER_QUANTITY, request.getLocale( ), model );
 
-            Collection<AdminUser> listUsers = (List<AdminUser>) AdminUserHome.findUserList( );
+            Collection<AdminUser> listUsers = AdminUserHome.findUserList( );
 
             for ( AdminUser adminUser : listUsers )
             {
@@ -687,14 +679,14 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
         List<ReservationDTO> oldBookingList = purchaseService.findByFilter( purchaseFilterUserName, getPaginationProperties( request ) );
 
         // Generates template
-        Map<String, Object> model = new HashMap<String, Object>( );
+        Map<String, Object> model = new HashMap<>( );
         model.put( PARAMETER_NEXT_BOOKING_LIST, toComeBookingList );
         model.put( PARAMETER_PAST_BOOKING_LIST, oldBookingList );
 
         model.put( MARK_USER, user );
 
         model.put( MARK_LIST_PRODUCT_SUBSCRIBED, listProduct );
-        model.put( PARAMETER_TAB_ACTIVE, (String) request.getAttribute( PARAMETER_TAB_ACTIVE ) );
+        model.put( PARAMETER_TAB_ACTIVE, request.getAttribute( PARAMETER_TAB_ACTIVE ) );
 
         String strNbItemPerPage = request.getParameter( PARAMETER_NB_ITEMS_PER_PAGE );
         String strDefaultNbItemPerPage = DEFAULT_RESULTS_PER_PAGE;
@@ -706,7 +698,7 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
 
         UrlItem url = new UrlItem( "jsp/site/Portal.jsp?page=reservation&action=mes-reservations" );
 
-        Paginator<ReservationDTO> paginator = new Paginator<ReservationDTO>( oldBookingList, nNbItemsPerPage, url.getUrl( ), PARAMETER_PAGE_INDEX,
+        Paginator<ReservationDTO> paginator = new Paginator<>( oldBookingList, nNbItemsPerPage, url.getUrl( ), PARAMETER_PAGE_INDEX,
                 strCurrentPageIndex );
 
         model.put( MARK_PAGINATOR, paginator );
@@ -739,7 +731,7 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
             throw new TechnicalException( "Paramètre " + PARAMETER_SEANCE_ID + " invalide   : " + purchaseId );
         }
 
-        Map<String, Object> model = new HashMap<String, Object>( );
+        Map<String, Object> model = new HashMap<>( );
         model.put( PARAMETER_PURCHASE_ID, purchaseId );
 
         SiteMessageService.setMessage( request, MESSAGE_CONFIRM_DELETE_PURCHASE, null, MESSAGE_CONFIRM_DELETE_PURCHASE_TITLE, JSP_DO_DELETE_RESERVATION, null,
@@ -787,7 +779,7 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
     private NotificationDTO sendBookingNotification( List<ReservationDTO> bookingList, HttpServletRequest request )
     {
         // Generate mail content
-        Map<String, Object> model = new HashMap<String, Object>( );
+        Map<String, Object> model = new HashMap<>( );
         model.put( PARAMETER_BOOKING_LIST, bookingList );
         model.put( MARK_BASE_URL, AppPathService.getBaseUrl( request ) );
 
@@ -820,7 +812,7 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
     private NotificationDTO sendRequestNotification( List<ReservationDTO> bookingList, UnauthentifiedPurchaserDTO purchaser, HttpServletRequest request )
     {
         // Generate mail content
-        Map<String, Object> model = new HashMap<String, Object>( );
+        Map<String, Object> model = new HashMap<>( );
         model.put( PARAMETER_BOOKING_LIST, bookingList );
         model.put( MARK_PURCHASER, purchaser );
         model.put( MARK_BASE_URL, AppPathService.getBaseUrl( request ) );
@@ -866,12 +858,9 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
 
         SubscriptionProductJspBean jspBean = new SubscriptionProductJspBean( );
 
-        if ( strSubscribe != null )
+        if ( strSubscribe != null && strSubscribe.equals( "false" ) )
         {
-            if ( strSubscribe.equals( "false" ) )
-            {
-                jspBean.doUnsubscribeToProduct( request, currentUser );
-            }
+            jspBean.doUnsubscribeToProduct( request, currentUser );
         }
 
     }

@@ -67,9 +67,7 @@ public class BilletteriePortletHome extends PortletHome
     public String getPortletTypeId( )
     {
         String strCurrentClassName = this.getClass( ).getName( );
-        String strPortletTypeId = PortletTypeHome.getPortletTypeId( strCurrentClassName );
-
-        return strPortletTypeId;
+        return  PortletTypeHome.getPortletTypeId( strCurrentClassName );
     }
 
     /**

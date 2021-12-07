@@ -82,6 +82,10 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class PartnerJspBean extends AbstractJspBean
 {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     public static final Logger LOGGER = Logger.getLogger( PartnerJspBean.class );
     public static final String PARAMETER_PARTNER_TYPE_LIST = "partner_type_list";
     public static final String PARAMETER_PARTNER_TYPE_LIST_DEFAULT = "partner_type_list_default";
@@ -199,7 +203,7 @@ public class PartnerJspBean extends AbstractJspBean
         setPageTitleProperty( PAGE_TITLE_MANAGE_PARTNER );
 
         ProviderFilter filter = getProviderFilter( request );
-        List<String> orderList = new ArrayList<String>( );
+        List<String> orderList = new ArrayList<>( );
         orderList.add( BilletterieConstants.NAME );
         filter.setOrders( orderList );
         filter.setOrderAsc( true );
@@ -208,7 +212,7 @@ public class PartnerJspBean extends AbstractJspBean
         DataTableManager<PartnerDTO> dataTableToUse = getDataTable( request, filter );
 
         // Fill the model
-        Map<String, Object> model = new HashMap<String, Object>( );
+        Map<String, Object> model = new HashMap<>( );
 
         model.put( MARK_DATA_TABLE_PARTNER, dataTableToUse );
 
@@ -273,7 +277,7 @@ public class PartnerJspBean extends AbstractJspBean
     public String getSavePartner( HttpServletRequest request )
     {
         PartnerDTO provider = null;
-        Map<String, Object> model = new HashMap<String, Object>( );
+        Map<String, Object> model = new HashMap<>( );
 
         // Manage validation errors
         FunctionnalException ve = getErrorOnce( request );
@@ -316,7 +320,7 @@ public class PartnerJspBean extends AbstractJspBean
                 if ( ( (String) requestParameter ).startsWith( PARAMETER_DEL_CONTACT ) )
                 {
                     String strIdContactToDelete = ( (String) requestParameter ).substring( PARAMETER_DEL_CONTACT.length( ) );
-                    int idContactToDelete = Integer.valueOf( strIdContactToDelete );
+                    int idContactToDelete = Integer.parseInt( strIdContactToDelete );
                     provider.removeContact( idContactToDelete );
 
                     break;
@@ -333,11 +337,8 @@ public class PartnerJspBean extends AbstractJspBean
         // Add the JSP which called this action
         model.put( StockConstants.MARK_JSP_BACK, request.getParameter( StockConstants.MARK_JSP_BACK ) );
 
-        // String strNumberContact = request.getParameter( MARK_PARTNER_NUMBER_CONTACT );
-        // int numberContact = strNumberContact == null ? 0 : Integer.valueOf( strNumberContact );
         if ( request.getParameter( PARAMETER_ADD_CONTACT ) != null )
         {
-            // numberContact++;
             populate( provider, request );
         }
 
@@ -348,7 +349,7 @@ public class PartnerJspBean extends AbstractJspBean
         model.put( MARK_LIST_CONTACT, listContactOrderById );
 
         DistrictFilter districtFilter = new DistrictFilter( );
-        List<String> order = new ArrayList<String>( );
+        List<String> order = new ArrayList<>( );
         order.add( "_libelle" );
         districtFilter.setOrders( order );
 
@@ -384,14 +385,14 @@ public class PartnerJspBean extends AbstractJspBean
 
             List<ValidationError> errors = validate( provider, "" );
 
-            if ( errors.size( ) > 0 )
+            if ( !errors.isEmpty( ) )
             {
                 return AdminMessageService.getMessageUrl( request, Messages.MESSAGE_INVALID_ENTRY, errors );
             }
 
             _serviceProvider.doSaveProvider( provider );
 
-            if ( !provider.isAccessible( ) && ( provider.getAccessibleComment( ) != StringUtils.EMPTY ) )
+            if ( !provider.isAccessible( ) && ( !provider.getAccessibleComment( ).equals( StringUtils.EMPTY ) ) )
             {
                 throw new BusinessException( provider, MESSAGE_ERROR_NO_COMMENT_IF_NOT_ACCESSIBLE );
             }

@@ -33,24 +33,43 @@
  */
 package fr.paris.lutece.plugins.stock.modules.billetterie.web;
 
+import static java.util.Optional.ofNullable;
+import static java.util.stream.Collectors.groupingBy;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
+
 import fr.paris.lutece.plugins.stock.business.attribute.AbstractAttributeNum;
-import fr.paris.lutece.plugins.stock.business.attribute.product.ProductAttributeNum;
-import fr.paris.lutece.plugins.stock.business.attribute.purchase.PurchaseAttribute;
-import fr.paris.lutece.plugins.stock.business.offer.Offer;
 import fr.paris.lutece.plugins.stock.business.product.Product;
-import fr.paris.lutece.plugins.stock.business.product.ProductFilter;
-import fr.paris.lutece.plugins.stock.business.provider.Provider;
-import fr.paris.lutece.plugins.stock.business.provider.ProviderFilter;
-import fr.paris.lutece.plugins.stock.business.purchase.Purchase;
 import fr.paris.lutece.plugins.stock.business.purchase.PurchaseFilter;
-import fr.paris.lutece.plugins.stock.commons.ResultList;
 import fr.paris.lutece.plugins.stock.commons.exception.FunctionnalException;
 import fr.paris.lutece.plugins.stock.modules.billetterie.utils.constants.BilletterieConstants;
-import fr.paris.lutece.plugins.stock.modules.tickets.business.*;
-import fr.paris.lutece.plugins.stock.modules.tickets.service.*;
+import fr.paris.lutece.plugins.stock.modules.tickets.business.Contact;
+import fr.paris.lutece.plugins.stock.modules.tickets.business.IReservationDAO;
+import fr.paris.lutece.plugins.stock.modules.tickets.business.NotificationDTO;
+import fr.paris.lutece.plugins.stock.modules.tickets.business.PartnerDTO;
+import fr.paris.lutece.plugins.stock.modules.tickets.business.ReservationDTO;
+import fr.paris.lutece.plugins.stock.modules.tickets.business.SeanceDTO;
+import fr.paris.lutece.plugins.stock.modules.tickets.business.ShowDTO;
+import fr.paris.lutece.plugins.stock.modules.tickets.service.INotificationService;
+import fr.paris.lutece.plugins.stock.modules.tickets.service.IProviderService;
+import fr.paris.lutece.plugins.stock.modules.tickets.service.IPurchaseService;
+import fr.paris.lutece.plugins.stock.modules.tickets.service.ISeanceService;
+import fr.paris.lutece.plugins.stock.modules.tickets.service.IShowService;
 import fr.paris.lutece.plugins.stock.modules.tickets.utils.constants.TicketsConstants;
-
-import fr.paris.lutece.plugins.stock.service.IProductService;
 import fr.paris.lutece.plugins.stock.utils.constants.StockConstants;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
@@ -59,26 +78,15 @@ import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.util.html.HtmlTemplate;
 
-import org.apache.commons.lang.StringUtils;
-
-import org.apache.log4j.Logger;
-
-import java.util.*;
-import java.util.stream.Collectors;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.servlet.http.HttpServletRequest;
-
-import static java.util.Optional.ofNullable;
-import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.mapping;
-
 /**
  * This class provides the user interface to manage notifications
  */
 public class NotificationJspBean extends AbstractJspBean
 {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     public static final Logger LOGGER = Logger.getLogger( NotificationJspBean.class );
     public static final String RESOURCE_TYPE = "STOCK";
     public static final String RIGHT_MANAGE_NOTIFICATIONS = "OFFERS_MANAGEMENT";
@@ -156,7 +164,7 @@ public class NotificationJspBean extends AbstractJspBean
     public String getSendNotification( HttpServletRequest request )
     {
         NotificationDTO notification;
-        Map<String, Object> model = new HashMap<String, Object>( );
+        Map<String, Object> model = new HashMap<>( );
 
         // Manage validation errors
         FunctionnalException ve = getErrorOnce( request );
@@ -196,7 +204,7 @@ public class NotificationJspBean extends AbstractJspBean
             SeanceDTO seance = this._serviceOffer.findSeanceById( idOffer );
             notification.setIdOffer( idOffer );
 
-            List<String> orderList = new ArrayList<String>( );
+            List<String> orderList = new ArrayList<>( );
             orderList.add( ORDER_FILTER_USER_NAME );
             filter.setOrders( orderList );
             filter.setOrderAsc( true );
@@ -242,7 +250,7 @@ public class NotificationJspBean extends AbstractJspBean
                         .setSubject( getMessage( MESSAGE_NOTIFICATION_CANCEL_SUBJECT, seance.getProduct( ).getName( ), seance.getDate( ), seance.getHour( ) ) );
 
                 // Set the default message
-                Map<String, Object> modelMail = new HashMap<String, Object>( );
+                Map<String, Object> modelMail = new HashMap<>( );
                 modelMail.put( MARK_BASE_URL, AppPathService.getBaseUrl( request ) );
                 modelMail.put( MARK_SEANCE, seance );
 
@@ -311,7 +319,7 @@ public class NotificationJspBean extends AbstractJspBean
                             + " - " + seance.getHour( ) ) );
 
                     // Set the default message
-                    Map<String, Object> modelMail = new HashMap<String, Object>( );
+                    Map<String, Object> modelMail = new HashMap<>( );
                     modelMail.put( MARK_BASE_URL, AppPathService.getBaseUrl( request ) );
                     modelMail.put( MARK_SEANCE, seance );
                     modelMail.put( MARK_TARIF_REDUIT_ID, TicketsConstants.OFFER_TYPE_REDUCT_ID );
