@@ -92,7 +92,7 @@ public class BilletterieHomeSolrAddon implements ISolrSearchAppAddOn
         }
         catch( SiteMessageException e )
         {
-            AppLogService.info( "User not signed : " + e.getMessage( ) );
+            AppLogService.info( "User not signed : " + e.getMessage( ), e );
         }
 
         List<RecommendedProduct> listProducts = null;
@@ -103,11 +103,10 @@ public class BilletterieHomeSolrAddon implements ISolrSearchAppAddOn
         catch( TasteException ex )
         {
             // User not found
-            // addError( "User not found" );
-            AppLogService.info( "Recommendation error : " + ex.getMessage( ) );
+            AppLogService.info( "Recommendation error : " + ex.getMessage( ), ex );
         }
 
-        List<String> orderList = new ArrayList<String>( );
+        List<String> orderList = new ArrayList<>( );
         orderList.add( ORDER_FILTER_DATE_END );
 
         HtmlPage htmlpage = HtmlPageHome.findByPrimaryKey( 1, _plugin );
