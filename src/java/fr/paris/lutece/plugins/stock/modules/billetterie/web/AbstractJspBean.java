@@ -50,8 +50,7 @@ import fr.paris.lutece.util.datatable.DataTableManager;
 import fr.paris.lutece.util.datatable.DataTablePaginationProperties;
 import fr.paris.lutece.util.html.HtmlTemplate;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 
 import java.lang.reflect.Method;
