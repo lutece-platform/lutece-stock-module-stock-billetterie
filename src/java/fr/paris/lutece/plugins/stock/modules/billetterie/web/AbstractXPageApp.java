@@ -48,14 +48,14 @@ import fr.paris.lutece.portal.service.security.LuteceUser;
 import fr.paris.lutece.portal.service.security.SecurityService;
 import fr.paris.lutece.portal.service.security.UserNotSignedException;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
+import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.util.beanvalidation.BeanValidationUtil;
 import fr.paris.lutece.util.html.HtmlTemplate;
 import fr.paris.lutece.util.html.Paginator;
 
 import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -86,7 +86,6 @@ public abstract class AbstractXPageApp
     private static final String ERROR_TEMPLATE = "admin/plugins/stock/modules/billetterie/error.html";
     private static final String FIELD_MESSAGE_PREFIX = "module.stock.billetterie.field.";
     private static final String MARK_MESSAGE_LIST = "messageList";
-    private static final Logger LOGGER = Logger.getLogger( AbstractXPageApp.class );
 
     /**
      * Populate a bean using parameters in http request
@@ -102,13 +101,9 @@ public abstract class AbstractXPageApp
         {
             BeanUtils.populate( bean, request.getParameterMap( ) );
         }
-        catch( IllegalAccessException e )
+        catch( IllegalAccessException | InvocationTargetException e )
         {
-            LOGGER.error( POPULATE_ERROR_MESSAGE, e );
-        }
-        catch( InvocationTargetException e )
-        {
-            LOGGER.error( POPULATE_ERROR_MESSAGE, e );
+            AppLogService.error( POPULATE_ERROR_MESSAGE, e );
         }
     }
 

@@ -1074,7 +1074,7 @@ public class OfferJspBean extends AbstractJspBean
         }
         catch( IOException e )
         {
-            AppLogService.error( e );
+            AppLogService.error( e.getMessage( ), e );
         }
     }
 }

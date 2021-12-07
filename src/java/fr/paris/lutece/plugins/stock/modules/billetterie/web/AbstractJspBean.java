@@ -88,7 +88,6 @@ public class AbstractJspBean extends PluginAdminPageJspBean
     protected static final String PARAMETER_TRUE = "true";
     protected static final String PARAMETER_FIND_BY_FILTER_NAME_METHOD = "findByFilter";
     private static final long serialVersionUID = 5259767254583048437L;
-    private static final Logger LOGGER = Logger.getLogger( AbstractJspBean.class );
     protected int _nItemsPerPage;
 
     /**
@@ -116,7 +115,7 @@ public class AbstractJspBean extends PluginAdminPageJspBean
             }
             catch( Exception e )
             {
-                LOGGER.error( "Error during cast :" + e );
+                AppLogService.error( "Error during cast :" + e.getMessage( ), e );
             }
         }
 
@@ -416,7 +415,7 @@ public class AbstractJspBean extends PluginAdminPageJspBean
         }
         catch( Exception e )
         {
-            LOGGER.error( "Erreur lors de l'obtention de la liste des beans : " + e );
+            AppLogService.error( "Erreur lors de l'obtention de la liste des beans : " + e.getMessage( ), e );
         }
 
         request.getSession( ).setAttribute( MARK_FILTER, filterToUse );

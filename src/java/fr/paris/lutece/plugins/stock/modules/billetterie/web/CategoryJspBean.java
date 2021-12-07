@@ -402,12 +402,12 @@ public class CategoryJspBean extends AbstractJspBean
         }
         catch( NumberFormatException e )
         {
-            AppLogService.debug( e );
+            AppLogService.debug( e.getMessage( ), e );
 
             return AdminMessageService.getMessageUrl( request, StockConstants.MESSAGE_ERROR_OCCUR, AdminMessage.TYPE_STOP );
         }
 
-        Map<String, Object> urlParam = new HashMap<String, Object>( );
+        Map<String, Object> urlParam = new HashMap<>( );
         urlParam.put( PARAMETER_CATEGORY_ID, nIdCategory );
 
         String strJspBack = request.getParameter( StockConstants.MARK_JSP_BACK );
@@ -452,7 +452,7 @@ public class CategoryJspBean extends AbstractJspBean
         }
         catch( NumberFormatException e )
         {
-            AppLogService.debug( e );
+            AppLogService.debug( e.getMessage( ), e );
 
             return AdminMessageService.getMessageUrl( request, StockConstants.MESSAGE_ERROR_OCCUR, AdminMessage.TYPE_STOP );
         }

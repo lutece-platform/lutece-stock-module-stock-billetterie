@@ -326,13 +326,13 @@ public class StatisticJspBean extends AbstractJspBean
         }
         catch( NumberFormatException ne )
         {
-            AppLogService.error( ne );
+            AppLogService.error( ne.getMessage( ), ne );
         }
 
-        List<ResultStatistic> listStatisticGraph = new ArrayList<ResultStatistic>( );
+        List<ResultStatistic> listStatisticGraph = new ArrayList<>( );
         ResultStatistic statisticFormSubmit;
 
-        if ( listeResultStatistic.size( ) != 0 )
+        if ( !listeResultStatistic.isEmpty( ) )
         {
             for ( int cpt = 0; cpt < nNumberOfResponseAxisX; cpt++ )
             {
@@ -382,7 +382,7 @@ public class StatisticJspBean extends AbstractJspBean
         }
         catch( Exception e )
         {
-            AppLogService.error( e );
+            AppLogService.error( e.getMessage( ), e );
         }
     }
 

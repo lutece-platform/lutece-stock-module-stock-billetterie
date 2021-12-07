@@ -36,16 +36,14 @@ package fr.paris.lutece.plugins.stock.modules.billetterie.service;
 import fr.paris.lutece.plugins.stock.service.IPurchaseSessionManager;
 import fr.paris.lutece.portal.service.daemon.Daemon;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
+import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
-
-import org.apache.log4j.Logger;
 
 /**
  * The daemon class to delete expired sessions
  */
 public class PurchaseClearDaemon extends Daemon
 {
-    public static final Logger LOGGER = Logger.getLogger( PurchaseClearDaemon.class );
     private static final String PARAMETER_TIME_MAX = AppPropertiesService.getProperty( "daemon.lock.session.time.expiration" );
     private IPurchaseSessionManager _purchaseSessionManager = SpringContextService.getContext( ).getBean( IPurchaseSessionManager.class );
 
@@ -62,7 +60,7 @@ public class PurchaseClearDaemon extends Daemon
         }
         catch( NumberFormatException e )
         {
-            LOGGER.error( "Erreur de parametrage de la durée de vie d'une reservation en session : " + e );
+            AppLogService.error( "Erreur de parametrage de la durée de vie d'une reservation en session : " + e.getMessage( ), e );
         }
     }
 }

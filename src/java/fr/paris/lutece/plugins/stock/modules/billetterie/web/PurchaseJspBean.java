@@ -71,9 +71,7 @@ import fr.paris.lutece.util.datatable.DataTableManager;
 import fr.paris.lutece.util.html.HtmlTemplate;
 import fr.paris.lutece.util.url.UrlItem;
 
-import org.apache.commons.lang.StringUtils;
-
-import org.apache.log4j.Logger;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 
@@ -437,7 +435,7 @@ public class PurchaseJspBean extends AbstractJspBean
         }
         catch( Exception e )
         {
-            LOGGER.error( "Erreur lors de l'obtention du data table : ", e );
+            AppLogService.error( "Erreur lors de l'obtention du data table : ", e );
         }
 
         DataTableManager<T> dataTableToUse = getAbstractDataTableManager( request, filter, MARK_DATA_TABLE_PURCHASE, JSP_MANAGE_PURCHASES, _servicePurchase,
@@ -570,7 +568,7 @@ public class PurchaseJspBean extends AbstractJspBean
                 }
                 catch( IOException e1 )
                 {
-                    AppLogService.error( e1 );
+                    AppLogService.error( e1.getMessage( ), e1  );
                 }
 
                 return null;
@@ -795,12 +793,12 @@ public class PurchaseJspBean extends AbstractJspBean
         }
         catch( NumberFormatException e )
         {
-            LOGGER.debug( e );
+            AppLogService.debug( e.getMessage( ), e );
 
             return AdminMessageService.getMessageUrl( request, StockConstants.MESSAGE_ERROR_OCCUR, AdminMessage.TYPE_STOP );
         }
 
-        Map<String, Object> urlParam = new HashMap<String, Object>( );
+        Map<String, Object> urlParam = new HashMap<>( );
         urlParam.put( PARAMETER_PURCHASE_ID, nIdPurchase );
 
         String strJspBack = JSP_MANAGE_PURCHASES;
@@ -829,7 +827,7 @@ public class PurchaseJspBean extends AbstractJspBean
             }
             catch( NumberFormatException e )
             {
-                LOGGER.debug( e );
+                AppLogService.debug( e.getMessage( ), e );
 
                 return AdminMessageService.getMessageUrl( request, StockConstants.MESSAGE_ERROR_OCCUR, AdminMessage.TYPE_STOP );
             }
@@ -840,23 +838,20 @@ public class PurchaseJspBean extends AbstractJspBean
         {
             for ( Object parameter : request.getParameterMap( ).keySet( ) )
             {
-                if ( parameter instanceof String )
+                if ( parameter instanceof String && ( (String) parameter ).startsWith( MARK_PURCHASSE_ID ))
                 {
-                    if ( ( (String) parameter ).startsWith( MARK_PURCHASSE_ID ) )
+                    try
                     {
-                        try
-                        {
-                            nIdPurchase = Integer.parseInt( request.getParameter( (String) parameter ) );
-                        }
-                        catch( NumberFormatException e )
-                        {
-                            LOGGER.debug( e );
-
-                            return AdminMessageService.getMessageUrl( request, StockConstants.MESSAGE_ERROR_OCCUR, AdminMessage.TYPE_STOP );
-                        }
-
-                        _servicePurchase.doDeletePurchase( nIdPurchase );
+                        nIdPurchase = Integer.parseInt( request.getParameter( (String) parameter ) );
                     }
+                    catch( NumberFormatException e )
+                    {
+                        AppLogService.debug( e.getMessage( ), e );
+
+                        return AdminMessageService.getMessageUrl( request, StockConstants.MESSAGE_ERROR_OCCUR, AdminMessage.TYPE_STOP );
+                    }
+
+                    _servicePurchase.doDeletePurchase( nIdPurchase );
                 }
             }
         }
@@ -883,7 +878,7 @@ public class PurchaseJspBean extends AbstractJspBean
         }
         catch( NumberFormatException e )
         {
-            LOGGER.debug( e );
+            AppLogService.debug( e.getMessage( ), e );
 
             return AdminMessageService.getMessageUrl( request, StockConstants.MESSAGE_ERROR_OCCUR, AdminMessage.TYPE_STOP );
         }
@@ -923,7 +918,7 @@ public class PurchaseJspBean extends AbstractJspBean
         }
         catch( NumberFormatException e )
         {
-            LOGGER.debug( e );
+            AppLogService.debug( e.getMessage( ), e );
 
             return AdminMessageService.getMessageUrl( request, StockConstants.MESSAGE_ERROR_OCCUR, AdminMessage.TYPE_STOP );
         }
@@ -981,7 +976,7 @@ public class PurchaseJspBean extends AbstractJspBean
         }
         catch( NumberFormatException e )
         {
-            LOGGER.debug( e );
+            AppLogService.debug( e.getMessage( ), e );
 
             return AdminMessageService.getMessageUrl( request, StockConstants.MESSAGE_ERROR_OCCUR, AdminMessage.TYPE_STOP );
         }

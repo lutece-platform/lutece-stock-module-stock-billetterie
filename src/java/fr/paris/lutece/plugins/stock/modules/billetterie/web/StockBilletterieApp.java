@@ -386,8 +386,7 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
         catch( TasteException ex )
         {
             // User not found
-            // addError( "User not found" );
-            AppLogService.info( "Recommendation error : " + ex.getMessage( ) );
+            AppLogService.info( "Recommendation error : " + ex.getMessage( ), ex );
         }
         model.put( MARK_PRODUCTS_LIST, listProducts );
 
@@ -575,15 +574,14 @@ public class StockBilletterieApp extends AbstractXPageApp implements XPageApplic
         catch( TasteException ex )
         {
             // User not found
-            // addError( "User not found" );
-            AppLogService.info( "Recommendation error : " + ex.getMessage( ) );
+            AppLogService.info( "Recommendation error : " + ex.getMessage( ), ex );
         }
 
-        List<String> orderList = new ArrayList<String>( );
+        List<String> orderList = new ArrayList<>( );
         orderList.add( ORDER_FILTER_DATE_END );
 
         List<ShowDTO> currentListShow = _showService.getCurrentProduct( orderList, null );
-        Map<String, Object> model = new HashMap<String, Object>( );
+        Map<String, Object> model = new HashMap<>( );
         model.put( MARK_SHOW_LIST, currentListShow );
         model.put( MARK_TYPE_LIST, TYPE_A_LAFFICHE );
         model.put( MARK_URL_POSTER, AppPropertiesService.getProperty( PROPERTY_POSTER_TB_PATH ) );

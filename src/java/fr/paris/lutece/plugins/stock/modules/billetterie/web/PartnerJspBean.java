@@ -423,14 +423,14 @@ public class PartnerJspBean extends AbstractJspBean
         }
         catch( NumberFormatException e )
         {
-            AppLogService.debug( e );
+            AppLogService.debug( e.getMessage( ), e );
 
             return AdminMessageService.getMessageUrl( request, StockConstants.MESSAGE_ERROR_OCCUR, AdminMessage.TYPE_STOP );
         }
 
         UrlItem url = new UrlItem( JSP_DO_DELETE_PARTNER );
 
-        Map<String, Object> urlParam = new HashMap<String, Object>( );
+        Map<String, Object> urlParam = new HashMap<>( );
         urlParam.put( PARAMETER_PARTNER_ID, nIdProvider );
 
         String strJspBack = request.getParameter( StockConstants.MARK_JSP_BACK );
@@ -474,7 +474,7 @@ public class PartnerJspBean extends AbstractJspBean
         }
         catch( NumberFormatException e )
         {
-            AppLogService.debug( e );
+            AppLogService.debug( e.getMessage( ), e );
 
             return AdminMessageService.getMessageUrl( request, StockConstants.MESSAGE_ERROR_OCCUR, AdminMessage.TYPE_STOP );
         }
