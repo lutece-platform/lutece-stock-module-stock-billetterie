@@ -254,6 +254,8 @@ public class PurchaseJspBean extends AbstractJspBean
     private static final String ORDER_FILTER_OFFER_TYPE_NAME = "offer.typeName";
     private static final String ORDER_FILTER_OFFER_DATE = "offer.date";
     private static final String ORDER_FILTER_OFFER_PRODUCT_NAME = "offer.product.name";
+    private static final String ADMIN_ROLE = "billetterie_stock_notifications" ;
+    
 
     // MEMBERS VARIABLES
     // @Inject
@@ -722,7 +724,7 @@ public class PurchaseJspBean extends AbstractJspBean
 
             HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_NOTIFICATION_ADMIN_OFFER_QUANTITY, request.getLocale( ), model );
 
-            Collection<AdminUser> listUsers = (List<AdminUser>) AdminUserHome.findUserList( );
+            Collection<AdminUser> listUsers = AdminUserHome.findByRole(ADMIN_ROLE);
 
             for ( AdminUser adminUser : listUsers )
             {
