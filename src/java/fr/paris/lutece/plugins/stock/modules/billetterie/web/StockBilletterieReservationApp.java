@@ -165,7 +165,6 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
     private static final String TEMPLATE_DIR = "skin/plugins/stock/modules/billetterie/";
     private static final String TEMPLATE_NOTIFICATION_BOOKING = "notification_booking.html";
     private static final String TEMPLATE_MY_BOOKINGS = "my_bookings.html";
-    private static final String TEMPLATE_MODIFY_BOOK = "modify_book.html";
     private static final String TEMPLATE_CONFIRM_BOOKING = "confirm_booking.html";
     private static final String TEMPLATE_NOTIFICATION_REQUEST = "notification_request.html";
     private static final String TEMPLATE_NOTIFICATION_ADMIN_OFFER_QUANTITY = "notification_admin_offer_quantity.html";
@@ -175,6 +174,8 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
     private final IPurchaseService _purchaseService = SpringContextService.getContext( ).getBean( IPurchaseService.class );
     private final INotificationService _notificationService = SpringContextService.getContext( ).getBean( INotificationService.class );
     private final IPurchaseSessionManager _purchaseSessionManager = SpringContextService.getContext( ).getBean( IPurchaseSessionManager.class );
+    
+    private static final String ADMIN_ROLE = "billetterie_stock_notifications" ;
 
     /**
      * Return page with action specified.
@@ -564,8 +565,8 @@ public class StockBilletterieReservationApp extends AbstractXPageApp implements 
             model.put( MARK_BASE_URL, AppPathService.getBaseUrl( request ) );
 
             HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_NOTIFICATION_ADMIN_OFFER_QUANTITY, request.getLocale( ), model );
-
-            Collection<AdminUser> listUsers = (List<AdminUser>) AdminUserHome.findUserList( );
+            
+            Collection<AdminUser> listUsers = AdminUserHome.findByRole(ADMIN_ROLE);
 
             for ( AdminUser adminUser : listUsers )
             {
