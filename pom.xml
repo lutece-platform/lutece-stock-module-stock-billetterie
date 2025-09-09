@@ -34,19 +34,19 @@
         <dependency>
             <groupId>fr.paris.lutece.plugins</groupId>
             <artifactId>plugin-userban</artifactId>
-            <version>[1.0.1-SNAPSHOT,)</version>
+            <version>[1.0.1-SNAPSHOT,1.9.9)</version>
             <type>lutece-plugin</type>
         </dependency>
         <dependency>
             <groupId>fr.paris.lutece.plugins</groupId>
             <artifactId>module-stock-tickets</artifactId>
-            <version>[1.1.2-SNAPSHOT,)</version>
+            <version>[1.1.2-SNAPSHOT,1.9.9)</version>
             <type>lutece-plugin</type>
         </dependency>
         <dependency>
             <groupId>fr.paris.lutece</groupId>
             <artifactId>lutece-core</artifactId>
-            <version>[6.1.2-SNAPSHOT,)</version>
+            <version>[6.1.2-SNAPSHOT,7.9.9)</version>
             <type>lutece-core</type>
             <exclusions>
                 <exclusion>
@@ -63,13 +63,13 @@
         <dependency>
 			<groupId>fr.paris.lutece.plugins</groupId>
 			<artifactId>module-stock-recommendation</artifactId>
-			<version>[1.0.0-SNAPSHOT,)</version>
+			<version>[1.0.0-SNAPSHOT,1.9.9)</version>
 			<type>lutece-plugin</type>
 		</dependency>
 		<dependency>
             <groupId>fr.paris.lutece.plugins</groupId>
             <artifactId>plugin-solr</artifactId>
-            <version>[3.1.4-SNAPSHOT,)</version>
+            <version>[3.1.4-SNAPSHOT,4.9.9)</version>
             <type>lutece-plugin</type>
         </dependency>
         <dependency>
